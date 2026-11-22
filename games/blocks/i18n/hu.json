@@ -63,8 +63,8 @@
     "copy": "Eredmény másolása",
     "copied": "Másolva",
     "shareText": {
-      "one": "way1ong Blocks · napi {date}: {score} pont",
-      "other": "way1ong Blocks · napi {date}: {score} pont"
+      "one": "{name} · napi {date}: {score} pont",
+      "other": "{name} · napi {date}: {score} pont"
     }
   },
   "settings": {
@@ -72,6 +72,8 @@
     "language": "Nyelv",
     "big": "Nagy tábla és elemek",
     "vibration": "Rezgés",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
     "reset": "Előrehaladás törlése",
     "resetSure": "Koppintson újra a rekordok és mentett játékok törléséhez",
     "resetDone": "Törölve"
