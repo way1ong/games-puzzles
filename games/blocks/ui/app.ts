@@ -100,7 +100,7 @@ export function startApp(root: HTMLElement): void {
     board = createBoardView(game.size, d.app.board);
     board.el.style.setProperty('--flash-ms', `${FLASH_MS}ms`);
     board.el.addEventListener('click', onBoardClick);
-    note = h('div', { class: 'board-note' });
+    note = h('div', { class: 'board-note', hidden: true });
     noteKey = '';
 
     const tray = createTray(BLOCKS.piecesPerRound, d.app.tray);
@@ -198,9 +198,10 @@ export function startApp(root: HTMLElement): void {
   function renderNote(): void {
     const showHint = !game.end && !hintDone && drag === null && selected === null;
     const key = game.end ? `end:${mode}:${game.end}` : showHint ? 'hint' : '';
+    // Shown or not is decided every time; the content is rebuilt only when it changes.
+    note.hidden = key === '';
     if (key === noteKey) return;
     noteKey = key;
-    note.hidden = key === '';
     note.classList.toggle('board-note--hint', showHint);
     if (showHint) {
       note.replaceChildren(h('p', {}, d.app.hint));
