@@ -63,8 +63,8 @@
     "copy": "Copy result",
     "copied": "Copied",
     "shareText": {
-      "one": "way1ong Blocks · daily {date}: {score} point",
-      "other": "way1ong Blocks · daily {date}: {score} points"
+      "one": "{name} · daily {date}: {score} point",
+      "other": "{name} · daily {date}: {score} points"
     }
   },
   "settings": {
@@ -72,6 +72,8 @@
     "language": "Language",
     "big": "Large board and pieces",
     "vibration": "Vibration",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap Share, then add the game to the Home Screen.",
     "reset": "Clear progress",
     "resetSure": "Tap again to clear records and saved games",
     "resetDone": "Progress cleared"

@@ -1,7 +1,9 @@
-// Menu: language, large board, vibration, clear progress, about the game and the "Made by way1ong" line.
+// Menu: language, large board, vibration, installing, clear progress, about the game and the "Made by
+// way1ong" line.
 import { BLOCKS } from '../config.ts';
 import { h } from './dom.ts';
 import { dict, LANGS, type Dict } from './i18n.ts';
+import { install, installWay } from './install.ts';
 import type { Settings } from './storage.ts';
 
 /**
@@ -21,9 +23,9 @@ export interface MenuActions {
 
 export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang: string, settings: Settings, actions: MenuActions): void } {
   const el = h('dialog', { class: 'dialog' });
-  return {
+  const menu = {
     el,
-    open(d, lang, settings, actions) {
+    open(d: Dict, lang: string, settings: Settings, actions: MenuActions): void {
       const langs = h('div', { class: 'choices', role: 'group', 'aria-label': d.settings.language });
       for (const code of LANGS) {
         const b = h('button', { class: 'choices__btn', type: 'button', lang: code, 'aria-pressed': String(code === lang) }, dict(code).meta.langName);
@@ -51,6 +53,20 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang:
         resetNote.textContent = d.settings.resetDone;
       });
 
+      // Install: the browser's window (the menu is drawn again afterwards: the offer works once) or how to.
+      const way = installWay();
+      let installPart: HTMLElement | null = null;
+      if (way === 'prompt') {
+        const button = h('button', { class: 'btn btn--ghost', type: 'button' }, d.settings.install);
+        button.addEventListener('click', async () => {
+          await install();
+          if (el.open) menu.open(d, lang, settings, actions);
+        });
+        installPart = button;
+      } else if (way === 'ios') {
+        installPart = h('p', { class: 'dialog__note' }, d.settings.installIos);
+      }
+
       const site = BLOCKS.links.site;
       const credit = site ? h('a', { href: site }, d.about.credit) : h('span', {}, d.about.credit);
       const close = h('button', { class: 'btn btn--primary', type: 'button' }, d.actions.close);
@@ -65,6 +81,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang:
           langs,
           toggle(d.settings.big, settings.big, actions.setBig),
           canVibrate() ? toggle(d.settings.vibration, settings.vibration, actions.setVibration) : null,
+          installPart,
           reset,
           resetNote,
           h('h2', {}, d.about.title),
@@ -79,4 +96,5 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang:
       close.focus();
     },
   };
+  return menu;
 }

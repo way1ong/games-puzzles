@@ -17,6 +17,12 @@ export type ShapeId =
 
 export const BLOCKS = {
   /**
+   * The game's name where it is installed (home screen, app list) and in the shared daily result: the working
+   * name until the final one is chosen (docs/DECISIONS.md). The short name under the icon is app.name in the
+   * dictionaries.
+   */
+  name: 'way1ong Blocks',
+  /**
    * Addresses: the studio's site for the "Made by way1ong" line, and the game itself for the shared daily
    * result. null — not public yet: the line has no link, the result has no address.
    */

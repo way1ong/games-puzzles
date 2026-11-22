@@ -41,6 +41,10 @@ games/<гра>/i18n/         словники en/hu/uk.json з однакови�
 games/<гра>/ui/           екран: по модулю на частину (поле, лоток, перетягування, діалоги, збереження)
 games/<гра>/styles/       tokens.css (усі кольори, світла й темна теми), app.css; claude-page.css — лише для тестової сторінки
 games/<гра>/index.html    сторінка гри; main.ts — вхід
+games/<гра>/icons/        іконки (малює scripts/make-icons.mjs з tokens.css; файли не правити руками)
+scripts/pwa.ts            збірка: маніфест, іконки й службовий скрипт кожної гри (встановлення, без інтернету)
+scripts/sw-template.js    службовий скрипт; перелік файлів і версію вписує pwa.ts
+scripts/make-icons.mjs    іконки гри з її кольорів (Playwright)
 scripts/claude-page.mjs   гра одним файлом для тестової сторінки claude.ai
 docs/                     рішення, стан, опис кожної гри
 ```
@@ -50,6 +54,7 @@ docs/                     рішення, стан, опис кожної гри
 - `npm run verify` — типи, тести, збірка в `dist/`.
 - `npm run preview` — переглянути зібране з `dist/`.
 - `npm run build:claude` — гра одним файлом `dist/claude/blocks.html` для тестової сторінки.
+- `node scripts/make-icons.mjs blocks` — намалювати іконки знову (після зміни кольорів у `tokens.css`).
 
 ## Тестова сторінка (claude.ai)
 https://claude.ai/artifact/5Sx8jhYn39x3pHdM2zMg4P — Дмитро з дружиною грають тут, поки гра не на Cloudflare. Після кожної зміни гри: `npm run build:claude`, перевірити, опублікувати `dist/claude/blocks.html` на ту саму адресу (інструмент `Artifact`, з іншої розмови — з `url`). Сторінка приватна: доступ іншим дає Дмитро через «Поділитися».

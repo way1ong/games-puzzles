@@ -1,12 +1,26 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
+import { BLOCKS } from './games/blocks/config.ts';
+import blocksEn from './games/blocks/i18n/en.json' with { type: 'json' };
+import { gameApps } from './scripts/pwa.ts';
 
 const here = (path: string) => fileURLToPath(new URL(path, import.meta.url));
 
-// Every game is its own page under games/<name>/ and is served at /<name>/.
+// Every game is its own page under games/<name>/ and is served at /<name>/; it installs and works offline.
 export default defineConfig({
   root: here('games'),
   base: '/',
+  plugins: [
+    gameApps(here('.'), [
+      {
+        game: 'blocks',
+        name: BLOCKS.name,
+        shortName: blocksEn.app.name,
+        description: blocksEn.meta.description,
+        lang: 'en',
+      },
+    ]),
+  ],
   build: {
     outDir: here('dist'),
     emptyOutDir: true,

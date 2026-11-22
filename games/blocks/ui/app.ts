@@ -319,7 +319,7 @@ export function startApp(root: HTMLElement): void {
   function dailyShare(): ShareText {
     const score = store.loadDaily()[today] ?? game.score;
     const date = new Intl.DateTimeFormat(lang, { dateStyle: 'medium' }).format(new Date(`${today}T12:00:00`));
-    const text = plural(lang, score, d.end.shareText, { date, score: num(lang, score) });
+    const text = plural(lang, score, d.end.shareText, { name: BLOCKS.name, date, score: num(lang, score) });
     return { label: d.end.copy, done: d.end.copied, text: BLOCKS.links.game ? `${text}\n${BLOCKS.links.game}` : text };
   }
 

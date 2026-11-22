@@ -71,10 +71,10 @@
     "copy": "Скопіювати результат",
     "copied": "Скопійовано",
     "shareText": {
-      "one": "way1ong Blocks · день {date}: {score} очко",
-      "few": "way1ong Blocks · день {date}: {score} очки",
-      "many": "way1ong Blocks · день {date}: {score} очок",
-      "other": "way1ong Blocks · день {date}: {score} очка"
+      "one": "{name} · день {date}: {score} очко",
+      "few": "{name} · день {date}: {score} очки",
+      "many": "{name} · день {date}: {score} очок",
+      "other": "{name} · день {date}: {score} очка"
     }
   },
   "settings": {
@@ -82,6 +82,8 @@
     "language": "Мова",
     "big": "Велике поле й фігури",
     "vibration": "Вібрація",
+    "install": "Встановити гру",
+    "installIos": "На iPhone чи iPad: натисніть «Поділитися», а потім додайте гру на початковий екран.",
     "reset": "Стерти прогрес",
     "resetSure": "Натисніть ще раз, щоб стерти рекорди й збережені ігри",
     "resetDone": "Прогрес стерто"
