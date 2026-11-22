@@ -1,0 +1,8 @@
+// The build config runs in Node; the games run in the browser and do not see Node types.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["vite.config.ts"]
+}
