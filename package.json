@@ -1,0 +1,22 @@
+{
+  "name": "way1ong-games-puzzles",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Free, ad-free puzzle games by way1ong — no tracking, work offline.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "verify": "npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "vite": "8.3.8",
+    "vitest": "5.1.1"
+  }
+}
