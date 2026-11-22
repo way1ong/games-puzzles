@@ -12,9 +12,15 @@
     "streak": "Sorozat",
     "round": "Kör",
     "roundOf": "{n}/{total}",
-    "board": "Játéktábla",
+    "boardState": {
+      "one": "Játéktábla: {total} mezőből {filled} foglalt",
+      "other": "Játéktábla: {total} mezőből {filled} foglalt"
+    },
     "tray": "Elemek",
-    "piece": "{n}. elem",
+    "piece": {
+      "one": "{n}. elem: {cells} mező",
+      "other": "{n}. elem: {cells} mező"
+    },
     "hint": "Húzzon egy elemet a táblára – vagy koppintson egy elemre, majd kétszer egy mezőre."
   },
   "modes": {
@@ -35,7 +41,7 @@
     "newGame": "Új játék",
     "undo": "Visszavonás",
     "turn": "Forgatás",
-    "turnPiece": "A(z) {n}. elem forgatása",
+    "turnPiece": "Forgatás: {n}. elem",
     "close": "Bezárás"
   },
   "announce": {
@@ -47,7 +53,9 @@
       "one": "{lines} sor eltűnt",
       "other": "{lines} sor eltűnt"
     },
-    "cannot": "Ide nem fér el"
+    "cannot": "Ide nem fér el",
+    "positionOk": "{row}. sor, {col}. oszlop",
+    "positionBad": "{row}. sor, {col}. oszlop: nem fér el"
   },
   "end": {
     "stuck": "Nincs több lépés",

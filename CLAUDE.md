@@ -45,6 +45,7 @@ games/<гра>/icons/        іконки (малює scripts/make-icons.mjs з 
 scripts/pwa.ts            збірка: маніфест, іконки й службовий скрипт кожної гри (встановлення, без інтернету)
 scripts/sw-template.js    службовий скрипт; перелік файлів і версію вписує pwa.ts
 scripts/make-icons.mjs    іконки гри з її кольорів (Playwright)
+scripts/audit.mjs         розкладка й доступність збірки в браузері (Playwright; axe-core — за ключем)
 scripts/claude-page.mjs   гра одним файлом для тестової сторінки claude.ai
 docs/                     рішення, стан, опис кожної гри
 ```
@@ -53,6 +54,7 @@ docs/                     рішення, стан, опис кожної гри
 - `npm run dev` — локальний перегляд (`/blocks/`).
 - `npm run verify` — типи, тести, збірка в `dist/`.
 - `npm run preview` — переглянути зібране з `dist/`.
+- `npm run audit` — після збірки: розкладка й доступність у браузері (розміри від 320 px до ПК, 3 мови, обидві теми, великий режим, текст 150–200 %, клавіатура). `npm run audit -- --axe <axe.min.js>` — ще й правила WCAG 2.2 (axe-core завантажити `npm pack axe-core` у тимчасову теку; у проєкт не додавати). `--shots <тека>` — знімки.
 - `npm run build:claude` — гра одним файлом `dist/claude/blocks.html` для тестової сторінки.
 - `node scripts/make-icons.mjs blocks` — намалювати іконки знову (після зміни кольорів у `tokens.css`).
 
