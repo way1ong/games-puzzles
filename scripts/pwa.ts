@@ -110,7 +110,8 @@ export function gameApps(root: string, apps: GameApp[]): Plugin {
         const hash = createHash('sha256').update(template);
         for (const file of files) hash.update(file).update(readFileSync(join(out, file)));
         const version = hash.digest('hex').slice(0, 12);
-        const relative = files.map((file) => posix.relative(app.game, file));
+        // The page itself is kept under the game's folder address ("./"), the address players open.
+        const relative = files.map((file) => (file === `${app.game}/index.html` ? './' : posix.relative(app.game, file)));
         const worker = template
           .replace("'__VERSION__'", JSON.stringify(version))
           .replace('__FILES__', JSON.stringify(relative))
