@@ -73,6 +73,7 @@ export function startApp(root: HTMLElement): void {
   let newBtn: HTMLButtonElement;
   let actions: HTMLElement;
   let modeBtns: HTMLButtonElement[] = [];
+  let modeNote: HTMLElement;
   const live = h('p', { class: 'visually-hidden', 'aria-live': 'polite' });
   const endDialog = createEndDialog();
   const menuDialog = createMenuDialog();
@@ -90,6 +91,8 @@ export function startApp(root: HTMLElement): void {
     );
     menuBtn.addEventListener('click', openMenu);
 
+    // What the chosen mode allows: e.g. that pieces turn only in the calm mode.
+    modeNote = h('p', { class: 'mode-note', 'aria-live': 'polite' });
     modeBtns = MODES.map((m) => {
       const b = h('button', { class: 'seg__btn', type: 'button' }, d.modes[m]);
       b.addEventListener('click', () => switchMode(m));
@@ -135,6 +138,7 @@ export function startApp(root: HTMLElement): void {
         { class: 'app' },
         h('header', { class: 'top' }, h('h1', { class: 'top__name' }, d.app.name), menuBtn),
         h('nav', { class: 'seg', 'aria-label': d.modes.label }, ...modeBtns),
+        modeNote,
         h('div', { class: 'stage' }, stats, h('div', { class: 'board-wrap' }, board.el, note)),
         tray.el,
         actions,
@@ -224,6 +228,10 @@ export function startApp(root: HTMLElement): void {
 
   function render(): void {
     modeBtns.forEach((b, i) => b.setAttribute('aria-pressed', String(MODES[i] === mode)));
+    modeNote.textContent =
+      mode === 'daily'
+        ? plural(lang, BLOCKS.dailyRounds, d.modeInfo.daily, { rounds: num(lang, BLOCKS.dailyRounds) })
+        : d.modeInfo[mode];
     renderStats();
     const preview = drag
       ? previewAt(drag.slot, drag.row, drag.col)

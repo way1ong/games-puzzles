@@ -155,6 +155,15 @@ html.big .app {
   color: var(--on-accent);
 }
 
+/* One line under the mode switch: what the chosen mode allows. */
+.mode-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
 /* Score line, right above the board and as wide as it. */
 .stats {
   display: flex;
@@ -542,10 +551,11 @@ html.dragging * {
     grid-template-areas:
       'stage top'
       'stage seg'
+      'stage modenote'
       'stage tray'
       'stage actions';
     grid-template-columns: minmax(0, 1fr) 21rem;
-    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
     column-gap: 1.5rem;
     row-gap: 0.75rem;
     height: 100vh;
@@ -563,6 +573,10 @@ html.dragging * {
 
   .seg {
     grid-area: seg;
+  }
+
+  .mode-note {
+    grid-area: modenote;
   }
 
   .stage {

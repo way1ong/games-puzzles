@@ -23,6 +23,14 @@
     "calm": "Calm",
     "daily": "Daily"
   },
+  "modeInfo": {
+    "classic": "No turning pieces, no taking moves back",
+    "calm": "Turn pieces and take moves back",
+    "daily": {
+      "one": "Today the same for everyone, {rounds} round",
+      "other": "Today the same for everyone, {rounds} rounds"
+    }
+  },
   "actions": {
     "newGame": "New game",
     "undo": "Undo",

@@ -23,6 +23,14 @@
     "calm": "Nyugodt",
     "daily": "Napi"
   },
+  "modeInfo": {
+    "classic": "Forgatás és visszavonás nélkül",
+    "calm": "Forgatással és visszavonással",
+    "daily": {
+      "one": "Ma mindenkinek ugyanaz, {rounds} kör",
+      "other": "Ma mindenkinek ugyanaz, {rounds} kör"
+    }
+  },
   "actions": {
     "newGame": "Új játék",
     "undo": "Visszavonás",
