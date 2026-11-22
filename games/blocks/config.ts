@@ -16,6 +16,11 @@ export type ShapeId =
   | 'square3';
 
 export const BLOCKS = {
+  /**
+   * Addresses: the studio's site for the "Made by way1ong" line, and the game itself for the shared daily
+   * result. null — not public yet: the line has no link, the result has no address.
+   */
+  links: { site: null as string | null, game: null as string | null },
   /** Board side, in cells (approved 22.11). */
   boardSize: 8,
   /** Pieces offered at a time (C). */

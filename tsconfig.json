@@ -16,5 +16,5 @@
     "skipLibCheck": true,
     "types": ["vite/client"]
   },
-  "include": ["games/**/*", "shared/**/*", "vite.config.ts"]
+  "include": ["games/**/*", "shared/**/*"]
 }

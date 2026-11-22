@@ -6,3 +6,8 @@ Free, ad-free puzzle games by way1ong — no tracking, work offline.
 
 - Правила для Claude Code — `CLAUDE.md`; рішення — `docs/DECISIONS.md`; стан — `docs/STATUS.md`.
 - Сайт: way1ong.eu (персональні застосунки й сайти на замовлення).
+
+## Команди
+- `npm install` — залежності (Node 22).
+- `npm run dev` — гра на `http://localhost:5173/blocks/`.
+- `npm run verify` — типи, тести, збірка в `dist/`; `npm run preview` — переглянути збірку.

@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Blocks – fejtörő reklám nélkül",
+    "description": "Helyezze el az elemeket, töltse ki a sorokat és oszlopokat. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Blocks",
+    "menu": "Menü",
+    "score": "Pont",
+    "best": "Rekord",
+    "streak": "Sorozat",
+    "round": "Kör",
+    "roundOf": "{n}/{total}",
+    "board": "Játéktábla",
+    "tray": "Elemek",
+    "piece": "{n}. elem",
+    "hint": "Húzzon egy elemet a táblára – vagy koppintson egy elemre, majd kétszer egy mezőre."
+  },
+  "modes": {
+    "label": "Játékmód",
+    "classic": "Klasszikus",
+    "calm": "Nyugodt",
+    "daily": "Napi"
+  },
+  "actions": {
+    "newGame": "Új játék",
+    "undo": "Visszavonás",
+    "turn": "Forgatás",
+    "turnPiece": "A(z) {n}. elem forgatása",
+    "close": "Bezárás"
+  },
+  "announce": {
+    "points": {
+      "one": "+{points} pont",
+      "other": "+{points} pont"
+    },
+    "lines": {
+      "one": "{lines} sor eltűnt",
+      "other": "{lines} sor eltűnt"
+    },
+    "cannot": "Ide nem fér el"
+  },
+  "end": {
+    "stuck": "Nincs több lépés",
+    "completed": "A mai feladvány kész",
+    "score": "Pontszám: {score}",
+    "best": "Rekord: {best}",
+    "newBest": "Új rekord!",
+    "playedToday": "A mai feladványt már megoldotta. Holnap jöjjön vissza egy újért.",
+    "streak": {
+      "one": "{n} nap egymás után",
+      "other": "{n} nap egymás után"
+    },
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "shareText": {
+      "one": "way1ong Blocks · napi {date}: {score} pont",
+      "other": "way1ong Blocks · napi {date}: {score} pont"
+    }
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "big": "Nagy tábla és elemek",
+    "vibration": "Rezgés",
+    "reset": "Előrehaladás törlése",
+    "resetSure": "Koppintson újra a rekordok és mentett játékok törléséhez",
+    "resetDone": "Törölve"
+  },
+  "about": {
+    "title": "A játékról",
+    "text": "Fejtörő reklám, fiók és nyomkövetés nélkül. A rekordjai ezen az eszközön maradnak. Internet nélkül is működik.",
+    "keys": "Billentyűzet: 1–3 elem kiválasztása, nyilak mozgatás, Enter lerakás, R forgatás, Ctrl+Z visszavonás (nyugodt mód).",
+    "credit": "Készítette: way1ong"
+  }
+}

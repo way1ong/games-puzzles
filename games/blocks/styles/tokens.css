@@ -1,0 +1,61 @@
+/* Blocks: the only file with colour values. Light and dark themes follow the system. */
+:root {
+  color-scheme: light dark;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #f4f1ea;
+  --surface: #ffffff;
+  --text: #1e2329;
+  --muted: #545e69;
+  --line: #c9c2b4;
+  --accent: #0b5cad;
+  --on-accent: #ffffff;
+  --focus: #0b5cad;
+
+  /* Board: the gaps between cells and empty cells (contrast 3:1 so the grid stays visible). */
+  --board: #948a76;
+  --cell: #f3efe7;
+  /* A piece that does not fit; lines that a move would clear; cleared lines lighting up. */
+  --bad: #b3261e;
+  --glow: #c77700;
+  --flash: #fff1a8;
+
+  --backdrop: rgb(20 24 28 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+  --drop: 0 6px 10px rgb(0 0 0 / 0.3);
+
+  /* Shapes: six colours that stay apart with colour blindness (Okabe–Ito) × two patterns. */
+  --c1: #e69f00;
+  --c2: #56b4e9;
+  --c3: #009e73;
+  --c4: #0072b2;
+  --c5: #d55e00;
+  --c6: #cc79a7;
+  --bevel-light: rgb(255 255 255 / 0.38);
+  --bevel-dark: rgb(0 0 0 / 0.25);
+  --dot: rgb(0 0 0 / 0.5);
+  --dot-ring: rgb(255 255 255 / 0.75);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14181d;
+    --surface: #1f252c;
+    --text: #e9edf1;
+    --muted: #a9b3bd;
+    --line: #3b444e;
+    --accent: #7fb8f0;
+    --on-accent: #0b1b2b;
+    --focus: #7fb8f0;
+
+    --board: #66717d;
+    --cell: #181c21;
+    --bad: #ff8a80;
+    --glow: #ffc94d;
+    --flash: #fff1a8;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+    --drop: 0 6px 12px rgb(0 0 0 / 0.6);
+  }
+}

@@ -1,0 +1,595 @@
+/* Blocks screen. Colours only from tokens.css. One column, centred; a phone in portrait first. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Large mode: everything measured in rem grows. */
+html.big {
+  font-size: 115%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 1rem/1.4 var(--font);
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: max(0.5rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
+}
+
+html.big .app {
+  max-width: 44rem;
+  padding-left: max(0.25rem, env(safe-area-inset-left));
+  padding-right: max(0.25rem, env(safe-area-inset-right));
+}
+
+/* ---------- top: name, menu, modes, score ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.top__name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.icon-menu {
+  width: 1.25rem;
+  height: 0.875rem;
+  background:
+    linear-gradient(currentColor 0 0) top / 100% 2px no-repeat,
+    linear-gradient(currentColor 0 0) center / 100% 2px no-repeat,
+    linear-gradient(currentColor 0 0) bottom / 100% 2px no-repeat;
+}
+
+/* Game modes: equal buttons in one row; the text gets a little smaller rather than break a word. */
+.seg {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--surface);
+  container-type: inline-size;
+}
+
+.seg__btn {
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0 0.375rem;
+  border: 0;
+  border-radius: 0.625rem;
+  background: transparent;
+  font-size: min(1em, 4.6cqi);
+  font-weight: 650;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+/* Choices that may grow in number (languages): buttons of their own width, wrapping to new lines. */
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.choices__btn {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.choices__btn[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.seg__btn[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Score line, right above the board and as wide as it. */
+.stats {
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: var(--side);
+  height: var(--stats-h);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.stat:last-child {
+  align-items: flex-end;
+  text-align: end;
+}
+
+.stat__label {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.stat__value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- board: takes the space that is left and stays square ---------- */
+/* Score and board take the space that is left; the board stays square, and on a phone it sits low,
+   next to the pieces (one-handed play). */
+.stage {
+  --stats-h: 2.875rem;
+  --stage-gap: 0.5rem;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--stage-gap);
+  min-height: 18rem;
+  container-type: size;
+}
+
+.stage > * {
+  --side: min(100cqw, 100cqh - var(--stats-h) - var(--stage-gap));
+}
+
+.board-wrap {
+  position: relative;
+  flex: none;
+  width: var(--side);
+  aspect-ratio: 1;
+}
+
+.board {
+  --gap: 3px;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--size), 1fr);
+  grid-template-rows: repeat(var(--size), 1fr);
+  gap: var(--gap);
+  padding: var(--gap);
+  border-radius: 0.75rem;
+  background: var(--board);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+html.big .board {
+  --gap: 4px;
+}
+
+.cell {
+  position: relative;
+  border-radius: 0.25rem;
+  background-color: var(--cell);
+}
+
+/* Blocks: colour by shape, shapes 7–12 also carry a dot. */
+.s1,
+.s7 {
+  --c: var(--c1);
+}
+.s2,
+.s8 {
+  --c: var(--c2);
+}
+.s3,
+.s9 {
+  --c: var(--c3);
+}
+.s4,
+.s10 {
+  --c: var(--c4);
+}
+.s5,
+.s11 {
+  --c: var(--c5);
+}
+.s6,
+.s12 {
+  --c: var(--c6);
+}
+
+.blk {
+  border-radius: 0.25rem;
+  background-color: var(--c);
+  box-shadow:
+    inset 0 -3px 0 var(--bevel-dark),
+    inset 0 2px 0 var(--bevel-light),
+    inset 0 0 0 1px var(--bevel-dark);
+}
+
+.blk:is(.s7, .s8, .s9, .s10, .s11, .s12) {
+  background-image: radial-gradient(circle, var(--dot) 0 16%, var(--dot-ring) 17% 27%, transparent 28%);
+}
+
+/* Where the piece would go: its colour, lighter; does not fit — red stripes. */
+.cell.ghost {
+  background-color: color-mix(in srgb, var(--c) 40%, var(--cell));
+  box-shadow: inset 0 0 0 2px var(--c);
+}
+
+.cell.shadow-bad::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(45deg, var(--bad) 0 3px, transparent 3px 7px);
+  opacity: 0.75;
+}
+
+.cell.will-clear {
+  outline: 3px solid var(--glow);
+  outline-offset: -3px;
+}
+
+.cell.flash {
+  animation: flash var(--flash-ms) ease-out;
+}
+
+@keyframes flash {
+  from {
+    background-color: var(--flash);
+    transform: scale(1.08);
+  }
+  to {
+    background-color: var(--cell);
+    transform: none;
+  }
+}
+
+.board-note {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  width: calc(100% - 2rem);
+  padding: 0.875rem 1rem;
+  border-radius: 0.875rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.board-note p {
+  margin: 0;
+}
+
+.board-note--hint {
+  pointer-events: none;
+}
+
+.board-note__title {
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+/* ---------- tray ---------- */
+.tray {
+  display: grid;
+  grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.tray__slot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.tray__grab {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-height: 2.75rem;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  background: var(--surface);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.tray__slot.is-selected .tray__grab {
+  border-color: var(--accent);
+}
+
+.tray__slot.is-empty .tray__grab {
+  cursor: default;
+}
+
+.tray__slot.is-dragging .piece {
+  opacity: 0.25;
+}
+
+.tray__turn {
+  min-height: 2.75rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.piece {
+  display: grid;
+}
+
+.floating {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  pointer-events: none;
+  filter: drop-shadow(var(--drop));
+  will-change: transform;
+}
+
+html.dragging,
+html.dragging * {
+  cursor: grabbing !important;
+}
+
+/* ---------- buttons, dialogs ---------- */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn--primary {
+  border: 2px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn--ghost {
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.copy-out {
+  color: var(--muted);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.copy-out:empty {
+  display: none;
+}
+
+.dialog {
+  width: min(28rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.dialog::backdrop {
+  background: var(--backdrop);
+}
+
+.dialog__body {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem;
+}
+
+.dialog h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.dialog h2:not(:first-child) {
+  margin-top: 0.5rem;
+}
+
+.dialog p {
+  margin: 0;
+}
+
+.dialog__highlight {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.dialog__label {
+  font-weight: 700;
+}
+
+.dialog__note {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.dialog__note:empty {
+  display: none;
+}
+
+.dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.dialog__credit a {
+  color: var(--accent);
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  cursor: pointer;
+}
+
+.toggle input {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+/* Wide screens (laptop, tablet on its side): the board on the left as tall as the screen; name, modes,
+   pieces and buttons in a column on the right. */
+@media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
+  .app {
+    display: grid;
+    grid-template-areas:
+      'stage top'
+      'stage seg'
+      'stage tray'
+      'stage actions';
+    grid-template-columns: minmax(0, 1fr) 21rem;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    column-gap: 1.5rem;
+    row-gap: 0.75rem;
+    height: 100vh;
+    height: 100dvh;
+    max-width: calc(100dvh + 19.5rem);
+  }
+
+  html.big .app {
+    max-width: calc(100dvh + 21rem);
+  }
+
+  .top {
+    grid-area: top;
+  }
+
+  .seg {
+    grid-area: seg;
+  }
+
+  .stage {
+    grid-area: stage;
+    justify-content: center;
+    min-height: 0;
+  }
+
+  .tray {
+    grid-area: tray;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(var(--count), minmax(0, 1fr));
+    min-height: 0;
+  }
+
+  .tray__slot {
+    min-height: 0;
+  }
+
+  .tray__grab {
+    flex: 1 1 0;
+    aspect-ratio: auto;
+    min-height: 0;
+  }
+
+  .actions {
+    grid-area: actions;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell.flash {
+    animation: none;
+  }
+}

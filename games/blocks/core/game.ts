@@ -7,6 +7,7 @@ import { movePoints } from './scoring.ts';
 import { drawPiece, rotate, rotations, SHAPE_IDS, type Piece } from './shapes.ts';
 
 export type Mode = 'classic' | 'calm' | 'daily';
+export const MODES: readonly Mode[] = ['classic', 'calm', 'daily'];
 
 /** Why the game ended: no piece fits anywhere, or the daily puzzle's rounds are all played. */
 export type End = 'stuck' | 'completed';
