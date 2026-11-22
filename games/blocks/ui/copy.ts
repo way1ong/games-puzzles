@@ -1,5 +1,5 @@
-// "Copy result": copies a text to the clipboard; where the clipboard is not available, shows the text so it
-// can be copied by hand.
+// "Copy result": copies a text to the clipboard; where the clipboard is not available, shows the text
+// selected, so it can be copied by hand.
 import { h } from './dom.ts';
 
 export interface ShareText {
@@ -18,6 +18,7 @@ export function copyControl(share: ShareText): { button: HTMLButtonElement; out:
       out.textContent = share.done;
     } catch {
       out.textContent = share.text;
+      window.getSelection()?.selectAllChildren(out);
     }
   });
   return { button, out };

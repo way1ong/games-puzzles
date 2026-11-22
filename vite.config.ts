@@ -10,6 +10,8 @@ export default defineConfig({
   build: {
     outDir: here('dist'),
     emptyOutDir: true,
+    // One script per game, nothing loaded later: no preload helper (it would be the only fetch in the bundle).
+    modulePreload: { polyfill: false },
     rollupOptions: {
       input: { blocks: here('games/blocks/index.html') },
     },
@@ -17,5 +19,7 @@ export default defineConfig({
   test: {
     root: here('.'),
     include: ['games/**/*.test.ts', 'shared/**/*.test.ts'],
+    // Tests read style sheets as text (`?raw`) to check the colour tokens.
+    css: { include: [/\.css(\?raw)?$/] },
   },
 });

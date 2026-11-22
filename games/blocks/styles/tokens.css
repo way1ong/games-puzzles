@@ -1,6 +1,9 @@
-/* Blocks: the only file with colour values. Light and dark themes follow the system. */
+/*
+ * Blocks: the only file with colour values. Light and dark themes follow the system; a page that hosts
+ * the game (e.g. a claude.ai test page) may force one with data-theme="light" | "dark" on <html>.
+ */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
   --bg: #f4f1ea;
@@ -38,7 +41,8 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
     --bg: #14181d;
     --surface: #1f252c;
     --text: #e9edf1;
@@ -58,4 +62,27 @@
     --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
     --drop: 0 6px 12px rgb(0 0 0 / 0.6);
   }
+}
+
+/* The same dark values when the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #14181d;
+  --surface: #1f252c;
+  --text: #e9edf1;
+  --muted: #a9b3bd;
+  --line: #3b444e;
+  --accent: #7fb8f0;
+  --on-accent: #0b1b2b;
+  --focus: #7fb8f0;
+
+  --board: #66717d;
+  --cell: #181c21;
+  --bad: #ff8a80;
+  --glow: #ffc94d;
+  --flash: #fff1a8;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  --drop: 0 6px 12px rgb(0 0 0 / 0.6);
 }

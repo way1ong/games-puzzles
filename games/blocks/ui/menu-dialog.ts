@@ -4,6 +4,14 @@ import { h } from './dom.ts';
 import { dict, LANGS, type Dict } from './i18n.ts';
 import type { Settings } from './storage.ts';
 
+/**
+ * Vibration only where it can work: the phone supports it and the game is not shown inside another site's
+ * frame (browsers block vibration there), so the switch never does nothing.
+ */
+function canVibrate(): boolean {
+  return 'vibrate' in navigator && window.self === window.top;
+}
+
 export interface MenuActions {
   setLang(lang: string): void;
   setBig(on: boolean): void;
@@ -56,7 +64,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang:
           h('p', { class: 'dialog__label' }, d.settings.language),
           langs,
           toggle(d.settings.big, settings.big, actions.setBig),
-          'vibrate' in navigator ? toggle(d.settings.vibration, settings.vibration, actions.setVibration) : null,
+          canVibrate() ? toggle(d.settings.vibration, settings.vibration, actions.setVibration) : null,
           reset,
           resetNote,
           h('h2', {}, d.about.title),

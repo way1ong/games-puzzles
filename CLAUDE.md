@@ -39,8 +39,9 @@ games/<гра>/config.ts     усі числа правил гри й адрес
 games/<гра>/core/         логіка: чисті функції без DOM, поруч тести *.test.ts
 games/<гра>/i18n/         словники en/hu/uk.json з однаковими ключами; i18n.test.ts їх звіряє
 games/<гра>/ui/           екран: по модулю на частину (поле, лоток, перетягування, діалоги, збереження)
-games/<гра>/styles/       tokens.css (усі кольори, світла й темна теми), app.css
+games/<гра>/styles/       tokens.css (усі кольори, світла й темна теми), app.css; claude-page.css — лише для тестової сторінки
 games/<гра>/index.html    сторінка гри; main.ts — вхід
+scripts/claude-page.mjs   гра одним файлом для тестової сторінки claude.ai
 docs/                     рішення, стан, опис кожної гри
 ```
 
@@ -48,3 +49,7 @@ docs/                     рішення, стан, опис кожної гри
 - `npm run dev` — локальний перегляд (`/blocks/`).
 - `npm run verify` — типи, тести, збірка в `dist/`.
 - `npm run preview` — переглянути зібране з `dist/`.
+- `npm run build:claude` — гра одним файлом `dist/claude/blocks.html` для тестової сторінки.
+
+## Тестова сторінка (claude.ai)
+https://claude.ai/artifact/5Sx8jhYn39x3pHdM2zMg4P — Дмитро з дружиною грають тут, поки гра не на Cloudflare. Після кожної зміни гри: `npm run build:claude`, перевірити, опублікувати `dist/claude/blocks.html` на ту саму адресу (інструмент `Artifact`, з іншої розмови — з `url`). Сторінка приватна: доступ іншим дає Дмитро через «Поділитися».
