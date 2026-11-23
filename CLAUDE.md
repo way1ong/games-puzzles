@@ -31,7 +31,7 @@
 - TypeScript (strict) без UI-фреймворку, збірка Vite; тести логіки й словників — Vitest; перевірка в браузері — Playwright (у хмарній сесії вже є).
 - Шрифти — системні (на пристрої гравця, без файлів і запитів); кольори — `games/<гра>/styles/tokens.css`.
 - Кожна гра — окремий застосунок, який можна встановити (PWA) і який працює без інтернету.
-- Хостинг — Cloudflare (той самий акаунт, що сайт і biznesradnik); адреса на домені way1ong.eu — коли домен буде підключено.
+- Хостинг — Cloudflare Workers зі статичними файлами (той самий акаунт, що сайт і biznesradnik): деплой — злиття в `main`, збирає Workers Builds; вручну `wrangler deploy` не запускати. Як підключити — `docs/cloudflare.md`. Адреса на домені way1ong.eu — коли домен буде підключено.
 
 ## Структура
 ```
@@ -45,14 +45,18 @@ games/<гра>/icons/        іконки (малює scripts/make-icons.mjs з 
 scripts/pwa.ts            збірка: маніфест, іконки й службовий скрипт кожної гри (встановлення, без інтернету)
 scripts/sw-template.js    службовий скрипт; перелік файлів і версію вписує pwa.ts
 scripts/make-icons.mjs    іконки гри з її кольорів (Playwright)
+scripts/audit.mjs         розкладка й доступність збірки в браузері (Playwright; axe-core — за ключем)
 scripts/claude-page.mjs   гра одним файлом для тестової сторінки claude.ai
-docs/                     рішення, стан, опис кожної гри
+games/public/_redirects   корінь адреси веде на першу гру (Cloudflare)
+wrangler.jsonc            Cloudflare Workers: віддає dist/ (ім'я воркера = ім'я в панелі)
+docs/                     рішення, стан, опис кожної гри, cloudflare.md (підключення)
 ```
 
 ## Команди
 - `npm run dev` — локальний перегляд (`/blocks/`).
 - `npm run verify` — типи, тести, збірка в `dist/`.
 - `npm run preview` — переглянути зібране з `dist/`.
+- `npm run audit` — після збірки: розкладка й доступність у браузері (розміри від 320 px до ПК, 3 мови, обидві теми, великий режим, текст 150–200 %, клавіатура). `npm run audit -- --axe <axe.min.js>` — ще й правила WCAG 2.2 (axe-core завантажити `npm pack axe-core` у тимчасову теку; у проєкт не додавати). `--shots <тека>` — знімки.
 - `npm run build:claude` — гра одним файлом `dist/claude/blocks.html` для тестової сторінки.
 - `node scripts/make-icons.mjs blocks` — намалювати іконки знову (після зміни кольорів у `tokens.css`).
 

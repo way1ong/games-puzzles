@@ -1,0 +1,10 @@
+{
+  // Cloudflare Workers with static assets: the games are the dist/ folder built by `npm run build`
+  // (each game at /<game>/; the root leads to /blocks/ through games/public/_redirects).
+  // The Worker name must match the name in the Cloudflare dashboard (Workers Builds) — docs/cloudflare.md.
+  "name": "way1ong-games",
+  "compatibility_date": "2026-11-17",
+  "assets": {
+    "directory": "./dist"
+  }
+}

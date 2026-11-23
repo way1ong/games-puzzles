@@ -114,14 +114,15 @@ html.big .app {
   container-type: inline-size;
 }
 
+/* Text and side padding follow the switch's width, so large system text does not break the words. */
 .seg__btn {
   min-width: 0;
   min-height: 2.75rem;
-  padding: 0 0.375rem;
+  padding: 0 min(0.375rem, 1cqi);
   border: 0;
   border-radius: 0.625rem;
   background: transparent;
-  font-size: min(1em, 4.6cqi);
+  font-size: min(1em, 4.4cqi);
   font-weight: 650;
   overflow-wrap: anywhere;
   cursor: pointer;

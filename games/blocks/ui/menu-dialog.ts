@@ -22,7 +22,7 @@ export interface MenuActions {
 }
 
 export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang: string, settings: Settings, actions: MenuActions): void } {
-  const el = h('dialog', { class: 'dialog' });
+  const el = h('dialog', { class: 'dialog', 'aria-labelledby': 'menu-title' });
   const menu = {
     el,
     open(d: Dict, lang: string, settings: Settings, actions: MenuActions): void {
@@ -76,7 +76,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang:
         h(
           'div',
           { class: 'dialog__body' },
-          h('h2', {}, d.settings.title),
+          h('h2', { id: 'menu-title' }, d.settings.title),
           h('p', { class: 'dialog__label' }, d.settings.language),
           langs,
           toggle(d.settings.big, settings.big, actions.setBig),

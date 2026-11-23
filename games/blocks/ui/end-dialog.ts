@@ -18,7 +18,7 @@ export interface EndContent {
 }
 
 export function createEndDialog(): { el: HTMLDialogElement; open(content: EndContent): void } {
-  const el = h('dialog', { class: 'dialog' });
+  const el = h('dialog', { class: 'dialog', 'aria-labelledby': 'end-title' });
 
   const button = (a: Action, kind: string) => {
     const b = h('button', { class: `btn ${kind}`, type: 'button' }, a.label);
@@ -32,7 +32,7 @@ export function createEndDialog(): { el: HTMLDialogElement; open(content: EndCon
   return {
     el,
     open(content) {
-      const body = h('div', { class: 'dialog__body' }, h('h2', {}, content.title));
+      const body = h('div', { class: 'dialog__body' }, h('h2', { id: 'end-title' }, content.title));
       if (content.highlight) body.append(h('p', { class: 'dialog__highlight' }, content.highlight));
       for (const line of content.lines) body.append(h('p', {}, line));
       const actions = h('div', { class: 'dialog__actions' });

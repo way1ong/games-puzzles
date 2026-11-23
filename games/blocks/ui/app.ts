@@ -100,7 +100,7 @@ export function startApp(root: HTMLElement): void {
     });
 
     stats = h('div', { class: 'stats' });
-    board = createBoardView(game.size, d.app.board);
+    board = createBoardView(game.size, boardLabel());
     board.el.style.setProperty('--flash-ms', `${FLASH_MS}ms`);
     board.el.addEventListener('click', onBoardClick);
     note = h('div', { class: 'board-note', hidden: true });
@@ -134,7 +134,7 @@ export function startApp(root: HTMLElement): void {
 
     root.replaceChildren(
       h(
-        'div',
+        'main',
         { class: 'app' },
         h('header', { class: 'top' }, h('h1', { class: 'top__name' }, d.app.name), menuBtn),
         h('nav', { class: 'seg', 'aria-label': d.modes.label }, ...modeBtns),
@@ -226,6 +226,29 @@ export function startApp(root: HTMLElement): void {
     }
   }
 
+  /** The board for screen readers: how full it is. */
+  function boardLabel(): string {
+    const total = game.size * game.size;
+    const filled = game.board.filter((v) => v > 0).length;
+    return plural(lang, filled, d.app.boardState, { filled: num(lang, filled), total: num(lang, total) });
+  }
+
+  function pieceLabel(n: number, cells: number): string {
+    return plural(lang, cells, d.app.piece, { n: num(lang, n), cells: num(lang, cells) });
+  }
+
+  /** Where the chosen piece would go, for players who move it with keys and listen. */
+  function announceTarget(withPiece: boolean): void {
+    const piece = selected === null ? null : game.tray[selected];
+    if (selected === null || !piece || !target) return;
+    const fits = canPlace(game.board, game.size, piece.cells, target.row, target.col);
+    const where = fmt(fits ? d.announce.positionOk : d.announce.positionBad, {
+      row: num(lang, target.row + 1),
+      col: num(lang, target.col + 1),
+    });
+    announce(withPiece ? `${pieceLabel(selected + 1, piece.cells.length)}. ${where}` : where);
+  }
+
   function render(): void {
     modeBtns.forEach((b, i) => b.setAttribute('aria-pressed', String(MODES[i] === mode)));
     modeNote.textContent =
@@ -239,13 +262,14 @@ export function startApp(root: HTMLElement): void {
         ? previewAt(selected, target.row, target.col)
         : null;
     board.render(game.board, preview, flash);
+    board.el.setAttribute('aria-label', boardLabel());
     renderNote();
     renderTray(slots, game.tray, {
       cellPx: trayCell,
       gapPx: TRAY_GAP,
       selected,
       canTurn: mode === 'calm' && !game.end,
-      pieceLabel: (n) => fmt(d.app.piece, { n }),
+      pieceLabel,
       turnLabel: (n) => fmt(d.actions.turnPiece, { n }),
       turnText: d.actions.turn,
     });
@@ -404,6 +428,7 @@ export function startApp(root: HTMLElement): void {
       target = { row: Math.floor((game.size - rows) / 2), col: Math.floor((game.size - cols) / 2) };
     }
     render();
+    announceTarget(true);
   }
 
   function keepTargetInside(): void {
@@ -468,6 +493,7 @@ export function startApp(root: HTMLElement): void {
       tapCell = null;
       keepTargetInside();
       render();
+      announceTarget(false);
     } else if (event.key === 'Enter' && !onControl) {
       event.preventDefault();
       placeFrom(selected, target.row, target.col);

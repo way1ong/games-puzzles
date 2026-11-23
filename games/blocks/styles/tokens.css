@@ -10,13 +10,13 @@
   --surface: #ffffff;
   --text: #1e2329;
   --muted: #545e69;
-  --line: #c9c2b4;
+  --line: #8d887e;
   --accent: #0b5cad;
   --on-accent: #ffffff;
   --focus: #0b5cad;
 
-  /* Board: the gaps between cells and empty cells (contrast 3:1 so the grid stays visible). */
-  --board: #948a76;
+  /* Board: the gaps between cells and empty cells (contrast at least 3:1 so the grid stays visible). */
+  --board: #8e8471;
   --cell: #f3efe7;
   /* A piece that does not fit; lines that a move would clear; cleared lines lighting up. */
   --bad: #b3261e;
@@ -47,7 +47,7 @@
     --surface: #1f252c;
     --text: #e9edf1;
     --muted: #a9b3bd;
-    --line: #3b444e;
+    --line: #6a7a8c;
     --accent: #7fb8f0;
     --on-accent: #0b1b2b;
     --focus: #7fb8f0;
@@ -71,7 +71,7 @@
   --surface: #1f252c;
   --text: #e9edf1;
   --muted: #a9b3bd;
-  --line: #3b444e;
+  --line: #6a7a8c;
   --accent: #7fb8f0;
   --on-accent: #0b1b2b;
   --focus: #7fb8f0;

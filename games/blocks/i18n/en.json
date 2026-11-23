@@ -12,9 +12,15 @@
     "streak": "Streak",
     "round": "Round",
     "roundOf": "{n}/{total}",
-    "board": "Game board",
+    "boardState": {
+      "one": "Game board: {filled} of {total} cells filled",
+      "other": "Game board: {filled} of {total} cells filled"
+    },
     "tray": "Pieces",
-    "piece": "Piece {n}",
+    "piece": {
+      "one": "Piece {n}: {cells} cell",
+      "other": "Piece {n}: {cells} cells"
+    },
     "hint": "Drag a piece onto the board — or tap a piece, then tap a cell twice."
   },
   "modes": {
@@ -47,7 +53,9 @@
       "one": "{lines} line cleared",
       "other": "{lines} lines cleared"
     },
-    "cannot": "It does not fit there"
+    "cannot": "It does not fit there",
+    "positionOk": "Row {row}, column {col}",
+    "positionBad": "Row {row}, column {col}: does not fit"
   },
   "end": {
     "stuck": "No more moves",

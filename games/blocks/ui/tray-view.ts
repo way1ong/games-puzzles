@@ -31,7 +31,8 @@ export interface TrayOptions {
   gapPx: number;
   selected: number | null;
   canTurn: boolean;
-  pieceLabel: (n: number) => string;
+  /** Name of a piece for screen readers: its number and how many cells it has. */
+  pieceLabel: (n: number, cells: number) => string;
   turnLabel: (n: number) => string;
   turnText: string;
 }
@@ -43,9 +44,16 @@ export function renderTray(slots: TraySlot[], tray: readonly (Piece | null)[], o
     slot.el.classList.toggle('is-empty', piece === null);
     slot.el.classList.toggle('is-selected', opts.selected === i && piece !== null);
     if (piece) slot.grab.append(pieceElement(piece.cells, shapeCode(piece.shape), opts.cellPx(piece.cells), opts.gapPx));
-    slot.grab.setAttribute('aria-label', opts.pieceLabel(i + 1));
     slot.grab.setAttribute('role', 'button');
     slot.grab.tabIndex = piece ? 0 : -1;
+    // An empty slot is nothing to act on: screen readers skip it.
+    if (piece) {
+      slot.grab.setAttribute('aria-label', opts.pieceLabel(i + 1, piece.cells.length));
+      slot.grab.removeAttribute('aria-hidden');
+    } else {
+      slot.grab.removeAttribute('aria-label');
+      slot.grab.setAttribute('aria-hidden', 'true');
+    }
     slot.grab.setAttribute('aria-pressed', String(opts.selected === i && piece !== null));
     // Calm mode only; under a placed piece the button is invisible (and not focusable) but keeps its place.
     slot.turn.hidden = !opts.canTurn;

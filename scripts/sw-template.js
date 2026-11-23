@@ -4,15 +4,26 @@ const VERSION = '__VERSION__';
 const FILES = __FILES__; // relative to this file
 const PREFIX = '__CACHE_PREFIX__';
 const CACHE = PREFIX + VERSION;
+// The game's page is kept under its own address (the folder, e.g. /blocks/): hosts redirect
+// /blocks/index.html there, and a redirected answer cannot open a page.
 const HOME = new URL('./', self.location.href).href;
-const PAGE = new URL('index.html', HOME).href;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE);
-      // Straight from the server, not from the browser's own cache, so one version is kept whole.
-      await cache.addAll(FILES.map((file) => new Request(new URL(file, HOME).href, { cache: 'reload' })));
+      await Promise.all(
+        FILES.map(async (file) => {
+          const url = new URL(file, HOME).href;
+          // Straight from the server, not from the browser's own cache, so one version is kept whole.
+          const response = await fetch(url, { cache: 'reload' });
+          if (!response.ok) throw new Error(`${url}: ${response.status}`);
+          const plain = response.redirected
+            ? new Response(await response.blob(), { status: response.status, statusText: response.statusText, headers: response.headers })
+            : response;
+          await cache.put(url, plain);
+        }),
+      );
       // The running page already has its code; the new files serve from the next opening on.
       await self.skipWaiting();
     })(),
@@ -33,7 +44,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
-  const key = request.mode === 'navigate' && request.url.startsWith(HOME) ? PAGE : request;
+  const key = request.mode === 'navigate' && request.url.startsWith(HOME) ? HOME : request;
   event.respondWith(
     (async () => {
       const cache = await caches.open(CACHE);
