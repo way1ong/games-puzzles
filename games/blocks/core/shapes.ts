@@ -1,6 +1,6 @@
 // Shapes, their orientations (rotations and mirror images) and drawing a random piece.
 import { BLOCKS, type ShapeId } from '../config.ts';
-import { nextInt } from './rng.ts';
+import { nextInt } from '../../../shared/core/rng.ts';
 
 export type Cell = readonly [row: number, col: number];
 export type Cells = readonly Cell[];

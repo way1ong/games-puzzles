@@ -1,0 +1,208 @@
+/*
+ * What every game screen shares: the page reset and the common controls (menu button, choice buttons,
+ * buttons, dialogs, switches). Colours only through the tokens that each game defines in its own
+ * styles/tokens.css: --bg, --surface, --text, --muted, --line, --accent, --on-accent, --focus, --backdrop,
+ * --shadow. A game loads tokens.css, then this file, then its own app.css.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Large mode: everything measured in rem grows. */
+html.big {
+  font-size: 115%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 1rem/1.4 var(--font);
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- menu button ---------- */
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.icon-menu {
+  width: 1.25rem;
+  height: 0.875rem;
+  background:
+    linear-gradient(currentColor 0 0) top / 100% 2px no-repeat,
+    linear-gradient(currentColor 0 0) center / 100% 2px no-repeat,
+    linear-gradient(currentColor 0 0) bottom / 100% 2px no-repeat;
+}
+
+/* Choices that may grow in number (languages): buttons of their own width, wrapping to new lines. */
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.choices__btn {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.choices__btn[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---------- buttons, dialogs, switches ---------- */
+.btn {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn--primary {
+  border: 2px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn--ghost {
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.copy-out {
+  color: var(--muted);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.copy-out:empty {
+  display: none;
+}
+
+.dialog {
+  width: min(28rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.dialog::backdrop {
+  background: var(--backdrop);
+}
+
+.dialog__body {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem;
+}
+
+.dialog h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.dialog h2:not(:first-child) {
+  margin-top: 0.5rem;
+}
+
+.dialog p {
+  margin: 0;
+}
+
+.dialog__highlight {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.dialog__label {
+  font-weight: 700;
+}
+
+.dialog__note {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.dialog__note:empty {
+  display: none;
+}
+
+.dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.dialog__credit a {
+  color: var(--accent);
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  cursor: pointer;
+}
+
+.toggle input {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  accent-color: var(--accent);
+}

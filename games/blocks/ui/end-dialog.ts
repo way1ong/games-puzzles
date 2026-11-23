@@ -1,6 +1,6 @@
 // End of a game: score, best or streak; for the daily puzzle — "copy result".
-import { copyControl, type ShareText } from './copy.ts';
-import { h } from './dom.ts';
+import { copyControl, type ShareText } from '../../../shared/ui/copy.ts';
+import { h } from '../../../shared/ui/dom.ts';
 
 interface Action {
   label: string;

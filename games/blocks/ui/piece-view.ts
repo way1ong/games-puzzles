@@ -1,6 +1,6 @@
 // A piece drawn as a small grid of cells (in the tray and while dragging).
 import type { Cells } from '../core/shapes.ts';
-import { h } from './dom.ts';
+import { h } from '../../../shared/ui/dom.ts';
 
 export function pieceSize(cells: Cells): { rows: number; cols: number } {
   return {

@@ -1,0 +1,78 @@
+/*
+ * Detective: the only file with the colours of the screen around the drawings (the drawings' own colours
+ * are in art/palette.ts). Light and dark themes follow the system; a page that hosts the game (e.g. a
+ * claude.ai test page) may force one with data-theme="light" | "dark" on <html>.
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #f6efe3;
+  --surface: #ffffff;
+  --text: #2b2620;
+  --muted: #5a5048;
+  --line: #8d8474;
+  --accent: #2a6248;
+  --on-accent: #ffffff;
+  --focus: #2a6248;
+
+  /* A thing found; evidence; a person set aside. */
+  --good: #2a6248;
+  --clue: #8a5a00;
+  --aside: rgb(246 239 227 / 0.74);
+  /* Marks drawn over the room (hint ring, keyboard pointer): a light line with a dark edge shows anywhere. */
+  --mark: #ffd24a;
+  --mark-edge: #1b1b1b;
+  /* The frame of the room. */
+  --frame: #5e3a22;
+
+  --backdrop: rgb(30 24 18 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #1a1714;
+    --surface: #262220;
+    --text: #eee8dd;
+    --muted: #b9afa2;
+    --line: #7d7366;
+    --accent: #7fcfa8;
+    --on-accent: #0e2a1d;
+    --focus: #7fcfa8;
+
+    --good: #7fcfa8;
+    --clue: #f2c46d;
+    --aside: rgb(26 23 20 / 0.74);
+    --mark: #ffd24a;
+    --mark-edge: #1b1b1b;
+    --frame: #8a6a4c;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  }
+}
+
+/* The same dark values when the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #1a1714;
+  --surface: #262220;
+  --text: #eee8dd;
+  --muted: #b9afa2;
+  --line: #7d7366;
+  --accent: #7fcfa8;
+  --on-accent: #0e2a1d;
+  --focus: #7fcfa8;
+
+  --good: #7fcfa8;
+  --clue: #f2c46d;
+  --aside: rgb(26 23 20 / 0.74);
+  --mark: #ffd24a;
+  --mark-edge: #1b1b1b;
+  --frame: #8a6a4c;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+}

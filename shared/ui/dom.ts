@@ -18,3 +18,15 @@ export function h<K extends keyof HTMLElementTagNameMap>(
   }
   return el;
 }
+
+/**
+ * An SVG element from its text. Only for drawings the game makes itself (its own numbers and colours):
+ * never for text that comes from a player or from outside.
+ */
+export function svg(markup: string): SVGSVGElement {
+  const holder = document.createElement('template');
+  holder.innerHTML = markup;
+  const el = holder.content.firstElementChild;
+  if (!(el instanceof SVGSVGElement)) throw new Error('Not an SVG drawing');
+  return el;
+}

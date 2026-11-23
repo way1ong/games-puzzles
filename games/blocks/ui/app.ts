@@ -2,12 +2,13 @@
 // drags and keys into moves. The rules themselves are in ../core (pure functions).
 import { BLOCKS } from '../config.ts';
 import { canPlace, fullLines, place as placeOnBoard } from '../core/board.ts';
-import { dailySeed, localDateKey, streak } from '../core/daily.ts';
+import { localDateKey, streak } from '../../../shared/core/dates.ts';
+import { dailySeed } from '../core/daily.ts';
 import { MODES, newGame, placePiece, shapeCode, turnPiece, undo, type GameState, type Mode } from '../core/game.ts';
 import type { Cells } from '../core/shapes.ts';
 import { createBoardView, type BoardView, type Preview } from './board-view.ts';
-import { copyControl, type ShareText } from './copy.ts';
-import { h } from './dom.ts';
+import { copyControl, type ShareText } from '../../../shared/ui/copy.ts';
+import { h } from '../../../shared/ui/dom.ts';
 import { attachDrag } from './drag.ts';
 import { createEndDialog } from './end-dialog.ts';
 import { dict, fmt, num, pickLang, plural, type Dict } from './i18n.ts';

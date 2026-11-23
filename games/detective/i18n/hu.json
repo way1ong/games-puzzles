@@ -1,0 +1,222 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Detective – hangulatos nyomozás reklám nélkül",
+    "description": "Nézzen körül a szobában, találja meg a bizonyítékokat, nevezze meg a tettest. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Detective",
+    "menu": "Menü",
+    "back": "Vissza az ügyekhez"
+  },
+  "home": {
+    "daily": "A nap ügye",
+    "dailyNote": "Ma mindenkinek ugyanaz",
+    "cases": "Ügyek",
+    "search": "Csak keresés",
+    "searchNote": "Szoba gyanúsítottak nélkül: a tárgyak mindig máshol vannak.",
+    "day": "nappal",
+    "night": "éjjel",
+    "new": "Új",
+    "started": "Megkezdve",
+    "solved": "Megoldva",
+    "streak": {
+      "one": "{n} nap egymás után",
+      "other": "{n} nap egymás után"
+    }
+  },
+  "rooms": {
+    "study": "A detektív dolgozószobája"
+  },
+  "intro": {
+    "things": {
+      "one": "Keressen meg {n} tárgyat a szobában.",
+      "other": "Keressen meg {n} tárgyat a szobában."
+    },
+    "clues": {
+      "one": "Közülük {n} bizonyíték.",
+      "other": "Közülük {n} bizonyíték."
+    },
+    "start": "Körülnézek a szobában"
+  },
+  "search": {
+    "progress": "Megvan: {found} / {total}",
+    "list": "Keresendő tárgyak",
+    "tip": "Görgesse a szobát, és érintse meg a listán szereplő tárgyakat.",
+    "foundMark": "megvan",
+    "clueMark": "bizonyíték",
+    "hint": "Segítség",
+    "zoomIn": "Közelebb",
+    "zoomOut": "Távolabb",
+    "room": "A szoba. Érintse meg a listán szereplő tárgyakat.",
+    "keys": "A nyilak mozgatják a mutatót, az Enter megérinti a tárgyat, a plusz és a mínusz a méretet állítja.",
+    "done": "Körülnézett a szobában.",
+    "evidence": "Bizonyítékok",
+    "toSuspects": "A gyanúsítottakhoz"
+  },
+  "announce": {
+    "found": "Megvan: {thing}.",
+    "clue": "Bizonyíték: {thing}, {where}.",
+    "nothing": "Itt nincs semmi.",
+    "hint": "Segítség: {thing} – {region}.",
+    "left": {
+      "one": "Még {n} tárgy van hátra.",
+      "other": "Még {n} tárgy van hátra."
+    }
+  },
+  "regions": {
+    "topLeft": "balra fent",
+    "top": "fent középen",
+    "topRight": "jobbra fent",
+    "left": "balra középen",
+    "middle": "középen",
+    "right": "jobbra középen",
+    "bottomLeft": "balra lent",
+    "bottom": "lent középen",
+    "bottomRight": "jobbra lent"
+  },
+  "where": {
+    "shelf": "a polcon",
+    "bookcaseTop": "a könyvszekrény tetején",
+    "sill": "az ablakpárkányon",
+    "desk": "az íróasztalon",
+    "seat": "a széken",
+    "floor": "a padlón",
+    "rug": "a szőnyegen",
+    "underDesk": "az íróasztal alatt"
+  },
+  "things": {
+    "key": "Kulcs",
+    "magnifier": "Nagyító",
+    "watch": "Zsebóra",
+    "coin": "Érme",
+    "envelope": "Boríték",
+    "quill": "Lúdtoll",
+    "candle": "Gyertya",
+    "matches": "Gyufa",
+    "ring": "Gyűrű",
+    "pencil": "Ceruza",
+    "ticket": "Jegy",
+    "pawn": "Sakkgyalog",
+    "hair:red": "Vörös hajszál",
+    "hair:dark": "Sötét hajszál",
+    "hair:blond": "Szőke hajszál",
+    "hair:gray": "Ősz hajszál",
+    "glasses": "Szemüveglencse",
+    "buttons:blue": "Kék gomb",
+    "buttons:brown": "Barna gomb",
+    "buttons:gold": "Aranyszínű gomb",
+    "scarf:red": "Piros fonalszál",
+    "scarf:yellow": "Sárga fonalszál",
+    "scarf:blue": "Kék fonalszál",
+    "flower": "Virágszirom"
+  },
+  "traits": {
+    "hair:red": "Vörös haj",
+    "hair:dark": "Sötét haj",
+    "hair:blond": "Szőke haj",
+    "hair:gray": "Ősz haj",
+    "glasses": "Szemüveg",
+    "buttons:blue": "Kék gombok",
+    "buttons:brown": "Barna gombok",
+    "buttons:gold": "Aranyszínű gombok",
+    "scarf:red": "Piros csíkos sál",
+    "scarf:yellow": "Sárga pöttyös sál",
+    "scarf:blue": "Kék, ferde csíkos sál",
+    "flower": "Virág"
+  },
+  "suspects": {
+    "title": "Ki a tettes?",
+    "lead": "Minden bizonyíték egy ismertetőjelre utal. Mindegyik csak egy emberre illik.",
+    "aside": "kizárva",
+    "traits": "Ismertetőjelek",
+    "setAside": "Kizárom",
+    "bringBack": "Visszateszem",
+    "accuse": "Ő a tettes",
+    "wrong": "Nem, nem {name} az: a(z) „{clue}” nem illik rá."
+  },
+  "result": {
+    "solved": "Az ügy megoldva!",
+    "who": "{name} volt az.",
+    "line": "{clue}. {trait}: {names}.",
+    "only": "Mindegyik csak rá illik: {name}.",
+    "firstTry": "Elsőre megnevezve",
+    "tries": "Próbálkozások: {n}",
+    "noHints": "Segítség nélkül",
+    "hints": "Segítségek: {n}",
+    "searchDone": "Minden megvan!",
+    "again": "Még egyszer",
+    "replay": "Újra játszom",
+    "comeBack": "Holnap jöjjön vissza egy új ügyért.",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "shareText": "{name} · a nap ügye, {date}: megoldva. {tries}. {hints}."
+  },
+  "stories": {
+    "lostLetter": {
+      "title": "Az eltűnt levél",
+      "text": "Reggel pecsétes levél feküdt a detektív íróasztalán. Délre eltűnt. Az ajtót senki sem törte fel – tehát ismerős járt itt.",
+      "ending": "{name} bevallja: a levelet tévedésből hozzá kézbesítették, ő tette az asztalra. Aztán elbizonytalanodott, hogy jó címre vitte-e, és visszavette. A levél újra a detektívnél van."
+    },
+    "midnightCall": {
+      "title": "Éjféli telefon",
+      "text": "Éjfélkor megszólalt a telefon a dolgozószobában. A vonalban csend. Az asztalon pedig aláírás nélküli cédula: „Holnap hétkor. Ne késsen.” Az ajtótól vizes lábnyomok vezetnek.",
+      "ending": "{name} nevet: a cédulát ő hagyta itt – meghívó az első koncertjére. Elfelejtette aláírni, és azért telefonált, hogy megtudja, ébren van-e még a detektív."
+    },
+    "dailySeal": {
+      "title": "Az eltűnt pecsét",
+      "text": "Eltűnt a detektív pecsétje az asztalról. A zár ép, az ablak csukva. Valaki az ismerősök közül járt itt, amíg a gazda távol volt.",
+      "ending": "A megfejtés egyszerű: {name} vitte el a pecsétet, hogy egy üdvözlőlapra nyomja. A pecsét már a helyén van."
+    },
+    "dailyVase": {
+      "title": "A törött váza",
+      "text": "Valaki eltört egy vázát a dolgozószobában, és csendben eltakarította a cserepeket. De nyomok maradtak.",
+      "ending": "{name} nem tagadja: a váza véletlenül esett le, és már rendelt helyette egy ugyanolyat."
+    },
+    "dailyNote": {
+      "title": "Cédula a fiókban",
+      "text": "Az íróasztal fiókjában aláírás nélküli cédula került elő: „Köszönök mindent.” Ki tette oda?",
+      "ending": "{name} mosolyog: köszönet egy régi szívességért. Az aláírás egyszerűen nem fért rá."
+    },
+    "dailyBiscuits": {
+      "title": "Az üres kekszesdoboz",
+      "text": "A polcon álló kekszesdoboz egyetlen nap alatt kiürült. A morzsák az ajtóig vezetnek.",
+      "ending": "{name} elpirul, és megígéri, hogy süt új kekszet – kétszer annyit."
+    }
+  },
+  "people": {
+    "anna": { "name": "Anna", "role": "titkárnő" },
+    "viktor": { "name": "Viktor", "role": "futár" },
+    "marta": { "name": "Márta", "role": "szomszéd" },
+    "bence": { "name": "Bence", "role": "egyetemista" },
+    "oleg": { "name": "Oleg", "role": "éjjeliőr" },
+    "lina": { "name": "Lina", "role": "virágkötő" },
+    "ilona": { "name": "Ilona", "role": "könyvtáros" },
+    "tamas": { "name": "Tamás", "role": "órás" },
+    "sofia": { "name": "Zsófia", "role": "zongorista" },
+    "pavlo": { "name": "Pál", "role": "postás" },
+    "emma": { "name": "Emma", "role": "cukrász" },
+    "gabor": { "name": "Gábor", "role": "kertész" },
+    "nora": { "name": "Nóra", "role": "fényképész" }
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "big": "Nagy méret: nagyobb szöveg, közelebbi szoba",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
+    "reset": "Előrehaladás törlése",
+    "resetSure": "Koppintson újra az összes ügy és eredmény törléséhez",
+    "resetDone": "Törölve"
+  },
+  "about": {
+    "title": "A játékról",
+    "text": "Hangulatos nyomozás reklám, fiók és nyomkövetés nélkül. Minden ezen az eszközön marad. Internet nélkül is működik.",
+    "how": "Keresse meg a szobában a lista minden tárgyát – némelyik bizonyíték. Utána nyissa meg az emberek lapját: minden bizonyíték egy ismertetőjelre utal, és mindegyik csak egy emberre illik.",
+    "keys": "Billentyűzet: a nyilak mozgatják a mutatót a szobában (Shifttel gyorsabban), az Enter megérinti a tárgyat, a + és a − a méretet állítja.",
+    "credit": "Készítette: way1ong"
+  },
+  "actions": {
+    "close": "Bezárás"
+  }
+}

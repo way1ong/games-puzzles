@@ -31,7 +31,7 @@ describe('seeded random numbers', () => {
   });
 
   it('turns text into a stable seed', () => {
-    expect(seedFromText('way1ong-blocks:daily:2026-11-22')).toBe(seedFromText('way1ong-blocks:daily:2026-11-22'));
+    expect(seedFromText('game:daily:2026-11-22')).toBe(seedFromText('game:daily:2026-11-22'));
     expect(seedFromText('a')).not.toBe(seedFromText('b'));
   });
 });

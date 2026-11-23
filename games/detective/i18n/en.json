@@ -1,0 +1,222 @@
+{
+  "meta": {
+    "langName": "English",
+    "title": "Detective — a cosy mystery without ads",
+    "description": "Look over the room, find the evidence, name the one who did it. No ads, no accounts, no tracking; works offline."
+  },
+  "app": {
+    "name": "Detective",
+    "menu": "Menu",
+    "back": "To the cases"
+  },
+  "home": {
+    "daily": "Case of the day",
+    "dailyNote": "The same for everyone today",
+    "cases": "Cases",
+    "search": "Just searching",
+    "searchNote": "A room without suspects: things in new places every time.",
+    "day": "by day",
+    "night": "at night",
+    "new": "New",
+    "started": "Started",
+    "solved": "Solved",
+    "streak": {
+      "one": "{n} day in a row",
+      "other": "{n} days in a row"
+    }
+  },
+  "rooms": {
+    "study": "The detective’s study"
+  },
+  "intro": {
+    "things": {
+      "one": "Find {n} thing in the room.",
+      "other": "Find {n} things in the room."
+    },
+    "clues": {
+      "one": "{n} of them is evidence.",
+      "other": "{n} of them are evidence."
+    },
+    "start": "Look over the room"
+  },
+  "search": {
+    "progress": "Found {found} of {total}",
+    "list": "Things to find",
+    "tip": "Scroll the room and touch the things from the list.",
+    "foundMark": "found",
+    "clueMark": "evidence",
+    "hint": "Hint",
+    "zoomIn": "Closer",
+    "zoomOut": "Farther",
+    "room": "The room. Touch the things from the list.",
+    "keys": "Arrow keys move the pointer, Enter touches, plus and minus change the size.",
+    "done": "The room is looked over.",
+    "evidence": "Evidence",
+    "toSuspects": "To the suspects"
+  },
+  "announce": {
+    "found": "Found: {thing}.",
+    "clue": "Evidence: {thing}, {where}.",
+    "nothing": "Nothing here.",
+    "hint": "Hint: {thing} — {region}.",
+    "left": {
+      "one": "{n} thing left.",
+      "other": "{n} things left."
+    }
+  },
+  "regions": {
+    "topLeft": "top left",
+    "top": "top middle",
+    "topRight": "top right",
+    "left": "middle left",
+    "middle": "in the middle",
+    "right": "middle right",
+    "bottomLeft": "bottom left",
+    "bottom": "bottom middle",
+    "bottomRight": "bottom right"
+  },
+  "where": {
+    "shelf": "on a shelf",
+    "bookcaseTop": "on top of the bookcase",
+    "sill": "on the windowsill",
+    "desk": "on the desk",
+    "seat": "on the chair",
+    "floor": "on the floor",
+    "rug": "on the rug",
+    "underDesk": "under the desk"
+  },
+  "things": {
+    "key": "Key",
+    "magnifier": "Magnifying glass",
+    "watch": "Pocket watch",
+    "coin": "Coin",
+    "envelope": "Envelope",
+    "quill": "Quill",
+    "candle": "Candle",
+    "matches": "Matches",
+    "ring": "Ring",
+    "pencil": "Pencil",
+    "ticket": "Ticket",
+    "pawn": "Chess pawn",
+    "hair:red": "Red hair strand",
+    "hair:dark": "Dark hair strand",
+    "hair:blond": "Fair hair strand",
+    "hair:gray": "Grey hair strand",
+    "glasses": "Glasses lens",
+    "buttons:blue": "Blue button",
+    "buttons:brown": "Brown button",
+    "buttons:gold": "Gold button",
+    "scarf:red": "Red thread",
+    "scarf:yellow": "Yellow thread",
+    "scarf:blue": "Blue thread",
+    "flower": "Petal"
+  },
+  "traits": {
+    "hair:red": "Red hair",
+    "hair:dark": "Dark hair",
+    "hair:blond": "Fair hair",
+    "hair:gray": "Grey hair",
+    "glasses": "Glasses",
+    "buttons:blue": "Blue buttons",
+    "buttons:brown": "Brown buttons",
+    "buttons:gold": "Gold buttons",
+    "scarf:red": "Red striped scarf",
+    "scarf:yellow": "Yellow dotted scarf",
+    "scarf:blue": "Blue scarf with slanted lines",
+    "flower": "A flower"
+  },
+  "suspects": {
+    "title": "Who did it?",
+    "lead": "Each piece of evidence points at a trait. Only one person has them all.",
+    "aside": "set aside",
+    "traits": "Traits",
+    "setAside": "Set aside",
+    "bringBack": "Bring back",
+    "accuse": "This is the one",
+    "wrong": "No, it is not {name}: “{clue}” does not fit."
+  },
+  "result": {
+    "solved": "Case solved!",
+    "who": "It was {name}.",
+    "line": "{clue}. {trait}: {names}.",
+    "only": "Only {name} has all of these.",
+    "firstTry": "Named at the first try",
+    "tries": "Tries: {n}",
+    "noHints": "Without hints",
+    "hints": "Hints: {n}",
+    "searchDone": "Everything is found!",
+    "again": "Once more",
+    "replay": "Play again",
+    "comeBack": "Come back tomorrow for a new case.",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "shareText": "{name} · case of {date}: solved. {tries}. {hints}."
+  },
+  "stories": {
+    "lostLetter": {
+      "title": "The Lost Letter",
+      "text": "In the morning a sealed letter lay on the detective’s desk. By noon it was gone. Nobody forced the door — so the visitor was someone who belongs here.",
+      "ending": "{name} admits it: the letter came to her by mistake, and she put it on the desk herself. Then she doubted the address and took it back. The letter is with the detective again."
+    },
+    "midnightCall": {
+      "title": "A Call at Midnight",
+      "text": "At midnight the telephone rang in the study. Silence on the line. And on the desk — an unsigned note: “Tomorrow at seven. Do not be late.” Wet footprints lead from the door.",
+      "ending": "{name} laughs: the note is hers — an invitation to her first concert. She forgot to sign it, and she rang to check whether the detective was still awake."
+    },
+    "dailySeal": {
+      "title": "The Missing Seal",
+      "text": "The detective’s seal is gone from the desk. The lock is whole, the window shut. One of the acquaintances came by while the owner was out.",
+      "ending": "The answer is simple: {name} took the seal to stamp a greeting card. The seal is back in its place."
+    },
+    "dailyVase": {
+      "title": "The Broken Vase",
+      "text": "Someone broke a vase in the study and quietly swept up the pieces. But traces remain.",
+      "ending": "{name} does not deny it: the vase fell by accident, and a new one just like it is already ordered."
+    },
+    "dailyNote": {
+      "title": "A Note in the Drawer",
+      "text": "An unsigned note turned up in the desk drawer: “Thank you for everything.” Who put it there?",
+      "ending": "{name} smiles: it is thanks for an old favour. The signature just did not fit."
+    },
+    "dailyBiscuits": {
+      "title": "The Empty Biscuit Tin",
+      "text": "The biscuit tin on the shelf was emptied in a single day. Crumbs lead to the door.",
+      "ending": "{name} blushes and promises to bake new biscuits — twice as many."
+    }
+  },
+  "people": {
+    "anna": { "name": "Anna", "role": "secretary" },
+    "viktor": { "name": "Viktor", "role": "courier" },
+    "marta": { "name": "Marta", "role": "neighbour" },
+    "bence": { "name": "Bence", "role": "student" },
+    "oleg": { "name": "Oleg", "role": "night watchman" },
+    "lina": { "name": "Lina", "role": "florist" },
+    "ilona": { "name": "Ilona", "role": "librarian" },
+    "tamas": { "name": "Tamas", "role": "watchmaker" },
+    "sofia": { "name": "Sofia", "role": "pianist" },
+    "pavlo": { "name": "Paul", "role": "postman" },
+    "emma": { "name": "Emma", "role": "pastry cook" },
+    "gabor": { "name": "Gabor", "role": "gardener" },
+    "nora": { "name": "Nora", "role": "photographer" }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "big": "Large mode: bigger text, a closer room",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap Share, then add the game to the Home Screen.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear all cases and results",
+    "resetDone": "Progress cleared"
+  },
+  "about": {
+    "title": "About",
+    "text": "A cosy mystery without ads, accounts or tracking. Everything stays on this device. Works offline.",
+    "how": "Find every thing from the list in the room — some of them are evidence. Then open the people’s cards: each piece of evidence points at a trait, and only one person has them all.",
+    "keys": "Keyboard: arrows move the pointer over the room (faster with Shift), Enter touches, + and − change the size.",
+    "credit": "Made by way1ong"
+  },
+  "actions": {
+    "close": "Close"
+  }
+}

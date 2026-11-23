@@ -1,7 +1,7 @@
 // The board on screen: size × size cells, the shadow of a piece being placed, lines it would clear,
 // and a short flash of cleared lines.
 import type { Cells } from '../core/shapes.ts';
-import { h } from './dom.ts';
+import { h } from '../../../shared/ui/dom.ts';
 
 export interface Preview {
   cells: Cells;
