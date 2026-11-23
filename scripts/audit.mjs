@@ -5,11 +5,11 @@
 // in every state too; axe-core is not a dependency of the project: download it (npm pack axe-core) into a
 // scratch folder and pass the file. Whatever games are named, all of them are also checked together: each
 // must be an app of its own for the browser (scripts/audit/apps.mjs).
-import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { preview } from 'vite';
 import { auditApps } from './audit/apps.mjs';
 import { createAxe, createReport } from './audit/common.mjs';
 
@@ -32,17 +32,13 @@ const report = createReport();
 const axe = createAxe(axePath ? readFileSync(axePath, 'utf8') : null);
 const done = [];
 
-const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { cwd: root, stdio: 'ignore' });
+// The server of the built games runs inside this script, so nothing is left running after it; a busy port
+// is an error — another server there could show some other build.
+const server = await preview({ configFile: join(root, 'vite.config.ts'), logLevel: 'silent', preview: { port: PORT, strictPort: true } }).catch((e) => {
+  throw new Error(`The built games could not be served on port ${PORT} (run npm run build first; the port must be free): ${e.message}`);
+});
 try {
-  for (let i = 0; ; i++) {
-    try {
-      if ((await fetch(`${origin}/${games[0]}/`)).ok) break;
-    } catch {
-      // not up yet
-    }
-    if (i > 100) throw new Error('vite preview did not start — run npm run build first');
-    await new Promise((r) => setTimeout(r, 100));
-  }
+  if (!(await fetch(`${origin}/${games[0]}/`)).ok) throw new Error(`No built game at ${origin}/${games[0]}/ — run npm run build first`);
   const { chromium } = createRequire(import.meta.url)('playwright');
   const browser = await chromium.launch();
   for (const game of games) {
@@ -56,7 +52,7 @@ try {
   done.push(`together: ${what}${report.problems.length === before ? '' : ` — ${report.problems.length - before} problem(s)`}`);
   await browser.close();
 } finally {
-  server.kill();
+  await server.close();
 }
 console.log(report.problems.length ? `\n${report.problems.length} problem(s)` : `\nOK${axePath ? ' (with axe)' : ''}`);
 for (const line of done) console.log(`  ${line}`);
