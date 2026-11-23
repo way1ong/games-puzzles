@@ -4,7 +4,7 @@
 import type { Paint } from './palette.ts';
 import { el, path } from './svg.ts';
 
-export type DefName = 'wall' | 'floor' | 'sky' | 'spine' | 'round' | 'glow' | 'vignette' | 'soft' | 'softer' | 'wallpaper' | 'grain';
+export type DefName = 'wall' | 'floor' | 'sky' | 'spine' | 'round' | 'glow' | 'vignette' | 'soft' | 'softer' | 'wallpaper' | 'grain' | 'tiles' | 'arch';
 
 export interface Ctx {
   p: Paint;
@@ -26,7 +26,8 @@ const stop = (offset: number, colour: string, opacity?: number): string =>
 const linear = (id: string, vertical: boolean, stops: string): string =>
   el('linearGradient', { id, x1: 0, y1: 0, x2: vertical ? 0 : 1, y2: vertical ? 1 : 0 }, stops);
 
-export function sceneDefs(c: Ctx): string {
+/** `extra` — what only this room refers to (its own patterns). */
+export function sceneDefs(c: Ctx, extra = ''): string {
   const { p, night } = c;
   const blur = (name: DefName, amount: number) =>
     el('filter', { id: c.id(name), x: '-30%', y: '-30%', width: '160%', height: '160%' }, el('feGaussianBlur', { stdDeviation: amount }));
@@ -53,7 +54,8 @@ export function sceneDefs(c: Ctx): string {
         'pattern',
         { id: c.id('grain'), width: 120, height: 14, patternUnits: 'userSpaceOnUse' },
         el('path', { d: 'M0 4 q30 -3 60 0 t60 0 M0 10 q40 3 80 0 t40 0', fill: 'none', stroke: p.black, 'stroke-opacity': 0.08, 'stroke-width': 1.2 }),
-      ),
+      ) +
+      extra,
   );
 }
 

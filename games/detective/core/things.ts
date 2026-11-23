@@ -16,6 +16,7 @@ export const ORDINARY = [
   'pencil',
   'ticket',
   'pawn',
+  'glove',
 ] as const;
 export type OrdinaryId = (typeof ORDINARY)[number];
 
@@ -55,6 +56,7 @@ export const SHAPES: Record<Shape, ShapeInfo> = {
   pencil: { w: 66, h: 12, on: ['top', 'sill', 'desk', ...GROUND], turn: 35 },
   ticket: { w: 44, h: 26, on: [...LEDGES_ALL, ...GROUND], turn: 25 },
   pawn: { w: 24, h: 40, on: LEDGES_ALL, turn: 0 },
+  glove: { w: 42, h: 28, on: ['seat', 'top', 'sill', 'desk', ...GROUND], turn: 35 },
   // evidence
   hair: { w: 40, h: 22, on: ['seat', 'top', 'sill', 'desk', ...GROUND], turn: 40 },
   glasses: { w: 28, h: 20, on: ['top', 'sill', 'desk', ...GROUND], turn: 30 },

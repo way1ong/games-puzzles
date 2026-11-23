@@ -2,6 +2,7 @@
 // around the drawings takes its colours from styles/tokens.css. A test (art.test.ts) keeps colours out of
 // the other drawing modules (docs/DECISIONS.md, 23.11).
 import type { Time } from '../core/cases.ts';
+import type { RoomId } from '../core/rooms.ts';
 import type { Buttons, Hair, Scarf } from '../core/traits.ts';
 
 type RGB = [number, number, number];
@@ -137,16 +138,104 @@ const TABLE = {
   phoneDark: ['#26262B'],
   dial: ['#C9C2B0'],
   ink: ['#2B2B2B'],
+  // the bakery: tiles, bread, flour, the shop door and window
+  tileWall: ['#FBF8F0', '#39404F'],
+  tileGrout: ['#DCD2BF', '#2B313D'],
+  tileBand: ['#3F7F78', '#1E3B3B'],
+  floorTile: ['#C97B45', '#4D3229'],
+  crust: ['#C98B3E'],
+  crustDark: ['#A66C2A'],
+  crustLight: ['#E4B369'],
+  flour: ['#FAF6EC', '#CFCCC6'],
+  sack: ['#DBC8A0'],
+  sackShade: ['#BFA97C'],
+  sackStripe: ['#A9463B'],
+  slate: ['#2F3B3A', '#161C1D'],
+  chalk: ['#F3F0E6', '#A9A79F'],
+  enamelGreen: ['#3F7D6E', '#1F4038'],
+  doorPaint: ['#4F8A7A', '#21403A'],
+  doorPaintDark: ['#3E6F62', '#18302B'],
+  doorPaintLight: ['#6BA595', '#2E5248'],
+  awning: ['#C24A3D', '#5A2A26'],
+  awningPale: ['#F7ECDB', '#6E6A66'],
+  wicker: ['#C79C5C'],
+  wickerDark: ['#9D7538'],
+  jam: ['#A9333B'],
+  jamLid: ['#EADBBB'],
+  mat: ['#B39562', '#4E4230'],
+  matEdge: ['#8C6E40', '#382E20'],
+  icing: ['#F8ECEF'],
+  berry: ['#B7374B'],
+  furGinger: ['#D98B3E', '#7B4F2B'],
+  sun: ['#FFE9A8', '#FFE9A8'],
+  moon: ['#F4EFD8', '#F4EFD8'],
+  // the station: wall panels, stone floor, the train and the platform, luggage, the violin
+  panelGreen: ['#4D6F5F', '#1E2E2A'],
+  panelGreenLight: ['#5F8573', '#28403A'],
+  panelGreenDark: ['#3B5749', '#16231F'],
+  slab: ['#C6BEAD', '#2D2E36'],
+  runner: ['#8F3238', '#472120'],
+  runnerInner: ['#A5444A', '#552A29'],
+  train: ['#3F7A5C', '#1E3B2E'],
+  trainDark: ['#2D5B45', '#152A22'],
+  trainRoof: ['#71777D', '#2A2E33'],
+  trainStripe: ['#E9D9A6', '#7A7358'],
+  platform: ['#ACA596', '#2A2B32'],
+  platformEdge: ['#F1E9D2', '#5B5A55'],
+  boardBlack: ['#23292D', '#101418'],
+  milkGlass: ['#F3F0E4', '#FFE4A6'],
+  officeInside: ['#F3E3B8', '#141A22'],
+  blind: ['#CDBD92', '#4E4836'],
+  velvet: ['#3F4F8C', '#222B52'],
+  velvetDark: ['#2E3A6B', '#191F3D'],
+  caseBlack: ['#2B2420', '#151210'],
+  violin: ['#B4632C', '#5E3519'],
+  violinDark: ['#8C481E', '#472610'],
+  suitcase: ['#9A6B43', '#4A3322'],
+  suitcaseDark: ['#7A5232', '#392718'],
+  mailbox: ['#B8402F', '#56231C'],
+  mailboxDark: ['#8F2F22', '#3F1A15'],
+  pigeon: ['#8F98A5'],
+  pigeonDark: ['#6C7480'],
+  pigeonNeck: ['#5E8A7C'],
 } satisfies Record<string, readonly [string, string?]>;
+
+/** What a room paints its own way: the walls, the skirting board, the floor. */
+const ROOM_TABLE: Record<RoomId, Partial<Record<keyof typeof TABLE, readonly [string, string?]>>> = {
+  study: {},
+  bakery: {
+    wallTop: ['#F7E8CF', '#2A3140'],
+    wallBottom: ['#F1D9B4', '#20262F'],
+    wallMotif: ['#EFD2A6', '#313A49'],
+    skirting: ['#8A5A3A', '#1B1510'],
+    floorTop: ['#EAD9BC', '#3B3336'],
+    floorBottom: ['#DCC6A0', '#2B2528'],
+  },
+  station: {
+    wallTop: ['#EEEBD6', '#252C39'],
+    wallBottom: ['#E3DFC4', '#1C232E'],
+    skirting: ['#3C2E24', '#13100D'],
+    floorTop: ['#D2CBBB', '#33343D'],
+    floorBottom: ['#BFB7A5', '#26272E'],
+    plank: ['#A69E8D', '#1D1E24'],
+    // a snowy night: the sky is pale with snow clouds
+    skyTop: ['#BFE1F3', '#1A2233'],
+    skyBottom: ['#E8F4FA', '#343E52'],
+  },
+};
 
 const BOOKS = ['#B5473A', '#2F6690', '#D9A441', '#3E7C59', '#6D4C7D', '#C8683A', '#2B4C6F', '#8C2F39', '#4F772D', '#A3742F', '#5B7DA6', '#7E5A3C'];
 
 export type PaintKey = keyof typeof TABLE;
 export type Paint = Record<PaintKey, string> & { books: readonly string[] };
 
-/** `own` — whether the table's own night colours are used (rooms) or every colour just darkens (things). */
-function paint(time: Time, dark: RGB, own: boolean): Paint {
-  const colours = (Object.entries(TABLE) as [PaintKey, readonly [string, string?]][]).map(
+/**
+ * `own` — whether the table's own night colours are used (rooms) or every colour just darkens (things);
+ * `room` — the room whose walls and floor are painted.
+ */
+function paint(time: Time, dark: RGB, own: boolean, room?: RoomId): Paint {
+  const table = room ? { ...TABLE, ...ROOM_TABLE[room] } : TABLE;
+  const colours = (Object.entries(table) as [PaintKey, readonly [string, string?]][]).map(
     ([name, [day, night]]) => [name, time === 'day' ? day : ((own ? night : undefined) ?? atNight(day, dark))] as const,
   );
   return {
@@ -164,7 +253,7 @@ function cached(key: string, make: () => Paint): Paint {
 }
 
 /** Colours of a room and its furniture at this time of day. */
-export const roomPaint = (time: Time): Paint => cached(`room:${time}`, () => paint(time, DEEP, true));
+export const roomPaint = (room: RoomId, time: Time): Paint => cached(`room:${room}:${time}`, () => paint(time, DEEP, true, room));
 
 /** Colours of the things to find: at night only a little darker than by day, so they stay findable. */
 export const thingPaint = (time: Time): Paint => cached(`thing:${time}`, () => paint(time, SOFT, false));

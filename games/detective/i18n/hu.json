@@ -26,7 +26,9 @@
     }
   },
   "rooms": {
-    "study": "A detektív dolgozószobája"
+    "study": "A detektív dolgozószobája",
+    "bakery": "A pékség",
+    "station": "A pályaudvar"
   },
   "intro": {
     "things": {
@@ -83,7 +85,16 @@
     "seat": "a széken",
     "floor": "a padlón",
     "rug": "a szőnyegen",
-    "underDesk": "az íróasztal alatt"
+    "underDesk": "az íróasztal alatt",
+    "rackTop": "az állvány tetején",
+    "table": "az asztalkán",
+    "counter": "a pulton",
+    "showcase": "az üvegvitrinen",
+    "mat": "a lábtörlőn",
+    "bench": "a padon",
+    "suitcase": "a bőröndön",
+    "ticketDesk": "a pénztár párkányán",
+    "runner": "a futószőnyegen"
   },
   "things": {
     "key": "Kulcs",
@@ -98,6 +109,7 @@
     "pencil": "Ceruza",
     "ticket": "Jegy",
     "pawn": "Sakkgyalog",
+    "glove": "Kesztyű",
     "hair:red": "Vörös hajszál",
     "hair:dark": "Sötét hajszál",
     "hair:blond": "Szőke hajszál",
@@ -182,6 +194,66 @@
       "title": "Az üres kekszesdoboz",
       "text": "A polcon álló kekszesdoboz egyetlen nap alatt kiürült. A morzsák az ajtóig vezetnek.",
       "ending": "{name} elpirul, és megígéri, hogy süt új kekszet – kétszer annyit."
+    },
+    "fairPie": {
+      "title": "Pite a vásárra",
+      "text": "Ma van a vásár, és Emma almás pitéjének a versenyre kellett volna mennie. Hajnalban még ott állt az állványán az ablaknál – most csak morzsák vannak rajta. Rozsdás, a macska úgy tesz, mintha aludna.",
+      "ending": "{name} zavarba jön: attól félt, hogy a pite elkésik, ezért hajnalban maga vitte el a vásárra. Már a zsűri asztalán van – a győztes kék szalagjával. Rozsdásnak semmi köze hozzá."
+    },
+    "nightShift": {
+      "title": "Éjszakai műszak",
+      "text": "Éjjel az éjjeliőr észrevette: a pékség ajtaja résnyire nyitva, a pult fölött égnek a lámpák. A padlón lisztes lábnyomok. Valaki elhagyott egy kesztyűt és egy kulcsot.",
+      "ending": "{name} felsóhajt: oda a meglepetés. Éjjel jött be, hogy tortát süssön az éjjeliőr születésnapjára – és úgy sietett haza, hogy elhagyta a kulcsát és a kesztyűjét. A torta elkészült; legfeljebb egy nappal korábban kapja meg az ünnepelt."
+    },
+    "bakeryRecipe": {
+      "title": "Az eltűnt recept",
+      "text": "A pult alatti fiókból eltűnt a füzet a pékség fonott kalácsának receptjével. A zár ép – tehát ismerős járt itt.",
+      "ending": "{name} visszaadja a füzetet: csak le kellett másolni a receptet, hogy otthon is megsüsse az ünnepre."
+    },
+    "bakeryBun": {
+      "title": "A megharapott zsemle",
+      "text": "Az ablakpárkányon álló kosárban van egy zsemle, amelybe valaki beleharapott – aztán visszatette. Ki sietett ennyire?",
+      "ending": "{name} elpirul, és kifizeti az egész kosár zsemlét – jut belőle mindenkinek."
+    },
+    "bakerySign": {
+      "title": "Fejjel lefelé lógó cégér",
+      "text": "Reggel a pereces cégér fejjel lefelé lógott az ajtón. Valaki visszaakasztotta, amíg a pékség zárva volt.",
+      "ending": "{name} nevet: a cégért lefújta a huzat, és sötétben, tapogatózva kellett visszaakasztani."
+    },
+    "bakeryJam": {
+      "title": "Az üres polc",
+      "text": "Eltűnt a polcról egy üveg málnalekvár. A helyén egy pénzérme és egy aláírás nélküli cédula: „Nagyon kellett.”",
+      "ending": "{name} elmagyarázza: a kassza zárva volt, a lekvár pedig sürgősen kellett a teához. Az érme a fizetség – borravalóval."
+    },
+    "strangeSuitcase": {
+      "title": "Az elcserélt bőrönd",
+      "text": "A váróteremben két egyforma bőrönd fekszik. Az egyiket épp most nyitották ki – és idegen holmi van benne. Valaki a másét vitte el, aztán rossz helyre tette vissza. Véletlenül vagy szándékosan?",
+      "ending": "{name} a fejéhez kap: sietett a vonathoz, rossz bőröndöt kapott fel, és csak a peronon vette észre – a fényképezőgépe helyett kották voltak benne. Csendben visszatette. Most már mindkét bőrönd a gazdájánál van."
+    },
+    "lastTrain": {
+      "title": "Az utolsó vonat",
+      "text": "Elment az utolsó vonat. A váróteremben ott maradt egy nyitott hegedűtok – de a hegedű nincs benne. A zenész csak egy percre lépett el, hogy megnézze a menetrendet.",
+      "ending": "{name} széttárja a karját: a hegedű huzatban feküdt az ajtónál, ezért bezárta a kis szobájába, hogy ne érje nedvesség, és senki se vigye el. A kulcs nála van, a hegedű ép – a zenész már egy köszönő dallamot játszik."
+    },
+    "stationUmbrella": {
+      "title": "A más esernyője",
+      "text": "Valaki más esernyőjével ment el a váróteremből, a sajátját – a töröttet – pedig a pad alatt hagyta.",
+      "ending": "{name} bocsánatot kér, és visszahozza az esernyőt: mindkettő fekete, és kint sötét volt."
+    },
+    "stationClock": {
+      "title": "Késik az óra",
+      "text": "Az állomás órája hirtelen tíz percet késett, és több utas majdnem lekéste a vonatát. Valaki hozzányúlt a mutatókhoz.",
+      "ending": "{name} elmagyarázza: az óra megállt, és a mutatókat szemre kellett beállítani. Az órást már hívták."
+    },
+    "stationBouquet": {
+      "title": "Csokor cédula nélkül",
+      "text": "A pénztár párkányán egy csokor fekszik, cédula nélkül. A pénztáros szerint valaki letette, és elszaladt.",
+      "ending": "{name} elpirul: a csokor köszönet egy megtalált és visszaadott pénztárcáért."
+    },
+    "stationTimetable": {
+      "title": "Egy sorral több",
+      "text": "A menetrendben megjelent egy sor, amely tegnap még nem volt ott: vonat a tengerhez, huszonöt órakor. Ki írta oda?",
+      "ending": "{name} nevet: tréfa az unokaöccsének, aki most tanulta meg olvasni a menetrendet. A sort már letörölték."
     }
   },
   "people": {

@@ -31,10 +31,10 @@ export function on(room: RoomId, thing: ThingId, spotId: string, dx = 0, rot = 0
   return putOn(spot, thing, dx, rot);
 }
 
-export const STORY_IDS = ['lostLetter', 'midnightCall'] as const;
+export const STORY_IDS = ['lostLetter', 'midnightCall', 'fairPie', 'nightShift', 'strangeSuitcase', 'lastTrain'] as const;
 export type StoryId = (typeof STORY_IDS)[number];
 
-/** Season one (docs/detective/SPEC.md): the study by day and at night. */
+/** Season one (docs/detective/SPEC.md): every room by day and at night. */
 export const STORIES: Record<StoryId, CaseDef> = {
   // A sealed letter is gone from the desk. Red hair, a blue button, a lens: only Marta has all three.
   lostLetter: {
@@ -95,5 +95,128 @@ export const STORIES: Record<StoryId, CaseDef> = {
       { person: 'tamas', buttons: 'gold', scarf: null, flower: true },
     ],
     culprit: 4,
+  },
+  // The pie for the fair is gone from its stand. Fair hair, a brown button, a yellow thread: only Bence.
+  fairPie: {
+    id: 'fairPie',
+    kind: 'story',
+    story: 'fairPie',
+    room: 'bakery',
+    time: 'day',
+    things: [
+      on('bakery', 'watch', 'rackTop1'),
+      on('bakery', 'scarf:yellow', 'sill1', -6),
+      on('bakery', 'key', 'rack3'),
+      on('bakery', 'coin', 'floor4'),
+      on('bakery', 'hair:blond', 'seat', -12),
+      on('bakery', 'envelope', 'counter1'),
+      on('bakery', 'pencil', 'table1'),
+      on('bakery', 'buttons:brown', 'mat2', 10),
+      on('bakery', 'ring', 'showcase2'),
+      on('bakery', 'matches', 'rack5'),
+    ],
+    clues: ['hair:blond', 'buttons:brown', 'scarf:yellow'],
+    suspects: [
+      { person: 'marta', buttons: 'blue', scarf: 'red', flower: false },
+      { person: 'viktor', buttons: 'brown', scarf: 'yellow', flower: false },
+      { person: 'emma', buttons: 'gold', scarf: 'yellow', flower: true },
+      { person: 'bence', buttons: 'brown', scarf: 'yellow', flower: false },
+      { person: 'nora', buttons: 'brown', scarf: 'blue', flower: false },
+      { person: 'pavlo', buttons: 'gold', scarf: 'yellow', flower: false },
+    ],
+    culprit: 3,
+  },
+  // Somebody was in the bakery at night: the door ajar, the lamps on, floury footprints, a glove, the key
+  // on the mat. A gold button, a petal, a red thread: only Emma.
+  nightShift: {
+    id: 'nightShift',
+    kind: 'story',
+    story: 'nightShift',
+    room: 'bakery',
+    time: 'night',
+    things: [
+      on('bakery', 'key', 'mat2', -8, 14),
+      on('bakery', 'flower', 'counter1', 12),
+      on('bakery', 'glove', 'seat', 10),
+      on('bakery', 'pencil', 'floor2', 0, 18),
+      on('bakery', 'candle', 'showcase1'),
+      on('bakery', 'scarf:red', 'rack2'),
+      on('bakery', 'matches', 'counter2'),
+      on('bakery', 'ticket', 'sill2'),
+      on('bakery', 'buttons:gold', 'floor8'),
+      on('bakery', 'magnifier', 'floor10', 0, -20),
+    ],
+    clues: ['buttons:gold', 'flower', 'scarf:red'],
+    suspects: [
+      { person: 'oleg', buttons: 'gold', scarf: 'red', flower: false },
+      { person: 'emma', buttons: 'gold', scarf: 'red', flower: true },
+      { person: 'lina', buttons: 'blue', scarf: 'red', flower: true },
+      { person: 'gabor', buttons: 'gold', scarf: null, flower: true },
+      { person: 'tamas', buttons: 'gold', scarf: 'blue', flower: false },
+      { person: 'ilona', buttons: 'brown', scarf: 'blue', flower: false },
+    ],
+    culprit: 1,
+  },
+  // Two suitcases just alike, and somebody else's things in one of them. A lens, a blue thread, a brown
+  // button: only Nora.
+  strangeSuitcase: {
+    id: 'strangeSuitcase',
+    kind: 'story',
+    story: 'strangeSuitcase',
+    room: 'station',
+    time: 'day',
+    things: [
+      on('station', 'ticket', 'ticket1'),
+      on('station', 'glasses', 'case1', -8),
+      on('station', 'key', 'sill1'),
+      on('station', 'glove', 'benchA1', -6),
+      on('station', 'coin', 'floor5'),
+      on('station', 'scarf:blue', 'benchB1', 8),
+      on('station', 'watch', 'case2'),
+      on('station', 'envelope', 'ticket2'),
+      on('station', 'buttons:brown', 'rug2', -12),
+      on('station', 'pencil', 'floor8', 0, 20),
+    ],
+    clues: ['glasses', 'scarf:blue', 'buttons:brown'],
+    suspects: [
+      { person: 'bence', buttons: 'brown', scarf: 'blue', flower: false },
+      { person: 'ilona', buttons: 'gold', scarf: 'blue', flower: false },
+      { person: 'sofia', buttons: 'blue', scarf: 'yellow', flower: false },
+      { person: 'viktor', buttons: 'brown', scarf: 'red', flower: false },
+      { person: 'gabor', buttons: 'gold', scarf: null, flower: true },
+      { person: 'nora', buttons: 'brown', scarf: 'blue', flower: false },
+    ],
+    culprit: 5,
+  },
+  // The last train has gone, and the musician's violin is not in its case. A grey hair, a blue button, a
+  // red thread: only Oleg.
+  lastTrain: {
+    id: 'lastTrain',
+    kind: 'story',
+    story: 'lastTrain',
+    room: 'station',
+    time: 'night',
+    things: [
+      on('station', 'pawn', 'case1'),
+      on('station', 'scarf:red', 'benchB2', -8),
+      on('station', 'coin', 'floor6'),
+      on('station', 'envelope', 'sill1'),
+      on('station', 'hair:gray', 'floor9', 0, 15),
+      on('station', 'matches', 'ticket2'),
+      on('station', 'key', 'benchA2', 6),
+      on('station', 'buttons:blue', 'rug3', 14),
+      on('station', 'ring', 'sill2'),
+      on('station', 'magnifier', 'floor2', 0, -15),
+    ],
+    clues: ['hair:gray', 'buttons:blue', 'scarf:red'],
+    suspects: [
+      { person: 'oleg', buttons: 'blue', scarf: 'red', flower: false },
+      { person: 'sofia', buttons: 'gold', scarf: 'yellow', flower: true },
+      { person: 'ilona', buttons: 'brown', scarf: 'red', flower: false },
+      { person: 'pavlo', buttons: 'blue', scarf: 'red', flower: false },
+      { person: 'gabor', buttons: 'blue', scarf: null, flower: false },
+      { person: 'tamas', buttons: 'brown', scarf: 'blue', flower: false },
+    ],
+    culprit: 0,
   },
 };

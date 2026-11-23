@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { DETECTIVE } from '../config.ts';
 import { canHold } from './placement.ts';
 import { ROOM_IDS, SPOTS, type Spot } from './rooms.ts';
+import { BAKERY, BAKERY_BLOCKED, BAKERY_RACK, BAKERY_SILL, bakeryRack } from './rooms/bakery.ts';
+import { STATION, STATION_BLOCKED, STATION_SILL, SUITCASE_TOP } from './rooms/station.ts';
 import { BOOK_GAP, STUDY, STUDY_BLOCKED, STUDY_SHELVES, STUDY_SILL, studyShelves } from './rooms/study.ts';
 import { ORDINARY, type ThingId } from './things.ts';
 import { ALL_CLUES } from './traits.ts';
@@ -119,5 +121,159 @@ describe('the study', () => {
     const onRug = (x: number, y: number) => ((x - rug.cx) / rug.rx) ** 2 + ((y - rug.cy) / rug.ry) ** 2;
     for (const s of of('rug')) expect(onRug(s.x, s.y), s.id).toBeLessThan(0.75);
     for (const s of of('floor')) expect(onRug(s.x, s.y - s.h / 2), s.id).toBeGreaterThan(1);
+  });
+});
+
+describe('the bakery', () => {
+  const spots = SPOTS.bakery;
+  const of = (kind: Spot['kind']) => spots.filter((s) => s.kind === kind);
+  const at = (where: Spot['where']) => spots.filter((s) => s.where === where);
+  const { rack, basketOnTop, window: win, cakeStand, bunBasket, table, chair, counter, mat } = BAKERY;
+  const inner = { left: rack.x + rack.side, right: rack.x + rack.w - rack.side };
+
+  it('rack: the bread and bays of every shelf fit between the sides', () => {
+    expect(BAKERY_RACK.length).toBe(rack.rows.length);
+    for (const row of BAKERY_RACK) {
+      expect(rack.start + row.reduce((sum, part) => sum + part.w, 0)).toBeLessThanOrEqual(inner.right);
+    }
+    // a shelf is high enough for what stands under the next one
+    rack.rows.forEach((y, i) => expect(y - ((rack.rows[i - 1] ?? rack.top) + rack.board), `shelf ${i}`).toBeGreaterThanOrEqual(rack.headroom));
+  });
+
+  it('shelf places are the free bays of the rack', () => {
+    const bays = bakeryRack().filter((p) => p.item.part === 'bay');
+    expect(of('shelf').map((s) => s.id).sort()).toEqual(bays.map((b) => (b.item.part === 'bay' ? b.item.spot : '')).sort());
+    for (const s of of('shelf')) {
+      expect(rack.rows as readonly number[], s.id).toContain(s.y);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(inner.left);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(inner.right);
+      expect(s.h, s.id).toBeLessThanOrEqual(rack.headroom);
+    }
+  });
+
+  it('places on the rack are on its top board, clear of the basket', () => {
+    expect(at('rackTop').length).toBeGreaterThan(0);
+    for (const s of at('rackTop')) {
+      expect(s.y, s.id).toBe(rack.roof);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(basketOnTop.x + basketOnTop.w);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(rack.x + rack.w);
+    }
+  });
+
+  it('places on the glass case are on its top', () => {
+    expect(at('showcase').length).toBeGreaterThan(0);
+    for (const s of at('showcase')) {
+      expect(s.y, s.id).toBe(counter.showcase.top);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(counter.showcase.x);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(counter.showcase.x + counter.showcase.w);
+    }
+  });
+
+  it('places on the sill, the table, the counter and the seat are on their lines, clear of what stands there', () => {
+    for (const s of of('sill')) {
+      expect(s.y, s.id).toBe(BAKERY_SILL);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(cakeStand.x + cakeStand.half);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(bunBasket.x - bunBasket.half);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(win.x + win.w);
+    }
+    for (const s of at('table')) {
+      expect(s.y, s.id).toBe(table.top);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(table.x - table.half);
+      // the cup stands on the right of the table
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(table.cup - 14);
+    }
+    for (const s of at('counter')) {
+      expect(s.y, s.id).toBe(counter.top);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(counter.x);
+      const leftOfCase = box(s).x2 <= counter.showcase.x;
+      const rightOfScales = box(s).x1 >= counter.scales + 30;
+      expect(leftOfCase || rightOfScales, s.id).toBe(true);
+    }
+    for (const s of of('seat')) {
+      expect(s.y, s.id).toBe(chair.seat);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(chair.x - chair.half);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(chair.x + chair.half);
+    }
+  });
+
+  it('places on the floor and the mat are on the floor, clear of the furniture', () => {
+    for (const s of [...of('floor'), ...of('rug')]) {
+      expect(box(s).y1, s.id).toBeGreaterThanOrEqual(BAKERY.floor);
+      for (const b of BAKERY_BLOCKED) expect(overlap(box(s), b), `${s.id} / ${b.name}`).toBe(false);
+    }
+    const onMat = { x1: mat.x, x2: mat.x + mat.w, y1: mat.y, y2: mat.y + mat.h };
+    expect(of('rug').length).toBeGreaterThan(0);
+    for (const s of of('rug')) {
+      expect(s.where, s.id).toBe('mat');
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(onMat.x1);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(onMat.x2);
+      expect(box(s).y1, s.id).toBeGreaterThanOrEqual(onMat.y1);
+      expect(s.y, s.id).toBeLessThanOrEqual(onMat.y2);
+    }
+    for (const s of of('floor')) expect(overlap(box(s), onMat), s.id).toBe(false);
+  });
+});
+
+describe('the station', () => {
+  const spots = SPOTS.station;
+  const of = (kind: Spot['kind']) => spots.filter((s) => s.kind === kind);
+  const at = (where: Spot['where']) => spots.filter((s) => s.where === where);
+  const { window: win, benchA, benchB, suitcases, ticket, runner } = STATION;
+
+  it('places on the sill are on its line, clear of the flower pot', () => {
+    expect(of('sill').length).toBeGreaterThan(0);
+    for (const s of of('sill')) {
+      expect(s.y, s.id).toBe(STATION_SILL);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(win.x);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(win.x + win.w);
+      expect(box(s).x2 <= win.pot - 24 || box(s).x1 >= win.pot + 24, s.id).toBe(true);
+    }
+  });
+
+  it('places on the benches are on their seats', () => {
+    expect(of('seat').length).toBeGreaterThan(0);
+    for (const s of of('seat')) {
+      expect(s.where, s.id).toBe('bench');
+      const bench = [benchA, benchB].find((b) => box(s).x1 >= b.x && box(s).x2 <= b.x + b.w);
+      expect(bench, s.id).toBeDefined();
+      expect(s.y, s.id).toBe(bench?.seat);
+    }
+  });
+
+  it('places on the suitcases are on their tops, one on each', () => {
+    expect(at('suitcase').length).toBe(suitcases.xs.length);
+    at('suitcase').forEach((s, i) => {
+      const middle = suitcases.xs[i] as number;
+      expect(s.y, s.id).toBe(SUITCASE_TOP);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(middle - suitcases.w / 2);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(middle + suitcases.w / 2);
+    });
+  });
+
+  it('places at the ticket window are on its ledge, clear of the bell', () => {
+    expect(at('ticketDesk').length).toBeGreaterThan(0);
+    for (const s of at('ticketDesk')) {
+      expect(s.y, s.id).toBe(ticket.ledge);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(ticket.x + 20);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(ticket.x + ticket.w - 20);
+      expect(box(s).x2 <= ticket.bell - 24 || box(s).x1 >= ticket.bell + 24, s.id).toBe(true);
+    }
+  });
+
+  it('places on the floor and the runner are on the floor, clear of the furniture', () => {
+    for (const s of [...of('floor'), ...of('rug')]) {
+      expect(box(s).y1, s.id).toBeGreaterThanOrEqual(STATION.floor);
+      for (const b of STATION_BLOCKED) expect(overlap(box(s), b), `${s.id} / ${b.name}`).toBe(false);
+    }
+    const onRunner = { x1: runner.x, x2: runner.x + runner.w, y1: runner.y, y2: runner.y + runner.h };
+    expect(of('rug').length).toBeGreaterThan(0);
+    for (const s of of('rug')) {
+      expect(s.where, s.id).toBe('runner');
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(onRunner.x1);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(onRunner.x2);
+      expect(box(s).y1, s.id).toBeGreaterThanOrEqual(onRunner.y1);
+      expect(s.y, s.id).toBeLessThanOrEqual(onRunner.y2);
+    }
+    for (const s of of('floor')) expect(overlap(box(s), onRunner), s.id).toBe(false);
   });
 });

@@ -2,7 +2,7 @@
 // a name for everything the game looks up by name.
 import { describe, expect, it } from 'vitest';
 import { STORY_IDS } from '../core/cases.ts';
-import { DAILY_FRAMES } from '../core/daily.ts';
+import { ALL_DAILY_FRAMES } from '../core/daily.ts';
 import { REGIONS } from '../core/game.ts';
 import { PERSON_IDS } from '../core/people.ts';
 import { ROOM_IDS, SPOTS } from '../core/rooms.ts';
@@ -76,7 +76,7 @@ it('names every thing, trait, place, region, room, person and story of the game 
   expect(keys(en.regions)).toEqual([...REGIONS].sort());
   expect(keys(en.rooms)).toEqual([...ROOM_IDS].sort());
   expect(keys(en.people)).toEqual([...PERSON_IDS].sort());
-  expect(keys(en.stories)).toEqual([...STORY_IDS, ...DAILY_FRAMES].sort());
+  expect(keys(en.stories)).toEqual([...STORY_IDS, ...ALL_DAILY_FRAMES].sort());
 });
 
 it('every story ending names the one who did it', () => {

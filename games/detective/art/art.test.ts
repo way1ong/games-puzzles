@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { STORIES, STORY_IDS } from '../core/cases.ts';
 import { dailyCase } from '../core/daily.ts';
 import { PEOPLE, PERSON_IDS, type Suspect } from '../core/people.ts';
+import { ROOM_IDS } from '../core/rooms.ts';
 import { ORDINARY, sizeOf, type ThingId } from '../core/things.ts';
 import { ALL_CLUES, BUTTONS, SCARVES } from '../core/traits.ts';
 import { BUTTON_PAINT, GLASSES, SCARF_PAINT, roomPaint, thingPaint } from './palette.ts';
@@ -54,7 +55,25 @@ describe('scenes', () => {
   it('is another picture at night', () => {
     const def = STORIES.lostLetter;
     expect(sceneSvg({ ...def, time: 'night' })).not.toBe(sceneSvg(def));
-    expect(roomPaint('night').wallTop).not.toBe(roomPaint('day').wallTop);
+    expect(roomPaint('study', 'night').wallTop).not.toBe(roomPaint('study', 'day').wallTop);
+  });
+});
+
+describe.each(ROOM_IDS)('the room %s', (room) => {
+  it('is a whole picture by day and at night, and the two differ', () => {
+    const day = sceneSvg({ room, time: 'day', things: [] });
+    const night = sceneSvg({ room, time: 'night', things: [] });
+    expectWhole(day, `${room} day`);
+    expectWhole(night, `${room} night`);
+    expect(night).not.toBe(day);
+    expect(roomPaint(room, 'night').wallTop).not.toBe(roomPaint(room, 'day').wallTop);
+  });
+
+  it('is not another room repainted', () => {
+    for (const other of ROOM_IDS) {
+      if (other === room) continue;
+      expect(sceneSvg({ room, time: 'day', things: [] })).not.toBe(sceneSvg({ room: other, time: 'day', things: [] }));
+    }
   });
 });
 
@@ -79,8 +98,8 @@ describe('things', () => {
   it('stay brighter at night than the furniture around them', () => {
     const light = (hex: string) => [1, 3, 5].reduce((sum, i) => sum + parseInt(hex.slice(i, i + 2), 16), 0);
     for (const name of ['gold', 'red', 'linen', 'blue', 'cream'] as const) {
-      expect(light(thingPaint('night')[name]), name).toBeGreaterThan(light(roomPaint('night')[name]));
-      expect(thingPaint('day')[name], name).toBe(roomPaint('day')[name]);
+      expect(light(thingPaint('night')[name]), name).toBeGreaterThan(light(roomPaint('study', 'night')[name]));
+      expect(thingPaint('day')[name], name).toBe(roomPaint('study', 'day')[name]);
     }
   });
 });
