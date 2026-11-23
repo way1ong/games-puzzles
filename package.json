@@ -15,7 +15,8 @@
     "verify": "npm run typecheck && npm run test && npm run build",
     "preview": "vite preview",
     "build:claude": "node scripts/claude-page.mjs",
-    "audit": "node scripts/audit.mjs"
+    "audit": "node scripts/audit.mjs",
+    "check:live": "node scripts/check-live.mjs"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

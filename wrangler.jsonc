@@ -14,6 +14,9 @@
   // With routes in this file a deploy switches the workers.dev address off unless it is kept on here.
   // It stays on while the games move to their domain; switching it off is a separate step.
   "workers_dev": true,
+  // No public addresses for branch previews and versions: with workers_dev on they would be switched on
+  // too, each carries the account's subdomain, and Cloudflare posts them into pull requests.
+  "preview_urls": false,
   // Branches other than main: Workers Builds runs `npx wrangler preview` for them, and that command stops
   // when this block is missing (it may be empty) — docs/cloudflare.md, "Гілки: попередній перегляд".
   // A Preview is a separate copy of the games for one branch; the games on main are not touched.
