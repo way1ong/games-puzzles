@@ -3,12 +3,14 @@
 // Run after the build:  npm run audit [-- <game> ...] [--axe <path to axe.min.js>] [--shots <folder>]
 // Without a game — every game (scripts/audit/<game>.mjs). With --axe the axe-core rules (WCAG 2.2 A/AA) run
 // in every state too; axe-core is not a dependency of the project: download it (npm pack axe-core) into a
-// scratch folder and pass the file.
+// scratch folder and pass the file. Whatever games are named, all of them are also checked together: each
+// must be an app of its own for the browser (scripts/audit/apps.mjs).
 import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { auditApps } from './audit/apps.mjs';
 import { createAxe, createReport } from './audit/common.mjs';
 
 const GAMES = ['blocks', 'detective'];
@@ -49,6 +51,9 @@ try {
     const what = await audit({ browser, origin, axe, fail: report.fail, shots });
     done.push(`${game}: ${what}${report.problems.length === before ? '' : ` — ${report.problems.length - before} problem(s)`}`);
   }
+  const before = report.problems.length;
+  const what = await auditApps({ browser, origin, games: GAMES, fail: report.fail });
+  done.push(`together: ${what}${report.problems.length === before ? '' : ` — ${report.problems.length - before} problem(s)`}`);
   await browser.close();
 } finally {
   server.kill();

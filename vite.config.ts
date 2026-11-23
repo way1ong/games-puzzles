@@ -35,7 +35,7 @@ export default defineConfig({
   },
   test: {
     root: here('.'),
-    include: ['games/**/*.test.ts', 'shared/**/*.test.ts'],
+    include: ['games/**/*.test.ts', 'shared/**/*.test.ts', 'scripts/**/*.test.ts'],
     // Tests read style sheets as text (`?raw`) to check the colour tokens.
     css: { include: [/\.css(\?raw)?$/] },
   },

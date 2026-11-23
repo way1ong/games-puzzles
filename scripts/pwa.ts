@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, posix } from 'node:path';
 import type { Plugin, Rolldown } from 'vite';
+import { appProblems, storePrefix } from './app-identity.ts';
 
 type OutputBundle = Rolldown.OutputBundle;
 type OutputChunk = Rolldown.OutputChunk;
@@ -30,6 +31,34 @@ function lightToken(root: string, game: string, name: string): string {
   return value;
 }
 
+/**
+ * The web app manifest of a game; it is served from the game's folder, next to the page.
+ * No "id" here: a browser reads an id against the address of the site, not of this file, so "./" named
+ * every game by the site's root — one identity for all, and the second installed game replaced the first
+ * (found 23.11). Without an id the identity is the start address, the game's own folder; so do not change
+ * start_url: for a browser that would be another app.
+ */
+export function gameManifest(app: GameApp, background: string) {
+  return {
+    start_url: './',
+    scope: './',
+    name: app.name,
+    short_name: app.shortName,
+    description: app.description,
+    lang: app.lang,
+    dir: 'ltr',
+    display: 'standalone',
+    background_color: background,
+    theme_color: background,
+    categories: ['games'],
+    icons: [
+      { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: 'icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+    ],
+  };
+}
+
 /** The entry chunk of a game and everything it pulls in: its code, imported code, styles and assets. */
 function filesOf(bundle: OutputBundle, game: string): string[] {
   const entry = Object.values(bundle).find((f): f is OutputChunk => f.type === 'chunk' && f.isEntry && f.name === game);
@@ -51,9 +80,15 @@ function filesOf(bundle: OutputBundle, game: string): string[] {
 
 export function gameApps(root: string, apps: GameApp[]): Plugin {
   const byPath = new Map(apps.map((app) => [`/${app.game}/index.html`, app]));
+  const manifestOf = (app: GameApp) => gameManifest(app, lightToken(root, app.game, '--bg'));
   return {
     name: 'way1ong-game-apps',
     apply: 'build',
+    buildStart() {
+      // Games that could not be installed and kept side by side must not be published: the build stops.
+      const problems = appProblems(apps.map((app) => ({ game: app.game, manifest: manifestOf(app) })));
+      if (problems.length) this.error(`The games would not live side by side on one address:\n- ${problems.join('\n- ')}`);
+    },
     transformIndexHtml: {
       order: 'post',
       handler(html, ctx) {
@@ -78,26 +113,7 @@ export function gameApps(root: string, apps: GameApp[]): Plugin {
         const icons = readdirSync(join(root, 'games', app.game, 'icons'));
         for (const icon of icons) copyFileSync(join(root, 'games', app.game, 'icons', icon), join(dir, 'icons', icon));
 
-        const manifest = {
-          id: './',
-          start_url: './',
-          scope: './',
-          name: app.name,
-          short_name: app.shortName,
-          description: app.description,
-          lang: app.lang,
-          dir: 'ltr',
-          display: 'standalone',
-          background_color: lightToken(root, app.game, '--bg'),
-          theme_color: lightToken(root, app.game, '--bg'),
-          categories: ['games'],
-          icons: [
-            { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-            { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-            { src: 'icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
-          ],
-        };
-        writeFileSync(join(dir, 'manifest.webmanifest'), `${JSON.stringify(manifest, null, 2)}\n`);
+        writeFileSync(join(dir, 'manifest.webmanifest'), `${JSON.stringify(manifestOf(app), null, 2)}\n`);
 
         // Paths relative to /<game>/, where the worker lives.
         const files = [
@@ -115,7 +131,7 @@ export function gameApps(root: string, apps: GameApp[]): Plugin {
         const worker = template
           .replace("'__VERSION__'", JSON.stringify(version))
           .replace('__FILES__', JSON.stringify(relative))
-          .replace("'__CACHE_PREFIX__'", JSON.stringify(`way1ong-${app.game}-`));
+          .replace("'__CACHE_PREFIX__'", JSON.stringify(storePrefix(app.game)));
         writeFileSync(join(dir, 'sw.js'), worker);
         this.info?.(`${app.game}: service worker ${version}, ${files.length} files`);
       }
