@@ -1,6 +1,8 @@
 // Every number of the Blocks rules lives here (docs/blocks/SPEC.md). (C) = Claude's proposal within the
 // approved plan of 22.11; change it here, not in the logic.
 
+import { gameAddress } from '../../shared/core/address.ts';
+
 export type ShapeId =
   | 'dot'
   | 'i2'
@@ -26,7 +28,7 @@ export const BLOCKS = {
    * Addresses: the studio's site for the "Made by way1ong" line, and the game itself for the shared daily
    * result. null — not public yet: the line has no link, the result has no address.
    */
-  links: { site: null as string | null, game: null as string | null },
+  links: { site: null as string | null, game: gameAddress('blocks') },
   /** Board side, in cells (approved 22.11). */
   boardSize: 8,
   /** Pieces offered at a time (C). */
