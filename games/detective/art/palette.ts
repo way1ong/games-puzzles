@@ -2,6 +2,7 @@
 // around the drawings takes its colours from styles/tokens.css. A test (art.test.ts) keeps colours out of
 // the other drawing modules (docs/DECISIONS.md, 23.11).
 import type { Time } from '../core/cases.ts';
+import type { RoomId } from '../core/rooms.ts';
 import type { Buttons, Hair, Scarf } from '../core/traits.ts';
 
 type RGB = [number, number, number];
@@ -137,16 +138,64 @@ const TABLE = {
   phoneDark: ['#26262B'],
   dial: ['#C9C2B0'],
   ink: ['#2B2B2B'],
+  // the bakery: tiles, bread, flour, the shop door and window
+  tileWall: ['#FBF8F0', '#39404F'],
+  tileGrout: ['#DCD2BF', '#2B313D'],
+  tileBand: ['#3F7F78', '#1E3B3B'],
+  floorTile: ['#C97B45', '#4D3229'],
+  crust: ['#C98B3E'],
+  crustDark: ['#A66C2A'],
+  crustLight: ['#E4B369'],
+  flour: ['#FAF6EC', '#CFCCC6'],
+  sack: ['#DBC8A0'],
+  sackShade: ['#BFA97C'],
+  sackStripe: ['#A9463B'],
+  slate: ['#2F3B3A', '#161C1D'],
+  chalk: ['#F3F0E6', '#A9A79F'],
+  enamelGreen: ['#3F7D6E', '#1F4038'],
+  doorPaint: ['#4F8A7A', '#21403A'],
+  doorPaintDark: ['#3E6F62', '#18302B'],
+  doorPaintLight: ['#6BA595', '#2E5248'],
+  awning: ['#C24A3D', '#5A2A26'],
+  awningPale: ['#F7ECDB', '#6E6A66'],
+  wicker: ['#C79C5C'],
+  wickerDark: ['#9D7538'],
+  jam: ['#A9333B'],
+  jamLid: ['#EADBBB'],
+  mat: ['#B39562', '#4E4230'],
+  matEdge: ['#8C6E40', '#382E20'],
+  icing: ['#F8ECEF'],
+  berry: ['#B7374B'],
+  furGinger: ['#D98B3E', '#7B4F2B'],
+  sun: ['#FFE9A8', '#FFE9A8'],
+  moon: ['#F4EFD8', '#F4EFD8'],
 } satisfies Record<string, readonly [string, string?]>;
+
+/** What a room paints its own way: the walls, the skirting board, the floor. */
+const ROOM_TABLE: Record<RoomId, Partial<Record<keyof typeof TABLE, readonly [string, string?]>>> = {
+  study: {},
+  bakery: {
+    wallTop: ['#F7E8CF', '#2A3140'],
+    wallBottom: ['#F1D9B4', '#20262F'],
+    wallMotif: ['#EFD2A6', '#313A49'],
+    skirting: ['#8A5A3A', '#1B1510'],
+    floorTop: ['#EAD9BC', '#3B3336'],
+    floorBottom: ['#DCC6A0', '#2B2528'],
+  },
+};
 
 const BOOKS = ['#B5473A', '#2F6690', '#D9A441', '#3E7C59', '#6D4C7D', '#C8683A', '#2B4C6F', '#8C2F39', '#4F772D', '#A3742F', '#5B7DA6', '#7E5A3C'];
 
 export type PaintKey = keyof typeof TABLE;
 export type Paint = Record<PaintKey, string> & { books: readonly string[] };
 
-/** `own` — whether the table's own night colours are used (rooms) or every colour just darkens (things). */
-function paint(time: Time, dark: RGB, own: boolean): Paint {
-  const colours = (Object.entries(TABLE) as [PaintKey, readonly [string, string?]][]).map(
+/**
+ * `own` — whether the table's own night colours are used (rooms) or every colour just darkens (things);
+ * `room` — the room whose walls and floor are painted.
+ */
+function paint(time: Time, dark: RGB, own: boolean, room?: RoomId): Paint {
+  const table = room ? { ...TABLE, ...ROOM_TABLE[room] } : TABLE;
+  const colours = (Object.entries(table) as [PaintKey, readonly [string, string?]][]).map(
     ([name, [day, night]]) => [name, time === 'day' ? day : ((own ? night : undefined) ?? atNight(day, dark))] as const,
   );
   return {
@@ -164,7 +213,7 @@ function cached(key: string, make: () => Paint): Paint {
 }
 
 /** Colours of a room and its furniture at this time of day. */
-export const roomPaint = (time: Time): Paint => cached(`room:${time}`, () => paint(time, DEEP, true));
+export const roomPaint = (room: RoomId, time: Time): Paint => cached(`room:${room}:${time}`, () => paint(time, DEEP, true, room));
 
 /** Colours of the things to find: at night only a little darker than by day, so they stay findable. */
 export const thingPaint = (time: Time): Paint => cached(`thing:${time}`, () => paint(time, SOFT, false));

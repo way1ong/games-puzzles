@@ -1,6 +1,6 @@
 // The daily case: the same for everybody on the same calendar day (the player's local date). Made from the
-// date: the room, day or night (they take turns), a story frame, the suspects with the evidence, the
-// things and their places. And free search: a room with ordinary things only, from a seed.
+// date: the room, day or night (they take turns), a story frame of that room, the suspects with the
+// evidence, the things and their places. And free search: a room with ordinary things only, from a seed.
 import { nextInt, seedFromText } from '../../../shared/core/rng.ts';
 import { DETECTIVE } from '../config.ts';
 import type { CaseDef, Time } from './cases.ts';
@@ -9,8 +9,23 @@ import { place } from './placement.ts';
 import { ROOM_IDS, SPOTS, type RoomId } from './rooms.ts';
 import { ORDINARY, type ThingId } from './things.ts';
 
-/** Story frames of daily cases (dictionaries: stories.<frame>). */
-export const DAILY_FRAMES = ['dailySeal', 'dailyVase', 'dailyNote', 'dailyBiscuits'] as const;
+/**
+ * Story frames of daily cases, by the room they happen in (dictionaries: stories.<frame>). Anybody may turn
+ * out to have done it, so a frame's ending fits any person.
+ */
+export const DAILY_FRAMES: Record<RoomId, readonly string[]> = {
+  study: ['dailySeal', 'dailyVase', 'dailyNote', 'dailyBiscuits'],
+  bakery: ['bakeryRecipe', 'bakeryBun', 'bakerySign', 'bakeryJam'],
+};
+export const ALL_DAILY_FRAMES: readonly string[] = ROOM_IDS.flatMap((room) => DAILY_FRAMES[room]);
+
+/**
+ * One of the items for a seed. The seed goes through the generator first: the low bits of two text seeds
+ * that differ only in their last word go together, and "seed % n" would tie the room to the story.
+ */
+function pick<T>(items: readonly T[], seed: number): T {
+  return items[nextInt(seed, items.length).value] as T;
+}
 
 function shuffled<T>(items: readonly T[], seed: number): T[] {
   const out = items.slice();
@@ -36,14 +51,14 @@ export function dailyTime(dateKey: string): Time {
 
 export function dailyCase(dateKey: string): CaseDef {
   const seed = (part: string) => seedFromText(`way1ong-detective:daily:${dateKey}:${part}`);
-  const room = ROOM_IDS[seed('room') % ROOM_IDS.length] as RoomId;
+  const room = pick(ROOM_IDS, seed('room'));
   const cast = makeCast(seed('cast'));
   const ordinary = shuffled(ORDINARY, seed('things')).slice(0, DETECTIVE.thingsPerScene - cast.clues.length);
   const things = shuffled<ThingId>([...ordinary, ...cast.clues], seed('list'));
   return {
     id: `daily:${dateKey}`,
     kind: 'daily',
-    story: DAILY_FRAMES[seed('story') % DAILY_FRAMES.length] as string,
+    story: pick(DAILY_FRAMES[room], seed('story')),
     room,
     time: dailyTime(dateKey),
     things: place(things, SPOTS[room], seed('places')),

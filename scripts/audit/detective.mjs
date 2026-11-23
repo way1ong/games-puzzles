@@ -1,7 +1,8 @@
 // Browser audit of Detective: a whole story case on every size and look (the list of cases, the story, the
 // room, a hint, every thing found, the suspects, a wrong and a right name, the end), the menu and the large
-// mode, the night case, the case of the day, free search, a saved game after a reload, the keyboard, large
-// system text. And the drawings themselves: every thing stays inside its size and rests on its line.
+// mode, the night case, every other story case from the story to the end, every room of free search, the
+// case of the day, a saved game after a reload, the keyboard, large system text. And the drawings
+// themselves: in every case and room every thing stays inside its size and rests on its line.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -177,6 +178,60 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     }
   }
 
+  // ---------- every other story case from the story to the end; every room of free search ----------
+  let stories = 0;
+  let searches = 0;
+  {
+    const label = 'every case';
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'uk-UA', isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    watch(page, `detective ${label}`, origin, fail);
+    await page.goto(base);
+    await page.waitForSelector('.case-card');
+    stories = await page.locator('.cases').first().locator('.case-card').count();
+    searches = await page.locator('.cases').nth(1).locator('.case-card').count();
+    const openRoom = async () => {
+      await page.waitForSelector('.room__scroll .scene');
+      await page.waitForFunction(() => Number(document.querySelector('.room__scroll .scene').getAttribute('width')) > 0);
+    };
+    // the first two stories are played above on every size
+    for (let i = 2; i < stories; i++) {
+      const name = `${label} ${i + 1}`;
+      await page.locator('.cases').first().locator('.case-card').nth(i).click();
+      await page.waitForSelector('.intro');
+      await check(page, `${name} story`);
+      await page.locator('.intro .btn--primary').click();
+      await openRoom();
+      await check(page, `${name} room`);
+      for (const p of await page.evaluate(inspectThings)) fail(`detective ${name}: ${p}`);
+      await findEverything(page, true, name);
+      await page.waitForSelector('.panel__end .btn--primary');
+      await page.locator('.panel__end .btn--primary').click();
+      await page.waitForSelector('.people');
+      await check(page, `${name} suspects`);
+      // name everybody in turn until the case is solved
+      for (let who = 0; who < 12 && !(await page.locator('.result').count()); who++) {
+        await page.locator('.person').nth(who).click();
+        await page.locator('dialog[open] .btn--primary').click();
+        if (await page.locator('dialog[open]').count()) await page.locator('dialog[open] .btn--ghost').first().click();
+      }
+      await page.waitForSelector('.result');
+      await check(page, `${name} solved`);
+      await page.locator('.result .btn--primary').click();
+      await page.waitForSelector('.case-card');
+    }
+    if ((await page.locator('.badge--solved').count()) !== Math.max(0, stories - 2)) fail(`detective ${label}: not every story played here is marked solved`);
+    for (let i = 0; i < searches; i++) {
+      await page.locator('.cases').nth(1).locator('.case-card').nth(i).click();
+      await openRoom();
+      await check(page, `${label} search ${i + 1}`);
+      for (const p of await page.evaluate(inspectThings)) fail(`detective ${label} search ${i + 1}: ${p}`);
+      await page.locator('.top .icon-btn').first().click();
+      await page.waitForSelector('.case-card');
+    }
+    await ctx.close();
+  }
+
   // ---------- the case of the day and free search; a saved game after a reload ----------
   {
     const label = 'day and search';
@@ -317,5 +372,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, `${label} a person`);
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks through a whole case, the case of the day, free search, a reload, keyboard, large text`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks through a whole case, ${stories} story cases and ${searches} rooms of free search, the case of the day, a reload, keyboard, large text`;
 }

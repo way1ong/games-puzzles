@@ -7,12 +7,21 @@ import type { RoomId } from '../core/rooms.ts';
 import type { ThingId } from '../core/things.ts';
 import { context, sceneDefs, type Ctx } from './defs.ts';
 import { roomPaint } from './palette.ts';
+import { bakeryBack, bakeryDefs, bakeryFront } from './rooms/bakery.ts';
 import { studyBack, studyFront } from './rooms/study.ts';
 import { el, g, type Attrs } from './svg.ts';
 import { placedThing } from './things.ts';
 
-const ROOMS: Record<RoomId, { back(c: Ctx, time: Time): string; front(c: Ctx): string }> = {
+interface RoomArt {
+  back(c: Ctx, time: Time): string;
+  front(c: Ctx): string;
+  /** Definitions only this room refers to. */
+  defs?(c: Ctx): string;
+}
+
+const ROOMS: Record<RoomId, RoomArt> = {
   study: { back: studyBack, front: studyFront },
+  bakery: { back: bakeryBack, front: bakeryFront, defs: bakeryDefs },
 };
 
 export interface SceneView {
@@ -25,13 +34,13 @@ export interface SceneView {
 
 export function sceneSvg(view: SceneView, attrs: Attrs = {}): string {
   const { width, height } = DETECTIVE.scene;
-  const c = context(roomPaint(view.time), view.time === 'night', `room-${view.time}`);
+  const c = context(roomPaint(view.room, view.time), view.time === 'night', `room-${view.time}`);
   const room = ROOMS[view.room];
   const found = view.found ?? [];
   const things = view.things.filter((t) => !found.includes(t.thing)).map((t) => placedThing(t, view.time));
   return el(
     'svg',
     { xmlns: 'http://www.w3.org/2000/svg', viewBox: `0 0 ${width} ${height}`, class: 'scene', ...attrs },
-    sceneDefs(c) + g({ class: 'scene__room' }, room.back(c, view.time)) + g({ class: 'scene__things' }, things.join('')) + g({ class: 'scene__front' }, room.front(c)) + g({ class: 'scene__marks' }, ''),
+    sceneDefs(c, room.defs?.(c)) + g({ class: 'scene__room' }, room.back(c, view.time)) + g({ class: 'scene__things' }, things.join('')) + g({ class: 'scene__front' }, room.front(c)) + g({ class: 'scene__marks' }, ''),
   );
 }

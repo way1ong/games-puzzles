@@ -26,7 +26,8 @@
     }
   },
   "rooms": {
-    "study": "A detektív dolgozószobája"
+    "study": "A detektív dolgozószobája",
+    "bakery": "A pékség"
   },
   "intro": {
     "things": {
@@ -83,7 +84,12 @@
     "seat": "a széken",
     "floor": "a padlón",
     "rug": "a szőnyegen",
-    "underDesk": "az íróasztal alatt"
+    "underDesk": "az íróasztal alatt",
+    "rackTop": "az állvány tetején",
+    "table": "az asztalkán",
+    "counter": "a pulton",
+    "showcase": "az üvegvitrinen",
+    "mat": "a lábtörlőn"
   },
   "things": {
     "key": "Kulcs",
@@ -98,6 +104,7 @@
     "pencil": "Ceruza",
     "ticket": "Jegy",
     "pawn": "Sakkgyalog",
+    "glove": "Kesztyű",
     "hair:red": "Vörös hajszál",
     "hair:dark": "Sötét hajszál",
     "hair:blond": "Szőke hajszál",
@@ -182,6 +189,36 @@
       "title": "Az üres kekszesdoboz",
       "text": "A polcon álló kekszesdoboz egyetlen nap alatt kiürült. A morzsák az ajtóig vezetnek.",
       "ending": "{name} elpirul, és megígéri, hogy süt új kekszet – kétszer annyit."
+    },
+    "fairPie": {
+      "title": "Pite a vásárra",
+      "text": "Ma van a vásár, és Emma almás pitéjének a versenyre kellett volna mennie. Hajnalban még ott állt az állványán az ablaknál – most csak morzsák vannak rajta. Rozsdás, a macska úgy tesz, mintha aludna.",
+      "ending": "{name} zavarba jön: attól félt, hogy a pite elkésik, ezért hajnalban maga vitte el a vásárra. Már a zsűri asztalán van – a győztes kék szalagjával. Rozsdásnak semmi köze hozzá."
+    },
+    "nightShift": {
+      "title": "Éjszakai műszak",
+      "text": "Éjjel az éjjeliőr észrevette: a pékség ajtaja résnyire nyitva, a pult fölött égnek a lámpák. A padlón lisztes lábnyomok. Valaki elhagyott egy kesztyűt és egy kulcsot.",
+      "ending": "{name} felsóhajt: oda a meglepetés. Éjjel jött be, hogy tortát süssön az éjjeliőr születésnapjára – és úgy sietett haza, hogy elhagyta a kulcsát és a kesztyűjét. A torta elkészült; legfeljebb egy nappal korábban kapja meg az ünnepelt."
+    },
+    "bakeryRecipe": {
+      "title": "Az eltűnt recept",
+      "text": "A pult alatti fiókból eltűnt a füzet a pékség fonott kalácsának receptjével. A zár ép – tehát ismerős járt itt.",
+      "ending": "{name} visszaadja a füzetet: csak le kellett másolni a receptet, hogy otthon is megsüsse az ünnepre."
+    },
+    "bakeryBun": {
+      "title": "A megharapott zsemle",
+      "text": "Az ablakpárkányon álló kosárban van egy zsemle, amelybe valaki beleharapott – aztán visszatette. Ki sietett ennyire?",
+      "ending": "{name} elpirul, és kifizeti az egész kosár zsemlét – jut belőle mindenkinek."
+    },
+    "bakerySign": {
+      "title": "Fejjel lefelé lógó cégér",
+      "text": "Reggel a pereces cégér fejjel lefelé lógott az ajtón. Valaki visszaakasztotta, amíg a pékség zárva volt.",
+      "ending": "{name} nevet: a cégért lefújta a huzat, és sötétben, tapogatózva kellett visszaakasztani."
+    },
+    "bakeryJam": {
+      "title": "Az üres polc",
+      "text": "Eltűnt a polcról egy üveg málnalekvár. A helyén egy pénzérme és egy aláírás nélküli cédula: „Nagyon kellett.”",
+      "ending": "{name} elmagyarázza: a kassza zárva volt, a lekvár pedig sürgősen kellett a teához. Az érme a fizetség – borravalóval."
     }
   },
   "people": {

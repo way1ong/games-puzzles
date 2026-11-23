@@ -1,9 +1,9 @@
-// A grey cat asleep.
+// A cat asleep: the grey one of the study, the ginger one of the bakery.
 import { floorShadow, type Ctx } from '../defs.ts';
 import { circle, ellipse, path, stroke } from '../svg.ts';
 
-export function cat(c: Ctx, x: number, y: number): string {
-  const { p } = c;
+export function cat(c: Ctx, x: number, y: number, ginger = false): string {
+  const p = ginger ? { ...c.p, fur: c.p.furGinger } : c.p;
   return (
     floorShadow(c, x, y + 16, 46, 8, 0.3) +
     ellipse(x, y, 46, 22, p.fur) +

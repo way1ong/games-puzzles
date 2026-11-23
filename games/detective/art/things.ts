@@ -67,6 +67,16 @@ const DRAW: Record<Shape, (p: Paint, value: string | undefined) => string> = {
     ellipse(0, -23.5, 7, 2.6, p.linen, { stroke: p.linenEdge, 'stroke-width': 1 }) +
     circle(0, -31.5, 7, p.linen, { stroke: p.linenEdge, 'stroke-width': 1 }) +
     stroke('M-3 -35 q2 -2 5 -2', p.white, 1.4, { opacity: 0.7 }),
+  // a woollen glove lying flat: the cuff, the palm with the thumb up, four fingers
+  glove: (p) =>
+    rect(-20, -19, 9, 17, p.cream, { rx: 2 }) +
+    rect(-17.5, -19, 1.8, 17, p.greenDark, { opacity: 0.7 }) +
+    rect(-14.2, -19, 1.8, 17, p.greenDark, { opacity: 0.7 }) +
+    g('rotate(-28 -4 -19)', rect(-8, -28, 7, 12, p.green, { rx: 3.5 })) +
+    rect(-12, -20, 18, 19, p.green, { rx: 5 }) +
+    [0, 1, 2, 3].map((i) => rect(3, -20 + i * 4.8, i === 0 || i === 3 ? 14 : 17, 4.4, p.green, { rx: 2.2 })).join('') +
+    stroke('M-8 -15 q7 -3 13 0', p.greenLight, 1.6, { opacity: 0.8 }) +
+    stroke('M-8 -6 q7 2 12 0', p.greenDark, 1.4, { opacity: 0.6 }),
   // ---------- evidence ----------
   hair: (p, value) => {
     const d = 'M-18 -1 C-12 -20 4 -20 6 -8 C7 -1 16 -2 18 -10';
