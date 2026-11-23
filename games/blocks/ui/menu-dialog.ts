@@ -1,9 +1,9 @@
 // Menu: language, large board, vibration, installing, clear progress, about the game and the "Made by
 // way1ong" line.
 import { BLOCKS } from '../config.ts';
-import { h } from './dom.ts';
+import { h } from '../../../shared/ui/dom.ts';
 import { dict, LANGS, type Dict } from './i18n.ts';
-import { install, installWay } from './install.ts';
+import { install, installWay } from '../../../shared/ui/install.ts';
 import type { Settings } from './storage.ts';
 
 /**

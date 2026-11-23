@@ -1,7 +1,7 @@
 // The pieces on offer: one slot per piece, a "turn" button under each in the calm mode.
 import type { Cells, Piece } from '../core/shapes.ts';
 import { shapeCode } from '../core/game.ts';
-import { h } from './dom.ts';
+import { h } from '../../../shared/ui/dom.ts';
 import { pieceElement } from './piece-view.ts';
 
 export interface TraySlot {
