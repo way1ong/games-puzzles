@@ -47,7 +47,7 @@ export const SHAPES: Record<Shape, ShapeInfo> = {
   watch: { w: 44, h: 40, on: LEDGES_ALL, turn: 0 },
   coin: { w: 26, h: 26, on: GROUND, turn: 0 },
   envelope: { w: 52, h: 34, on: [...LEDGES_ALL, ...GROUND], turn: 25 },
-  quill: { w: 62, h: 26, on: ['top', 'sill', 'desk', ...GROUND], turn: 20 },
+  quill: { w: 62, h: 30, on: ['top', 'sill', 'desk', ...GROUND], turn: 20 },
   // a candle only stands, and never burns: there are books around (owner's remark of 23.11)
   candle: { w: 42, h: 48, on: LEDGES_ALL, turn: 0 },
   matches: { w: 34, h: 22, on: [...LEDGES_ALL, 'floor'], turn: 20 },

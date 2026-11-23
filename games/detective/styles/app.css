@@ -1,0 +1,723 @@
+/* Detective screen. Colours only from tokens.css; the page reset and common controls are in
+   shared/styles/ui.css. A phone in portrait first: one column, the room as tall as the space allows. */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: max(0.5rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
+}
+
+/* Looking over the room: the room takes what is left of the screen (on a short phone the list goes below
+   and the page scrolls). */
+.app--search {
+  gap: 0.5rem;
+  max-width: none;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top__name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+/* The heading takes the focus when the screen changes (for screen readers); it is not a control. */
+.top__name:focus {
+  outline: none;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+}
+
+.sign {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.icon-plus,
+.icon-minus {
+  width: 1.125rem;
+  height: 1.125rem;
+  background: linear-gradient(currentColor 0 0) center / 100% 2.5px no-repeat;
+}
+
+.icon-plus {
+  background:
+    linear-gradient(currentColor 0 0) center / 100% 2.5px no-repeat,
+    linear-gradient(currentColor 0 0) center / 2.5px 100% no-repeat;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.badge {
+  padding: 0.125rem 0.5rem;
+  border: 1.5px solid currentColor;
+  border-radius: 62rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge--new {
+  color: var(--muted);
+}
+
+.badge--started,
+.badge--clue {
+  color: var(--clue);
+}
+
+.badge--solved {
+  color: var(--good);
+}
+
+/* What has just happened, in words (also read aloud). The line keeps its height when it is empty. */
+.status {
+  min-height: 1.4em;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* ---------- the list of cases ---------- */
+.home {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.home__part {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.home__streak,
+.home__note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.cases {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A card's place measures itself: when large text leaves too little room, the words go under the sign. */
+.case-slot {
+  container-type: inline-size;
+}
+
+.case-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 4rem;
+  padding: 0.625rem 0.75rem;
+  border: 2px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+  text-align: start;
+  cursor: pointer;
+}
+
+/* Day and night: a sun on a light round, a moon on a dark one. */
+.case-card__time {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+}
+
+.case-card--day .case-card__time {
+  background: var(--bg);
+  color: var(--clue);
+}
+
+.case-card--night .case-card__time {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--surface);
+}
+
+.case-card__text {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.case-card__title {
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.case-card__line,
+.case-card__note {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+@container (max-width: 17rem) {
+  .case-card {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+  }
+
+  .case-card__text {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+
+  .case-card .badge {
+    justify-self: end;
+  }
+}
+
+/* ---------- the story ---------- */
+.intro {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.intro__picture {
+  overflow: hidden;
+  border: 3px solid var(--frame);
+  border-radius: 0.75rem;
+  line-height: 0;
+}
+
+.intro__picture .scene {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.intro p {
+  margin: 0;
+}
+
+.intro__meta {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.intro__text {
+  font-size: 1.0625rem;
+}
+
+.intro__task {
+  font-weight: 650;
+}
+
+/* ---------- the room ---------- */
+.search {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+/* On a short phone the room keeps most of the screen and the list goes below it (the page scrolls). */
+.room {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: min(24rem, 62vh);
+  min-height: min(24rem, 62dvh);
+  overflow: hidden;
+  border: 3px solid var(--frame);
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.room__view {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+/* The browser's own scrolling moves the room; two fingers and the buttons change its size. The box fills
+   its holder but takes no part in the layout: the size of the drawing never changes the page. */
+.room__scroll {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+}
+
+.room__scroll:focus-visible {
+  outline-offset: -3px;
+}
+
+.room__scroll.is-dragged {
+  cursor: grabbing;
+}
+
+.room__scroll .scene {
+  display: block;
+  flex: none;
+  margin: auto;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Under the room: how much is found, and the size buttons — beside the room, never over it. */
+.room__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.5rem;
+  padding: 0.25rem 0.375rem 0.25rem 0.75rem;
+  border-top: 3px solid var(--frame);
+}
+
+.room__count {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.room__zoom {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.room__zoom .icon-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Marks over the room: a light line with a dark edge, the same width on the screen at any size. */
+.mark-edge,
+.mark-line,
+.found-flash {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.mark-edge {
+  stroke: var(--mark-edge);
+  stroke-width: 7px;
+}
+
+.mark-line {
+  stroke: var(--mark);
+  stroke-width: 3px;
+}
+
+.hint {
+  animation: hint 1.4s ease-in-out infinite;
+}
+
+@keyframes hint {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.thing {
+  transition: opacity 0.35s ease;
+}
+
+.thing.is-found {
+  opacity: 0;
+}
+
+.found-flash {
+  stroke: var(--mark);
+  stroke-width: 4px;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: found 0.35s ease-out forwards;
+}
+
+@keyframes found {
+  from {
+    transform: scale(0.4);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+.miss {
+  fill: var(--mark);
+  stroke: var(--mark-edge);
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
+  animation: miss 0.35s ease-out forwards;
+}
+
+@keyframes miss {
+  from {
+    opacity: 0.8;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* ---------- the list of things ---------- */
+.panel {
+  display: grid;
+  gap: 0.375rem;
+}
+
+/* Two lines are kept for the words about the last find, so the room above does not jump. */
+.panel .status {
+  min-height: 2.8em;
+}
+
+.panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.5rem;
+  min-height: 2.75rem;
+}
+
+.panel__title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.things {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(8.5rem, 100%), 1fr));
+  gap: 0.125rem 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.thing-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  min-height: 2rem;
+}
+
+.thing-chip .thing-icon,
+.thing-chip .sign {
+  flex: none;
+  width: 2rem;
+  height: 1.625rem;
+}
+
+/* A thin edge keeps pale things (a quill, a candle) visible on the page. */
+.thing-icon {
+  filter: drop-shadow(0 0 0.5px var(--muted)) drop-shadow(0 0 0.5px var(--muted));
+}
+
+.thing-chip .sign {
+  color: var(--good);
+}
+
+.thing-chip__text {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+/* A long word (Szemüveglencse) is divided rather than pushed off a narrow screen. */
+.thing-chip__name {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.thing-chip__clue {
+  color: var(--clue);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.thing-chip.is-found .thing-chip__name {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.panel__end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.panel__end p {
+  margin: 0;
+  font-weight: 650;
+}
+
+/* ---------- who did it ---------- */
+.suspects {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.suspects__title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.suspects__lead {
+  margin: 0;
+  color: var(--muted);
+}
+
+.clues {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(13.5rem, 100%), 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clue {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.clue .thing-icon {
+  flex: none;
+  width: 2.25rem;
+  height: 2rem;
+}
+
+.clue__text {
+  display: grid;
+  min-width: 0;
+}
+
+.clue__name {
+  font-weight: 700;
+}
+
+.clue__where {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* Two in a row on a phone, three on a wider screen; one when large text leaves a card no room for a word. */
+.people {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(max(8.5rem, 30%), 100%), 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.person {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.125rem;
+  width: 100%;
+  padding: 0.5rem 0.5rem 0.625rem;
+  border: 2px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+  text-align: center;
+  cursor: pointer;
+}
+
+.person .portrait {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 0.375rem;
+  border-radius: 0.6875rem;
+  aspect-ratio: 1;
+}
+
+.person__name {
+  font-size: 1.125rem;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.person__role {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+/* Set aside: a veil over the card, the word over the veil. */
+.person.is-aside::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--aside);
+  content: '';
+  pointer-events: none;
+}
+
+.badge--aside {
+  position: absolute;
+  top: 0.875rem;
+  left: 50%;
+  z-index: 1;
+  background: var(--surface);
+  color: var(--text);
+  transform: translateX(-50%);
+}
+
+/* A person's card and the end of a case. */
+.person-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.person-card__picture {
+  flex: none;
+  width: min(7.5rem, 45%);
+}
+
+.person-card__picture .portrait {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+
+.person-card h2 {
+  margin: 0;
+}
+
+.person-card__role {
+  color: var(--muted);
+}
+
+.traits,
+.result__why {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.dialog .person-card__note {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.result {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.result p {
+  margin: 0;
+}
+
+.result__title {
+  margin: 0;
+  font-size: 1.375rem;
+}
+
+.result__who {
+  color: var(--accent);
+  font-size: 1.125rem;
+  font-weight: 750;
+}
+
+.result__ending {
+  font-size: 1.0625rem;
+}
+
+.result__numbers,
+.result__streak,
+.result__note {
+  color: var(--muted);
+}
+
+/* A laptop or a tablet on its side: the room on the left as tall as the screen, the list on the right. */
+@media (min-width: 60rem) and (min-aspect-ratio: 4/3) {
+  .search {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .panel {
+    align-content: start;
+    width: 19rem;
+    overflow: auto;
+  }
+
+  .things {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hint,
+  .found-flash,
+  .miss {
+    animation: none;
+  }
+
+  .found-flash {
+    opacity: 0;
+  }
+
+  .miss {
+    opacity: 0.7;
+  }
+
+  .thing {
+    transition: none;
+  }
+}

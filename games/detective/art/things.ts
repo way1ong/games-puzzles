@@ -33,7 +33,7 @@ const DRAW: Record<Shape, (p: Paint, value: string | undefined) => string> = {
   // lying: the feather's end and the nib touch what it lies on
   quill: (p) =>
     g(
-      'translate(1 -9) rotate(-75) scale(0.95)',
+      'translate(1 -14) rotate(-75) scale(0.95)',
       path('M0 -30 q12 14 6 40 l-6 6 l-6 -6 q-6 -26 6 -40Z', p.feather, { stroke: p.featherEdge, 'stroke-width': 1.5 }) + line(0, -26, 0, 20, p.featherEdge, 1.5) + path('M-2 16 l2 12 l2 -12Z', p.ink),
     ),
   // a candle in a holder with a handle; never lit
@@ -69,15 +69,15 @@ const DRAW: Record<Shape, (p: Paint, value: string | undefined) => string> = {
     stroke('M-3 -35 q2 -2 5 -2', p.white, 1.4, { opacity: 0.7 }),
   // ---------- evidence ----------
   hair: (p, value) => {
-    const d = 'M-18 -3 C-12 -22 4 -22 6 -10 C7 -3 16 -4 18 -12';
+    const d = 'M-18 -1 C-12 -20 4 -20 6 -8 C7 -1 16 -2 18 -10';
     const hair = HAIR_PAINT[value as Hair];
-    return halo(d, p, 6) + stroke(d, hair.base, 3) + stroke('M-14 -8 C-9 -18 2 -19 4 -11', hair.light, 1.2, { opacity: 0.8 });
+    return halo(d, p, 6) + stroke(d, hair.base, 3) + stroke('M-14 -6 C-9 -16 2 -17 4 -9', hair.light, 1.2, { opacity: 0.8 });
   },
   glasses: (p) =>
     ellipse(0, -10, 13, 9, p.glass, { stroke: p.glassEdge, 'stroke-width': 1.6 }) + stroke('M-12 -8 L-6 -11 L-2 -7 L3 -13 L7 -9 L12 -12', p.crack, 1.3) + stroke('M-8 -14 q4 -4 9 -4', p.white, 2),
   buttons: (_p, value) => buttonArt(value as Buttons, 0, -11, 10),
   scarf: (p, value) => {
-    const d = 'M-20 -6 C-14 -20 -6 2 0 -9 C5 -18 12 -16 14 -8 C15 -3 19 -3 20 -9';
+    const d = 'M-20 -2 C-14 -16 -6 6 0 -5 C5 -14 12 -12 14 -4 C15 1 19 1 20 -5';
     return halo(d, p, 6) + stroke(d, SCARF_PAINT[value as Scarf].main, 2.8);
   },
   flower: () =>
@@ -91,9 +91,10 @@ export function thingArt(thing: ThingId, time: Time): string {
 
 /** A thing on its place in a room; lying things turn about their middle. */
 export function placedThing(placed: Placed, time: Time): string {
-  const { h } = sizeOf(placed.thing);
+  const { w, h } = sizeOf(placed.thing);
   const turn = placed.rot ? ` translate(0 ${-h / 2}) rotate(${placed.rot}) translate(0 ${h / 2})` : '';
-  return el('g', { class: 'thing', 'data-thing': placed.thing, transform: `translate(${placed.x} ${placed.y})${turn}` }, thingArt(placed.thing, time));
+  // data-box: the size the drawing must stay in (the browser audit measures the drawing against it)
+  return el('g', { class: 'thing', 'data-thing': placed.thing, 'data-box': `${w} ${h}`, transform: `translate(${placed.x} ${placed.y})${turn}` }, thingArt(placed.thing, time));
 }
 
 /** A small picture of a thing for the list (its own SVG, daylight colours). */
