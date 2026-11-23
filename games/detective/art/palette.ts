@@ -169,6 +169,35 @@ const TABLE = {
   furGinger: ['#D98B3E', '#7B4F2B'],
   sun: ['#FFE9A8', '#FFE9A8'],
   moon: ['#F4EFD8', '#F4EFD8'],
+  // the station: wall panels, stone floor, the train and the platform, luggage, the violin
+  panelGreen: ['#4D6F5F', '#1E2E2A'],
+  panelGreenLight: ['#5F8573', '#28403A'],
+  panelGreenDark: ['#3B5749', '#16231F'],
+  slab: ['#C6BEAD', '#2D2E36'],
+  runner: ['#8F3238', '#472120'],
+  runnerInner: ['#A5444A', '#552A29'],
+  train: ['#3F7A5C', '#1E3B2E'],
+  trainDark: ['#2D5B45', '#152A22'],
+  trainRoof: ['#71777D', '#2A2E33'],
+  trainStripe: ['#E9D9A6', '#7A7358'],
+  platform: ['#ACA596', '#2A2B32'],
+  platformEdge: ['#F1E9D2', '#5B5A55'],
+  boardBlack: ['#23292D', '#101418'],
+  milkGlass: ['#F3F0E4', '#FFE4A6'],
+  officeInside: ['#F3E3B8', '#141A22'],
+  blind: ['#CDBD92', '#4E4836'],
+  velvet: ['#3F4F8C', '#222B52'],
+  velvetDark: ['#2E3A6B', '#191F3D'],
+  caseBlack: ['#2B2420', '#151210'],
+  violin: ['#B4632C', '#5E3519'],
+  violinDark: ['#8C481E', '#472610'],
+  suitcase: ['#9A6B43', '#4A3322'],
+  suitcaseDark: ['#7A5232', '#392718'],
+  mailbox: ['#B8402F', '#56231C'],
+  mailboxDark: ['#8F2F22', '#3F1A15'],
+  pigeon: ['#8F98A5'],
+  pigeonDark: ['#6C7480'],
+  pigeonNeck: ['#5E8A7C'],
 } satisfies Record<string, readonly [string, string?]>;
 
 /** What a room paints its own way: the walls, the skirting board, the floor. */
@@ -181,6 +210,17 @@ const ROOM_TABLE: Record<RoomId, Partial<Record<keyof typeof TABLE, readonly [st
     skirting: ['#8A5A3A', '#1B1510'],
     floorTop: ['#EAD9BC', '#3B3336'],
     floorBottom: ['#DCC6A0', '#2B2528'],
+  },
+  station: {
+    wallTop: ['#EEEBD6', '#252C39'],
+    wallBottom: ['#E3DFC4', '#1C232E'],
+    skirting: ['#3C2E24', '#13100D'],
+    floorTop: ['#D2CBBB', '#33343D'],
+    floorBottom: ['#BFB7A5', '#26272E'],
+    plank: ['#A69E8D', '#1D1E24'],
+    // a snowy night: the sky is pale with snow clouds
+    skyTop: ['#BFE1F3', '#1A2233'],
+    skyBottom: ['#E8F4FA', '#343E52'],
   },
 };
 

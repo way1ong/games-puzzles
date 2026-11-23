@@ -27,7 +27,8 @@
   },
   "rooms": {
     "study": "The detective’s study",
-    "bakery": "The bakery"
+    "bakery": "The bakery",
+    "station": "The railway station"
   },
   "intro": {
     "things": {
@@ -89,7 +90,11 @@
     "table": "on the table",
     "counter": "on the counter",
     "showcase": "on the glass case",
-    "mat": "on the doormat"
+    "mat": "on the doormat",
+    "bench": "on a bench",
+    "suitcase": "on a suitcase",
+    "ticketDesk": "on the ticket-window ledge",
+    "runner": "on the carpet runner"
   },
   "things": {
     "key": "Key",
@@ -219,6 +224,36 @@
       "title": "The Empty Shelf",
       "text": "A jar of raspberry jam is gone from the shelf. In its place lie a coin and an unsigned note: “Badly needed.”",
       "ending": "{name} explains: the till was closed, and the jam was needed for tea at once. The coin is the payment — with a tip."
+    },
+    "strangeSuitcase": {
+      "title": "The Wrong Suitcase",
+      "text": "Two suitcases just alike lie in the waiting hall. One has just been opened — and the things inside belong to somebody else. Someone took the wrong one, then put it back in the wrong place. By chance or on purpose?",
+      "ending": "{name} clutches her head: hurrying for the train, she grabbed the wrong suitcase and noticed only on the platform — sheet music inside instead of her camera. She quietly put it back. Now each suitcase is with its owner."
+    },
+    "lastTrain": {
+      "title": "The Last Train",
+      "text": "The last train has gone. An open case is left in the waiting hall — and there is no violin in it. The musician stepped away for a minute, only to look at the timetable.",
+      "ending": "{name} spreads his hands: the violin lay in the draught by the door, so he locked it in his little room — away from the damp and from strangers. He has the key, the violin is whole, and the musician is already playing a thank-you."
+    },
+    "stationUmbrella": {
+      "title": "Somebody Else’s Umbrella",
+      "text": "Somebody left the waiting hall with another person’s umbrella — and left a broken one under the bench.",
+      "ending": "{name} brings the umbrella back with an apology: both are black, and it was dark outside."
+    },
+    "stationClock": {
+      "title": "The Clock Runs Late",
+      "text": "The station clock suddenly fell ten minutes behind, and several passengers nearly missed their trains. Somebody has touched the hands.",
+      "ending": "{name} explains: the clock had stopped, and the hands had to be set by guesswork. The clockmaker has been sent for."
+    },
+    "stationBouquet": {
+      "title": "A Bouquet without a Note",
+      "text": "A bouquet lies on the ledge of the ticket window, with no note. The clerk says somebody put it down and ran.",
+      "ending": "{name} blushes: the bouquet is thanks for a wallet that was found and given back."
+    },
+    "stationTimetable": {
+      "title": "One Line Too Many",
+      "text": "A line has appeared in the timetable that was not there yesterday: a train to the sea at twenty-five o’clock. Who wrote it?",
+      "ending": "{name} laughs: it is a joke for a nephew who has just learnt to read the timetable. The line is already wiped off."
     }
   },
   "people": {

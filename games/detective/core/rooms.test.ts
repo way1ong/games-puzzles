@@ -5,6 +5,7 @@ import { DETECTIVE } from '../config.ts';
 import { canHold } from './placement.ts';
 import { ROOM_IDS, SPOTS, type Spot } from './rooms.ts';
 import { BAKERY, BAKERY_BLOCKED, BAKERY_RACK, BAKERY_SILL, bakeryRack } from './rooms/bakery.ts';
+import { STATION, STATION_BLOCKED, STATION_SILL, SUITCASE_TOP } from './rooms/station.ts';
 import { BOOK_GAP, STUDY, STUDY_BLOCKED, STUDY_SHELVES, STUDY_SILL, studyShelves } from './rooms/study.ts';
 import { ORDINARY, type ThingId } from './things.ts';
 import { ALL_CLUES } from './traits.ts';
@@ -210,5 +211,69 @@ describe('the bakery', () => {
       expect(s.y, s.id).toBeLessThanOrEqual(onMat.y2);
     }
     for (const s of of('floor')) expect(overlap(box(s), onMat), s.id).toBe(false);
+  });
+});
+
+describe('the station', () => {
+  const spots = SPOTS.station;
+  const of = (kind: Spot['kind']) => spots.filter((s) => s.kind === kind);
+  const at = (where: Spot['where']) => spots.filter((s) => s.where === where);
+  const { window: win, benchA, benchB, suitcases, ticket, runner } = STATION;
+
+  it('places on the sill are on its line, clear of the flower pot', () => {
+    expect(of('sill').length).toBeGreaterThan(0);
+    for (const s of of('sill')) {
+      expect(s.y, s.id).toBe(STATION_SILL);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(win.x);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(win.x + win.w);
+      expect(box(s).x2 <= win.pot - 24 || box(s).x1 >= win.pot + 24, s.id).toBe(true);
+    }
+  });
+
+  it('places on the benches are on their seats', () => {
+    expect(of('seat').length).toBeGreaterThan(0);
+    for (const s of of('seat')) {
+      expect(s.where, s.id).toBe('bench');
+      const bench = [benchA, benchB].find((b) => box(s).x1 >= b.x && box(s).x2 <= b.x + b.w);
+      expect(bench, s.id).toBeDefined();
+      expect(s.y, s.id).toBe(bench?.seat);
+    }
+  });
+
+  it('places on the suitcases are on their tops, one on each', () => {
+    expect(at('suitcase').length).toBe(suitcases.xs.length);
+    at('suitcase').forEach((s, i) => {
+      const middle = suitcases.xs[i] as number;
+      expect(s.y, s.id).toBe(SUITCASE_TOP);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(middle - suitcases.w / 2);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(middle + suitcases.w / 2);
+    });
+  });
+
+  it('places at the ticket window are on its ledge, clear of the bell', () => {
+    expect(at('ticketDesk').length).toBeGreaterThan(0);
+    for (const s of at('ticketDesk')) {
+      expect(s.y, s.id).toBe(ticket.ledge);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(ticket.x + 20);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(ticket.x + ticket.w - 20);
+      expect(box(s).x2 <= ticket.bell - 24 || box(s).x1 >= ticket.bell + 24, s.id).toBe(true);
+    }
+  });
+
+  it('places on the floor and the runner are on the floor, clear of the furniture', () => {
+    for (const s of [...of('floor'), ...of('rug')]) {
+      expect(box(s).y1, s.id).toBeGreaterThanOrEqual(STATION.floor);
+      for (const b of STATION_BLOCKED) expect(overlap(box(s), b), `${s.id} / ${b.name}`).toBe(false);
+    }
+    const onRunner = { x1: runner.x, x2: runner.x + runner.w, y1: runner.y, y2: runner.y + runner.h };
+    expect(of('rug').length).toBeGreaterThan(0);
+    for (const s of of('rug')) {
+      expect(s.where, s.id).toBe('runner');
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(onRunner.x1);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(onRunner.x2);
+      expect(box(s).y1, s.id).toBeGreaterThanOrEqual(onRunner.y1);
+      expect(s.y, s.id).toBeLessThanOrEqual(onRunner.y2);
+    }
+    for (const s of of('floor')) expect(overlap(box(s), onRunner), s.id).toBe(false);
   });
 });
