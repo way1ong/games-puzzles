@@ -1,6 +1,8 @@
 // Every number of the Detective rules lives here (docs/detective/SPEC.md). (C) = Claude's proposal within
 // the plan approved on 23.11; change it here, not in the logic.
 
+import { gameAddress } from '../../shared/core/address.ts';
+
 export const DETECTIVE = {
   /**
    * The game's name where it is installed and in the shared daily result: the working name until the final
@@ -11,7 +13,7 @@ export const DETECTIVE = {
    * Addresses: the studio's site for the "Made by way1ong" line, and the game itself for the shared daily
    * result. null — not public yet: the line has no link, the result has no address.
    */
-  links: { site: null as string | null, game: null as string | null },
+  links: { site: null as string | null, game: gameAddress('detective') },
   /** Every room is drawn on a sheet of this size, in scene units. */
   scene: { width: 1200, height: 800 },
   /** Things to find in a room: in a case and in free search (C). */
