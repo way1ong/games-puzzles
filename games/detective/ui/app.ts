@@ -120,7 +120,7 @@ export function startApp(root: HTMLElement): void {
       content.replaceChildren(search(def, progress));
     } else if (progress.stage === 'suspects') {
       main.className = 'app app--page';
-      content.replaceChildren(suspectsView(d, def, progress, openPerson), status);
+      content.replaceChildren(suspectsView(d, def, progress, openPerson));
     } else {
       main.className = 'app app--page';
       content.replaceChildren(resultView(d, def, progress, resultExtras(def, progress)));
