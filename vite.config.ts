@@ -4,6 +4,8 @@ import { BLOCKS } from './games/blocks/config.ts';
 import blocksEn from './games/blocks/i18n/en.json' with { type: 'json' };
 import { DETECTIVE } from './games/detective/config.ts';
 import detectiveEn from './games/detective/i18n/en.json' with { type: 'json' };
+import { SUDOKU } from './games/sudoku/config.ts';
+import sudokuEn from './games/sudoku/i18n/en.json' with { type: 'json' };
 import { gameApps, type GameApp } from './scripts/pwa.ts';
 
 const here = (path: string) => fileURLToPath(new URL(path, import.meta.url));
@@ -12,6 +14,7 @@ const here = (path: string) => fileURLToPath(new URL(path, import.meta.url));
 const GAMES: GameApp[] = [
   { game: 'blocks', name: BLOCKS.name, shortName: blocksEn.app.name, description: blocksEn.meta.description, lang: 'en' },
   { game: 'detective', name: DETECTIVE.name, shortName: detectiveEn.app.name, description: detectiveEn.meta.description, lang: 'en' },
+  { game: 'sudoku', name: SUDOKU.name, shortName: sudokuEn.app.name, description: sudokuEn.meta.description, lang: 'en' },
 ];
 
 // A test page is one game in one file (scripts/claude-page.mjs sets ONLY_GAME): built alone, the game's

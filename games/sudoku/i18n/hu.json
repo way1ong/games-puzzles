@@ -1,0 +1,292 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Sudoku – klasszikus sudoku reklám nélkül",
+    "description": "Klasszikus 9 × 9-es sudoku négy szinten, jegyzetekkel és magyarázó tippekkel. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Sudoku",
+    "menu": "Menü",
+    "back": "Vissza a kezdéshez",
+    "close": "Bezárás"
+  },
+  "levels": {
+    "label": "Szint",
+    "easy": "Könnyű",
+    "medium": "Közepes",
+    "hard": "Nehéz",
+    "expert": "Szakértő"
+  },
+  "levelInfo": {
+    "easy": "Sok megadott szám, csak egyszerű lépések",
+    "medium": "Kevesebb megadott szám, jegyzetek nélkül is megy",
+    "hard": "A jegyzetek segítenek",
+    "expert": "Haladó módszerek, találgatás nélkül"
+  },
+  "home": {
+    "play": "Játék",
+    "continue": "Folytatás",
+    "newPuzzle": "Új feladvány",
+    "daily": "A nap feladványa",
+    "dailyNote": "Ma mindenkinek ugyanaz, minden szinten más",
+    "solved": "megoldva",
+    "started": "elkezdve",
+    "streak": {
+      "one": "{n} nap egymás után",
+      "other": "{n} nap egymás után"
+    }
+  },
+  "game": {
+    "board": "Sudoku-tábla",
+    "dailyTitle": "A nap feladványa · {date}",
+    "time": "Idő",
+    "preparing": "Készül a feladvány…",
+    "tipCell": "Koppintson egy cellára, majd egy számra.",
+    "tipDigit": "Koppintson egy számra, majd a cellákra.",
+    "cell": "{row}. sor, {col}. oszlop: {content}",
+    "cellEmpty": "üres",
+    "cellGiven": "{number}, megadott szám",
+    "cellNotes": "jegyzetek: {numbers}",
+    "cellRepeat": "{number}, ismétlődik",
+    "cellWrong": "{number}, hibás",
+    "placed": "{number}: {row}. sor, {col}. oszlop",
+    "erased": "Törölve: {row}. sor, {col}. oszlop",
+    "noteAdded": "Jegyzet hozzáadva: {number}",
+    "noteRemoved": "Jegyzet törölve: {number}",
+    "placedDone": "{number}: {row}. sor, {col}. oszlop. Kész: {place}",
+    "fullWithMistakes": "A tábla megtelt, de néhány szám hibás.",
+    "showMistakes": "Mutassa meg",
+    "nothingToUndo": "Nincs mit visszavonni",
+    "nothingToRedo": "Nincs mit megismételni",
+    "newSure": "Koppintson még egyszer az új feladványhoz: ez a feladvány bezárul"
+  },
+  "place": {
+    "row": "{n}. sor",
+    "col": "{n}. oszlop",
+    "box": "{n}. négyzet"
+  },
+  "pad": {
+    "label": "Számok",
+    "digit": "{number}",
+    "digitLeft": {
+      "one": "{number}: {left} van hátra",
+      "other": "{number}: {left} van hátra"
+    },
+    "digitDone": "{number}: mind a helyén"
+  },
+  "tools": {
+    "label": "Eszközök",
+    "undo": "Vissza",
+    "redo": "Újra",
+    "notes": "Jegyzetek",
+    "hint": "Tipp",
+    "fill": "Jegyzetek kitöltése",
+    "erase": "Törlés",
+    "newGame": "Új feladvány"
+  },
+  "digits": {
+    "1": "az 1-es",
+    "2": "a 2-es",
+    "3": "a 3-as",
+    "4": "a 4-es",
+    "5": "az 5-ös",
+    "6": "a 6-os",
+    "7": "a 7-es",
+    "8": "a 8-as",
+    "9": "a 9-es"
+  },
+  "hint": {
+    "title": "Tipp",
+    "explain": "Magyarázat",
+    "next": "Tovább",
+    "place": "Szám beírása",
+    "stepOf": "Lépés: {n}/{total}",
+    "chain": "A következő szám a kiemelt cellába kerül. Előbb erre a módszerre lesz szükség: {name}.",
+    "mistakesTitle": "Hibás számok",
+    "mistakes": {
+      "one": "A kiemelt szám hibás. Törölje, majd nézze meg újra.",
+      "other": "{n} kiemelt szám hibás. Törölje őket, majd nézze meg újra."
+    },
+    "erase": "Törlés",
+    "reveal": "Itt nincs egyszerű lépés. A kiemelt cellába ez kerül: {digit}."
+  },
+  "techniques": {
+    "fullHouse": "Utolsó üres cella",
+    "hiddenSingle": "Egyetlen hely",
+    "nakedSingle": "Egyetlen szám",
+    "pointing": "A négyzet egy vonalra mutat",
+    "claiming": "A vonal egy négyzetre mutat",
+    "nakedPair": "Pár",
+    "hiddenPair": "Rejtett pár",
+    "nakedTriple": "Hármas",
+    "hiddenTriple": "Rejtett hármas",
+    "xWing": "X-szárny",
+    "xyWing": "XY-szárny",
+    "swordfish": "Kardhal",
+    "xyzWing": "XYZ-szárny"
+  },
+  "where": {
+    "fullHouse": {
+      "row": "A kiemelt sorban egyetlen üres cella maradt.",
+      "col": "A kiemelt oszlopban egyetlen üres cella maradt.",
+      "box": "A kiemelt négyzetben egyetlen üres cella maradt."
+    },
+    "hiddenSingle": {
+      "row": "Nézze meg a kiemelt sort: {digit} csak egy helyre kerülhet benne.",
+      "col": "Nézze meg a kiemelt oszlopot: {digit} csak egy helyre kerülhet benne.",
+      "box": "Nézze meg a kiemelt négyzetet: {digit} csak egy helyre kerülhet benne."
+    },
+    "nakedSingle": "Nézze meg a kiemelt cellát: csak egyetlen szám illik bele.",
+    "pointing": "Nézze meg, hová kerülhet {digit} a kiemelt négyzetben.",
+    "claiming": {
+      "row": "Nézze meg, hová kerülhet {digit} a kiemelt sorban.",
+      "col": "Nézze meg, hová kerülhet {digit} a kiemelt oszlopban."
+    },
+    "nakedPair": "Nézze meg a két kiemelt cellát.",
+    "hiddenPair": {
+      "row": "Nézze meg ezt a két számot a kiemelt sorban: {a} és {b}.",
+      "col": "Nézze meg ezt a két számot a kiemelt oszlopban: {a} és {b}.",
+      "box": "Nézze meg ezt a két számot a kiemelt négyzetben: {a} és {b}."
+    },
+    "nakedTriple": "Nézze meg a három kiemelt cellát.",
+    "hiddenTriple": {
+      "row": "Nézze meg ezt a három számot a kiemelt sorban: {a}, {b} és {c}.",
+      "col": "Nézze meg ezt a három számot a kiemelt oszlopban: {a}, {b} és {c}.",
+      "box": "Nézze meg ezt a három számot a kiemelt négyzetben: {a}, {b} és {c}."
+    },
+    "xWing": {
+      "rows": "Nézze meg, hová kerülhet {digit} a két kiemelt sorban.",
+      "cols": "Nézze meg, hová kerülhet {digit} a két kiemelt oszlopban."
+    },
+    "swordfish": {
+      "rows": "Nézze meg, hová kerülhet {digit} a három kiemelt sorban.",
+      "cols": "Nézze meg, hová kerülhet {digit} a három kiemelt oszlopban."
+    },
+    "xyWing": "Nézze meg a három keretes cellát: mindegyikben két szám lehet.",
+    "xyzWing": "Nézze meg a három keretes cellát."
+  },
+  "why": {
+    "fullHouse": "Minden más szám megvan már – csak {digit} hiányzik.",
+    "hiddenSingle": {
+      "row": "A sor többi üres cellájába {digit} nem kerülhet – így a kiemelt cellába kerül.",
+      "col": "Az oszlop többi üres cellájába {digit} nem kerülhet – így a kiemelt cellába kerül.",
+      "box": "A négyzet többi üres cellájába {digit} nem kerülhet – így a kiemelt cellába kerül."
+    },
+    "nakedSingle": "Minden más szám szerepel már a sorában, az oszlopában vagy a négyzetében – csak {digit} marad.",
+    "pointing": {
+      "row": "Ebben a négyzetben {digit} csak egy sorba kerülhet. Így a sor többi cellájában nem állhat.",
+      "col": "Ebben a négyzetben {digit} csak egy oszlopba kerülhet. Így az oszlop többi cellájában nem állhat."
+    },
+    "claiming": {
+      "row": "Ebben a sorban {digit} csak egy négyzeten belül állhat. Így a négyzet többi cellájában nem lehet.",
+      "col": "Ebben az oszlopban {digit} csak egy négyzeten belül állhat. Így a négyzet többi cellájában nem lehet."
+    },
+    "nakedPair": {
+      "row": "Ebben a két cellában csak {a} és {b} állhat. Ezek tehát ide kerülnek, a sor többi cellájában nem lehetnek.",
+      "col": "Ebben a két cellában csak {a} és {b} állhat. Ezek tehát ide kerülnek, az oszlop többi cellájában nem lehetnek.",
+      "box": "Ebben a két cellában csak {a} és {b} állhat. Ezek tehát ide kerülnek, a négyzet többi cellájában nem lehetnek."
+    },
+    "hiddenPair": {
+      "row": "Ebben a sorban {a} és {b} csak a két kiemelt cellába kerülhet. Ezek a cellák tehát foglaltak – a többi szám kivehető a jegyzeteikből.",
+      "col": "Ebben az oszlopban {a} és {b} csak a két kiemelt cellába kerülhet. Ezek a cellák tehát foglaltak – a többi szám kivehető a jegyzeteikből.",
+      "box": "Ebben a négyzetben {a} és {b} csak a két kiemelt cellába kerülhet. Ezek a cellák tehát foglaltak – a többi szám kivehető a jegyzeteikből."
+    },
+    "nakedTriple": {
+      "row": "Ebben a három cellában együtt csak {a}, {b} és {c} állhat. Ezek tehát ide kerülnek, a sor többi cellájában nem lehetnek.",
+      "col": "Ebben a három cellában együtt csak {a}, {b} és {c} állhat. Ezek tehát ide kerülnek, az oszlop többi cellájában nem lehetnek.",
+      "box": "Ebben a három cellában együtt csak {a}, {b} és {c} állhat. Ezek tehát ide kerülnek, a négyzet többi cellájában nem lehetnek."
+    },
+    "hiddenTriple": {
+      "row": "Ebben a sorban {a}, {b} és {c} csak a három kiemelt cellába kerülhet. Ezek a cellák tehát foglaltak – a többi szám kivehető a jegyzeteikből.",
+      "col": "Ebben az oszlopban {a}, {b} és {c} csak a három kiemelt cellába kerülhet. Ezek a cellák tehát foglaltak – a többi szám kivehető a jegyzeteikből.",
+      "box": "Ebben a négyzetben {a}, {b} és {c} csak a három kiemelt cellába kerülhet. Ezek a cellák tehát foglaltak – a többi szám kivehető a jegyzeteikből."
+    },
+    "xWing": {
+      "rows": "Mindkét sorban {digit} csak ugyanabba a két oszlopba kerülhet. Ezekben az oszlopokban tehát ebben a két sorban lesz – az oszlopok többi cellájában nem állhat.",
+      "cols": "Mindkét oszlopban {digit} csak ugyanabba a két sorba kerülhet. Ezekben a sorokban tehát ebben a két oszlopban lesz – a sorok többi cellájában nem állhat."
+    },
+    "swordfish": {
+      "rows": "Ebben a három sorban {digit} csak ugyanabba a három oszlopba kerülhet. Ezekben az oszlopokban tehát ebben a három sorban lesz – az oszlopok többi cellájában nem állhat.",
+      "cols": "Ebben a három oszlopban {digit} csak ugyanabba a három sorba kerülhet. Ezekben a sorokban tehát ebben a három oszlopban lesz – a sorok többi cellájában nem állhat."
+    },
+    "xyWing": "A folytonos keretű cellában {x} vagy {y} állhat. Ha {x}, akkor az egyik szaggatott keretű cellában {z} lesz, ha {y}, akkor a másikban. Így {z} biztosan az egyikükben lesz – abban a cellában, amelyből mindkettő látszik, nem állhat.",
+    "xyzWing": "A folytonos keretű cellában {x}, {y} vagy {z} állhat, a szaggatott keretűekben {x} vagy {z}, illetve {y} vagy {z}. Bármi lesz is, a három cella egyikében {z} lesz – abban a cellában, amelyből mindhárom látszik, nem állhat."
+  },
+  "whyAfter": {
+    "hiddenSingle": {
+      "row": "Az előző lépések után {digit} ebben a sorban csak a kiemelt cellába kerülhet.",
+      "col": "Az előző lépések után {digit} ebben az oszlopban csak a kiemelt cellába kerülhet.",
+      "box": "Az előző lépések után {digit} ebben a négyzetben csak a kiemelt cellába kerülhet."
+    },
+    "nakedSingle": "Az előző lépések után ebben a cellában csak egy szám maradt: {digit}."
+  },
+  "end": {
+    "title": "Megoldva!",
+    "level": "Szint: {level}",
+    "clean": "Tipp nélkül",
+    "hints": {
+      "one": "{n} tippel",
+      "other": "{n} tippel"
+    },
+    "time": "Idő: {time}",
+    "streak": {
+      "one": "A nap feladványa: {n} nap egymás után",
+      "other": "A nap feladványa: {n} nap egymás után"
+    },
+    "newGame": "Új feladvány",
+    "home": "Vissza a kezdéshez",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "shareClean": "{name} · {date} · {level}: megoldva tipp nélkül",
+    "shareHints": {
+      "one": "{name} · {date} · {level}: megoldva {n} tippel",
+      "other": "{name} · {date} · {level}: megoldva {n} tippel"
+    }
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "play": "Játék",
+    "autoNotes": "Jegyzetek automatikus törlése",
+    "fillButton": "„Jegyzetek kitöltése” gomb",
+    "errors": "Hibák ellenőrzése",
+    "errorsOff": "Ki",
+    "errorsRepeats": "Csak az ismétlődés",
+    "errorsSolution": "A megoldás szerint",
+    "peers": "A sor, az oszlop és a négyzet kiemelése",
+    "same": "Az azonos számok kiemelése",
+    "counts": "Mutassa, hány maradt az egyes számokból",
+    "input": "Számok beírása",
+    "inputCell": "Előbb a cella",
+    "inputDigit": "Előbb a szám",
+    "time": "Az idő mutatása",
+    "look": "Megjelenés és hang",
+    "big": "Nagy számok és tábla",
+    "theme": "Téma",
+    "themeSystem": "A rendszer szerint",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "sound": "Hang",
+    "vibration": "Rezgés",
+    "game": "Ez a játék",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
+    "reset": "Előrehaladás törlése",
+    "resetSure": "Koppintson újra a statisztika és a mentett játékok törléséhez",
+    "resetDone": "Törölve"
+  },
+  "stats": {
+    "title": "Statisztika",
+    "solved": "Megoldva",
+    "clean": "Tipp nélkül",
+    "best": "Legjobb idő",
+    "none": "—"
+  },
+  "about": {
+    "title": "A játékról",
+    "rules": "Töltse ki a táblát 1-től 9-ig a számokkal úgy, hogy minden sorban, minden oszlopban és minden 3 × 3-as négyzetben minden szám pontosan egyszer szerepeljen. Minden feladványnak egy megoldása van, és soha nem kell találgatni.",
+    "text": "Sudoku reklám, fiók és nyomkövetés nélkül. Az előrehaladása ezen az eszközön marad. Internet nélkül is működik.",
+    "keys": "Billentyűzet: nyilak – cella kiválasztása, 1–9 – szám, Backspace, Delete vagy 0 – törlés, N – jegyzetek, H – tipp, Ctrl+Z – visszavonás, Ctrl+Y – ismétlés, Esc – bezárás.",
+    "credit": "Készítette: way1ong"
+  }
+}

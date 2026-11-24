@@ -1,0 +1,102 @@
+/*
+ * Sudoku: the only file with colour values. Light and dark themes follow the system unless the player
+ * chooses one in the settings; a page that hosts the game (e.g. a claude.ai test page) may force one too —
+ * both with data-theme="light" | "dark" on <html>.
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #f3f1ec;
+  --surface: #ffffff;
+  --text: #1b2127;
+  --muted: #525c66;
+  --line: #868177;
+  --accent: #0d5a70;
+  --on-accent: #ffffff;
+  --focus: #0d5a70;
+
+  /* Board: cells, thin lines between cells and thick lines between boxes (contrast at least 3:1). */
+  --cell: #ffffff;
+  --grid: #7e796f;
+  --grid-strong: #2b3137;
+  /* Digits: open ones, the player's own, notes; mistakes and the notes a hint removes. */
+  --given: #1b2127;
+  --entered: #0d5a70;
+  --note: #4a545d;
+  --bad: #a3211a;
+  --struck: #a3211a;
+  /* Highlights: the chosen cell, its row, column and box, the same digit; what a hint looks at; a finished line. */
+  --selected: #b4dbe7;
+  --peer: #e9eef1;
+  --same: #cde4ec;
+  --hint-area: #fff1c2;
+  --hint-ring: #a35f00;
+  --flash: #fff1a8;
+
+  --backdrop: rgb(20 24 28 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #121619;
+    --surface: #1c2227;
+    --text: #e8edf1;
+    --muted: #a5b0ba;
+    --line: #6b7987;
+    --accent: #6cc3d9;
+    --on-accent: #0a1f26;
+    --focus: #6cc3d9;
+
+    --cell: #171c20;
+    --grid: #6b7782;
+    --grid-strong: #b9c3cb;
+    --given: #eef2f5;
+    --entered: #7fd3ea;
+    --note: #b8c2cb;
+    --bad: #ffa69e;
+    --struck: #ffa69e;
+    --selected: #1f4652;
+    --peer: #212a30;
+    --same: #1d3a45;
+    --hint-area: #3a3217;
+    --hint-ring: #f0b84d;
+    --flash: #5a5320;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  }
+}
+
+/* The same dark values when the player or the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #121619;
+  --surface: #1c2227;
+  --text: #e8edf1;
+  --muted: #a5b0ba;
+  --line: #6b7987;
+  --accent: #6cc3d9;
+  --on-accent: #0a1f26;
+  --focus: #6cc3d9;
+
+  --cell: #171c20;
+  --grid: #6b7782;
+  --grid-strong: #b9c3cb;
+  --given: #eef2f5;
+  --entered: #7fd3ea;
+  --note: #b8c2cb;
+  --bad: #ffa69e;
+  --struck: #ffa69e;
+  --selected: #1f4652;
+  --peer: #212a30;
+  --same: #1d3a45;
+  --hint-area: #3a3217;
+  --hint-ring: #f0b84d;
+  --flash: #5a5320;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+}

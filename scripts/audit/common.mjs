@@ -15,9 +15,12 @@ export function createReport() {
 /**
  * Runs in the page: everything a player could meet that is wrong on any screen right now. `width` — the
  * width of the screen: a phone shows a wider page shrunk, and then the page's own measure of the window
- * grows with it.
+ * grows with it. Or { width, dense }: `dense` — a selector of targets that cannot all be 44 px on a phone
+ * (the 81 cells of a sudoku board), checked against the smaller size `dense.min` instead.
  */
-export function inspectScreen(width) {
+export function inspectScreen(arg) {
+  const width = typeof arg === 'number' ? arg : arg.width;
+  const dense = typeof arg === 'number' ? null : arg.dense;
   const out = [];
   const doc = document.scrollingElement;
   if (doc.scrollWidth > width + 1 || window.innerWidth > width + 1) out.push(`the page is ${Math.max(doc.scrollWidth, window.innerWidth)} px wide on a ${width} px screen`);
@@ -30,7 +33,8 @@ export function inspectScreen(width) {
     if (!visible(el)) continue;
     const box = (el.tagName === 'INPUT' ? el.closest('label') : el).getBoundingClientRect();
     const name = (el.getAttribute('aria-label') || el.textContent).trim().slice(0, 24);
-    if (box.width < 44 || box.height < 44) out.push(`small target "${name}" ${Math.round(box.width)}×${Math.round(box.height)}`);
+    const min = dense && el.matches(dense.selector) ? dense.min : 44;
+    if (box.width < min || box.height < min) out.push(`small target "${name}" ${Math.round(box.width)}×${Math.round(box.height)}`);
     if (box.right > window.innerWidth + 1 || box.left < -1) out.push(`"${name}" sticks out of the screen`);
     const text = el.textContent.trim();
     if (el.tagName !== 'BUTTON' || !text) continue;
