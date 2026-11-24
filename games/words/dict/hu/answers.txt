@@ -2447,7 +2447,6 @@ szakadék
 szalon
 szög
 tanú
-tao
 vacak
 vagány
 vállal

@@ -37,6 +37,15 @@ export const WORDS = {
   ] satisfies LevelStep[],
   /** The daily puzzle (C). */
   daily: { letters: 6, words: { min: 5, max: 8 } },
+  /** The crossword's biggest width and height, in cells (C). */
+  maxGridSide: 9,
+  /**
+   * Main words of the levels (the longest word, whose letters make the wheel) go from the more common to the
+   * rarer: in groups of this many, the order shuffled within each group (C).
+   */
+  levelGroup: 40,
+  /** Tries to lay out a level's crossword with enough words before taking fewer (C). */
+  layoutTries: 12,
   /**
    * Hungarian letters written with two characters that make one tile when the setting is on (as in Hungarian
    * Scrabble; decision of 24.11, to confirm with a Hungarian speaker). dz and dzs stay separate letters there.

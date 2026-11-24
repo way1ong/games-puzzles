@@ -1,1 +1,6 @@
-# none yet
+# odd as crossword words (abbreviations in use, archaic, a hyphen part)
+cis
+sic
+ere
+nee
+tao

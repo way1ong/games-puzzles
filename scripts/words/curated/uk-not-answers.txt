@@ -2,3 +2,6 @@
 бордель
 # a people's name, indeclinable
 еве
+# slang or an old spelling
+інет
+міт
