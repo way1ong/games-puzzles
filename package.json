@@ -16,7 +16,9 @@
     "preview": "vite preview",
     "build:claude": "node scripts/claude-page.mjs",
     "audit": "node scripts/audit.mjs",
-    "check:live": "node scripts/check-live.mjs"
+    "check:live": "node scripts/check-live.mjs",
+    "words:fetch": "node --experimental-strip-types --no-warnings scripts/words/fetch.ts",
+    "words:build": "node --experimental-strip-types --no-warnings --max-old-space-size=4096 scripts/words/build.ts"
   },
   "devDependencies": {
     "@types/node": "22.20.5",
