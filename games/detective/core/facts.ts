@@ -2,8 +2,11 @@
 // levels (docs/detective/SPEC.md, «Рівні»). An easy case has neither.
 import type { ThingId } from './things.ts';
 
-/** easy — every piece of evidence points at a trait; medium — facts, circumstances and a false lead. */
-export const LEVELS = ['easy', 'medium'] as const;
+/**
+ * easy — every piece of evidence points at a trait; medium — facts, circumstances and a false lead; hard —
+ * everybody says where they were, and only the one who did it lies.
+ */
+export const LEVELS = ['easy', 'medium', 'hard'] as const;
 export type Level = (typeof LEVELS)[number];
 
 /** Why a person was in the room openly by day (dictionaries: visits.<id>). */
@@ -33,6 +36,21 @@ export type Circumstance =
 
 export type CircumstanceKind = Circumstance['kind'];
 export const CIRCUMSTANCE_KINDS: readonly CircumstanceKind[] = ['locked', 'time'];
+
+/** Where a person can be at the moment it happened, other than the scene itself. */
+export const PLACES = ['library', 'home', 'cafe', 'theatre'] as const;
+export type PlaceId = (typeof PLACES)[number];
+
+/**
+ * What a suspect says about the moment it happened: where they were, whom of the other suspects (by index)
+ * they saw there, and who, they say, was not there. The words themselves are written by hand for every case
+ * (dictionaries: stories.<story>.says.<person>).
+ */
+export interface Statement {
+  at: PlaceId;
+  saw?: number[];
+  notSaw?: number[];
+}
 
 export function hasKey(facts: readonly Fact[]): boolean {
   return facts.some((f) => f.kind === 'key');

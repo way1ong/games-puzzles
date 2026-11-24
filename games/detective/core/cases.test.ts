@@ -38,7 +38,8 @@ describe.each(STORY_IDS)('the case %s', (id) => {
 
   it('a harder case has more evidence than traits to match: the thing a circumstance rests on', () => {
     expect(evidenceCount(def)).toBe(def.clues.length + def.circumstances.filter((c) => c.kind === 'time').length);
-    expect(def.facts.length).toBe(def.level === 'easy' ? 0 : def.suspects.length);
+    expect(def.facts.length).toBe(def.level === 'medium' ? def.suspects.length : 0);
+    expect(def.statements.length).toBe(def.level === 'hard' ? def.suspects.length : 0);
   });
 
   it('keeps every thing on a place of the room', () => {

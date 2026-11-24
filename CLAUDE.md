@@ -42,7 +42,7 @@ games/<гра>/ui/           екран: по модулю на частину (
 games/<гра>/styles/       tokens.css (усі кольори інтерфейсу, світла й темна теми), app.css; claude-page.css — лише для тестової сторінки
 games/<гра>/index.html    сторінка гри; main.ts — вхід
 games/<гра>/icons/        іконки (малює scripts/make-icons.mjs з tokens.css; файли не правити руками)
-games/detective/core/facts.ts, deduction.ts  важчі рівні: факти про людей, обставини, причини відсіювання, чесність загадки
+games/detective/core/facts.ts, deduction.ts  важчі рівні: факти про людей, обставини, свідчення, причини відсіювання, чесність загадки
 games/detective/core/rooms/  розміри кімнати й меблів і місця для предметів — малюнок бере положення звідси
 games/detective/art/      малюнки кодом (SVG): palette.ts — усі кольори малюнків (день і ніч, люди); rooms/, furniture/, things.ts, people/
 shared/core/              спільне для ігор без DOM: генератор із зерна, календарні дні й серія, адреса ігор у мережі

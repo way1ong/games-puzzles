@@ -12,6 +12,7 @@ import {
   hint,
   isEvidence,
   newProgress,
+  reasonsAtOnce,
   regionOf,
   remaining,
   restore,
@@ -219,9 +220,9 @@ describe('a harder case: who did it, with reasons', () => {
     expect(lead.check).toEqual({ excludes: false, why: 'visitor', visitor: 3 });
     expect(lead.progress.slips).toBe(2);
     const sofia = rule(medium, lead.progress, 1, 'locked');
-    expect(sofia.check).toEqual({ excludes: true });
+    expect(sofia.check).toEqual({ excludes: true, by: 'reason', reason: 'locked' });
     expect(sofia.progress.ruledOut).toEqual([1]);
-    expect(sofia.progress.reasons).toEqual({ 1: 'locked' });
+    expect(sofia.progress.reasons).toEqual({ 1: ['locked'] });
     expect(sofia.progress.slips).toBe(2);
     // set aside for good: no second ruling, no bringing back
     expect(rule(medium, sofia.progress, 1, 'locked')).toEqual({ progress: sofia.progress, check: null });
@@ -233,13 +234,13 @@ describe('a harder case: who did it, with reasons', () => {
     for (const reason of ['locked', 'time', 'hair:dark', 'buttons:brown', 'flower'] as const) p = rule(medium, p, 2, reason).progress;
     expect(p.ruledOut).toEqual([]);
     expect(p.slips).toBe(5);
-    for (const { suspect, reason } of eliminations(medium)) p = rule(medium, p, suspect, reason).progress;
+    for (const { suspect, picked } of eliminations(medium)) p = rule(medium, p, suspect, picked).progress;
     expect(eliminations(medium)).toEqual([
-      { suspect: 0, reason: 'hair:dark' },
-      { suspect: 1, reason: 'locked' },
-      { suspect: 3, reason: 'locked' },
-      { suspect: 4, reason: 'time' },
-      { suspect: 5, reason: 'buttons:brown' },
+      { suspect: 0, picked: ['hair:dark'] },
+      { suspect: 1, picked: ['locked'] },
+      { suspect: 3, picked: ['locked'] },
+      { suspect: 4, picked: ['time'] },
+      { suspect: 5, picked: ['buttons:brown'] },
     ]);
     expect(remaining(medium, p)).toEqual([2]);
     expect(canAccuse(medium, p, 2)).toBe(true);
@@ -254,6 +255,8 @@ describe('a harder case: who did it, with reasons', () => {
     expect(rule(medium, begin(newProgress(medium)), 1, 'locked').check).toBeNull();
     expect(rule(medium, ready, 9, 'locked').check).toBeNull();
     expect(rule(medium, ready, 1, 'glasses').check).toBeNull();
+    expect(rule(medium, ready, 1, ['locked', 'time']).check).toBeNull(); // one reason at a time on the medium level
+    expect(rule(medium, ready, 1, []).check).toBeNull();
     const easy = toSuspects(def, findAll(begin(newProgress(def))));
     expect(rule(def, easy, 0, 'buttons:blue')).toEqual({ progress: easy, check: null });
     expect(canAccuse(def, easy, 0)).toBe(true);
@@ -262,10 +265,61 @@ describe('a harder case: who did it, with reasons', () => {
   it('a saved game keeps only people set aside for a reason that holds', () => {
     const p = rule(medium, rule(medium, ready, 1, 'locked').progress, 4, 'time').progress;
     expect(restore(medium, JSON.parse(JSON.stringify(p)))).toEqual(p);
-    const forged = { ...p, ruledOut: [1, 4, 2, 0], reasons: { 1: 'locked', 4: 'hair:dark', 2: 'locked' }, slips: 2.7, wrong: [3] };
-    expect(restore(medium, JSON.parse(JSON.stringify(forged)))).toMatchObject({ ruledOut: [1], reasons: { 1: 'locked' }, slips: 2, wrong: [] });
+    // a reason alone (the save of the first medium level) is taken as a list of one
+    const forged = { ...p, ruledOut: [1, 4, 2, 0], reasons: { 1: 'locked', 4: ['hair:dark'], 2: ['locked'], 0: ['hair:dark', 'locked'] }, slips: 2.7, wrong: [3] };
+    expect(restore(medium, JSON.parse(JSON.stringify(forged)))).toMatchObject({ ruledOut: [1], reasons: { 1: ['locked'] }, slips: 2, wrong: [] });
     // a save from before the levels: no reasons, no slips
     const { reasons: _r, slips: _s, ...old } = toSuspects(def, findAll(begin(newProgress(def))));
     expect(restore(def, old)).toMatchObject({ reasons: {}, slips: 0, stage: 'suspects' });
+  });
+});
+
+describe('a hard case: statements, and only the one who did it lies', () => {
+  const hard = STORIES.missingStamp;
+  // anna 0 · sofia 1 · ilona 2 (the librarian) · tamas 3 (did it) · nora 4 · viktor 5
+  let ready = begin(newProgress(hard));
+  for (const { thing } of hard.things) ready = { ...ready, found: [...ready.found, thing] };
+  ready = toSuspects(hard, ready);
+
+  it('takes two reasons at once, and no more', () => {
+    expect(reasonsAtOnce(hard)).toBe(2);
+    expect(reasonsAtOnce(STORIES.recipeBook)).toBe(1);
+    expect(rule(hard, ready, 0, ['say:2', 'say:3', 'say:4']).check).toBeNull();
+    expect(rule(hard, ready, 0, ['say:9']).check).toBeNull();
+  });
+
+  it('a statement that gives an alibi, two statements that clash, evidence — each sets a person aside', () => {
+    const nora = rule(hard, ready, 4, 'say:2'); // the librarian saw Nora in the reading room
+    expect(nora.check).toEqual({ excludes: true, by: 'vouched', speaker: 2 });
+    const anna = rule(hard, nora.progress, 0, ['say:3', 'say:2']); // Tamas and the librarian cannot both be right
+    expect(anna.check).toEqual({ excludes: true, by: 'clash', a: 3, b: 2 });
+    expect(anna.progress.reasons).toEqual({ 4: ['say:2'], 0: ['say:3', 'say:2'] });
+    const ilona = rule(hard, anna.progress, 2, 'buttons:gold');
+    expect(ilona.check).toEqual({ excludes: true, by: 'reason', reason: 'buttons:gold' });
+    expect(ilona.progress.slips).toBe(0);
+  });
+
+  it('a slip: a statement alone, their own statement, evidence that fits', () => {
+    expect(rule(hard, ready, 0, 'say:2')).toMatchObject({ check: { excludes: false, why: 'possible' }, progress: { slips: 1 } });
+    expect(rule(hard, ready, 0, 'say:0').check).toEqual({ excludes: false, why: 'own' });
+    expect(rule(hard, ready, 0, 'glasses').check).toEqual({ excludes: false, why: 'fits' });
+    // nothing rules out the one who did it — not even the librarian's word against his
+    expect(rule(hard, ready, 3, ['say:2', 'say:3']).check).toEqual({ excludes: false, why: 'own' });
+    expect(rule(hard, ready, 3, ['say:2', 'say:4']).check).toEqual({ excludes: false, why: 'possible' });
+  });
+
+  it('is solved by setting everybody else aside', () => {
+    let p = ready;
+    for (const { suspect, picked } of eliminations(hard)) p = rule(hard, p, suspect, picked).progress;
+    expect(eliminations(hard)).toEqual([
+      { suspect: 0, picked: ['say:2', 'say:3'] },
+      { suspect: 1, picked: ['glasses'] },
+      { suspect: 2, picked: ['buttons:gold'] },
+      { suspect: 4, picked: ['say:2'] },
+      { suspect: 5, picked: ['scarf:blue'] },
+    ]);
+    expect(remaining(hard, p)).toEqual([3]);
+    expect(accuse(hard, p, 3).correct).toBe(true);
+    expect(restore(hard, JSON.parse(JSON.stringify(p)))).toEqual(p);
   });
 });

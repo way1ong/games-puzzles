@@ -1,7 +1,7 @@
 // Dictionaries: the same keys and parameters in every language, every plural form the language needs, and
 // a name for everything the game looks up by name.
 import { describe, expect, it } from 'vitest';
-import { STORY_IDS } from '../core/cases.ts';
+import { STORIES, STORY_IDS } from '../core/cases.ts';
 import { ALL_DAILY_FRAMES } from '../core/daily.ts';
 import { AWAYS, CIRCUMSTANCE_KINDS, LEVELS, VISITS } from '../core/facts.ts';
 import { REGIONS } from '../core/game.ts';
@@ -89,5 +89,16 @@ it('names every thing, trait, place, region, room, person and story of the game 
 it('every story ending names the one who did it', () => {
   for (const [lang, dict] of Object.entries(dictionaries)) {
     for (const [id, story] of Object.entries(dict.stories as Tree)) expect((story as Tree).ending, `${lang} ${id}`).toContain('{name}');
+  }
+});
+
+it('a hard case has the words of every suspect’s statement, with the time in them — and no other case has any', () => {
+  for (const [lang, dict] of Object.entries(dictionaries)) {
+    for (const id of STORY_IDS) {
+      const says = ((dict.stories as Tree)[id] as Tree).says as Tree | undefined;
+      const speakers = STORIES[id].statements.length > 0 ? STORIES[id].suspects.map((s) => s.person).sort() : [];
+      expect(keys(says), `${lang} ${id}`).toEqual(speakers);
+      for (const text of Object.values(says ?? {})) expect(text, `${lang} ${id}`).toContain('{time}');
+    }
   }
 });

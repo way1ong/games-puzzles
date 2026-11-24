@@ -69,6 +69,7 @@ export function dailyCase(dateKey: string): CaseDef {
     level: 'easy',
     circumstances: [],
     facts: [],
+    statements: [],
   };
 }
 
@@ -88,5 +89,6 @@ export function searchCase(room: RoomId, time: Time, seed: number): CaseDef {
     level: 'easy',
     circumstances: [],
     facts: [],
+    statements: [],
   };
 }

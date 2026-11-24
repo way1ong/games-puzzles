@@ -1,6 +1,6 @@
 // A case: a room at a time of day, the things hidden in it, the evidence among them, the suspects and who
 // did it. Story cases are written by hand here; daily cases are made from the date (core/daily.ts).
-import type { Circumstance, Fact, Level } from './facts.ts';
+import type { Circumstance, Fact, Level, Statement } from './facts.ts';
 import type { Suspect } from './people.ts';
 import { putOn, type Placed } from './placement.ts';
 import { SPOTS, type RoomId } from './rooms.ts';
@@ -30,6 +30,8 @@ export interface CaseDef {
   circumstances: Circumstance[];
   /** What is known about each suspect beyond the looks, in the order of the suspects; an easy case has none. */
   facts: Fact[][];
+  /** A hard case: what each suspect says about the moment it happened, in the order of the suspects. */
+  statements: Statement[];
 }
 
 /** A moment of the day in minutes after midnight. */
@@ -41,7 +43,7 @@ export function on(room: RoomId, thing: ThingId, spotId: string, dx = 0, rot = 0
   return putOn(spot, thing, dx, rot);
 }
 
-export const STORY_IDS = ['lostLetter', 'midnightCall', 'fairPie', 'nightShift', 'strangeSuitcase', 'lastTrain', 'recipeBook'] as const;
+export const STORY_IDS = ['lostLetter', 'midnightCall', 'fairPie', 'nightShift', 'strangeSuitcase', 'lastTrain', 'recipeBook', 'missingStamp'] as const;
 export type StoryId = (typeof STORY_IDS)[number];
 
 /**
@@ -81,6 +83,7 @@ export const STORIES: Record<StoryId, CaseDef> = {
     level: 'easy',
     circumstances: [],
     facts: [],
+    statements: [],
   },
   // A call at midnight, a note without a name, wet footprints. Dark hair, a yellow thread, a petal: Sofia.
   midnightCall: {
@@ -114,6 +117,7 @@ export const STORIES: Record<StoryId, CaseDef> = {
     level: 'easy',
     circumstances: [],
     facts: [],
+    statements: [],
   },
   // The pie for the fair is gone from its stand. Fair hair, a brown button, a yellow thread: only Bence.
   fairPie: {
@@ -147,6 +151,7 @@ export const STORIES: Record<StoryId, CaseDef> = {
     level: 'easy',
     circumstances: [],
     facts: [],
+    statements: [],
   },
   // Somebody was in the bakery at night: the door ajar, the lamps on, floury footprints, a glove, the key
   // on the mat. A gold button, a petal, a red thread: only Emma.
@@ -181,6 +186,7 @@ export const STORIES: Record<StoryId, CaseDef> = {
     level: 'easy',
     circumstances: [],
     facts: [],
+    statements: [],
   },
   // Two suitcases just alike, and somebody else's things in one of them. A lens, a blue thread, a brown
   // button: only Nora.
@@ -215,6 +221,7 @@ export const STORIES: Record<StoryId, CaseDef> = {
     level: 'easy',
     circumstances: [],
     facts: [],
+    statements: [],
   },
   // The last train has gone, and the musician's violin is not in its case. A grey hair, a blue button, a
   // red thread: only Oleg.
@@ -249,6 +256,7 @@ export const STORIES: Record<StoryId, CaseDef> = {
     level: 'easy',
     circumstances: [],
     facts: [],
+    statements: [],
   },
   // Medium. The book of recipes is gone from the bakery at night; the lock is whole, and a pocket watch has
   // stopped at 21:40. A dark hair, a brown button, a petal. At face value all three fit Sofia — but she has
@@ -290,6 +298,51 @@ export const STORIES: Record<StoryId, CaseDef> = {
       [{ kind: 'visit', why: 'flowers' }],
       [{ kind: 'key' }, { kind: 'away', from: at(21), to: at(22, 30), where: 'mailSorting' }],
       [{ kind: 'key' }],
+    ],
+    statements: [],
+  },
+  // Hard. A rare stamp is gone from the album; the pocket watch beside it has stopped at 19:30, and each of
+  // the six says where they were then. A lens, a gold button, a blue thread fit three people. Tamas says he
+  // sat in the library next to Nora; the librarian says he never came in. Both cannot be true, and only the
+  // one who did it lies — so it is one of the two, and the button is not the librarian's.
+  missingStamp: {
+    id: 'missingStamp',
+    kind: 'story',
+    story: 'missingStamp',
+    room: 'study',
+    time: 'night',
+    things: [
+      on('study', 'watch', 'top1'),
+      on('study', 'coin', 'rug1'),
+      on('study', 'glasses', 'sill1', 8),
+      on('study', 'ring', 'shelf1'),
+      on('study', 'scarf:blue', 'seat', 10),
+      on('study', 'ticket', 'shelf3'),
+      on('study', 'pencil', 'floor2', 0, 20),
+      on('study', 'buttons:gold', 'underDesk'),
+      on('study', 'matches', 'desk1'),
+      on('study', 'quill', 'onBooks'),
+    ],
+    clues: ['glasses', 'buttons:gold', 'scarf:blue'],
+    suspects: [
+      { person: 'anna', buttons: 'gold', scarf: 'blue', flower: false },
+      { person: 'sofia', buttons: 'gold', scarf: 'blue', flower: true },
+      { person: 'ilona', buttons: 'brown', scarf: 'blue', flower: false },
+      { person: 'tamas', buttons: 'gold', scarf: 'blue', flower: false },
+      { person: 'nora', buttons: 'gold', scarf: 'blue', flower: true },
+      { person: 'viktor', buttons: 'gold', scarf: 'red', flower: false },
+    ],
+    culprit: 3,
+    level: 'hard',
+    circumstances: [{ kind: 'time', at: at(19, 30), thing: 'watch' }],
+    facts: [],
+    statements: [
+      { at: 'home' },
+      { at: 'theatre' },
+      { at: 'library', saw: [4], notSaw: [3] },
+      { at: 'library', saw: [4] },
+      { at: 'library' },
+      { at: 'cafe' },
     ],
   },
 };
