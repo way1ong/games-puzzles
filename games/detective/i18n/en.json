@@ -39,7 +39,8 @@
       "one": "{n} of them is evidence.",
       "other": "{n} of them are evidence."
     },
-    "start": "Look over the room"
+    "start": "Look over the room",
+    "medium": "Medium level: one of the leads may turn out to be false."
   },
   "search": {
     "progress": "Found {found} of {total}",
@@ -145,7 +146,51 @@
     "setAside": "Set aside",
     "bringBack": "Bring back",
     "accuse": "This is the one",
-    "wrong": "No, it is not {name}: “{clue}” does not fit."
+    "wrong": "No, it is not {name}: “{clue}” does not fit.",
+    "leadMedium": "The one who did it meets every circumstance. Evidence that a daytime visitor could have left proves nothing. Set aside everyone who does not fit — and name the reason for each.",
+    "circumstances": "Circumstances",
+    "facts": "What is known",
+    "ruleOut": "Set aside — name the reason",
+    "backToCard": "Back to the card",
+    "whyNot": "Why is it not {name}?",
+    "rule": "To name the one who did it, set the others aside — with a reason for each.",
+    "last": "One person is left. Open the card and name them."
+  },
+  "levels": {
+    "easy": "easy",
+    "medium": "medium"
+  },
+  "facts": {
+    "key": "Has a key to the door",
+    "noKey": "Has no key to the door",
+    "visit": "Daytime visit: {why}",
+    "alibi": "Alibi: {from}–{to}, {where}",
+    "noAlibi": "No alibi"
+  },
+  "visits": {
+    "flowers": "delivering flowers"
+  },
+  "away": {
+    "mailSorting": "sorting mail at the post office"
+  },
+  "circumstances": {
+    "locked": {
+      "name": "The lock is whole",
+      "text": "The door was opened with a key: the one who did it has a key."
+    },
+    "time": {
+      "name": "The pocket watch stopped at {time}",
+      "text": "That is when it happened. Whoever has an alibi for that time did not do it."
+    }
+  },
+  "rulings": {
+    "locked": "{name}: no key, and the door was opened with a key.",
+    "time": "{name}: at {time} — {where}. That is an alibi.",
+    "clue": "{name}: “{clue}” does not fit.",
+    "hasKey": "{name} has a key: this does not rule them out.",
+    "free": "{name} has no alibi for {time}: this does not rule them out.",
+    "fits": "“{clue}” fits {name}: this does not rule them out.",
+    "visitor": "“{clue}” is a false lead: a daytime visitor ({visitor}) could have left it. It proves nothing."
   },
   "result": {
     "solved": "Case solved!",
@@ -162,7 +207,11 @@
     "comeBack": "Come back tomorrow for a new case.",
     "copy": "Copy result",
     "copied": "Copied",
-    "shareText": "{name} · case of {date}: solved. {tries}. {hints}."
+    "shareText": "{name} · case of {date}: solved. {tries}. {hints}.",
+    "falseLead": "False lead — “{clue}”: {visitor} left it by day ({why}).",
+    "left": "Everybody else is ruled out — {name} is left.",
+    "noSlips": "Every reason right",
+    "slips": "Wrong reasons: {n}"
   },
   "stories": {
     "lostLetter": {
@@ -234,6 +283,11 @@
       "title": "The Last Train",
       "text": "The last train has gone. An open case is left in the waiting hall — and there is no violin in it. The musician stepped away for a minute, only to look at the timetable.",
       "ending": "{name} spreads his hands: the violin lay in the draught by the door, so he locked it in his little room — away from the damp and from strangers. He has the key, the violin is whole, and the musician is already playing a thank-you."
+    },
+    "recipeBook": {
+      "title": "The Recipe Book",
+      "text": "At night the book of recipes vanished from the bakery. The door stands ajar, but the lock is whole — it was opened with a key. Floury footprints cross the floor.",
+      "ending": "{name} owns up: the binding of the recipe book had come apart, so he quietly took it to the bookbinder — to bring it back in a new cover for the bakery’s anniversary. The book is on its shelf again, as good as new."
     },
     "stationUmbrella": {
       "title": "Somebody Else’s Umbrella",

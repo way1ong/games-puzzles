@@ -66,6 +66,9 @@ export function dailyCase(dateKey: string): CaseDef {
     clues: cast.clues,
     suspects: cast.suspects,
     culprit: cast.culprit,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
   };
 }
 
@@ -82,5 +85,8 @@ export function searchCase(room: RoomId, time: Time, seed: number): CaseDef {
     clues: [],
     suspects: [],
     culprit: -1,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
   };
 }

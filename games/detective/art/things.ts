@@ -16,7 +16,7 @@ const DRAW: Record<Shape, (p: Paint, value: string | undefined) => string> = {
   key: (p) =>
     circle(-14, -12, 9, 'none', { stroke: p.gold, 'stroke-width': 5 }) + rect(-6, -14.5, 30, 5, p.gold) + rect(16, -9.5, 4, 8, p.gold) + rect(10, -9.5, 4, 6, p.gold) + stroke('M-20 -17 q4 -4 10 -4', p.white, 1.6, { opacity: 0.5 }),
   magnifier: (p) =>
-    line(6, -24, 26, -4, p.woodMid, 7) +
+    line(6, -24, 27, -3, p.woodMid, 7) +
     line(6, -24, 10, -20, p.brass, 7, { 'stroke-linecap': 'butt' }) +
     circle(-8, -38, 18, p.glass, { stroke: p.brass, 'stroke-width': 5, 'fill-opacity': 0.85 }) +
     stroke('M-17 -44 q4 -8 12 -9', p.white, 3),

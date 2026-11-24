@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { STORY_IDS } from '../core/cases.ts';
 import { ALL_DAILY_FRAMES } from '../core/daily.ts';
+import { AWAYS, CIRCUMSTANCE_KINDS, LEVELS, VISITS } from '../core/facts.ts';
 import { REGIONS } from '../core/game.ts';
 import { PERSON_IDS } from '../core/people.ts';
 import { ROOM_IDS, SPOTS } from '../core/rooms.ts';
@@ -77,6 +78,12 @@ it('names every thing, trait, place, region, room, person and story of the game 
   expect(keys(en.rooms)).toEqual([...ROOM_IDS].sort());
   expect(keys(en.people)).toEqual([...PERSON_IDS].sort());
   expect(keys(en.stories)).toEqual([...STORY_IDS, ...ALL_DAILY_FRAMES].sort());
+  expect(keys(en.levels)).toEqual([...LEVELS].sort());
+  expect(keys(en.visits)).toEqual([...VISITS].sort());
+  expect(keys(en.away)).toEqual([...AWAYS].sort());
+  expect(keys(en.circumstances)).toEqual([...CIRCUMSTANCE_KINDS].sort());
+  // the intro has a line for every level but the easy one
+  for (const level of LEVELS) expect(level === 'easy' || level in en.intro, level).toBe(true);
 });
 
 it('every story ending names the one who did it', () => {

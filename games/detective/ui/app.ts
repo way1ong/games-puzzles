@@ -5,10 +5,11 @@ import { h } from '../../../shared/ui/dom.ts';
 import { DETECTIVE } from '../config.ts';
 import { STORIES, STORY_IDS, type CaseDef, type StoryId, type Time } from '../core/cases.ts';
 import { dailyCase, searchCase } from '../core/daily.ts';
-import { accuse, allFound, begin, hint, newProgress, regionOf, toSuspects, toggleRuledOut, touch, tries, type Progress } from '../core/game.ts';
+import { check, type ReasonId } from '../core/deduction.ts';
+import { accuse, allFound, begin, canAccuse, hint, isEvidence, newProgress, regionOf, rule, toSuspects, toggleRuledOut, touch, tries, type Progress } from '../core/game.ts';
 import { ROOM_IDS, type RoomId } from '../core/rooms.ts';
 import { sizeOf } from '../core/things.ts';
-import { isClue } from '../core/traits.ts';
+import { factLines, reasonChoices, rulingText } from './deduction-text.ts';
 import { homeView, roomLine, statusOf, storyTitle, type HomeEntry } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
 import { backSign } from './icons.ts';
@@ -41,6 +42,8 @@ export function startApp(root: HTMLElement): void {
   let room: RoomView | null = null;
   /** The suspect whose card is open, to return the focus to. */
   let lastPerson = 0;
+  /** A harder case: what the last ruling said, shown over the suspects. */
+  let ruling = '';
 
   // ---------- elements that live through redraws ----------
   const title = h('h1', { class: 'top__name', tabindex: -1 });
@@ -83,6 +86,7 @@ export function startApp(root: HTMLElement): void {
     const opened = caseOf(currentRoute());
     def = opened?.def ?? null;
     progress = opened ? (store.loadProgress(opened.def) ?? newProgress(opened.def, opened.seed)) : null;
+    ruling = '';
   }
 
   const save = () => {
@@ -120,7 +124,7 @@ export function startApp(root: HTMLElement): void {
       content.replaceChildren(search(def, progress));
     } else if (progress.stage === 'suspects') {
       main.className = 'app app--page';
-      content.replaceChildren(suspectsView(d, def, progress, openPerson));
+      content.replaceChildren(suspectsView(d, def, progress, (i) => openPerson(i), { lang, note: ruling }));
     } else {
       main.className = 'app app--page';
       content.replaceChildren(resultView(d, def, progress, resultExtras(def, progress)));
@@ -144,7 +148,7 @@ export function startApp(root: HTMLElement): void {
     const inRow = streak(days, today);
     const stories: HomeEntry[] = STORY_IDS.map((id) => {
       const c = STORIES[id];
-      return { route: id, title: storyTitle(d, c), line: roomLine(d, c.room, c.time), time: c.time, status: statusOf(stageOf(c)) };
+      return { route: id, title: storyTitle(d, c), line: `${roomLine(d, c.room, c.time)} · ${d.levels[c.level]}`, time: c.time, status: statusOf(stageOf(c)) };
     });
     const searches: HomeEntry[] = ROOM_IDS.flatMap((roomId) =>
       TIMES.map((time): HomeEntry => {
@@ -231,7 +235,7 @@ export function startApp(root: HTMLElement): void {
     room.remove(thing);
     const name = d.things[thing];
     const left = def.things.length - progress.found.length;
-    const what = isClue(thing) ? fmt(d.announce.clue, { thing: name, where: whereFound(d, def, thing) }) : fmt(d.announce.found, { thing: name });
+    const what = isEvidence(def, thing) ? fmt(d.announce.clue, { thing: name, where: whereFound(d, def, thing) }) : fmt(d.announce.found, { thing: name });
     if (progress.stage === 'solved') {
       // free search: the last thing ends it
       show();
@@ -253,18 +257,42 @@ export function startApp(root: HTMLElement): void {
   }
 
   // ---------- who did it ----------
-  function openPerson(i: number, note = ''): void {
+  function openPerson(i: number, note = '', picking: ReasonId | null = null): void {
     if (!def || !progress) return;
     const suspect = def.suspects[i];
     if (!suspect) return;
+    const c = def;
     lastPerson = i;
+    const aside = progress.ruledOut.includes(i);
+    const reason = progress.reasons[i];
+    // a person set aside on a harder level: the card says what for
+    const said = note || (c.level !== 'easy' && aside && reason ? rulingText(d, lang, c, i, reason, check(c, i, reason)) : '');
+    const harder =
+      c.level === 'easy'
+        ? null
+        : { facts: factLines(d, lang, c, i), reasons: reasonChoices(d, lang, c), canAccuse: canAccuse(c, progress, i), step: picking ? ('reasons' as const) : ('card' as const), focus: picking };
     personDialog.open(
       d,
-      { suspect, aside: progress.ruledOut.includes(i), wrong: progress.wrong.includes(i), note },
+      { suspect, aside, wrong: progress.wrong.includes(i), note: said, harder },
       {
+        rule(picked) {
+          if (!def || !progress) return;
+          const result = rule(def, progress, i, picked);
+          if (!result.check) return;
+          progress = result.progress;
+          save();
+          const text = rulingText(d, lang, def, i, picked, result.check);
+          if (!result.check.excludes) {
+            openPerson(i, text, picked);
+            return;
+          }
+          ruling = text;
+          show(false);
+          personDialog.el.close();
+        },
         toggleAside() {
           if (!def || !progress) return;
-          progress = toggleRuledOut(progress, i);
+          progress = toggleRuledOut(def, progress, i);
           save();
           show(false);
           personDialog.el.close();
@@ -293,6 +321,7 @@ export function startApp(root: HTMLElement): void {
     const back = { label: d.app.back, action: closeRoute };
     if (c.kind === 'search') {
       return {
+        lang,
         streak: null,
         share: null,
         secondary: {
@@ -313,6 +342,7 @@ export function startApp(root: HTMLElement): void {
       const link = DETECTIVE.links.game;
       const text = fmt(d.result.shareText, { name: DETECTIVE.name, date: dateText(today), tries: triesLine(d, p), hints: hintsLine(d, p) });
       return {
+        lang,
         streak: inRow > 0 ? plural(lang, inRow, d.home.streak, { n: inRow }) : null,
         share: { label: d.result.copy, done: d.result.copied, text: link ? `${text} ${link}` : text },
         secondary: null,
@@ -320,6 +350,7 @@ export function startApp(root: HTMLElement): void {
       };
     }
     return {
+      lang,
       streak: null,
       share: null,
       secondary: {
