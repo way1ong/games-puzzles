@@ -40,7 +40,8 @@
       "other": "Közülük {n} bizonyíték."
     },
     "start": "Körülnézek a szobában",
-    "medium": "Közepes szint: az egyik nyom hamisnak bizonyulhat."
+    "medium": "Közepes szint: az egyik nyom hamisnak bizonyulhat.",
+    "hard": "Nehéz szint: az ártatlanok igazat mondanak, csak a tettes hazudik."
   },
   "search": {
     "progress": "Megvan: {found} / {total}",
@@ -154,11 +155,17 @@
     "backToCard": "Vissza a kártyához",
     "whyNot": "Miért nem {name} a tettes?",
     "rule": "A tettes megnevezéséhez zárja ki a többieket – mindegyiket okkal.",
-    "last": "Egy ember maradt. Nyissa meg a kártyáját, és nevezze meg."
+    "last": "Egy ember maradt. Nyissa meg a kártyáját, és nevezze meg.",
+    "leadHard": "Az ártatlanok igazat mondanak. Csak a tettes hazudik. Vesse össze a vallomásokat a bizonyítékokkal és egymással. Zárjon ki mindenkit, aki nem lehet a tettes – és mindegyiknél nevezze meg az okot: egy bizonyítékot, vagy egy-két vallomást.",
+    "statements": "Vallomások",
+    "says": "Vallomás: {name}",
+    "pick": "Válasszon egy okot, vagy kettőt, amelyek együtt bizonyítják.",
+    "checkReason": "Ellenőrzöm"
   },
   "levels": {
     "easy": "könnyű",
-    "medium": "közepes"
+    "medium": "közepes",
+    "hard": "nehéz"
   },
   "facts": {
     "key": "Van kulcsa az ajtóhoz",
@@ -190,7 +197,11 @@
     "hasKey": "{name}: van kulcsa. Ez a körülmény nem zárja ki.",
     "free": "{name}: {time}-ra nincs alibije. Ez a körülmény nem zárja ki.",
     "fits": "{name}: a(z) „{clue}” illik rá. Ez a bizonyíték nem zárja ki.",
-    "visitor": "A(z) „{clue}” hamis nyom: egy nappali látogató ({visitor}) is otthagyhatta. Semmit sem bizonyít."
+    "visitor": "A(z) „{clue}” hamis nyom: egy nappali látogató ({visitor}) is otthagyhatta. Semmit sem bizonyít.",
+    "vouched": "{name}: van alibije – {speaker} vallomása. Ha {name} lenne a tettes, ez a vallomás igaz volna.",
+    "clash": "{a} és {b} vallomása nem lehet egyszerre igaz. Csak a tettes hazudik, tehát kettejük közül valaki az – nem {name}.",
+    "own": "{name} saját vallomása semmit sem bizonyít: a tettes hazudik.",
+    "possible": "Ez nem zárja ki: mindez igaz lehet akkor is, ha {name} a tettes."
   },
   "result": {
     "solved": "Az ügy megoldva!",
@@ -211,7 +222,8 @@
     "falseLead": "Hamis nyom – „{clue}”: nappali látogatás nyoma, {visitor} ({why}).",
     "left": "Mindenki mást kizártunk – marad: {name}.",
     "noSlips": "Minden ok helyes",
-    "slips": "Téves okok: {n}"
+    "slips": "Téves okok: {n}",
+    "liar": "A hamis vallomás: {name}."
   },
   "stories": {
     "lostLetter": {
@@ -288,6 +300,19 @@
       "title": "A receptkönyv",
       "text": "Éjjel eltűnt a pékségből a receptkönyv. Az ajtó résnyire nyitva, de a zár ép – kulccsal nyitották ki. A padlón lisztes lábnyomok.",
       "ending": "{name} bevallja: a receptkönyv kötése szétesett, ezért titokban elvitte a könyvkötőhöz – a pékség évfordulójára új borítóban akarta visszahozni. A könyv már a helyén van, akár az új."
+    },
+    "missingStamp": {
+      "title": "Az eltűnt bélyeg",
+      "text": "Este eltűnt egy ritka bélyeg a nyomozó asztalán fekvő albumból. Mellette megállt a zsebóra – valaki sietve meglökhette. Mind a hatan elmondták, hol voltak abban a percben.",
+      "ending": "{name} bevallja: azért vitte el a bélyeget, hogy titokban bekereteztesse – ajándéknak szánta a nyomozónak az iroda évfordulójára. A könyvtárat csak kitalálta, hogy ne rontsa el a meglepetést. A bélyeg már keretben van, a falon.",
+      "says": {
+        "anna": "{time}-kor otthon voltam, egyedül. Senki sem tudja igazolni.",
+        "sofia": "{time}-kor a színházban voltam, próbán.",
+        "ilona": "{time}-kor a könyvtárban voltam, a pultnál. Nóra az olvasóteremben ült. Tamás viszont ma be sem jött hozzánk.",
+        "tamas": "{time}-kor a könyvtárban voltam – Nóra mellett olvastam.",
+        "nora": "{time}-kor a könyvtárban voltam, képeket válogattam egy kiállításra.",
+        "viktor": "{time}-kor a kávézóban voltam, teáztam a műszak után."
+      }
     },
     "stationUmbrella": {
       "title": "A más esernyője",

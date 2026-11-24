@@ -98,9 +98,19 @@ export async function audit({ browser, origin, axe, fail, shots }) {
         await shot('h3-reasons');
       }
       const reasons = await page.locator('dialog[open] .reason').count();
+      // the hard level: reasons are picked (one, or two together) and then checked
+      const several = (await page.locator('dialog[open] [data-act=check]').count()) > 0;
+      if (several && !(await page.locator('dialog[open] [data-act=check]').isHidden())) fail(`detective ${label}: "check" is offered with nothing picked`);
+      const sets = [];
+      for (let a = 0; a < reasons; a++) sets.push([a]);
+      for (let a = 0; several && a < reasons; a++) for (let b = a + 1; b < reasons; b++) sets.push([a, b]);
       let aside = false;
-      for (let r = 0; r < reasons && !aside; r++) {
-        await page.locator('dialog[open] .reason').nth(r).click();
+      for (const set of sets) {
+        for (const r of set) await page.locator('dialog[open] .reason').nth(r).click();
+        if (several) {
+          if ((await page.locator('dialog[open] .reason[aria-pressed=true]').count()) !== set.length) fail(`detective ${label}: ${set.length} reason(s) picked, another number marked`);
+          await page.locator('dialog[open] [data-act=check]').click();
+        }
         aside = !(await page.locator('dialog[open]').count());
         if (aside) break;
         if (!(await page.locator('dialog[open] .person-card__note').textContent()).trim()) fail(`detective ${label}: a reason that does not hold is answered with nothing`);
@@ -109,6 +119,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
           await look(`${label} a reason that does not hold`);
           await shot('h4-slip');
         }
+        // take the picked reasons back before the next try
+        if (several) for (const r of set) await page.locator('dialog[open] .reason').nth(r).click();
       }
       if (aside) {
         if (!(await page.locator('.suspects__note').textContent()).trim()) fail(`detective ${label}: setting a person aside says nothing`);
@@ -307,16 +319,17 @@ export async function audit({ browser, origin, axe, fail, shots }) {
   if (harder.length === 0) fail('detective: no case of a harder level in the list');
   for (const [width, height] of harder.length ? SIZES : []) {
     for (const [locale, colorScheme] of LOOKS) {
-      const label = `${width}×${height} ${locale} ${colorScheme} harder`;
+     for (const which of harder) {
+      const label = `${width}×${height} ${locale} ${colorScheme} harder ${which + 1}`;
       const ctx = await browser.newContext({ viewport: { width, height }, locale, colorScheme, isMobile: width < 768, hasTouch: width < 1024 });
       const page = await ctx.newPage();
       watch(page, `detective ${label}`, origin, fail);
       const shot = async (name) => {
-        if (shots) await page.screenshot({ path: join(shots, `detective-${width}x${height}-${locale}-${name}.png`) });
+        if (shots) await page.screenshot({ path: join(shots, `detective-${width}x${height}-${locale}-${which + 1}-${name}.png`) });
       };
       await page.goto(base);
       await page.waitForSelector('.case-card');
-      await page.locator('.cases').first().locator('.case-card').nth(harder[0]).click();
+      await page.locator('.cases').first().locator('.case-card').nth(which).click();
       await page.waitForSelector('.intro');
       await check(page, `${label} story`);
       await shot('h1-story');
@@ -336,6 +349,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await shot('h1-suspects');
       await playHarder(page, label, (what) => check(page, what), shot);
       await ctx.close();
+     }
     }
   }
 
@@ -479,5 +493,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, `${label} a person`);
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks through a whole case and through a harder one from the suspects on, ${stories} story cases and ${searches} rooms of free search, the case of the day, a reload, keyboard, large text`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks through a whole case and through ${harder.length} harder ones from the suspects on, ${stories} story cases and ${searches} rooms of free search, the case of the day, a reload, keyboard, large text`;
 }

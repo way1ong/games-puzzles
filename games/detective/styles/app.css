@@ -612,9 +612,76 @@
   height: 2rem;
 }
 
+.reason__text {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
 .reason__name {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.reason__line {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 400;
+}
+
+/* A reason picked (the hard level takes two): a thick accent edge and a tick, not colour alone. */
+.reason[aria-pressed='true'] {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.reason[aria-pressed='true'] .reason__name::before {
+  content: '✓ ';
+}
+
+/* Under the reasons: the game's answer and the buttons, held at the bottom of the window. */
+.reasons-foot {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  gap: 0.5rem;
+  margin: 0 -1.25rem -1.25rem;
+  padding: 0.75rem 1.25rem 1.25rem;
+  border-top: 2px solid var(--line);
+  background: var(--surface);
+}
+
+.dialog__hint {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* What everybody says, to be compared. */
+.statements {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.statement {
+  display: grid;
+  gap: 0.125rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.statement__name {
+  font-weight: 700;
+}
+
+.person-card__says {
+  margin: 0;
+  padding-left: 0.75rem;
+  border-left: 4px solid var(--line);
 }
 
 /* Two in a row on a phone, three on a wider screen; one when large text leaves a card no room for a word. */

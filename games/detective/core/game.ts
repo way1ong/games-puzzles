@@ -3,7 +3,7 @@
 import { DETECTIVE } from '../config.ts';
 import type { CaseDef } from './cases.ts';
 import { explain, firstMismatch } from './clues.ts';
-import { check, excludedBy, reasonsOf, type Check, type ReasonId } from './deduction.ts';
+import { bestProof, prove, reasonsOf, type Proof, type ReasonId } from './deduction.ts';
 import { traitsOf } from './people.ts';
 import { thingAt, type Placed } from './placement.ts';
 import type { ThingId } from './things.ts';
@@ -25,8 +25,8 @@ export interface Progress {
   wrong: number[];
   /** Suspects the player has set aside. */
   ruledOut: number[];
-  /** Harder levels: the reason each suspect was set aside for (suspect → reason); every one of them holds. */
-  reasons: Record<number, ReasonId>;
+  /** Harder levels: the reasons each suspect was set aside for (suspect → reasons named together); they hold. */
+  reasons: Record<number, ReasonId[]>;
   /** Harder levels: reasons named that did not rule the person out. */
   slips: number;
 }
@@ -93,19 +93,26 @@ export function toggleRuledOut(def: CaseDef, progress: Progress, suspect: number
 export interface Ruling {
   progress: Progress;
   /** null — nothing to rule on (not the stage, no such person or reason, or the person is set aside already). */
-  check: Check | null;
+  check: Proof | null;
+}
+
+/** How many reasons may be named at once: on the hard level two statements can clash; elsewhere — one. */
+export function reasonsAtOnce(def: CaseDef): number {
+  return def.level === 'hard' ? DETECTIVE.reasonsAtOnce : 1;
 }
 
 /**
- * A harder case: "it is not this person, because…". A reason that holds sets the person aside for good; one
- * that does not is counted as a slip.
+ * A harder case: "it is not this person, because…". Reasons that hold set the person aside for good; ones
+ * that do not are counted as a slip.
  */
-export function rule(def: CaseDef, progress: Progress, suspect: number, reason: ReasonId): Ruling {
+export function rule(def: CaseDef, progress: Progress, suspect: number, reason: ReasonId | readonly ReasonId[]): Ruling {
+  const picked = [...new Set(typeof reason === 'string' ? [reason] : reason)];
   if (progress.stage !== 'suspects' || def.level === 'easy' || !def.suspects[suspect]) return { progress, check: null };
-  if (progress.ruledOut.includes(suspect) || !reasonsOf(def).includes(reason)) return { progress, check: null };
-  const result = check(def, suspect, reason);
+  const known = reasonsOf(def);
+  if (progress.ruledOut.includes(suspect) || picked.length === 0 || picked.length > reasonsAtOnce(def) || picked.some((r) => !known.includes(r))) return { progress, check: null };
+  const result = prove(def, suspect, picked);
   if (!result.excludes) return { progress: { ...progress, slips: progress.slips + 1 }, check: result };
-  return { progress: { ...progress, ruledOut: [...progress.ruledOut, suspect], reasons: { ...progress.reasons, [suspect]: reason } }, check: result };
+  return { progress: { ...progress, ruledOut: [...progress.ruledOut, suspect], reasons: { ...progress.reasons, [suspect]: picked } }, check: result };
 }
 
 /** Suspects not set aside yet. */
@@ -153,12 +160,12 @@ export function solution(def: CaseDef): { clue: ClueId; who: number[] }[] {
   return explain(def.suspects.map(traitsOf), def.clues);
 }
 
-/** For the end of a harder case: everybody else with the first reason (in the order of the screen) that rules them out. */
-export function eliminations(def: CaseDef): { suspect: number; reason: ReasonId }[] {
-  const out: { suspect: number; reason: ReasonId }[] = [];
+/** For the end of a harder case: everybody else with the plainest reasons that rule them out. */
+export function eliminations(def: CaseDef): { suspect: number; picked: ReasonId[] }[] {
+  const out: { suspect: number; picked: ReasonId[] }[] = [];
   def.suspects.forEach((_, suspect) => {
-    const reason = excludedBy(def, suspect)[0];
-    if (suspect !== def.culprit && reason !== undefined) out.push({ suspect, reason });
+    const picked = suspect === def.culprit ? null : bestProof(def, suspect);
+    if (picked) out.push({ suspect, picked });
   });
   return out;
 }
@@ -199,13 +206,14 @@ export function restore(def: CaseDef, saved: unknown): Progress | null {
     slips: typeof p.slips === 'number' && p.slips >= 0 ? Math.floor(p.slips) : 0,
   };
   if (def.level !== 'easy') {
-    // only people set aside for a reason that holds stay aside
+    // only people set aside for reasons that hold stay aside (a save of the first medium level kept one reason, not a list)
     const known = reasonsOf(def);
     const saved = (p.reasons ?? {}) as Record<string, unknown>;
     progress.ruledOut = progress.ruledOut.filter((i) => {
-      const reason = saved[i] as ReasonId;
-      if (!known.includes(reason) || !check(def, i, reason).excludes) return false;
-      progress.reasons[i] = reason;
+      const value = saved[i];
+      const picked = (typeof value === 'string' ? [value] : Array.isArray(value) ? value : []) as ReasonId[];
+      if (picked.length === 0 || picked.length > reasonsAtOnce(def) || picked.some((r) => !known.includes(r)) || !prove(def, i, picked).excludes) return false;
+      progress.reasons[i] = picked;
       return true;
     });
     progress.wrong = [];

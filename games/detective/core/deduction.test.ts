@@ -1,7 +1,7 @@
 // Deduction: what rules a suspect out, false leads, and what makes a harder case a fair puzzle.
 import { describe, expect, it } from 'vitest';
 import { STORIES, at, type CaseDef } from './cases.ts';
-import { atFaceValue, candidates, check, excludedBy, falseLeads, leftBy, puzzleProblems, reasonsOf, visitors } from './deduction.ts';
+import { atFaceValue, bestProof, candidates, check, clashes, excludedBy, falseLeads, leftBy, prove, puzzleProblems, reasonsOf, statementsHold, visitors } from './deduction.ts';
 import { alibis, awayAt, hasKey, visitOf } from './facts.ts';
 
 const def = STORIES.recipeBook;
@@ -115,5 +115,68 @@ describe('a fair puzzle', () => {
     const easy = structuredClone(STORIES.lostLetter) as CaseDef;
     easy.facts = [[{ kind: 'key' }]];
     expect(puzzleProblems(easy).join()).toContain('an easy case has no circumstances and no facts');
+  });
+});
+
+describe('the hard case: statements', () => {
+  const hard = STORIES.missingStamp;
+  // anna 0 · sofia 1 · ilona 2 (the librarian) · tamas 3 (did it) · nora 4 · viktor 5
+  const [ANNA, SOFIA2, ILONA, TAMAS2, NORA, VIKTOR2] = [0, 1, 2, 3, 4, 5] as const;
+  const all = [0, 1, 2, 3, 4, 5];
+
+  it('the reasons end with a statement of everybody', () => {
+    expect(reasonsOf(hard)).toEqual(['time', 'glasses', 'buttons:gold', 'scarf:blue', 'say:0', 'say:1', 'say:2', 'say:3', 'say:4', 'say:5']);
+  });
+
+  it('everybody else can be telling the truth only if Tamas or the librarian did it', () => {
+    expect(all.filter((c) => statementsHold(hard, c, all))).toEqual([ILONA, TAMAS2]);
+    expect(clashes(hard)).toEqual([[ILONA, TAMAS2]]);
+  });
+
+  it('a statement gives an alibi to the person it places elsewhere', () => {
+    expect(prove(hard, NORA, ['say:2'])).toEqual({ excludes: true, by: 'vouched', speaker: ILONA });
+    expect(prove(hard, NORA, ['say:3'])).toEqual({ excludes: true, by: 'vouched', speaker: TAMAS2 }); // true or not, it is his word
+    expect(prove(hard, ANNA, ['say:2'])).toEqual({ excludes: false, why: 'possible' });
+    expect(prove(hard, NORA, ['say:4'])).toEqual({ excludes: false, why: 'own' });
+  });
+
+  it('two statements that cannot both be true rule out everybody but those two', () => {
+    for (const other of [ANNA, SOFIA2, NORA, VIKTOR2]) expect(prove(hard, other, ['say:2', 'say:3']).excludes, String(other)).toBe(true);
+    expect(prove(hard, ANNA, ['say:2', 'say:3'])).toEqual({ excludes: true, by: 'clash', a: ILONA, b: TAMAS2 });
+    expect(prove(hard, ILONA, ['say:2', 'say:3'])).toEqual({ excludes: false, why: 'own' });
+    expect(prove(hard, TAMAS2, ['say:2', 'say:3'])).toEqual({ excludes: false, why: 'own' });
+    expect(prove(hard, ANNA, ['say:4', 'say:5'])).toEqual({ excludes: false, why: 'possible' });
+  });
+
+  it('evidence decides between the two: the gold button is not the librarian’s', () => {
+    expect(atFaceValue(hard)).toEqual([ANNA, TAMAS2, NORA]);
+    expect(prove(hard, ILONA, ['buttons:gold'])).toEqual({ excludes: true, by: 'reason', reason: 'buttons:gold' });
+    expect(prove(hard, ILONA, ['glasses', 'buttons:gold']).excludes).toBe(true);
+    expect(candidates(hard)).toEqual([TAMAS2]);
+    expect(excludedBy(hard, TAMAS2)).toEqual([]);
+    expect(bestProof(hard, TAMAS2)).toBeNull();
+    expect(bestProof(hard, ANNA)).toEqual(['say:2', 'say:3']);
+    expect(bestProof(hard, NORA)).toEqual(['say:2']);
+  });
+
+  it('is a fair puzzle, and stops being one when broken', () => {
+    const broken = (change: (c: CaseDef) => void): string => {
+      const copy = structuredClone(hard) as CaseDef;
+      change(copy);
+      return puzzleProblems(copy).join();
+    };
+    expect(puzzleProblems(hard)).toEqual([]);
+    // the librarian no longer contradicts Tamas: nothing tells him from Anna
+    expect(broken((c) => (c.statements[ILONA] = { at: 'library', saw: [NORA] }))).toContain('leave [0,3]');
+    // the librarian in gold buttons: the evidence no longer tells her from Tamas
+    expect(broken((c) => ((c.suspects[ILONA] as (typeof c.suspects)[number]).buttons = 'gold'))).toContain('leave [2,3]');
+    expect(broken((c) => c.statements.pop())).toContain('a statement from every suspect');
+    expect(broken((c) => (c.circumstances = []))).toContain('needs the time');
+    expect(broken((c) => (c.statements[ANNA] = { at: 'home', saw: [ANNA] }))).toContain('about themselves');
+    // somebody saw Anna too: then the evidence is all one needs… and the lens rules out nobody new
+    expect(broken((c) => (c.suspects[SOFIA2] = { person: 'viktor', buttons: 'gold', scarf: 'red', flower: false }))).toContain('"glasses" rules out nobody');
+    const medium = structuredClone(STORIES.recipeBook) as CaseDef;
+    medium.statements = [{ at: 'home' }];
+    expect(puzzleProblems(medium).join()).toContain('only a hard case has statements');
   });
 });

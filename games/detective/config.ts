@@ -22,6 +22,8 @@ export const DETECTIVE = {
   cluesPerCase: 3,
   /** Suspects in a case (C; the approved phone sample shows six). */
   suspectsPerCase: 6,
+  /** A hard case: how many reasons a player may name at once to set a person aside — two statements can clash (C). */
+  reasonsAtOnce: 2,
   /**
    * A touch counts within this many CSS pixels of a thing, so even a small thing is a 44 px target (C).
    */

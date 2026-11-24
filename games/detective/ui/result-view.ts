@@ -4,7 +4,7 @@ import { copyControl, type ShareText } from '../../../shared/ui/copy.ts';
 import { h, svg } from '../../../shared/ui/dom.ts';
 import { portraitSvg } from '../art/people/portrait.ts';
 import type { CaseDef, StoryId } from '../core/cases.ts';
-import { check, falseLeads } from '../core/deduction.ts';
+import { falseLeads, prove } from '../core/deduction.ts';
 import { visitOf } from '../core/facts.ts';
 import { eliminations, solution, tries, type Progress } from '../core/game.ts';
 import { rulingText } from './deduction-text.ts';
@@ -78,11 +78,12 @@ export function resultView(d: Dict, def: CaseDef, progress: Progress, extras: Re
     }
   } else {
     // everybody else with the reason that rules them out, then whose the false lead was
-    for (const { suspect, reason } of eliminations(def)) why.append(h('li', {}, rulingText(d, extras.lang, def, suspect, reason, check(def, suspect, reason))));
+    for (const { suspect, picked } of eliminations(def)) why.append(h('li', {}, rulingText(d, extras.lang, def, suspect, picked, prove(def, suspect, picked))));
     for (const { clue, visitor } of falseLeads(def)) {
       const visit = visitOf(def.facts[visitor] ?? []);
       why.append(h('li', {}, fmt(d.result.falseLead, { clue: d.things[clue], visitor: nameOf(visitor), why: visit ? d.visits[visit] : '' })));
     }
+    if (def.statements.length > 0) why.append(h('li', {}, fmt(d.result.liar, { name })));
   }
   body.append(
     h('div', { class: 'person-card' }, picture, h('div', {}, h('h2', { class: 'result__title' }, d.result.solved), h('p', { class: 'result__who' }, fmt(d.result.who, { name })))),

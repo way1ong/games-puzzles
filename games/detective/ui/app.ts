@@ -5,11 +5,11 @@ import { h } from '../../../shared/ui/dom.ts';
 import { DETECTIVE } from '../config.ts';
 import { STORIES, STORY_IDS, type CaseDef, type StoryId, type Time } from '../core/cases.ts';
 import { dailyCase, searchCase } from '../core/daily.ts';
-import { check, type ReasonId } from '../core/deduction.ts';
-import { accuse, allFound, begin, canAccuse, hint, isEvidence, newProgress, regionOf, rule, toSuspects, toggleRuledOut, touch, tries, type Progress } from '../core/game.ts';
+import { prove, type ReasonId } from '../core/deduction.ts';
+import { accuse, allFound, begin, canAccuse, hint, isEvidence, newProgress, reasonsAtOnce, regionOf, rule, toSuspects, toggleRuledOut, touch, tries, type Progress } from '../core/game.ts';
 import { ROOM_IDS, type RoomId } from '../core/rooms.ts';
 import { sizeOf } from '../core/things.ts';
-import { factLines, reasonChoices, rulingText } from './deduction-text.ts';
+import { factLines, reasonChoices, rulingText, statementText } from './deduction-text.ts';
 import { homeView, roomLine, statusOf, storyTitle, type HomeEntry } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
 import { backSign } from './icons.ts';
@@ -257,7 +257,7 @@ export function startApp(root: HTMLElement): void {
   }
 
   // ---------- who did it ----------
-  function openPerson(i: number, note = '', picking: ReasonId | null = null): void {
+  function openPerson(i: number, note = '', picking: readonly ReasonId[] | null = null): void {
     if (!def || !progress) return;
     const suspect = def.suspects[i];
     if (!suspect) return;
@@ -266,11 +266,19 @@ export function startApp(root: HTMLElement): void {
     const aside = progress.ruledOut.includes(i);
     const reason = progress.reasons[i];
     // a person set aside on a harder level: the card says what for
-    const said = note || (c.level !== 'easy' && aside && reason ? rulingText(d, lang, c, i, reason, check(c, i, reason)) : '');
+    const said = note || (c.level !== 'easy' && aside && reason ? rulingText(d, lang, c, i, reason, prove(c, i, reason)) : '');
     const harder =
       c.level === 'easy'
         ? null
-        : { facts: factLines(d, lang, c, i), reasons: reasonChoices(d, lang, c), canAccuse: canAccuse(c, progress, i), step: picking ? ('reasons' as const) : ('card' as const), focus: picking };
+        : {
+            facts: factLines(d, lang, c, i),
+            statement: statementText(d, lang, c, i),
+            reasons: reasonChoices(d, lang, c),
+            atOnce: reasonsAtOnce(c),
+            canAccuse: canAccuse(c, progress, i),
+            step: picking ? ('reasons' as const) : ('card' as const),
+            picked: picking ?? [],
+          };
     personDialog.open(
       d,
       { suspect, aside, wrong: progress.wrong.includes(i), note: said, harder },

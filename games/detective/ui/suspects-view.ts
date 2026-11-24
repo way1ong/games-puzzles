@@ -8,7 +8,7 @@ import { remaining, type Progress } from '../core/game.ts';
 import { SPOTS } from '../core/rooms.ts';
 import type { ThingId } from '../core/things.ts';
 import type { ClueId } from '../core/traits.ts';
-import { circumstanceText } from './deduction-text.ts';
+import { circumstanceText, statementLines } from './deduction-text.ts';
 import type { Dict } from './i18n.ts';
 
 /** Where a thing was found, in words. */
@@ -59,15 +59,23 @@ export function suspectsView(d: Dict, def: CaseDef, progress: Progress, open: (s
   });
   const title = h('h2', { class: 'suspects__title' }, d.suspects.title);
   if (def.level === 'easy') return h('section', { class: 'suspects' }, title, h('p', { class: 'suspects__lead' }, d.suspects.lead), clueList(d, def), people);
+  // a hard case: what everybody says, side by side — statements are to be compared
+  const said: (HTMLElement | null)[] = [];
+  if (def.statements.length > 0) {
+    const list = h('ul', { class: 'statements', 'aria-labelledby': 'statements-title' });
+    for (const line of statementLines(d, extras.lang, def)) list.append(h('li', { class: 'statement' }, h('span', { class: 'statement__name' }, line.name), h('span', { class: 'statement__text' }, line.text)));
+    said.push(h('h3', { class: 'suspects__part', id: 'statements-title' }, d.suspects.statements), list);
+  }
   return h(
     'section',
     { class: 'suspects' },
     title,
-    h('p', { class: 'suspects__lead' }, d.suspects.leadMedium),
+    h('p', { class: 'suspects__lead' }, def.level === 'hard' ? d.suspects.leadHard : d.suspects.leadMedium),
     h('h3', { class: 'suspects__part', id: 'circumstances-title' }, d.suspects.circumstances),
     circumstanceList(d, extras.lang, def),
     h('h3', { class: 'suspects__part' }, d.search.evidence),
     clueList(d, def),
+    ...said,
     h('p', { class: 'suspects__note', role: 'status' }, extras.note),
     h('p', { class: 'suspects__rule' }, remaining(def, progress).length === 1 ? d.suspects.last : d.suspects.rule),
     people,
