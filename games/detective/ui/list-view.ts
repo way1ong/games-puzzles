@@ -3,8 +3,7 @@
 import { h, svg } from '../../../shared/ui/dom.ts';
 import { thingIcon } from '../art/things.ts';
 import type { CaseDef } from '../core/cases.ts';
-import type { Progress } from '../core/game.ts';
-import { isClue } from '../core/traits.ts';
+import { isEvidence, type Progress } from '../core/game.ts';
 import type { Dict } from './i18n.ts';
 import { checkSign } from './icons.ts';
 
@@ -16,7 +15,7 @@ export function thingList(d: Dict, def: CaseDef, progress: Progress): HTMLUListE
     const text = h('span', { class: 'thing-chip__text' }, h('span', { class: 'thing-chip__name' }, d.things[thing]));
     if (found) text.append(h('span', { class: 'visually-hidden' }, ` — ${d.search.foundMark}`));
     // found evidence says so under its name
-    if (found && isClue(thing)) text.append(h('span', { class: 'thing-chip__clue' }, d.search.clueMark));
+    if (found && isEvidence(def, thing)) text.append(h('span', { class: 'thing-chip__clue' }, d.search.clueMark));
     item.append(found ? checkSign() : svg(thingIcon(thing)), text);
     list.append(item);
   }

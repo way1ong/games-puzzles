@@ -1,6 +1,7 @@
 // Browser audit of Detective: a whole story case on every size and look (the list of cases, the story, the
 // room, a hint, every thing found, the suspects, a wrong and a right name, the end), the menu and the large
-// mode, the night case, every other story case from the story to the end, every room of free search, the
+// mode, the night case, every other story case from the story to the end (a harder case — by naming a reason
+// for everybody set aside; the harder case again on every size and look), every room of free search, the
 // case of the day, a saved game after a reload, the keyboard, large system text. And the drawings
 // themselves: in every case and room every thing stays inside its size and rests on its line.
 import { join } from 'node:path';
@@ -72,6 +73,70 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await touch(page, point, hasTouch);
       await page.waitForFunction((n) => document.querySelectorAll('.thing-chip.is-found').length > n || !document.querySelector('.things'), before, { timeout: 3000 }).catch(() => fail(`${label}: a touch on ${thing} did not find it`));
     }
+  }
+
+  /**
+   * A harder case from the suspects to the end: for everybody, "set aside — name the reason" and the reasons
+   * in turn until one holds (the first that does not is looked over as a screen); nothing holds for the one
+   * who did it, who is named last. `look` checks a screen; `shot` takes its picture.
+   */
+  async function playHarder(page, label, look, shot = async () => {}) {
+    const people = await page.locator('.person').count();
+    let slipSeen = false;
+    let stuck = -1;
+    for (let who = 0; who < people; who++) {
+      await page.locator('.person').nth(who).click();
+      await page.waitForSelector('dialog[open] [data-act=rule]');
+      if (who === 0) {
+        await look(`${label} a person`);
+        await shot('h2-person');
+      }
+      await page.locator('dialog[open] [data-act=rule]').click();
+      await page.waitForSelector('dialog[open] .reasons');
+      if (who === 0) {
+        await look(`${label} reasons`);
+        await shot('h3-reasons');
+      }
+      const reasons = await page.locator('dialog[open] .reason').count();
+      let aside = false;
+      for (let r = 0; r < reasons && !aside; r++) {
+        await page.locator('dialog[open] .reason').nth(r).click();
+        aside = !(await page.locator('dialog[open]').count());
+        if (aside) break;
+        if (!(await page.locator('dialog[open] .person-card__note').textContent()).trim()) fail(`detective ${label}: a reason that does not hold is answered with nothing`);
+        if (!slipSeen) {
+          slipSeen = true;
+          await look(`${label} a reason that does not hold`);
+          await shot('h4-slip');
+        }
+      }
+      if (aside) {
+        if (!(await page.locator('.suspects__note').textContent()).trim()) fail(`detective ${label}: setting a person aside says nothing`);
+        continue;
+      }
+      // nothing rules this person out: back to the card, and on
+      if (stuck >= 0) fail(`detective ${label}: no reason rules out two people`);
+      stuck = who;
+      await page.locator('dialog[open] [data-act=back]').click();
+      await page.locator('dialog[open] .btn--ghost').first().click();
+    }
+    if ((await page.locator('.person.is-aside').count()) !== people - 1) fail(`detective ${label}: not everybody but one is set aside`);
+    await look(`${label} one person left`);
+    await shot('h5-left');
+    // a person set aside says what for, and cannot be named
+    const other = stuck === 0 ? 1 : 0;
+    await page.locator('.person').nth(other).click();
+    await page.waitForSelector('dialog[open]');
+    if (!(await page.locator('dialog[open] .person-card__note').textContent()).trim()) fail(`detective ${label}: a person set aside does not say what for`);
+    if (await page.locator('dialog[open] [data-act]').count()) fail(`detective ${label}: a person set aside can still be named or set aside`);
+    await page.locator('dialog[open] .btn--ghost').first().click();
+    await page.locator('.person').nth(stuck).click();
+    await page.waitForSelector('dialog[open] [data-act=accuse]');
+    await look(`${label} the last person`);
+    await page.locator('dialog[open] [data-act=accuse]').click();
+    await page.waitForSelector('.result');
+    await look(`${label} solved`);
+    await shot('h6-solved');
   }
 
   // ---------- a whole story case on every size, in every language and theme ----------
@@ -181,6 +246,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
   // ---------- every other story case from the story to the end; every room of free search ----------
   let stories = 0;
   let searches = 0;
+  /** Story cases of the harder levels, by their place in the list. */
+  const harder = [];
   {
     const label = 'every case';
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'uk-UA', isMobile: true, hasTouch: true });
@@ -209,7 +276,11 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await page.locator('.panel__end .btn--primary').click();
       await page.waitForSelector('.people');
       await check(page, `${name} suspects`);
-      // name everybody in turn until the case is solved
+      if (await page.locator('.clues--wide').count()) {
+        harder.push(i);
+        await playHarder(page, name, (what) => check(page, what));
+      }
+      // an easy case: name everybody in turn until the case is solved
       for (let who = 0; who < 12 && !(await page.locator('.result').count()); who++) {
         await page.locator('.person').nth(who).click();
         await page.locator('dialog[open] .btn--primary').click();
@@ -230,6 +301,42 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await page.waitForSelector('.case-card');
     }
     await ctx.close();
+  }
+
+  // ---------- a harder case from the suspects to the end on every size, in every language and theme ----------
+  if (harder.length === 0) fail('detective: no case of a harder level in the list');
+  for (const [width, height] of harder.length ? SIZES : []) {
+    for (const [locale, colorScheme] of LOOKS) {
+      const label = `${width}×${height} ${locale} ${colorScheme} harder`;
+      const ctx = await browser.newContext({ viewport: { width, height }, locale, colorScheme, isMobile: width < 768, hasTouch: width < 1024 });
+      const page = await ctx.newPage();
+      watch(page, `detective ${label}`, origin, fail);
+      const shot = async (name) => {
+        if (shots) await page.screenshot({ path: join(shots, `detective-${width}x${height}-${locale}-${name}.png`) });
+      };
+      await page.goto(base);
+      await page.waitForSelector('.case-card');
+      await page.locator('.cases').first().locator('.case-card').nth(harder[0]).click();
+      await page.waitForSelector('.intro');
+      await check(page, `${label} story`);
+      await shot('h1-story');
+      await page.locator('.intro .btn--primary').click();
+      await page.waitForSelector('.room__scroll .scene');
+      // the room is played above; here its things are taken as found
+      await page.evaluate(() => {
+        const key = Object.keys(localStorage).find((k) => k.includes(':case:') && JSON.parse(localStorage.getItem(k)).stage === 'search');
+        const saved = JSON.parse(localStorage.getItem(key));
+        saved.found = [...document.querySelectorAll('.room__scroll [data-thing]')].map((e) => e.getAttribute('data-thing'));
+        saved.stage = 'suspects';
+        localStorage.setItem(key, JSON.stringify(saved));
+      });
+      await page.reload();
+      await page.waitForSelector('.people');
+      await check(page, `${label} suspects`);
+      await shot('h1-suspects');
+      await playHarder(page, label, (what) => check(page, what), shot);
+      await ctx.close();
+    }
   }
 
   // ---------- the case of the day and free search; a saved game after a reload ----------
@@ -372,5 +479,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, `${label} a person`);
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks through a whole case, ${stories} story cases and ${searches} rooms of free search, the case of the day, a reload, keyboard, large text`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks through a whole case and through a harder one from the suspects on, ${stories} story cases and ${searches} rooms of free search, the case of the day, a reload, keyboard, large text`;
 }

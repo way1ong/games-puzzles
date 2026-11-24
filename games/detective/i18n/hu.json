@@ -39,7 +39,8 @@
       "one": "Közülük {n} bizonyíték.",
       "other": "Közülük {n} bizonyíték."
     },
-    "start": "Körülnézek a szobában"
+    "start": "Körülnézek a szobában",
+    "medium": "Közepes szint: az egyik nyom hamisnak bizonyulhat."
   },
   "search": {
     "progress": "Megvan: {found} / {total}",
@@ -145,7 +146,51 @@
     "setAside": "Kizárom",
     "bringBack": "Visszateszem",
     "accuse": "Ő a tettes",
-    "wrong": "Nem, nem {name} az: a(z) „{clue}” nem illik rá."
+    "wrong": "Nem, nem {name} az: a(z) „{clue}” nem illik rá.",
+    "leadMedium": "A tettesre minden körülmény illik. Az a bizonyíték, amelyet egy nappali látogató is otthagyhatott, semmit sem bizonyít. Zárjon ki mindenkit, aki nem lehet a tettes – és mindegyiknél nevezze meg az okot.",
+    "circumstances": "Körülmények",
+    "facts": "Amit tudni lehet",
+    "ruleOut": "Kizárom – megnevezem az okot",
+    "backToCard": "Vissza a kártyához",
+    "whyNot": "Miért nem {name} a tettes?",
+    "rule": "A tettes megnevezéséhez zárja ki a többieket – mindegyiket okkal.",
+    "last": "Egy ember maradt. Nyissa meg a kártyáját, és nevezze meg."
+  },
+  "levels": {
+    "easy": "könnyű",
+    "medium": "közepes"
+  },
+  "facts": {
+    "key": "Van kulcsa az ajtóhoz",
+    "noKey": "Nincs kulcsa az ajtóhoz",
+    "visit": "Nappali látogatás: {why}",
+    "alibi": "Alibi: {from}–{to}, {where}",
+    "noAlibi": "Nincs alibije"
+  },
+  "visits": {
+    "flowers": "virágkiszállítás"
+  },
+  "away": {
+    "mailSorting": "levélválogatás a postán"
+  },
+  "circumstances": {
+    "locked": {
+      "name": "A zár ép",
+      "text": "Az ajtót kulccsal nyitották ki: a tettesnek van kulcsa."
+    },
+    "time": {
+      "name": "A zsebóra {time}-kor megállt",
+      "text": "Akkor történt. Akinek erre az időre alibije van, nem a tettes."
+    }
+  },
+  "rulings": {
+    "locked": "{name}: nincs kulcsa, az ajtót pedig kulccsal nyitották ki.",
+    "time": "{name}: {time}-kor – {where}. Ez alibi.",
+    "clue": "{name}: a(z) „{clue}” nem illik rá.",
+    "hasKey": "{name}: van kulcsa. Ez a körülmény nem zárja ki.",
+    "free": "{name}: {time}-ra nincs alibije. Ez a körülmény nem zárja ki.",
+    "fits": "{name}: a(z) „{clue}” illik rá. Ez a bizonyíték nem zárja ki.",
+    "visitor": "A(z) „{clue}” hamis nyom: egy nappali látogató ({visitor}) is otthagyhatta. Semmit sem bizonyít."
   },
   "result": {
     "solved": "Az ügy megoldva!",
@@ -162,7 +207,11 @@
     "comeBack": "Holnap jöjjön vissza egy új ügyért.",
     "copy": "Eredmény másolása",
     "copied": "Másolva",
-    "shareText": "{name} · a nap ügye, {date}: megoldva. {tries}. {hints}."
+    "shareText": "{name} · a nap ügye, {date}: megoldva. {tries}. {hints}.",
+    "falseLead": "Hamis nyom – „{clue}”: nappali látogatás nyoma, {visitor} ({why}).",
+    "left": "Mindenki mást kizártunk – marad: {name}.",
+    "noSlips": "Minden ok helyes",
+    "slips": "Téves okok: {n}"
   },
   "stories": {
     "lostLetter": {
@@ -234,6 +283,11 @@
       "title": "Az utolsó vonat",
       "text": "Elment az utolsó vonat. A váróteremben ott maradt egy nyitott hegedűtok – de a hegedű nincs benne. A zenész csak egy percre lépett el, hogy megnézze a menetrendet.",
       "ending": "{name} széttárja a karját: a hegedű huzatban feküdt az ajtónál, ezért bezárta a kis szobájába, hogy ne érje nedvesség, és senki se vigye el. A kulcs nála van, a hegedű ép – a zenész már egy köszönő dallamot játszik."
+    },
+    "recipeBook": {
+      "title": "A receptkönyv",
+      "text": "Éjjel eltűnt a pékségből a receptkönyv. Az ajtó résnyire nyitva, de a zár ép – kulccsal nyitották ki. A padlón lisztes lábnyomok.",
+      "ending": "{name} bevallja: a receptkönyv kötése szétesett, ezért titokban elvitte a könyvkötőhöz – a pékség évfordulójára új borítóban akarta visszahozni. A könyv már a helyén van, akár az új."
     },
     "stationUmbrella": {
       "title": "A más esernyője",

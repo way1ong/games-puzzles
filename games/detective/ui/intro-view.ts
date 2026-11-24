@@ -4,6 +4,7 @@ import { h, svg } from '../../../shared/ui/dom.ts';
 import { sceneSvg } from '../art/scene.ts';
 import { DETECTIVE } from '../config.ts';
 import type { CaseDef, StoryId } from '../core/cases.ts';
+import { evidenceCount } from '../core/game.ts';
 import { plural, type Dict } from './i18n.ts';
 import { roomLine } from './home-view.ts';
 
@@ -22,8 +23,9 @@ export function introView(d: Dict, lang: string, def: CaseDef, start: () => void
     h(
       'p',
       { class: 'intro__task' },
-      `${plural(lang, DETECTIVE.thingsPerScene, d.intro.things, { n: DETECTIVE.thingsPerScene })} ${plural(lang, def.clues.length, d.intro.clues, { n: def.clues.length })}`,
+      `${plural(lang, DETECTIVE.thingsPerScene, d.intro.things, { n: DETECTIVE.thingsPerScene })} ${plural(lang, evidenceCount(def), d.intro.clues, { n: evidenceCount(def) })}`,
     ),
+    def.level === 'easy' ? null : h('p', { class: 'intro__level' }, d.intro[def.level]),
     h('div', { class: 'actions' }, button),
   );
 }

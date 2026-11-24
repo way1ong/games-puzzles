@@ -1,5 +1,6 @@
 // A case: a room at a time of day, the things hidden in it, the evidence among them, the suspects and who
 // did it. Story cases are written by hand here; daily cases are made from the date (core/daily.ts).
+import type { Circumstance, Fact, Level } from './facts.ts';
 import type { Suspect } from './people.ts';
 import { putOn, type Placed } from './placement.ts';
 import { SPOTS, type RoomId } from './rooms.ts';
@@ -23,7 +24,16 @@ export interface CaseDef {
   suspects: Suspect[];
   /** Index of the one who did it; -1 — free search, nobody. */
   culprit: number;
+  /** How much thinking it takes (docs/detective/SPEC.md, «Рівні»). */
+  level: Level;
+  /** What the scene itself says; an easy case has none. */
+  circumstances: Circumstance[];
+  /** What is known about each suspect beyond the looks, in the order of the suspects; an easy case has none. */
+  facts: Fact[][];
 }
+
+/** A moment of the day in minutes after midnight. */
+export const at = (hours: number, minutes = 0): number => hours * 60 + minutes;
 
 export function on(room: RoomId, thing: ThingId, spotId: string, dx = 0, rot = 0): Placed {
   const spot = SPOTS[room].find((s) => s.id === spotId);
@@ -31,10 +41,13 @@ export function on(room: RoomId, thing: ThingId, spotId: string, dx = 0, rot = 0
   return putOn(spot, thing, dx, rot);
 }
 
-export const STORY_IDS = ['lostLetter', 'midnightCall', 'fairPie', 'nightShift', 'strangeSuitcase', 'lastTrain'] as const;
+export const STORY_IDS = ['lostLetter', 'midnightCall', 'fairPie', 'nightShift', 'strangeSuitcase', 'lastTrain', 'recipeBook'] as const;
 export type StoryId = (typeof STORY_IDS)[number];
 
-/** Season one (docs/detective/SPEC.md): every room by day and at night. */
+/**
+ * Season one (docs/detective/SPEC.md): every room by day and at night — the easy cases; after them the
+ * harder ones.
+ */
 export const STORIES: Record<StoryId, CaseDef> = {
   // A sealed letter is gone from the desk. Red hair, a blue button, a lens: only Marta has all three.
   lostLetter: {
@@ -65,6 +78,9 @@ export const STORIES: Record<StoryId, CaseDef> = {
       { person: 'lina', buttons: 'blue', scarf: null, flower: true },
     ],
     culprit: 2,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
   },
   // A call at midnight, a note without a name, wet footprints. Dark hair, a yellow thread, a petal: Sofia.
   midnightCall: {
@@ -95,6 +111,9 @@ export const STORIES: Record<StoryId, CaseDef> = {
       { person: 'tamas', buttons: 'gold', scarf: null, flower: true },
     ],
     culprit: 4,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
   },
   // The pie for the fair is gone from its stand. Fair hair, a brown button, a yellow thread: only Bence.
   fairPie: {
@@ -125,6 +144,9 @@ export const STORIES: Record<StoryId, CaseDef> = {
       { person: 'pavlo', buttons: 'gold', scarf: 'yellow', flower: false },
     ],
     culprit: 3,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
   },
   // Somebody was in the bakery at night: the door ajar, the lamps on, floury footprints, a glove, the key
   // on the mat. A gold button, a petal, a red thread: only Emma.
@@ -156,6 +178,9 @@ export const STORIES: Record<StoryId, CaseDef> = {
       { person: 'ilona', buttons: 'brown', scarf: 'blue', flower: false },
     ],
     culprit: 1,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
   },
   // Two suitcases just alike, and somebody else's things in one of them. A lens, a blue thread, a brown
   // button: only Nora.
@@ -187,6 +212,9 @@ export const STORIES: Record<StoryId, CaseDef> = {
       { person: 'nora', buttons: 'brown', scarf: 'blue', flower: false },
     ],
     culprit: 5,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
   },
   // The last train has gone, and the musician's violin is not in its case. A grey hair, a blue button, a
   // red thread: only Oleg.
@@ -218,5 +246,50 @@ export const STORIES: Record<StoryId, CaseDef> = {
       { person: 'tamas', buttons: 'brown', scarf: 'blue', flower: false },
     ],
     culprit: 0,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
+  },
+  // Medium. The book of recipes is gone from the bakery at night; the lock is whole, and a pocket watch has
+  // stopped at 21:40. A dark hair, a brown button, a petal. At face value all three fit Sofia — but she has
+  // no key. The petal is the florist's, who brought flowers by day; the rest leaves only Viktor.
+  recipeBook: {
+    id: 'recipeBook',
+    kind: 'story',
+    story: 'recipeBook',
+    room: 'bakery',
+    time: 'night',
+    things: [
+      on('bakery', 'watch', 'rackTop1'),
+      on('bakery', 'flower', 'counter1', 12),
+      on('bakery', 'coin', 'floor4'),
+      on('bakery', 'hair:dark', 'seat', -12),
+      on('bakery', 'envelope', 'sill1'),
+      on('bakery', 'pencil', 'table1'),
+      on('bakery', 'buttons:brown', 'mat2', 10),
+      on('bakery', 'ring', 'showcase2'),
+      on('bakery', 'matches', 'rack5'),
+      on('bakery', 'candle', 'showcase1'),
+    ],
+    clues: ['hair:dark', 'buttons:brown', 'flower'],
+    suspects: [
+      { person: 'emma', buttons: 'brown', scarf: null, flower: false },
+      { person: 'sofia', buttons: 'brown', scarf: 'blue', flower: true },
+      { person: 'viktor', buttons: 'brown', scarf: null, flower: false },
+      { person: 'lina', buttons: 'blue', scarf: 'yellow', flower: true },
+      { person: 'pavlo', buttons: 'brown', scarf: 'red', flower: false },
+      { person: 'tamas', buttons: 'gold', scarf: null, flower: false },
+    ],
+    culprit: 2,
+    level: 'medium',
+    circumstances: [{ kind: 'locked' }, { kind: 'time', at: at(21, 40), thing: 'watch' }],
+    facts: [
+      [{ kind: 'key' }],
+      [],
+      [{ kind: 'key' }],
+      [{ kind: 'visit', why: 'flowers' }],
+      [{ kind: 'key' }, { kind: 'away', from: at(21), to: at(22, 30), where: 'mailSorting' }],
+      [{ kind: 'key' }],
+    ],
   },
 };
