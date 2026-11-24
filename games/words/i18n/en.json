@@ -1,0 +1,173 @@
+{
+  "meta": {
+    "langName": "English",
+    "title": "Words — a word game without ads",
+    "description": "Make words from the letters on the wheel and fill the crossword. No ads, no accounts, no tracking; works offline."
+  },
+  "app": {
+    "name": "Words",
+    "menu": "Menu",
+    "back": "Back to start",
+    "close": "Close"
+  },
+  "home": {
+    "play": "Play",
+    "continue": "Continue",
+    "level": "Level {n}",
+    "daily": "Daily puzzle",
+    "dailyNote": "The same for everyone today",
+    "solved": "solved",
+    "started": "started",
+    "streak": {
+      "one": "{n} day in a row",
+      "other": "{n} days in a row"
+    },
+    "levelsDone": {
+      "one": "{n} level done",
+      "other": "{n} levels done"
+    }
+  },
+  "game": {
+    "level": "Level {n}",
+    "dailyTitle": "Daily puzzle · {date}",
+    "preparing": "Making the level…",
+    "loadFailed": "The word list could not be loaded. Check the connection and open the game again.",
+    "wordsLeft": {
+      "one": "{n} word left",
+      "other": "{n} words left"
+    },
+    "bonusCount": {
+      "one": "{n} bonus word",
+      "other": "{n} bonus words"
+    },
+    "tipBoth": "Swipe across the letters to make a word — or tap them one by one, then “Check”.",
+    "tipSwipe": "Swipe across the letters to make a word; lift your finger to check it.",
+    "tipTap": "Tap the letters one by one, then “Check”.",
+    "crossword": "Crossword",
+    "wordState": "Word {n} of {total}, {length} letters: {state}",
+    "wordFound": "found — {word}",
+    "wordHidden": "not found",
+    "wordOpen": "not found, open letters: {letters}",
+    "cell": "Row {row}, column {col}",
+    "wheel": "Letters",
+    "current": "Your word",
+    "found": "Found: {word}",
+    "bonus": "Bonus word: {word} — a real word, not in this crossword",
+    "again": "Already found: {word}",
+    "short": {
+      "one": "Too short: at least {n} letter",
+      "other": "Too short: at least {n} letters"
+    },
+    "unknown": "Not in the word list: {word}",
+    "report": "Report “{word}”",
+    "reported": "Reported: {word}. Thank you!"
+  },
+  "tools": {
+    "shuffle": "Shuffle",
+    "clear": "Clear",
+    "check": "Check",
+    "hint": "Hint",
+    "bonus": "Bonus words"
+  },
+  "hint": {
+    "title": "Hint",
+    "firstLetter": "First letter of a word",
+    "chooseCell": "Letter in a cell you choose",
+    "wholeWord": "A whole word",
+    "chooseNow": "Tap a cell of the crossword that is still empty.",
+    "counted": "Every hint is free; the result shows how many were used."
+  },
+  "bonusList": {
+    "title": "Bonus words",
+    "none": "No bonus words yet. Real words made of these letters that are not in the crossword are kept here."
+  },
+  "end": {
+    "title": "Level {n} done!",
+    "dailyTitle": "Daily puzzle solved!",
+    "words": {
+      "one": "{n} word",
+      "other": "{n} words"
+    },
+    "bonus": {
+      "one": "{n} bonus word",
+      "other": "{n} bonus words"
+    },
+    "clean": "Without hints",
+    "hints": {
+      "one": "With {n} hint",
+      "other": "With {n} hints"
+    },
+    "time": "Time: {time}",
+    "streak": {
+      "one": "Daily puzzles: {n} day in a row",
+      "other": "Daily puzzles: {n} days in a row"
+    },
+    "next": "Next level",
+    "home": "To the start",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "shareClean": "{name} · {date}: solved without hints",
+    "shareHints": {
+      "one": "{name} · {date}: solved with {n} hint",
+      "other": "{name} · {date}: solved with {n} hints"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language (words and texts)",
+    "play": "Playing",
+    "input": "Making words",
+    "inputBoth": "Swipe or tap",
+    "inputSwipe": "Swipe",
+    "inputTap": "Tap",
+    "showCells": "Show the empty cells of the crossword",
+    "showLeft": "Show how many words are left",
+    "showBonus": "Show bonus words",
+    "time": "Show the time",
+    "grace": "Keep the streak after one missed day",
+    "huTiles": "Hungarian: cs, gy, ly, ny, sz, ty, zs as one tile",
+    "look": "Look and sound",
+    "big": "Large letters",
+    "theme": "Theme",
+    "themeSystem": "As the system",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "sound": "Sound",
+    "vibration": "Vibration",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap “Share”, then add the game to the Home Screen.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear levels, statistics and saved games",
+    "resetDone": "Progress cleared"
+  },
+  "reported": {
+    "title": "Reported words",
+    "none": "No words reported yet. If a word looks wrong, tap “Report” after trying it.",
+    "note": "The list stays on this device. Copy it and send it to us if you like — the game sends nothing itself.",
+    "copy": "Copy the list",
+    "copied": "Copied",
+    "line": "{lang}: {word} ({verdict})"
+  },
+  "stats": {
+    "title": "Statistics",
+    "levels": "Levels done",
+    "words": "Words found",
+    "bonus": "Bonus words",
+    "hints": "Hints",
+    "dailies": "Daily puzzles solved"
+  },
+  "about": {
+    "title": "About the game",
+    "rules": {
+      "one": "Make words from the letters on the wheel: each letter once in a word, at least {n} letter. A word of the crossword fills its cells; the level is done when the crossword is full. Other real words made of the letters count as bonus words.",
+      "other": "Make words from the letters on the wheel: each letter once in a word, at least {n} letters. A word of the crossword fills its cells; the level is done when the crossword is full. Other real words made of the letters count as bonus words."
+    },
+    "forms": "English: the crossword holds common words in their dictionary form; plurals and other forms count as bonus words.",
+    "text": "A word game without ads, accounts or tracking. Progress stays on this device. Works offline.",
+    "keys": "Keyboard: letters — make a word, Enter — check, Backspace — last letter off, Space — shuffle, ? — hint, Esc — close.",
+    "dictionaries": "Dictionaries",
+    "dictionariesNote": "The word lists come from these sources (their authors and licences):",
+    "licence": "The full text of the GNU LGPL 2.1 licence",
+    "credit": "Made by way1ong"
+  }
+}

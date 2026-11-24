@@ -1,0 +1,87 @@
+/*
+ * Words: the only file with colour values. Light and dark themes follow the system unless the player chooses
+ * one in the settings; a page that hosts the game (e.g. a claude.ai test page) may force one too — both with
+ * data-theme="light" | "dark" on <html>.
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #edf2ee;
+  --surface: #ffffff;
+  --text: #16231b;
+  --muted: #4c5a52;
+  --line: #77847c;
+  --accent: #1b6648;
+  --on-accent: #ffffff;
+  --focus: #1b6648;
+
+  /* Crossword: a cell and its frame; a cell of a found word; a letter opened by a hint; a word just found. */
+  --cell: #ffffff;
+  --cell-line: #77847c;
+  --found: #d6ecdf;
+  --opened: #8a4500;
+  --lit: #fff1a8;
+  /* Wheel: its disc and a letter's tile (a chosen letter takes the accent). */
+  --wheel: #dde8e1;
+  --tile: #ffffff;
+  /* Verdicts: a bonus word; a word not in the list. */
+  --bonus: #7a3f00;
+  --bad: #a3211a;
+
+  --backdrop: rgb(20 24 28 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0f1612;
+    --surface: #18211c;
+    --text: #e6efe9;
+    --muted: #a4b3aa;
+    --line: #6b7a71;
+    --accent: #62cfa0;
+    --on-accent: #06201a;
+    --focus: #62cfa0;
+
+    --cell: #1a241f;
+    --cell-line: #6b7a71;
+    --found: #1f4134;
+    --opened: #f3b95a;
+    --lit: #5a5320;
+    --wheel: #1c2822;
+    --tile: #25322b;
+    --bonus: #f3b95a;
+    --bad: #ffa69e;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  }
+}
+
+/* The same dark values when the player or the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0f1612;
+  --surface: #18211c;
+  --text: #e6efe9;
+  --muted: #a4b3aa;
+  --line: #6b7a71;
+  --accent: #62cfa0;
+  --on-accent: #06201a;
+  --focus: #62cfa0;
+
+  --cell: #1a241f;
+  --cell-line: #6b7a71;
+  --found: #1f4134;
+  --opened: #f3b95a;
+  --lit: #5a5320;
+  --wheel: #1c2822;
+  --tile: #25322b;
+  --bonus: #f3b95a;
+  --bad: #ffa69e;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+}
