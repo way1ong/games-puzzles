@@ -11,11 +11,11 @@
   // so the next deploy from main creates the DNS record and the certificate itself — docs/cloudflare.md,
   // "Домен". The games tell players this address too: shared/core/address.ts (a test keeps them equal).
   "routes": [{ "pattern": "games.way1ong.eu", "custom_domain": true }],
-  // With routes in this file a deploy switches the workers.dev address off unless it is kept on here.
-  // It stays on while the games move to their domain; switching it off is a separate step.
-  "workers_dev": true,
-  // No public addresses for branch previews and versions: with workers_dev on they would be switched on
-  // too, each carries the account's subdomain, and Cloudflare posts them into pull requests.
+  // The workers.dev address is off (decision of 24.11): the games live on their own domain, and that
+  // address carries the account's subdomain. With "routes" a deploy would infer the same; said here outright.
+  "workers_dev": false,
+  // No public addresses for branch previews and versions either: each would carry the account's subdomain,
+  // and Cloudflare posts them into pull requests.
   "preview_urls": false,
   // Branches other than main: Workers Builds runs `npx wrangler preview` for them, and that command stops
   // when this block is missing (it may be empty) — docs/cloudflare.md, "Гілки: попередній перегляд".
