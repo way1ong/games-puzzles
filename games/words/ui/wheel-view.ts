@@ -54,8 +54,11 @@ export function createWheelView(actions: WheelActions): WheelView {
 
   let state: WheelState = { letters: [], selected: [], input: 'both' };
   let buttons: HTMLButtonElement[] = [];
-  /** A slide in progress: the letters reached, and the pointer's place (for the line to the finger). */
-  let slide: { path: number[]; moved: boolean; x: number; y: number } | null = null;
+  /**
+   * A slide in progress: the finger (or mouse) that began it, the letters reached, and the pointer's place (for
+   * the line to the finger). Other fingers are ignored meanwhile — a hand holding the phone may touch the screen.
+   */
+  let slide: { pointer: number; path: number[]; moved: boolean; x: number; y: number } | null = null;
   /** A pointer tap was handled: the click that follows it is ignored. */
   let tapped = false;
 
@@ -116,16 +119,20 @@ export function createWheelView(actions: WheelActions): WheelView {
 
   ring.addEventListener('pointerdown', (event) => {
     if (event.button !== 0 || buttons.length === 0) return;
+    if (slide) {
+      event.preventDefault();
+      return;
+    }
     const m = measure();
     const i = letterAt(m.centres, m.start, event.clientX, event.clientY);
     if (i === null) return;
     event.preventDefault();
     ring.setPointerCapture(event.pointerId);
-    slide = { path: [i], moved: false, x: event.clientX, y: event.clientY };
+    slide = { pointer: event.pointerId, path: [i], moved: false, x: event.clientX, y: event.clientY };
   });
 
   ring.addEventListener('pointermove', (event) => {
-    if (!slide || state.input === 'tap') return;
+    if (!slide || event.pointerId !== slide.pointer || state.input === 'tap') return;
     // Every point of the way since the last move, a third of the reach apart: a quick slide skips no letter.
     const m = measure();
     const from = { x: slide.x, y: slide.y };
@@ -138,8 +145,8 @@ export function createWheelView(actions: WheelActions): WheelView {
     if (slide.moved) drawLine();
   });
 
-  const finish = (cancelled: boolean) => {
-    if (!slide) return;
+  const finish = (event: PointerEvent, cancelled: boolean) => {
+    if (!slide || event.pointerId !== slide.pointer) return;
     const { path, moved } = slide;
     slide = null;
     tapped = true;
@@ -149,8 +156,8 @@ export function createWheelView(actions: WheelActions): WheelView {
     else if (state.input !== 'swipe') toggle(path[0]!);
     drawLine();
   };
-  ring.addEventListener('pointerup', () => finish(false));
-  ring.addEventListener('pointercancel', () => finish(true));
+  ring.addEventListener('pointerup', (event) => finish(event, false));
+  ring.addEventListener('pointercancel', (event) => finish(event, true));
 
   /** A tap: the letter is added — or, if it is the last one, taken off. */
   function toggle(i: number): void {
@@ -160,7 +167,7 @@ export function createWheelView(actions: WheelActions): WheelView {
 
   // Keyboard and screen readers press the letters as buttons.
   ring.addEventListener('click', (event) => {
-    if (tapped) return;
+    if (tapped || slide) return;
     const b = (event.target as HTMLElement).closest<HTMLButtonElement>('.wheel__letter');
     if (b) toggle(buttons.indexOf(b));
   });

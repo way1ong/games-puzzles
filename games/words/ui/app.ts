@@ -66,6 +66,11 @@ export function startApp(root: HTMLElement): void {
   let generation = 0;
 
   const track = (): Track => ({ lang, tiles: settings.huTiles });
+  /**
+   * The track the level being played belongs to: it is always saved there, even when the language or the tile
+   * setting has just changed (saving under the new one would overwrite that track's own level).
+   */
+  let playTrack: Track = track();
 
   // ---------- elements ----------
   const title = h('h1', { class: 'top__name', tabindex: -1 });
@@ -228,9 +233,10 @@ export function startApp(root: HTMLElement): void {
 
   function begin(p: Play): void {
     play = p;
+    playTrack = track();
     wheel = [...p.level.letters];
     selected = [];
-    store.savePlay(track(), p);
+    store.savePlay(playTrack, p);
     startClock();
     renderGame();
     title.focus();
@@ -245,7 +251,7 @@ export function startApp(root: HTMLElement): void {
     if (clockFrom === null || !play) return;
     play = addTime(play, performance.now() - clockFrom);
     clockFrom = null;
-    store.savePlay(track(), play);
+    store.savePlay(playTrack, play);
   }
 
   const playedMs = () => (play ? play.ms + (clockFrom === null ? 0 : performance.now() - clockFrom) : 0);
@@ -380,7 +386,7 @@ export function startApp(root: HTMLElement): void {
       tipDone = true;
       store.saveTipDone();
     }
-    if (play !== before) store.savePlay(track(), play);
+    if (play !== before) store.savePlay(playTrack, play);
     if (result.verdict === 'found') {
       justFound = result.text;
       feedback('found');
@@ -441,7 +447,7 @@ export function startApp(root: HTMLElement): void {
       return;
     }
     play = withTime(next);
-    store.savePlay(track(), play);
+    store.savePlay(playTrack, play);
     render();
     if (play.done) finish();
   }
@@ -450,13 +456,13 @@ export function startApp(root: HTMLElement): void {
   function finish(): void {
     if (!play) return;
     const p = play;
-    store.savePlay(track(), p);
+    store.savePlay(playTrack, p);
     store.recordDone(p);
     const daily = p.level.daily;
-    if (daily) store.saveDayResult(daily, lang, { hints: p.hints, ms: p.ms });
+    if (daily) store.saveDayResult(daily, p.level.lang, { hints: p.hints, ms: p.ms });
     else {
-      store.saveLevelReached(track(), (p.level.number ?? 0) + 1);
-      store.dropPlay(track());
+      store.saveLevelReached(playTrack, (p.level.number ?? 0) + 1);
+      store.dropPlay(playTrack);
     }
     feedback('done');
     const lines = [plural(lang, p.found.length, d.end.words, { n: p.found.length })];
@@ -516,9 +522,13 @@ export function startApp(root: HTMLElement): void {
           else renderHome();
         },
         clearProgress() {
+          // The level on the screen is stopped (and saved) first, so nothing is saved again after the clearing.
+          const was = screen;
+          leave();
           store.clearAll();
           tipDone = false;
-          reopen();
+          if (was) open(was);
+          else renderHome();
         },
       },
     );

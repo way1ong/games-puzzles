@@ -1,6 +1,6 @@
 // Browser audit of Words: every size and look — the start screen, a level, a word made by sliding, the hint
 // window, choosing a cell for a hint, the menu with the large letters, the daily puzzle; large system text;
-// the keyboard; one level played to the end.
+// the keyboard; one level played to the end; a level kept when the language is switched there and back.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -158,7 +158,23 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     const reached = await page.evaluate((key) => localStorage.getItem(key), `${STORE}reached:en:tiles`);
     if (reached !== '2') fail(`words keyboard: the next level is not 2 (${reached})`);
     if (shots) await page.screenshot({ path: join(shots, 'words-done.png') });
+
+    // Each language keeps its own level: a word found, the language switched there and back.
+    await page.locator('dialog[open] .btn--primary').click();
+    await page.waitForFunction((key) => JSON.parse(localStorage.getItem(key))?.play.level.number === 2, `${STORE}play:en:tiles`, { timeout: 30000 });
+    const [first] = await levelWords(page, 'en');
+    await page.keyboard.type(first.join(''));
+    await page.keyboard.press('Enter');
+    for (const code of ['hu', 'en']) {
+      await page.locator('.top .icon-btn').nth(1).click();
+      await page.locator(`dialog[open] .choices__btn[lang="${code}"]`).click();
+      await page.locator('dialog[open] .dialog__actions .btn--primary').click();
+      await page.waitForSelector('.wheel__letter', { timeout: 30000 });
+    }
+    const kept = await page.evaluate((key) => JSON.parse(localStorage.getItem(key))?.play, `${STORE}play:en:tiles`);
+    if (kept?.level.lang !== 'en' || !kept.found.includes(first.join(''))) fail(`words: after switching the language and back, the English level has ${JSON.stringify(kept?.found)}`);
+    if (!(await page.locator('.cw-cell.is-found').count())) fail('words: after switching the language and back, no found cells');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, large text, keyboard, a level to the end`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks, large text, keyboard, a level to the end, a level kept across languages`;
 }
