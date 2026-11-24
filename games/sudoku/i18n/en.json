@@ -1,0 +1,292 @@
+{
+  "meta": {
+    "langName": "English",
+    "title": "Sudoku — classic sudoku without ads",
+    "description": "Classic 9 × 9 sudoku in four levels, with notes and hints that explain. No ads, no accounts, no tracking; works offline."
+  },
+  "app": {
+    "name": "Sudoku",
+    "menu": "Menu",
+    "back": "Back to start",
+    "close": "Close"
+  },
+  "levels": {
+    "label": "Level",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "expert": "Expert"
+  },
+  "levelInfo": {
+    "easy": "Many open digits, simple steps only",
+    "medium": "Fewer open digits, no notes needed",
+    "hard": "Notes will help",
+    "expert": "Advanced patterns, never guessing"
+  },
+  "home": {
+    "play": "Play",
+    "continue": "Continue",
+    "newPuzzle": "New puzzle",
+    "daily": "Daily puzzle",
+    "dailyNote": "The same for everyone today, one for each level",
+    "solved": "solved",
+    "started": "started",
+    "streak": {
+      "one": "{n} day in a row",
+      "other": "{n} days in a row"
+    }
+  },
+  "game": {
+    "board": "Sudoku board",
+    "dailyTitle": "Daily puzzle · {date}",
+    "time": "Time",
+    "preparing": "Making a puzzle…",
+    "tipCell": "Tap a cell, then a digit.",
+    "tipDigit": "Tap a digit, then the cells for it.",
+    "cell": "Row {row}, column {col}: {content}",
+    "cellEmpty": "empty",
+    "cellGiven": "{number}, open digit",
+    "cellNotes": "notes {numbers}",
+    "cellRepeat": "{number}, repeated",
+    "cellWrong": "{number}, wrong",
+    "placed": "{number} in row {row}, column {col}",
+    "erased": "Erased: row {row}, column {col}",
+    "noteAdded": "Note {number} added",
+    "noteRemoved": "Note {number} removed",
+    "placedDone": "{number} in row {row}, column {col}. Done: {place}",
+    "fullWithMistakes": "The board is full, but some digits are wrong.",
+    "showMistakes": "Show them",
+    "nothingToUndo": "Nothing to undo",
+    "nothingToRedo": "Nothing to redo",
+    "newSure": "Tap again to start a new puzzle: this one will be closed"
+  },
+  "place": {
+    "row": "row {n}",
+    "col": "column {n}",
+    "box": "box {n}"
+  },
+  "pad": {
+    "label": "Digits",
+    "digit": "{number}",
+    "digitLeft": {
+      "one": "{number}: {left} left",
+      "other": "{number}: {left} left"
+    },
+    "digitDone": "{number}: all placed"
+  },
+  "tools": {
+    "label": "Tools",
+    "undo": "Undo",
+    "redo": "Redo",
+    "notes": "Notes",
+    "hint": "Hint",
+    "fill": "Fill notes",
+    "erase": "Erase",
+    "newGame": "New puzzle"
+  },
+  "digits": {
+    "1": "1",
+    "2": "2",
+    "3": "3",
+    "4": "4",
+    "5": "5",
+    "6": "6",
+    "7": "7",
+    "8": "8",
+    "9": "9"
+  },
+  "hint": {
+    "title": "Hint",
+    "explain": "Explain",
+    "next": "Next",
+    "place": "Place the digit",
+    "stepOf": "Step {n} of {total}",
+    "chain": "The next digit goes into the highlighted cell. First you will need this technique: {name}.",
+    "mistakesTitle": "Wrong digits",
+    "mistakes": {
+      "one": "The highlighted digit is wrong. Erase it, then look again.",
+      "other": "{n} highlighted digits are wrong. Erase them, then look again."
+    },
+    "erase": "Erase",
+    "reveal": "No simple step was found here. The highlighted cell takes {digit}."
+  },
+  "techniques": {
+    "fullHouse": "Last free cell",
+    "hiddenSingle": "Only place",
+    "nakedSingle": "Only digit",
+    "pointing": "Box points to a line",
+    "claiming": "Line points to a box",
+    "nakedPair": "Pair",
+    "hiddenPair": "Hidden pair",
+    "nakedTriple": "Triple",
+    "hiddenTriple": "Hidden triple",
+    "xWing": "X-Wing",
+    "xyWing": "XY-Wing",
+    "swordfish": "Swordfish",
+    "xyzWing": "XYZ-Wing"
+  },
+  "where": {
+    "fullHouse": {
+      "row": "The highlighted row has one free cell left.",
+      "col": "The highlighted column has one free cell left.",
+      "box": "The highlighted box has one free cell left."
+    },
+    "hiddenSingle": {
+      "row": "Look at the highlighted row: the digit {digit} fits in only one place there.",
+      "col": "Look at the highlighted column: the digit {digit} fits in only one place there.",
+      "box": "Look at the highlighted box: the digit {digit} fits in only one place there."
+    },
+    "nakedSingle": "Look at the highlighted cell: only one digit fits there.",
+    "pointing": "Look where {digit} can go in the highlighted box.",
+    "claiming": {
+      "row": "Look where {digit} can go in the highlighted row.",
+      "col": "Look where {digit} can go in the highlighted column."
+    },
+    "nakedPair": "Look at the two highlighted cells.",
+    "hiddenPair": {
+      "row": "Look at the digits {a} and {b} in the highlighted row.",
+      "col": "Look at the digits {a} and {b} in the highlighted column.",
+      "box": "Look at the digits {a} and {b} in the highlighted box."
+    },
+    "nakedTriple": "Look at the three highlighted cells.",
+    "hiddenTriple": {
+      "row": "Look at the digits {a}, {b} and {c} in the highlighted row.",
+      "col": "Look at the digits {a}, {b} and {c} in the highlighted column.",
+      "box": "Look at the digits {a}, {b} and {c} in the highlighted box."
+    },
+    "xWing": {
+      "rows": "Look where {digit} can go in the two highlighted rows.",
+      "cols": "Look where {digit} can go in the two highlighted columns."
+    },
+    "swordfish": {
+      "rows": "Look where {digit} can go in the three highlighted rows.",
+      "cols": "Look where {digit} can go in the three highlighted columns."
+    },
+    "xyWing": "Look at the three framed cells: each can hold two digits.",
+    "xyzWing": "Look at the three framed cells."
+  },
+  "why": {
+    "fullHouse": "All the other digits are already there — only {digit} is missing.",
+    "hiddenSingle": {
+      "row": "{digit} cannot go into any other free cell of the row — so it goes into the highlighted one.",
+      "col": "{digit} cannot go into any other free cell of the column — so it goes into the highlighted one.",
+      "box": "{digit} cannot go into any other free cell of the box — so it goes into the highlighted one."
+    },
+    "nakedSingle": "Every other digit is already in its row, column or box — only {digit} is left.",
+    "pointing": {
+      "row": "In this box {digit} can only be in one row. So it cannot be anywhere else in that row.",
+      "col": "In this box {digit} can only be in one column. So it cannot be anywhere else in that column."
+    },
+    "claiming": {
+      "row": "In this row {digit} can only be inside one box. So it cannot be in the other cells of that box.",
+      "col": "In this column {digit} can only be inside one box. So it cannot be in the other cells of that box."
+    },
+    "nakedPair": {
+      "row": "These two cells can only hold {a} and {b}. So {a} and {b} go there, and nowhere else in the row.",
+      "col": "These two cells can only hold {a} and {b}. So {a} and {b} go there, and nowhere else in the column.",
+      "box": "These two cells can only hold {a} and {b}. So {a} and {b} go there, and nowhere else in the box."
+    },
+    "hiddenPair": {
+      "row": "In this row {a} and {b} fit only into the two highlighted cells. So those cells are taken by them — any other digit can go from their notes.",
+      "col": "In this column {a} and {b} fit only into the two highlighted cells. So those cells are taken by them — any other digit can go from their notes.",
+      "box": "In this box {a} and {b} fit only into the two highlighted cells. So those cells are taken by them — any other digit can go from their notes."
+    },
+    "nakedTriple": {
+      "row": "Between them these three cells can only hold {a}, {b} and {c}. So those digits go there, and nowhere else in the row.",
+      "col": "Between them these three cells can only hold {a}, {b} and {c}. So those digits go there, and nowhere else in the column.",
+      "box": "Between them these three cells can only hold {a}, {b} and {c}. So those digits go there, and nowhere else in the box."
+    },
+    "hiddenTriple": {
+      "row": "In this row {a}, {b} and {c} fit only into the three highlighted cells. So those cells are taken by them — any other digit can go from their notes.",
+      "col": "In this column {a}, {b} and {c} fit only into the three highlighted cells. So those cells are taken by them — any other digit can go from their notes.",
+      "box": "In this box {a}, {b} and {c} fit only into the three highlighted cells. So those cells are taken by them — any other digit can go from their notes."
+    },
+    "xWing": {
+      "rows": "In both rows {digit} fits only into the same two columns. So in those columns it will be in these rows — and nowhere else in the columns.",
+      "cols": "In both columns {digit} fits only into the same two rows. So in those rows it will be in these columns — and nowhere else in the rows."
+    },
+    "swordfish": {
+      "rows": "In these three rows {digit} fits only into the same three columns. So in those columns it will be in these rows — and nowhere else in the columns.",
+      "cols": "In these three columns {digit} fits only into the same three rows. So in those rows it will be in these columns — and nowhere else in the rows."
+    },
+    "xyWing": "The cell with the solid frame holds {x} or {y}. If it is {x}, one dashed cell must be {z}; if it is {y}, the other one. Either way one of them is {z} — so a cell that sees both dashed cells cannot be {z}.",
+    "xyzWing": "The cell with the solid frame holds {x}, {y} or {z}; the dashed ones {x} or {z} and {y} or {z}. Whatever happens, one of the three is {z} — so a cell that sees all three cannot be {z}."
+  },
+  "whyAfter": {
+    "hiddenSingle": {
+      "row": "After the steps before, {digit} fits in this row only into the highlighted cell.",
+      "col": "After the steps before, {digit} fits in this column only into the highlighted cell.",
+      "box": "After the steps before, {digit} fits in this box only into the highlighted cell."
+    },
+    "nakedSingle": "After the steps before, only {digit} is left for this cell."
+  },
+  "end": {
+    "title": "Solved!",
+    "level": "Level: {level}",
+    "clean": "Without hints",
+    "hints": {
+      "one": "With {n} hint",
+      "other": "With {n} hints"
+    },
+    "time": "Time: {time}",
+    "streak": {
+      "one": "Daily puzzles: {n} day in a row",
+      "other": "Daily puzzles: {n} days in a row"
+    },
+    "newGame": "New puzzle",
+    "home": "To the start",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "shareClean": "{name} · {date} · {level}: solved without hints",
+    "shareHints": {
+      "one": "{name} · {date} · {level}: solved with {n} hint",
+      "other": "{name} · {date} · {level}: solved with {n} hints"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "play": "Playing",
+    "autoNotes": "Remove notes automatically",
+    "fillButton": "“Fill notes” button",
+    "errors": "Check for mistakes",
+    "errorsOff": "Off",
+    "errorsRepeats": "Repeats only",
+    "errorsSolution": "Against the solution",
+    "peers": "Highlight the row, column and box",
+    "same": "Highlight the same digits",
+    "counts": "Show how many of each digit are left",
+    "input": "Entering digits",
+    "inputCell": "Cell first",
+    "inputDigit": "Digit first",
+    "time": "Show the time",
+    "look": "Look and sound",
+    "big": "Large digits and board",
+    "theme": "Theme",
+    "themeSystem": "As the system",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "sound": "Sound",
+    "vibration": "Vibration",
+    "game": "This game",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap “Share”, then add the game to the Home Screen.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear statistics and saved games",
+    "resetDone": "Progress cleared"
+  },
+  "stats": {
+    "title": "Statistics",
+    "solved": "Solved",
+    "clean": "Without hints",
+    "best": "Best time",
+    "none": "—"
+  },
+  "about": {
+    "title": "About the game",
+    "rules": "Fill the board with the digits 1 to 9 so that every row, every column and every 3 × 3 box holds each digit exactly once. Every puzzle has one solution, and you never need to guess.",
+    "text": "Sudoku without ads, accounts or tracking. Progress stays on this device. Works offline.",
+    "keys": "Keyboard: arrows — choose a cell, 1–9 — digit, Backspace, Delete or 0 — erase, N — notes, H — hint, Ctrl+Z — undo, Ctrl+Y — redo, Esc — close.",
+    "credit": "Made by way1ong"
+  }
+}

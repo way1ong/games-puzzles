@@ -1,0 +1,658 @@
+/* Sudoku screen. Colours only from tokens.css; the page reset and common controls are in shared/styles/ui.css.
+   One column, centred; a phone in portrait first. */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: max(0.5rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
+}
+
+html.big .app {
+  max-width: 44rem;
+  padding-left: max(0.25rem, env(safe-area-inset-left));
+  padding-right: max(0.25rem, env(safe-area-inset-right));
+}
+
+/* ---------- top: back, name, menu ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top__name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+/* The heading takes the focus when the screen changes (for screen readers); it is not a control. */
+.top__name:focus {
+  outline: none;
+}
+
+.sign {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------- the start screen ---------- */
+.home {
+  display: grid;
+  gap: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.home__part {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.home__note,
+.home__streak {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.levels {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.level {
+  display: grid;
+  grid-template-areas:
+    'name state'
+    'info info';
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.125rem 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--surface);
+  text-align: start;
+  cursor: pointer;
+}
+
+.level__name {
+  grid-area: name;
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.level__state {
+  grid-area: state;
+  align-self: center;
+  color: var(--accent);
+  font-weight: 700;
+  text-align: end;
+}
+
+.level__info {
+  grid-area: info;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.daily {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+@media (min-width: 30rem) {
+  .daily {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.daily__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.daily__btn.is-started {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+
+.daily__btn.is-solved {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- the game ---------- */
+.play {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 0.75rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.info__time {
+  margin-inline-start: auto;
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The board takes the space that is left and stays square; on a phone it sits low, next to the digits
+   (one-handed play). */
+.stage {
+  display: flex;
+  flex: 1 1 0;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 16rem;
+  container-type: size;
+}
+
+.board-wrap {
+  position: relative;
+  flex: none;
+  width: min(100cqw, 100cqh);
+  aspect-ratio: 1;
+}
+
+.board {
+  --thick: 3px;
+  --digit: 0.62;
+  --note-size: 0.28;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-rows: repeat(9, minmax(0, 1fr));
+  border: var(--thick) solid var(--grid-strong);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--cell);
+  container-type: inline-size;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html.big .board {
+  --thick: 4px;
+  --digit: 0.68;
+  --note-size: 0.3;
+}
+
+.board-wrap.is-waiting .board {
+  opacity: 0.3;
+}
+
+.board-wait {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--grid);
+  border-bottom: 1px solid var(--grid);
+  background: var(--cell);
+  color: var(--entered);
+  font-size: calc(100cqi / 9 * var(--digit));
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.cell:nth-child(9n) {
+  border-right: 0;
+}
+
+.cell:nth-child(n + 73) {
+  border-bottom: 0;
+}
+
+.cell.edge-r {
+  border-right: var(--thick) solid var(--grid-strong);
+}
+
+.cell.edge-b {
+  border-bottom: var(--thick) solid var(--grid-strong);
+}
+
+.cell.is-given {
+  color: var(--given);
+  font-weight: 800;
+}
+
+.cell.is-peer {
+  background: var(--peer);
+}
+
+.cell.is-same {
+  background: var(--same);
+}
+
+.cell.is-area {
+  background: var(--hint-area);
+}
+
+/* The chosen cell: a colour and a frame (not the colour alone). */
+.cell.is-selected {
+  background: var(--selected);
+  box-shadow: inset 0 0 0 3px var(--accent);
+}
+
+/* What a hint rests on: a dashed frame (a wing's pivot: a solid one); where its digit goes: a full frame. */
+.cell.is-pattern {
+  outline: 3px dashed var(--hint-ring);
+  outline-offset: -4px;
+}
+
+.cell.is-pivot {
+  outline: 3px solid var(--hint-ring);
+  outline-offset: -4px;
+}
+
+.cell.is-target {
+  background: var(--selected);
+  box-shadow: inset 0 0 0 3px var(--accent);
+}
+
+/* A mistake: the colour and a wavy line under the digit. */
+.cell.is-bad {
+  color: var(--bad);
+}
+
+.cell.is-bad .cell__digit {
+  text-decoration: underline wavy var(--bad);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.1em;
+}
+
+.cell:focus-visible {
+  z-index: 1;
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;
+}
+
+.cell.is-flash {
+  animation: flash var(--flash-ms) ease-out;
+}
+
+@keyframes flash {
+  from {
+    background-color: var(--flash);
+  }
+}
+
+.cell__notes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  height: 100%;
+  padding: 6%;
+  color: var(--note);
+  font-size: calc(100cqi / 9 * var(--note-size));
+  font-weight: 650;
+}
+
+.note {
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
+
+/* The digit the player looks at, in the notes: bolder and underlined. */
+.note.is-same {
+  color: var(--text);
+  font-weight: 900;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+/* A note a hint removes: struck through. */
+.note.is-struck {
+  color: var(--struck);
+  font-weight: 800;
+  text-decoration: line-through;
+  text-decoration-thickness: 0.12em;
+}
+
+/* ---------- under the board ---------- */
+.board-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+.controls {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.tools {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.375rem;
+  container-type: inline-size;
+}
+
+.tools.tools--five {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+/* The words get a little smaller rather than break: they follow the row's width. */
+.tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  min-width: 0;
+  min-height: 3rem;
+  padding: 0.25rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-size: min(0.8125rem, 3.6cqi);
+  font-weight: 650;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+}
+
+.tools--five .tool {
+  font-size: min(0.8125rem, 3cqi);
+}
+
+.tool[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.tool[aria-disabled='true'] {
+  border-style: dashed;
+  color: var(--muted);
+  cursor: default;
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.375rem;
+  container-type: inline-size;
+}
+
+.pad__btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 3.25rem;
+  padding: 0;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+html.big .pad__btn {
+  min-height: 3.75rem;
+  font-size: 2.125rem;
+}
+
+/* How many of the digit are left: small, in the corner. */
+.pad__left {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.375rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.pad__left .sign {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.pad__btn.is-done .pad__digit {
+  color: var(--muted);
+}
+
+.pad__btn[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.pad__btn[aria-pressed='true'] .pad__left,
+.pad__btn[aria-pressed='true'] .pad__digit {
+  color: var(--on-accent);
+}
+
+.pad__btn--erase {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.125rem;
+}
+
+.pad__label {
+  font-size: min(0.8125rem, 3.2cqi);
+  font-weight: 650;
+}
+
+/* ---------- the hint (in place of the tools and digits) ---------- */
+.hint {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--accent);
+  border-radius: 0.875rem;
+  background: var(--surface);
+}
+
+.hint__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+}
+
+.hint__title {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.hint__title:focus {
+  outline: none;
+}
+
+.hint__counter {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.hint__text {
+  margin: 0;
+}
+
+.hint__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* ---------- menu ---------- */
+.dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.dialog h3 {
+  margin: 0.5rem 0 0;
+  font-size: 1.0625rem;
+}
+
+.stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats th,
+.stats td {
+  padding: 0.375rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+  text-align: end;
+  vertical-align: bottom;
+}
+
+.stats th[scope='row'],
+.stats thead th:first-child {
+  text-align: start;
+}
+
+/* Wide screens (laptop, tablet on its side): the board on the left as tall as the screen; the tools and the
+   digits (three by three) on the right. */
+@media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
+  .app {
+    height: 100vh;
+    height: 100dvh;
+    max-width: calc(100dvh + 22rem);
+  }
+
+  html.big .app {
+    max-width: calc(100dvh + 24rem);
+  }
+
+  .play {
+    display: grid;
+    grid-template-areas:
+      'stage info'
+      'stage note'
+      'stage controls';
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    column-gap: 1.5rem;
+    row-gap: 0.75rem;
+  }
+
+  .info {
+    grid-area: info;
+  }
+
+  .stage {
+    grid-area: stage;
+    align-items: center;
+    min-height: 0;
+  }
+
+  .board-note {
+    grid-area: note;
+  }
+
+  .controls {
+    grid-area: controls;
+    align-content: start;
+  }
+
+  .pad {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pad__btn {
+    min-height: 3.75rem;
+  }
+
+  .pad__btn--erase {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .pad__label {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell.is-flash {
+    animation: none;
+  }
+}
