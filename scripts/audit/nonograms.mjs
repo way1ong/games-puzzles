@@ -81,6 +81,17 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       const r = c.getBoundingClientRect();
       return { x: r.left + r.width / 2, y: r.top + r.height / 2, cell: Number(c.dataset.cell) };
     }, nth);
+  /**
+   * Before a page is loaded anew: the game's service worker has taken the page over. On the first visit it does so
+   * while the page is open, and a load caught halfway makes the browser warn that the script it fetched ahead went
+   * unused — harmless for a player, noise here.
+   */
+  const settled = (page) =>
+    page.evaluate(() =>
+      navigator.serviceWorker.ready.then(
+        () => new Promise((done) => (navigator.serviceWorker.controller ? done(true) : navigator.serviceWorker.addEventListener('controllerchange', () => done(true), { once: true }))),
+      ),
+    );
   const openPicture = async (page, route) => {
     await page.goto(`${base}#${route}`);
     await page.waitForSelector('.cell');
@@ -132,6 +143,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await check(page, `${label} 15 × 15`);
       // back to the start (else the game opens where the player stopped)
       await page.evaluate((s) => localStorage.removeItem(`${s}last`), STORE);
+      await settled(page);
       await page.goto(base);
       await page.waitForSelector('.pick');
       await page.locator('.pick').last().click();
@@ -158,6 +170,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await page.goto(base);
     if (left) {
       await page.evaluate((s) => localStorage.setItem(`${s}settings`, JSON.stringify({ leftHand: true })), STORE);
+      await settled(page);
       await page.reload();
     }
     const side = async (what) => {

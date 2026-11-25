@@ -16,7 +16,9 @@ const DRAW: Record<Shape, (p: Paint, value: string | undefined) => string> = {
   key: (p) =>
     circle(-14, -12, 9, 'none', { stroke: p.gold, 'stroke-width': 5 }) + rect(-6, -14.5, 30, 5, p.gold) + rect(16, -9.5, 4, 8, p.gold) + rect(10, -9.5, 4, 6, p.gold) + stroke('M-20 -17 q4 -4 10 -4', p.white, 1.6, { opacity: 0.5 }),
   magnifier: (p) =>
-    line(6, -24, 27, -3, p.woodMid, 7) +
+    // The handle: a bar with round ends drawn as its own outline (not a thick line), so the drawing ends where it is
+    // seen and its lower end rests right on the line.
+    path('M3.525 -21.525L24.025 -1.025A3.5 3.5 0 0 0 28.975 -5.975L8.475 -26.475A3.5 3.5 0 0 0 3.525 -21.525Z', p.woodMid) +
     line(6, -24, 10, -20, p.brass, 7, { 'stroke-linecap': 'butt' }) +
     circle(-8, -38, 18, p.glass, { stroke: p.brass, 'stroke-width': 5, 'fill-opacity': 0.85 }) +
     stroke('M-17 -44 q4 -8 12 -9', p.white, 3),
