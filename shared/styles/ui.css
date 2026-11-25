@@ -19,6 +19,12 @@ html {
   text-size-adjust: 100%;
 }
 
+/* The page's width as a query for the games' layouts of a phone on its side: two columns only while the screen
+   is wide enough for the player's text size (a container's rem follows the page's text, a media query's not). */
+#app {
+  container: app / inline-size;
+}
+
 /* Large mode: everything measured in rem grows. */
 html.big {
   font-size: 115%;

@@ -1,8 +1,9 @@
 // Browser audit of Words: every size and look — the start screen, a level, a word made by sliding, the hint
 // window, choosing a cell for a hint, the menu with the large letters, the daily puzzle; large system text;
-// the keyboard; one level played to the end; a level kept when the language is switched there and back. The Word
-// Field (second mode): every size and look and phones on their side — a field, a word placed, a hint, the menu,
-// the daily field; large text; the keyboard.
+// the keyboard; one level played to the end; a level kept when the language is switched there and back; phones on
+// their side — nothing to scroll in play, the wheel standing still. The Word Field (second mode): every size and
+// look and phones on their side — a field, a word placed, a hint, the menu, the daily field; large text; the
+// keyboard.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -25,11 +26,13 @@ function inspectWords() {
     const w = wheel.getBoundingClientRect();
     if (Math.abs(w.width - w.height) > 1) out.push('the wheel is not round');
     const letters = [...wheel.querySelectorAll('.wheel__letter')].map((b) => b.getBoundingClientRect());
+    // The letters are round (and so is where a finger hits them): two overlap when their circles do.
     for (let i = 0; i < letters.length; i++) {
       for (let j = i + 1; j < letters.length; j++) {
         const a = letters[i];
         const b = letters[j];
-        if (a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom) out.push('two letters of the wheel overlap');
+        const apart = Math.hypot(a.left + a.width / 2 - (b.left + b.width / 2), a.top + a.height / 2 - (b.top + b.height / 2));
+        if (apart < (a.width + b.width) / 2 - 1) out.push('two letters of the wheel overlap');
       }
       const a = letters[i];
       if (a.left < w.left - 1 || a.right > w.right + 1 || a.top < w.top - 1 || a.bottom > w.bottom + 1) out.push('a letter sticks out of the wheel');
@@ -222,6 +225,51 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     }
   }
 
+  // The wheel on phones held sideways (decision of 25.11): the crossword and the wheel side by side, nothing to
+  // scroll in play; the wheel stays where it is while the line above it changes; a word, a hint, a chosen cell,
+  // the large letters.
+  for (const [width, height, locale, colorScheme, level] of [
+    [640, 360, 'uk-UA', 'light', 81],
+    [740, 360, 'hu-HU', 'dark', 81],
+    [863, 360, 'en-GB', 'light', 1],
+    [915, 412, 'uk-UA', 'dark', 500],
+  ]) {
+    const label = `${width}×${height} side, wheel level ${level} ${locale} ${colorScheme}`;
+    const lang = locale.slice(0, 2);
+    const ctx = await browser.newContext({ viewport: { width, height }, locale, colorScheme, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    watch(page, `words ${label}`, origin, fail);
+    await page.goto(base);
+    await page.evaluate(([key, n]) => localStorage.setItem(key, String(n)), [`${STORE}reached:${lang}:tiles`, level]);
+    await page.goto(base);
+    await page.waitForSelector('.home__main');
+    await check(page, `${label} start`);
+    await openLevel(page);
+    const inPlay = async (what) => {
+      await check(page, `${label} ${what}`);
+      const scroll = await page.evaluate(() => document.scrollingElement.scrollHeight - innerHeight);
+      if (scroll > 1) fail(`words ${label} ${what}: the page scrolls ${scroll} px in play`);
+    };
+    const wheelBox = () => page.$eval('.wheel', (w) => JSON.stringify(w.getBoundingClientRect()));
+    await inPlay('level');
+    const before = await wheelBox();
+    const words = await levelWords(page, lang);
+    await slide(page, words[0]);
+    await page.waitForTimeout(50);
+    await inPlay('word found');
+    if ((await wheelBox()) !== before) fail(`words ${label}: the wheel moved when the line above it changed`);
+    await page.locator('.info__tools .tool').last().click();
+    await check(page, `${label} hint window`);
+    await page.locator('.hint-option').nth(1).click();
+    await inPlay('choosing a cell');
+    await page.locator('.cw-cell.is-choice').first().click();
+    await inPlay('cell opened');
+    await page.evaluate(() => document.documentElement.classList.add('big'));
+    await inPlay('large letters');
+    if (shots) await page.screenshot({ path: join(shots, `words-side-${width}x${height}-${lang}.png`) });
+    await ctx.close();
+  }
+
   // The keyboard, and a level to the end with the keys (English: the test browser's own keys).
   {
     const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 }, locale: 'en-GB' });
@@ -259,5 +307,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     if (!(await page.locator('.cw-cell.is-found').count())) fail('words: after switching the language and back, no found cells');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks (Wheel and Word Field), phones on their side, large text, keyboard, a level to the end, a level kept across languages`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks (Wheel and Word Field), phones on their side (both modes), large text, keyboard, a level to the end, a level kept across languages`;
 }

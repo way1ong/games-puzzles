@@ -135,7 +135,9 @@ export function startApp(root: HTMLElement): void {
   const wheelTools = h('div', { class: 'wheel-tools' }, shuffleBtn, checkBtn, clearBtn);
   // One line above the wheel: the word being made; else the verdict of the last try; else how to play.
   const statusEl = h('div', { class: 'status' }, currentEl, verdictEl, tipEl);
-  const playArea = h('div', { class: 'play-area' }, statusEl, wheelView.el, wheelTools);
+  // The wheel's own place: on a phone on its side the wheel takes as much of it as is free (a box only there).
+  const wheelBox = h('div', { class: 'wheel-box' }, wheelView.el);
+  const playArea = h('div', { class: 'play-area' }, statusEl, wheelBox, wheelTools);
   const playView = h('div', { class: 'play' }, info, chooseBar, stage, playArea);
 
   backBtn.addEventListener('click', closeRoute);
