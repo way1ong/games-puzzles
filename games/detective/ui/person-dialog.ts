@@ -103,11 +103,20 @@ export function createPersonDialog(): { el: HTMLDialogElement; open(d: Dict, sta
     first.focus();
   }
 
-  /** "Why is it not this person?" — the circumstances, the evidence and the statements as buttons. */
+  /** "Why is it not this person?" — the person's traits, what is known and what they say (so there is no going back
+   * to the card to compare), then the circumstances, the evidence and the statements as buttons. */
   function reasons(d: Dict, state: PersonState, actions: PersonActions): void {
     const harder = state.harder;
     if (!harder) return;
     const who = d.people[state.suspect.person];
+    const line = (label: string, text: string) => h('p', {}, h('span', { class: 'reasons-who__label' }, `${label}: `), text);
+    const about = h(
+      'div',
+      { class: 'reasons-who' },
+      line(d.suspects.traits, cluesOf(traitsOf(state.suspect)).map((t) => d.traits[t]).join(', ')),
+      harder.facts.length > 0 ? line(d.suspects.facts, harder.facts.join('; ')) : null,
+      harder.statement ? line(d.suspects.statements, harder.statement) : null,
+    );
     const several = harder.atOnce > 1;
     /** The reasons picked, oldest first. */
     let picked = harder.picked.filter((id) => harder.reasons.some((r) => r.id === id));
@@ -148,6 +157,7 @@ export function createPersonDialog(): { el: HTMLDialogElement; open(d: Dict, sta
         'div',
         { class: 'dialog__body' },
         h('h2', { id: 'person-title' }, fmt(d.suspects.whyNot, { name: who.name })),
+        about,
         several ? h('p', { class: 'dialog__hint' }, d.suspects.pick) : null,
         list,
         // the answer and the buttons stay in sight while the long list scrolls
