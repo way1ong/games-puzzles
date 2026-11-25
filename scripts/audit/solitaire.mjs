@@ -1,6 +1,8 @@
 // Browser audit of Solitaire: every size and look — the start screen, a deal, the stock turned, a hint, a face-down
 // card touched, the menu with the widest settings (the time, four colours, the large mode, the left hand), three cards
-// a turn, the deal of the day; phones on their side; large system text; the keyboard; a deal played to the end.
+// a turn, the deal of the day, and the deal of the day where no way to the end is left; phones on their side; large
+// system text; the keyboard; a deal played to the end.
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -11,6 +13,29 @@ import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.
  */
 const DENSE = { selector: '.card, .slot', min: 24 };
 const STORE = 'way1ong-solitaire:v1:';
+/**
+ * A made-up deal of the day, played at random into a dead end: no move leads anywhere, and the game says so — the
+ * moves to undo in the note, "Start over" standing out among the tools (decision of 25.11).
+ */
+const DEAD_END = JSON.parse(readFileSync(new URL('./solitaire-dead-end.json', import.meta.url), 'utf8'));
+
+/** Puts the dead end in place of today's deal of the day for a way of turning the stock (runs in the page). */
+function plantDeadEnd([store, play, draw]) {
+  const t = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const today = `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+  localStorage.setItem(`${store}daily:${draw}`, JSON.stringify({ version: 1, play: { ...play, draw, daily: today } }));
+}
+
+/** From a deal to the start screen, the dead end planted (leaving a deal saves it), and into the deal of the day. */
+async function openDeadEnd(page, draw) {
+  await page.locator('.top .icon-btn').first().click();
+  await page.waitForSelector('.pick');
+  await page.evaluate(plantDeadEnd, [STORE, DEAD_END, draw]);
+  await openDeal(page, 1);
+  // the note offers the moves to undo; "Start over" stands out among the tools
+  await page.waitForFunction(() => document.querySelector('.note__actions button') && document.querySelector('.tools .is-suggested:not([hidden])'), null, { timeout: 60000 });
+}
 
 /** Runs in the page: what must hold on the Solitaire screens besides the common checks. */
 function inspectSolitaire() {
@@ -111,6 +136,10 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await check(page, `${label} start again`);
       await openDeal(page, 1);
       await check(page, `${label} deal of the day`);
+      // the deal of the day in a dead end: the note and its two buttons
+      await openDeadEnd(page, 3);
+      await check(page, `${label} deal of the day, no way left`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-dead-end`);
       await ctx.close();
     }
   }
@@ -152,6 +181,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await page.locator('dialog[open] .dialog__actions .btn--primary').click();
     await side('time, large, left hand');
     await shot(page, `side-${width}x${height}`);
+    await openDeadEnd(page, 1);
+    await side('deal of the day, no way left');
     await ctx.close();
   }
 
@@ -171,6 +202,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, `${width}×${height} text ${size}% deal`);
     await hint(page);
     await check(page, `${width}×${height} text ${size}% hint`);
+    await openDeadEnd(page, 1);
+    await check(page, `${width}×${height} text ${size}% deal of the day, no way left`);
     await ctx.close();
   }
 

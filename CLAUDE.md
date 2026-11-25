@@ -57,6 +57,7 @@ games/pairs/core/deal.ts, solve.ts, play.ts  розклад, що завжди �
 games/pairs/art/          малюнки плиток кодом (SVG): palette.ts — усі кольори, tiles.ts — 24 малюнки (символи `pairs-<малюнок>`)
 games/solitaire/core/klondike.ts, tap.ts  правила Косинки (колода й скид — один ряд `talon`), куди йде карта від торкання
 games/solitaire/core/solve.ts, deals.ts, hint.ts  розв’язувач (знає всі карти, частинами); роздачі, які можна пройти, і роздача дня; підказка
+games/solitaire/core/stuck.ts  коли гра сама каже, що шляху до кінця немає: гравець явно застряг (корисних ходів немає чи колоду двічі перегорнуто без змін)
 games/solitaire/ui/layout.ts  де лежить кожна карта: розмір карт, два розклади (ряд над стовпцями або колода й основи по боках — що дає більші карти), смужки стовпців
 games/solitaire/art/suits.ts  обриси мастей (SVG, колір дає карта — tokens.css)
 games/solitaire/art/courts.ts, textures.ts  вигляд «Мальований»: фігури валета, дами й короля (кольори — змінні tokens.css), фактури сукна й паперу

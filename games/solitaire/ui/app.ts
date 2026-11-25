@@ -1,6 +1,7 @@
 // The game screen: which screen is open (the start, Klondike, the deal of the day), the deal in play, the hint shown;
 // turns taps, drags and keys into moves and draws the result. The rules themselves are in ../core (pure functions);
-// the work that takes time (finding a deal that can be won, a hint) goes in slices (maker.ts).
+// the work that takes time (finding a deal that can be won, a hint, the quiet check that a way to the end is left)
+// goes in slices (maker.ts).
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import { setTextures } from '../../../shared/ui/textures.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
@@ -25,6 +26,7 @@ import {
   type Place,
 } from '../core/klondike.ts';
 import { longestStreak, recordLeft, recordWon } from '../core/stats.ts';
+import { carriedBack, worthChecking } from '../core/stuck.ts';
 import { bestPlace } from '../core/tap.ts';
 import { createEndDialog } from './end-dialog.ts';
 import { homeView, type DailyState } from './home-view.ts';
@@ -72,8 +74,14 @@ export function startApp(root: HTMLElement): void {
   let game: Klondike | null = null;
   let stopMaking: (() => void) | null = null;
   let stopHinting: (() => void) | null = null;
+  let stopChecking: (() => void) | null = null;
   let finishing: number | null = null;
   let hint: Hint | null = null;
+  /**
+   * The game found, unasked, that no way to the end is left from this position (core/stuck.ts), and how many moves
+   * back the deal can be won again (null — not within reach).
+   */
+  let deadEnd: { at: Klondike; back: number | null } | null = null;
   /** A short word about the last action (no place, nothing to undo), shown until the next move. */
   let message: string | null = null;
   /** "New deal" was tapped once: the second tap deals. */
@@ -100,7 +108,7 @@ export function startApp(root: HTMLElement): void {
   const table = createTableView({ tap: onTap, drop: onDrop });
   const preparing = h('p', { class: 'table-wait', role: 'status' });
   const stage = h('div', { class: 'stage' }, table.el, preparing);
-  const tools = createToolsView({ hint: askHint, undo: takeBack, newDeal });
+  const tools = createToolsView({ hint: askHint, undo: takeBack, newDeal, restart });
   // The note under the table: the columns grow from the top, so a note coming and going does not move them.
   const playView = h('div', { class: 'play' }, info, stage, note, tools.el);
 
@@ -165,6 +173,8 @@ export function startApp(root: HTMLElement): void {
     stopMaking = null;
     stopHinting?.();
     stopHinting = null;
+    stopChecking?.();
+    stopChecking = null;
     if (finishing !== null) window.clearTimeout(finishing);
     finishing = null;
   }
@@ -175,6 +185,7 @@ export function startApp(root: HTMLElement): void {
     slot = null;
     game = null;
     hint = null;
+    deadEnd = null;
   }
 
   function openSlot(next: Slot): void {
@@ -215,10 +226,12 @@ export function startApp(root: HTMLElement): void {
 
   function begin(g: Klondike): void {
     game = g;
+    deadEnd = null;
     if (slot) store.savePlay(slot, g);
     startClock();
     renderGame();
     title.focus();
+    checkWay();
   }
 
   function refillReady(): void {
@@ -317,6 +330,16 @@ export function startApp(root: HTMLElement): void {
     };
   }
 
+  /**
+   * No way to the end is left: back to where the deal can be won, and — standing out among the tools — a new deal
+   * (the deal of the day: from its start).
+   */
+  function deadEndNote(back: number | null): { text: string; actions: NoteAction[]; suggestNew: boolean } {
+    const actions: NoteAction[] = [];
+    if (back !== null) actions.push({ label: plural(lang, back, d.hint.undoMoves, { n: back }), run: () => takeBackMany(back) });
+    return { text: d.game.deadEnd, actions, suggestNew: true };
+  }
+
   /** What the line above the table says now, and what it offers to do there. */
   function noteNow(g: Klondike | null): { text: string; actions: NoteAction[]; suggestNew: boolean } | null {
     if (!g) return { text: d.game.preparing, actions: [], suggestNew: false };
@@ -326,6 +349,8 @@ export function startApp(root: HTMLElement): void {
     }
     if (stopHinting) return { text: d.hint.thinking, actions: [], suggestNew: false };
     if (hint) return hintText(g, hint);
+    // before a passing word (a card with no place…): the way out of a dead end stays in sight
+    if (deadEnd?.at === g) return deadEndNote(deadEnd.back);
     if (message) return { text: message, actions: [], suggestNew: false };
     if (canFinish(g)) return { text: d.game.finishNote, actions: [{ label: d.game.finish, run: finishAll }], suggestNew: false };
     if (!tipDone) return { text: d.game.tip, actions: [], suggestNew: false };
@@ -352,8 +377,10 @@ export function startApp(root: HTMLElement): void {
       }),
     );
     tools.el.hidden = !g || g.done;
-    tools.el.classList.toggle('tools--two', slot.daily);
-    tools.render({ canUndo: !!g && g.history.length > 0, suggestNew: now?.suggestNew ?? false, thinking: !!stopHinting }, d);
+    const suggestNew = now?.suggestNew ?? false;
+    // the deal of the day has no new deal; where no way is found from here, "Start over" takes its place
+    const fresh = !slot.daily ? 'deal' : suggestNew && !!g && g.history.length > 0 ? 'restart' : null;
+    tools.render({ canUndo: !!g && g.history.length > 0, fresh, suggestNew, thinking: !!stopHinting }, d);
     if (g) table.render(g, { hint: hintMarks(), leftHand: settings.leftHand }, d, lang);
     noteByKeys();
   }
@@ -378,7 +405,37 @@ export function startApp(root: HTMLElement): void {
       finish();
       return;
     }
+    checkWay();
     render();
+  }
+
+  /**
+   * After every change: if the player is plainly stuck (core/stuck.ts), the hint's search is asked quietly whether a
+   * way to the end is left. It is not a hint: nothing is counted, and nothing is said unless no way is left.
+   */
+  function checkWay(): void {
+    stopChecking?.();
+    stopChecking = null;
+    const g = game;
+    if (!g || !slot || g.done) {
+      deadEnd = null;
+      return;
+    }
+    if (deadEnd) {
+      // turning the stock in a dead end leaves it a dead end: no need to ask again
+      const back = carriedBack(deadEnd.at, deadEnd.back, g);
+      deadEnd = back === undefined ? null : { at: g, back };
+      if (deadEnd) return;
+    }
+    if (!worthChecking(g)) return;
+    const forSlot = slot;
+    stopChecking = runSoon(hintSearch(g), (found) => {
+      stopChecking = null;
+      if (slot !== forSlot || game !== g || found.kind !== 'stuck') return;
+      deadEnd = { at: g, back: found.back };
+      render();
+      announce(noteText.textContent ?? '');
+    });
   }
 
   /** Words for a move: the card and where it went, and the card it turned up. */
@@ -476,6 +533,14 @@ export function startApp(root: HTMLElement): void {
     commit(next, d.game.undone);
   }
 
+  /** The deal of the day from its start: every move taken back. */
+  function restart(): void {
+    if (!game || game.done || finishing !== null) return;
+    let next = game;
+    while (next.history.length > 0) next = undo(next);
+    commit(next, d.game.restarted);
+  }
+
   /** Puts the rest home one card after another (all at once when the system asks for less motion). */
   function finishAll(): void {
     if (!game || !canFinish(game) || finishing !== null) return;
@@ -532,7 +597,8 @@ export function startApp(root: HTMLElement): void {
 
   function newDeal(): void {
     if (!game || !slot || slot.daily) return;
-    if (game.history.length > 0 && !game.done && !armedNew) {
+    // the game has said no way is left: one tap deals (otherwise the second tap does)
+    if (game.history.length > 0 && !game.done && !armedNew && deadEnd?.at !== game) {
       armedNew = true;
       const text = d.game.newSure;
       announce(text);
@@ -547,6 +613,15 @@ export function startApp(root: HTMLElement): void {
   // ---------- hints ----------
   function askHint(): void {
     if (!game || !slot || game.done || stopHinting || finishing !== null) return;
+    if (deadEnd?.at === game) {
+      // the game has just said it: no way is left — not counted as a hint
+      message = null;
+      render();
+      announce(noteText.textContent ?? '');
+      return;
+    }
+    stopChecking?.();
+    stopChecking = null;
     const g = game;
     const forSlot = slot;
     hint = null;

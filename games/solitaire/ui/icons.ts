@@ -1,4 +1,4 @@
-// Small signs of the screen: back, hint, undo, new deal, turning the waste over, done. Drawn with the text colour of
+// Small signs of the screen: back, hint, undo, new deal, start over, turning the waste over, done. Drawn with the text colour of
 // the place they stand in.
 import { svg } from '../../../shared/ui/dom.ts';
 
@@ -17,6 +17,9 @@ export const undoSign = (): SVGSVGElement => sign('<path d="M9 7 4.5 11.5 9 16"/
 /** Two cards fanned out: a new deal. */
 export const dealSign = (): SVGSVGElement =>
   sign('<rect x="3.5" y="6" width="10" height="14" rx="1.8" transform="rotate(-10 8.5 13)"/><rect x="10.5" y="4" width="10" height="14" rx="1.8" transform="rotate(8 15.5 11)"/>');
+
+/** A round arrow the other way: the deal of the day from its start. */
+export const restartSign = (): SVGSVGElement => sign('<path d="M5 12a7 7 0 1 0 2.05-4.95"/><path d="M4.5 4.5v4h4"/>');
 
 /** A round arrow: the waste turns over into the stock. */
 export const turnSign = (): SVGSVGElement => sign('<path d="M19 12a7 7 0 1 1-2.05-4.95"/><path d="M19.5 4.5v4h-4"/>');
