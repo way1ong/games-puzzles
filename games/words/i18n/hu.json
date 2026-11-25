@@ -1,0 +1,173 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Words – szójáték reklám nélkül",
+    "description": "Rakjon ki szavakat a körön lévő betűkből, és töltse ki a keresztrejtvényt. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Words",
+    "menu": "Menü",
+    "back": "Vissza a kezdéshez",
+    "close": "Bezárás"
+  },
+  "home": {
+    "play": "Játék",
+    "continue": "Folytatás",
+    "level": "{n}. szint",
+    "daily": "A nap feladványa",
+    "dailyNote": "Ma mindenkinek ugyanaz",
+    "solved": "megoldva",
+    "started": "elkezdve",
+    "streak": {
+      "one": "{n} nap egymás után",
+      "other": "{n} nap egymás után"
+    },
+    "levelsDone": {
+      "one": "{n} szint kész",
+      "other": "{n} szint kész"
+    }
+  },
+  "game": {
+    "level": "{n}. szint",
+    "dailyTitle": "A nap feladványa · {date}",
+    "preparing": "Készül a szint…",
+    "loadFailed": "A szólistát nem sikerült betölteni. Ellenőrizze a kapcsolatot, és nyissa meg újra a játékot.",
+    "wordsLeft": {
+      "one": "Még {n} szó",
+      "other": "Még {n} szó"
+    },
+    "bonusCount": {
+      "one": "{n} bónuszszó",
+      "other": "{n} bónuszszó"
+    },
+    "tipBoth": "Húzza végig az ujját a betűkön, hogy szót rakjon ki – vagy koppintson rájuk sorban, majd az „Ellenőrzés” gombra.",
+    "tipSwipe": "Húzza végig az ujját a betűkön; ha felemeli, a szót ellenőrzi a játék.",
+    "tipTap": "Koppintson a betűkre sorban, majd az „Ellenőrzés” gombra.",
+    "crossword": "Keresztrejtvény",
+    "wordState": "{n}. szó / {total}, {length} betű: {state}",
+    "wordFound": "megvan – {word}",
+    "wordHidden": "még nincs meg",
+    "wordOpen": "még nincs meg, felfedett betűk: {letters}",
+    "cell": "{row}. sor, {col}. oszlop",
+    "wheel": "Betűk",
+    "current": "Az Ön szava",
+    "found": "Megvan: {word}",
+    "bonus": "Bónuszszó: {word} – létező szó, de nincs ebben a rejtvényben",
+    "again": "Már megvan: {word}",
+    "short": {
+      "one": "Túl rövid: legalább {n} betű kell",
+      "other": "Túl rövid: legalább {n} betű kell"
+    },
+    "unknown": "Nincs a szólistában: {word}",
+    "report": "„{word}” megjelölése",
+    "reported": "Megjelölve: {word}. Köszönjük!"
+  },
+  "tools": {
+    "shuffle": "Keverés",
+    "clear": "Törlés",
+    "check": "Ellenőrzés",
+    "hint": "Tipp",
+    "bonus": "Bónuszszavak"
+  },
+  "hint": {
+    "title": "Tipp",
+    "firstLetter": "Egy szó első betűje",
+    "chooseCell": "Betű egy választott mezőben",
+    "wholeWord": "Egy egész szó",
+    "chooseNow": "Koppintson a rejtvény egy még üres mezőjére.",
+    "counted": "A tippek ingyenesek; az eredményben látszik, hány volt."
+  },
+  "bonusList": {
+    "title": "Bónuszszavak",
+    "none": "Még nincs bónuszszó. Itt gyűlnek a betűkből kirakható létező szavak, amelyek nincsenek a rejtvényben."
+  },
+  "end": {
+    "title": "{n}. szint teljesítve!",
+    "dailyTitle": "A nap feladványa megoldva!",
+    "words": {
+      "one": "{n} szó",
+      "other": "{n} szó"
+    },
+    "bonus": {
+      "one": "{n} bónuszszó",
+      "other": "{n} bónuszszó"
+    },
+    "clean": "Tipp nélkül",
+    "hints": {
+      "one": "{n} tippel",
+      "other": "{n} tippel"
+    },
+    "time": "Idő: {time}",
+    "streak": {
+      "one": "A nap feladványa: {n} nap egymás után",
+      "other": "A nap feladványa: {n} nap egymás után"
+    },
+    "next": "Következő szint",
+    "home": "Vissza a kezdéshez",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "shareClean": "{name} · {date}: megoldva tipp nélkül",
+    "shareHints": {
+      "one": "{name} · {date}: megoldva {n} tippel",
+      "other": "{name} · {date}: megoldva {n} tippel"
+    }
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv (szavak és szövegek)",
+    "play": "Játék",
+    "input": "Szavak kirakása",
+    "inputBoth": "Húzás vagy koppintás",
+    "inputSwipe": "Húzás",
+    "inputTap": "Koppintás",
+    "showCells": "A rejtvény üres mezőinek mutatása",
+    "showLeft": "Mutassa, hány szó van még hátra",
+    "showBonus": "A bónuszszavak mutatása",
+    "time": "Az idő mutatása",
+    "grace": "Egy kihagyott nap ne szakítsa meg a sorozatot",
+    "huTiles": "Magyar: cs, gy, ly, ny, sz, ty, zs egy lapkán",
+    "look": "Megjelenés és hang",
+    "big": "Nagy betűk",
+    "theme": "Téma",
+    "themeSystem": "A rendszer szerint",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "sound": "Hang",
+    "vibration": "Rezgés",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
+    "reset": "Előrehaladás törlése",
+    "resetSure": "Koppintson újra a szintek, a statisztika és a mentett játékok törléséhez",
+    "resetDone": "Törölve"
+  },
+  "reported": {
+    "title": "Megjelölt szavak",
+    "none": "Még nincs megjelölt szó. Ha egy szó hibásnak tűnik, próbálja ki, majd koppintson a „Megjelölés” gombra.",
+    "note": "A lista ezen az eszközön marad. Ha szeretné, másolja ki és küldje el nekünk – a játék magától semmit sem küld.",
+    "copy": "A lista másolása",
+    "copied": "Másolva",
+    "line": "{lang}: {word} ({verdict})"
+  },
+  "stats": {
+    "title": "Statisztika",
+    "levels": "Kész szintek",
+    "words": "Megtalált szavak",
+    "bonus": "Bónuszszavak",
+    "hints": "Tippek",
+    "dailies": "Megoldott napi feladványok"
+  },
+  "about": {
+    "title": "A játékról",
+    "rules": {
+      "one": "Rakjon ki szavakat a körön lévő betűkből: minden betűt egyszer egy szóban, legalább {n} betűből. A rejtvény szava kitölti a mezőit; a szint akkor kész, ha a rejtvény megtelt. A betűkből kirakható többi létező szó bónuszszó.",
+      "other": "Rakjon ki szavakat a körön lévő betűkből: minden betűt egyszer egy szóban, legalább {n} betűből. A rejtvény szava kitölti a mezőit; a szint akkor kész, ha a rejtvény megtelt. A betűkből kirakható többi létező szó bónuszszó."
+    },
+    "forms": "Magyar: a rejtvényben gyakori szavak szótári alakban állnak; a toldalékos alakokat a játék nem fogadja el. A cs, gy, ly, ny, sz, ty és zs betű a beállítás szerint egy lapkán áll.",
+    "text": "Szójáték reklám, fiók és nyomkövetés nélkül. Az előrehaladása ezen az eszközön marad. Internet nélkül is működik.",
+    "keys": "Billentyűzet: betűk – szó kirakása (a kétjegyű betű, pl. sz, két billentyűvel), Enter – ellenőrzés, Backspace – az utolsó betű törlése, szóköz – keverés, ? – tipp, Esc – bezárás.",
+    "dictionaries": "Szótárak",
+    "dictionariesNote": "A szólisták forrásai (szerzők és licencek):",
+    "licence": "A GNU LGPL 2.1 licenc teljes szövege",
+    "credit": "Készítette: way1ong"
+  }
+}

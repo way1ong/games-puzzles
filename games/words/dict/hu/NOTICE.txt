@@ -1,0 +1,12 @@
+Word lists of way1ong Words (hu). Made by scripts/words/build.ts from:
+
+- Magyar Ispell — Németh László, Godó Ferenc and the Magyar Ispell contributors. MPL 1.1 or later; used under the Mozilla Public License 2.0.
+  accepted.txt and answers.txt hold its words (only words written with Hungarian letters, of 3 to 7 tiles,
+  a "|" marks a compound’s boundary). They are subject to the terms of the Mozilla Public License, v. 2.0;
+  you can obtain a copy at https://mozilla.org/MPL/2.0/. The source: https://github.com/laszlonemeth/magyarispell
+
+- answers.txt was chosen and ordered with word frequencies from wordfreq 3.1.1 (data): Robyn Speer, wordfreq; data from Google Books Ngrams, the Leeds Internet Corpus, Wikipedia, ParaCrawl, OPUS OpenSubtitles 2018 (OpenSubtitles), SUBTLEX word lists by Marc Brysbaert et al. (freely available data) and Twitter.
+It is shared under the Creative Commons Attribution-ShareAlike 4.0 (data) licence (https://creativecommons.org/licenses/by-sa/4.0/).
+
+- Offensive words were left out with List of Dirty, Naughty, Obscene, and Otherwise Bad Words (Creative Commons Attribution 4.0): Shutterstock and the LDNOOBW contributors.
+

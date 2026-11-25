@@ -1,0 +1,10 @@
+Word lists of way1ong Words (uk). Made by scripts/words/build.ts from:
+
+- VESUM (Великий електронний словник української мови), morfologik-ukrainian-lt 6.8.6 — ВЕСУМ: Андрій Рисін, Василь Старко та учасники проєкту brown-uk/dict_uk. GNU Lesser General Public License 2.1 or later (LICENSE-LGPL-2.1.txt).
+  accepted.txt and answers.txt hold its lemmas in dictionary form (only words written with Ukrainian letters,
+  of 3 to 7 letters, without names, abbreviations and offensive words). Each is a plain text file the game
+  reads as it is and can be replaced. The source: https://github.com/brown-uk/dict_uk
+
+- answers.txt was chosen and ordered with word frequencies from wordfreq 3.1.1 (data): Robyn Speer, wordfreq; data from Google Books Ngrams, the Leeds Internet Corpus, Wikipedia, ParaCrawl, OPUS OpenSubtitles 2018 (OpenSubtitles), SUBTLEX word lists by Marc Brysbaert et al. (freely available data) and Twitter.
+It is shared under the Creative Commons Attribution-ShareAlike 4.0 (data) licence (https://creativecommons.org/licenses/by-sa/4.0/).
+

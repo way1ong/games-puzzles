@@ -6,6 +6,8 @@ import { DETECTIVE } from './games/detective/config.ts';
 import detectiveEn from './games/detective/i18n/en.json' with { type: 'json' };
 import { SUDOKU } from './games/sudoku/config.ts';
 import sudokuEn from './games/sudoku/i18n/en.json' with { type: 'json' };
+import { WORDS } from './games/words/config.ts';
+import wordsEn from './games/words/i18n/en.json' with { type: 'json' };
 import { gameApps, type GameApp } from './scripts/pwa.ts';
 
 const here = (path: string) => fileURLToPath(new URL(path, import.meta.url));
@@ -15,6 +17,7 @@ const GAMES: GameApp[] = [
   { game: 'blocks', name: BLOCKS.name, shortName: blocksEn.app.name, description: blocksEn.meta.description, lang: 'en' },
   { game: 'detective', name: DETECTIVE.name, shortName: detectiveEn.app.name, description: detectiveEn.meta.description, lang: 'en' },
   { game: 'sudoku', name: SUDOKU.name, shortName: sudokuEn.app.name, description: sudokuEn.meta.description, lang: 'en' },
+  { game: 'words', name: WORDS.name, shortName: wordsEn.app.name, description: wordsEn.meta.description, lang: 'en' },
 ];
 
 // A test page is one game in one file (scripts/claude-page.mjs sets ONLY_GAME): built alone, the game's
@@ -32,6 +35,10 @@ export default defineConfig({
     emptyOutDir: true,
     // One script per game, nothing loaded later: no preload helper (it would be the only fetch in the bundle).
     modulePreload: { polyfill: false },
+    // A test page is one file: files a game loads (Words' word lists) go inside it as data addresses. On the
+    // site the lists and their notices stay files of their own, however small (their licences want them
+    // separate and replaceable).
+    assetsInlineLimit: only ? () => true : (file) => (file.endsWith('.txt') ? false : undefined),
     rollupOptions: {
       input: Object.fromEntries(games.map((app) => [app.game, here(`games/${app.game}/index.html`)])),
     },

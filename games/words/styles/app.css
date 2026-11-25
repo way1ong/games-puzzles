@@ -1,0 +1,619 @@
+/* Words screen. Colours only from tokens.css; the page reset and common controls are in shared/styles/ui.css.
+   One column, centred; a phone in portrait first: the crossword above, the wheel low, under the thumb. */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: max(0.5rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
+}
+
+html.big .app {
+  max-width: 44rem;
+}
+
+/* ---------- top: back, name, menu ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top__name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.top__name:focus {
+  outline: none;
+}
+
+.sign {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------- the start screen ---------- */
+.home {
+  display: grid;
+  gap: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.home__part {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.home__note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.home__main {
+  display: grid;
+  gap: 0.25rem;
+  justify-items: center;
+  min-height: 2.75rem;
+  padding: 1rem;
+  border: 2px solid var(--accent);
+  border-radius: 1rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  cursor: pointer;
+}
+
+.home__main-label {
+  font-size: 1.375rem;
+  font-weight: 800;
+}
+
+.home__main-level {
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.home__daily {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--surface);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.home__daily.is-started {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+
+.home__daily.is-solved {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- a level ---------- */
+.play {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.info__text {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.75rem;
+  min-width: 0;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.info__time {
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.info__tools {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.choose-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--accent);
+  border-radius: 0.875rem;
+  background: var(--surface);
+}
+
+.choose-note {
+  margin: 0;
+  font-weight: 650;
+}
+
+/* The crossword takes the space that is left; its cells grow with it, up to a comfortable size. */
+.stage {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 7rem;
+  container-type: size;
+}
+
+.crossword-wrap {
+  display: contents;
+}
+
+.crossword {
+  --gap: 3px;
+  --cell: min(calc((100cqw - var(--gap) * (var(--cols) - 1)) / var(--cols)), calc((100cqh - var(--gap) * (var(--rows) - 1)) / var(--rows)), 3.5rem);
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--gap);
+}
+
+html.big .crossword {
+  --cell: min(calc((100cqw - var(--gap) * (var(--cols) - 1)) / var(--cols)), calc((100cqh - var(--gap) * (var(--rows) - 1)) / var(--rows)), 4.25rem);
+}
+
+.cw-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 2px solid var(--cell-line);
+  border-radius: 0.375rem;
+  background: var(--cell);
+  color: var(--text);
+  font: 800 calc(var(--cell) * 0.55) / 1 var(--font);
+  text-transform: uppercase;
+}
+
+/* A found word: a fuller colour and a thicker frame (not the colour alone). */
+.cw-cell.is-found {
+  border: 3px solid var(--accent);
+  background: var(--found);
+}
+
+/* A letter opened by a hint: its own colour, slanted, and a dot in the corner. */
+.cw-cell.is-opened {
+  color: var(--opened);
+  font-style: italic;
+}
+
+.cw-cell.is-opened::after {
+  content: '';
+  position: absolute;
+  right: 12%;
+  bottom: 12%;
+  width: 14%;
+  height: 14%;
+  border-radius: 50%;
+  background: var(--opened);
+}
+
+.cw-cell.is-hidden {
+  visibility: hidden;
+}
+
+.cw-cell.is-choice {
+  border-style: dashed;
+  border-color: var(--accent);
+  cursor: pointer;
+}
+
+/* A word just found lights up (the time is set by the screen: --lit-ms). */
+.cw-cell.is-lit {
+  animation: lit var(--lit-ms, 0ms) ease-out;
+}
+
+@keyframes lit {
+  from {
+    background-color: var(--lit);
+  }
+}
+
+.board-wait {
+  margin: 0;
+  padding: 1rem;
+  color: var(--muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---------- the word, the verdict, the wheel ---------- */
+.play-area {
+  display: grid;
+  gap: 0.375rem;
+  justify-items: center;
+}
+
+.status {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 2.75rem;
+}
+
+.current {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.25;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem 0.75rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  text-align: center;
+}
+
+.verdict[data-kind='found'] {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.verdict[data-kind='bonus'] {
+  color: var(--bonus);
+  font-weight: 700;
+}
+
+.tip {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* The wheel fits the width and, on a short phone, the height too: the letters stay under the thumb. */
+.wheel {
+  position: relative;
+  width: min(78vw, 17.5rem, 36dvh);
+  aspect-ratio: 1;
+  max-width: 100%;
+  border-radius: 50%;
+  background: var(--wheel);
+  container-type: inline-size;
+}
+
+html.big .wheel {
+  width: min(92vw, 22rem, 42dvh);
+}
+
+.wheel__ring {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.wheel__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.wheel__line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 6px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.wheel__letter {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  display: grid;
+  place-items: center;
+  /* The letters follow the wheel's size (large system text must not push them out of it or onto each other):
+     at most 27 % of the wheel, so seven letters on the circle never touch. */
+  width: min(3.5rem, 27cqi);
+  height: min(3.5rem, 27cqi);
+  padding: 0;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: var(--tile);
+  color: var(--text);
+  font-size: min(1.75rem, 13cqi);
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  touch-action: none;
+}
+
+.wheel__letter.is-pair {
+  font-size: min(1.25rem, 9.5cqi);
+}
+
+/* A chosen letter: the accent and a thicker frame. */
+.wheel__letter.is-selected {
+  border: 3px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+html.big .wheel__letter {
+  width: min(4.25rem, 27cqi);
+  height: min(4.25rem, 27cqi);
+  font-size: min(2.125rem, 13cqi);
+}
+
+.wheel-tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.375rem;
+  width: 100%;
+  container-type: inline-size;
+}
+
+.wheel-tools--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tool {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  min-width: 2.75rem;
+  min-height: 3rem;
+  padding: 0.25rem 0.5rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+}
+
+.wheel-tools .tool {
+  font-size: min(0.875rem, 4.2cqi);
+}
+
+.tool--main {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.tool[aria-disabled='true'] {
+  border-style: dashed;
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: default;
+}
+
+.tool__count {
+  position: absolute;
+  top: 0.125rem;
+  right: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.btn--small {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn--small .sign {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* ---------- dialogs ---------- */
+.dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.dialog h3 {
+  margin: 0.5rem 0 0;
+  font-size: 1.0625rem;
+}
+
+.dialog__actions--start {
+  justify-content: flex-start;
+}
+
+.hint-options {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.hint-option {
+  text-align: start;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.25rem 1rem;
+  margin: 0;
+}
+
+.stats dt {
+  color: var(--muted);
+}
+
+.stats dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.reported,
+.bonus-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 650;
+}
+
+.licence summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  color: var(--accent);
+  font-weight: 700;
+  list-style: none;
+  cursor: pointer;
+}
+
+.licence summary::-webkit-details-marker {
+  display: none;
+}
+
+/* The sign that the text opens: points right when closed, down when open. */
+.licence summary::before {
+  flex: none;
+  border-block: 0.375rem solid transparent;
+  border-inline-start: 0.5rem solid currentColor;
+  content: '';
+}
+
+.licence[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.notice {
+  max-height: 12rem;
+  margin: 0;
+  padding: 0.5rem;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Wide screens (laptop, tablet on its side): the crossword on the left as tall as the screen; the word and the
+   wheel on the right. */
+@media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
+  .app {
+    height: 100vh;
+    height: 100dvh;
+    max-width: 64rem;
+  }
+
+  .play {
+    display: grid;
+    grid-template-areas:
+      'info info'
+      'choose choose'
+      'stage area';
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    column-gap: 1.5rem;
+  }
+
+  .info {
+    grid-area: info;
+  }
+
+  .choose-bar {
+    grid-area: choose;
+  }
+
+  .stage {
+    grid-area: stage;
+    min-height: 0;
+  }
+
+  .play-area {
+    grid-area: area;
+    align-content: center;
+  }
+
+  /* The wheel stays where the mouse left it: the line above it keeps one height, its text sits next to the
+     wheel, and a longer text grows upwards. */
+  .status {
+    height: 4.5rem;
+    align-content: end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cw-cell.is-lit {
+    animation: none;
+  }
+}
