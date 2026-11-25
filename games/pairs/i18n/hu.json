@@ -1,0 +1,155 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Párok – nyugodt lapkás játék reklám nélkül",
+    "description": "Vegye le az azonos lapkák párjait, amíg az asztal ki nem ürül. Minden kirakás teljesíthető; a tipp, a visszavonás és a keverés ingyenes. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Párok",
+    "menu": "Menü",
+    "back": "Vissza a kezdéshez",
+    "close": "Bezárás"
+  },
+  "home": {
+    "play": "Játék",
+    "start": "Kezdés",
+    "continue": "Folytatás",
+    "done": "Kész",
+    "passed": {
+      "one": "{n} szint teljesítve",
+      "other": "{n} szint teljesítve"
+    },
+    "first": "Vegye le az azonos képű lapkák párjait, amíg az asztal ki nem ürül.",
+    "dailyTitle": "A nap kirakása · {date}",
+    "dailyNote": "Ma mindenkinek ugyanaz",
+    "streak": {
+      "one": "{n} nap egymás után",
+      "other": "{n} nap egymás után"
+    }
+  },
+  "game": {
+    "level": "{n}. szint",
+    "daily": "A nap kirakása",
+    "board": "Az asztal a lapkákkal",
+    "left": "Lapkák: {n}",
+    "pairs": "levehető párok: {n}",
+    "noPairs": "nincs levehető pár",
+    "tip": "Koppintson két szabad, azonos képű lapkára. Egy lapka szabad, ha semmi sem fekszik rajta, és a bal vagy a jobb oldala szabad.",
+    "stuck": "Nincs levehető pár. Keverje meg a lapkákat, vagy vonjon vissza egy lépést.",
+    "tileFree": "{picture}, szabad",
+    "tileHint": "{picture}, szabad, tipp",
+    "tileBlocked": "{picture}, zárt",
+    "chosen": "{picture} kiválasztva",
+    "unchosen": "A kiválasztás megszűnt",
+    "covered": "{picture}: a lapka zárt, egy másik fekszik rajta.",
+    "sides": "{picture}: a lapka mindkét oldalról zárt.",
+    "taken": "Pár levéve: {picture}.",
+    "undone": "Lépés visszavonva.",
+    "undoneMany": {
+      "one": "{n} lépés visszavonva.",
+      "other": "{n} lépés visszavonva."
+    },
+    "nothingToUndo": "Nincs mit visszavonni.",
+    "shuffled": "A lapkák összekeverve.",
+    "shuffleFailed": "A lapkákat nem sikerült összekeverni. Vonjon vissza egy lépést, és próbálja újra."
+  },
+  "tools": {
+    "label": "Eszközök",
+    "hint": "Tipp",
+    "undo": "Vissza",
+    "shuffle": "Keverés"
+  },
+  "hint": {
+    "pair": "Vegye le a két kiemelt lapkát ({picture}): utánuk az asztal még kiüríthető.",
+    "any": "A kiemelt lapkák ({picture}) levehetők; a játék nem látott tovább előre.",
+    "stuck": {
+      "one": "Innen az asztal nem üríthető ki. Vonjon vissza {n} lépést, vagy keverje meg a lapkákat.",
+      "other": "Innen az asztal nem üríthető ki. Vonjon vissza {n} lépést, vagy keverje meg a lapkákat."
+    },
+    "stuckFar": "Innen az asztal nem üríthető ki. Keverje meg a lapkákat, vagy vonjon vissza több lépést.",
+    "undoMoves": {
+      "one": "{n} lépés visszavonása",
+      "other": "{n} lépés visszavonása"
+    }
+  },
+  "end": {
+    "title": "A kirakás kész!",
+    "clean": "Tipp és keverés nélkül",
+    "hints": "Tippek: {n}",
+    "shuffles": "Keverések: {n}",
+    "time": "Idő: {time}",
+    "streak": {
+      "one": "A nap kirakása: {n} nap egymás után",
+      "other": "A nap kirakása: {n} nap egymás után"
+    },
+    "next": "Következő szint",
+    "home": "Vissza a kezdéshez",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "shareClean": "{name} · {date}: kész tipp és keverés nélkül",
+    "share": "{name} · {date}: kész · tippek: {hints} · keverések: {shuffles}"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "play": "Játék",
+    "dim": "A zárt lapkák halványítása",
+    "pairs": "Mutassa, hány pár vehető le",
+    "time": "Az idő mutatása",
+    "look": "Megjelenés",
+    "big": "Nagy lapkák és gombok",
+    "theme": "Téma",
+    "themeSystem": "A rendszer szerint",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
+    "reset": "Előrehaladás törlése",
+    "resetSure": "Koppintson újra a szintek, az eredmények és a statisztika törléséhez",
+    "resetDone": "Törölve"
+  },
+  "stats": {
+    "title": "Statisztika",
+    "passed": "Teljesítve",
+    "clean": "Tipp és keverés nélkül",
+    "levels": "Szintek",
+    "days": "A nap kirakásai",
+    "longest": {
+      "one": "Leghosszabb sorozat: {n} nap",
+      "other": "Leghosszabb sorozat: {n} nap"
+    }
+  },
+  "about": {
+    "title": "A játékról",
+    "rules": "A lapkák rétegekben fekszenek az asztalon. Egy lapka szabad, ha semmi sem fekszik rajta – még a sarkával sem –, és a bal vagy a jobb oldala szabad. Koppintson két szabad, azonos képű lapkára, és lekerülnek az asztalról. A kirakás kész, ha az asztal üres. Minden kirakás teljesíthető; a tipp, a visszavonás és a keverés korlátlan.",
+    "text": "Párok reklám, fiók és nyomkövetés nélkül. Az előrehaladása ezen az eszközön marad. Internet nélkül is működik.",
+    "keys": "Billentyűzet: nyilak – lépés a szabad lapkák között, Enter vagy szóköz – kiválasztás, H – tipp, Ctrl+Z – visszavonás, S – keverés, Esc – a kiválasztás megszüntetése vagy bezárás.",
+    "credit": "Készítette: way1ong"
+  },
+  "pictures": {
+    "apple": "Alma",
+    "pear": "Körte",
+    "cherries": "Cseresznye",
+    "lemon": "Citrom",
+    "grapes": "Szőlő",
+    "strawberry": "Eper",
+    "carrot": "Sárgarépa",
+    "mushroom": "Gomba",
+    "cucumber": "Uborka",
+    "key": "Kulcs",
+    "bell": "Csengő",
+    "cup": "Bögre",
+    "umbrella": "Esernyő",
+    "house": "Ház",
+    "boat": "Hajó",
+    "star": "Csillag",
+    "moon": "Hold",
+    "sun": "Nap",
+    "heart": "Szív",
+    "fish": "Hal",
+    "flower": "Virág",
+    "leaf": "Falevél",
+    "tree": "Fenyőfa",
+    "drop": "Csepp"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "meta": {
+    "langName": "English",
+    "title": "Solitaire — patience with cards, without ads",
+    "description": "Klondike solitaire with big, easy-to-read cards. By default every deal can be won; hints and undo are free and unlimited. No ads, no accounts, no tracking; works offline."
+  },
+  "app": {
+    "name": "Solitaire",
+    "menu": "Menu",
+    "back": "Back to start",
+    "close": "Close"
+  },
+  "home": {
+    "play": "Play",
+    "game": "Klondike",
+    "start": "New deal",
+    "begin": "Start",
+    "continue": "Continue",
+    "done": "Done",
+    "drawOne": "One card a turn",
+    "drawThree": "Three cards a turn",
+    "dailyTitle": "Deal of the day · {date}",
+    "dailyNote": "The same for everyone today",
+    "streak": {
+      "one": "{n} day in a row",
+      "other": "{n} days in a row"
+    }
+  },
+  "game": {
+    "title": "Klondike",
+    "daily": "Deal of the day",
+    "table": "Card table",
+    "preparing": "Dealing the cards…",
+    "tip": "Tap a card: it goes where it fits best. Or drag it. Put every card on the four foundations, from the ace to the king.",
+    "stock": {
+      "one": "Stock: {n} card",
+      "other": "Stock: {n} cards"
+    },
+    "stockTurn": "Stock empty: tap to turn the waste over",
+    "stockNone": "Stock empty",
+    "waste": "{card}, top of the waste",
+    "column": "{card}, column {n}",
+    "foundation": "{card}, foundation",
+    "foundationEmpty": "Foundation for {suit}: empty",
+    "columnEmpty": "Column {n}: empty",
+    "toColumn": "column {n}",
+    "toFoundation": "the foundation",
+    "moved": "{card} to {target}.",
+    "turnedUp": "Turned up: {card}.",
+    "drawn": "From the stock: {card}.",
+    "turnedOver": "The waste is turned over into the stock.",
+    "noPlace": "{card}: there is no place for it now.",
+    "faceDown": "This card is face down: it turns up when nothing lies on it.",
+    "fromHome": "To bring a card back from the foundation, drag it.",
+    "cantDrop": "{card} cannot go there.",
+    "undone": "Move undone.",
+    "nothingToUndo": "Nothing to undo.",
+    "finishNote": "Every card is open: the rest can go home by itself.",
+    "finish": "Finish",
+    "newSure": "Tap again to deal anew: this deal will count as played."
+  },
+  "tools": {
+    "label": "Tools",
+    "hint": "Hint",
+    "undo": "Undo",
+    "newDeal": "New deal"
+  },
+  "hint": {
+    "thinking": "Looking for a way…",
+    "move": "{card} to {target}.",
+    "draw": "Turn cards from the stock.",
+    "finish": "Every card can go home: tap “Finish”.",
+    "stuck": {
+      "one": "The game finds no way to the end from here. Undo {n} move, or deal anew.",
+      "other": "The game finds no way to the end from here. Undo {n} moves, or deal anew."
+    },
+    "stuckFar": "The game finds no way to the end from here. Deal anew, or undo several moves.",
+    "unsure": "The game could not look all the way to the end; this move looks good: {card} to {target}.",
+    "unsureDraw": "The game could not look all the way to the end; try turning cards from the stock.",
+    "undoMoves": {
+      "one": "Undo {n} move",
+      "other": "Undo {n} moves"
+    }
+  },
+  "end": {
+    "title": "Solved!",
+    "clean": "Without hints",
+    "hints": "Hints: {n}",
+    "time": "Time: {time}",
+    "streak": {
+      "one": "Deals of the day: {n} day in a row",
+      "other": "Deals of the day: {n} days in a row"
+    },
+    "newDeal": "New deal",
+    "home": "To the start",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "shareClean": "{name} · {date}: solved without hints",
+    "share": "{name} · {date}: solved · hints: {hints}"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "play": "Playing",
+    "draw": "The stock turns",
+    "drawOne": "One card",
+    "drawThree": "Three cards",
+    "deals": "Deals",
+    "dealsWinnable": "Only ones that can be won",
+    "dealsAny": "Any, as from the deck",
+    "time": "Show the time",
+    "look": "Look",
+    "leftHand": "For the left hand (stock on the left)",
+    "fourColours": "Four suit colours",
+    "big": "Large card signs and buttons",
+    "theme": "Theme",
+    "themeSystem": "As the system",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap “Share”, then add the game to the Home Screen.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear deals, results and statistics",
+    "resetDone": "Progress cleared"
+  },
+  "stats": {
+    "title": "Statistics",
+    "kind": "Stock",
+    "played": "Played",
+    "won": "Solved",
+    "clean": "Without hints",
+    "best": "Best time",
+    "none": "—",
+    "longest": {
+      "one": "Deals of the day — longest streak: {n} day",
+      "other": "Deals of the day — longest streak: {n} days"
+    }
+  },
+  "about": {
+    "title": "About the game",
+    "rules": "Put every card on the four foundations, each suit from the ace to the king. In the columns, lay cards downwards in alternating colours (a red nine on a black ten); you can move several open cards in order together. Only a king goes to an empty column. A face-down card turns up when nothing lies on it. Tap the stock to turn cards; when it is empty, the waste turns over.",
+    "text": "Solitaire without ads, accounts or tracking. Progress stays on this device. Works offline.",
+    "keys": "Keyboard: arrows — move between cards and places, Enter or Space — like a tap, D — the stock, H — hint, Ctrl+Z — undo, F — finish, N — new deal, Esc — close.",
+    "credit": "Made by way1ong"
+  },
+  "cards": {
+    "name": "{rank} of {suit}",
+    "ranks": {
+      "1": "Ace",
+      "2": "Two",
+      "3": "Three",
+      "4": "Four",
+      "5": "Five",
+      "6": "Six",
+      "7": "Seven",
+      "8": "Eight",
+      "9": "Nine",
+      "10": "Ten",
+      "11": "Jack",
+      "12": "Queen",
+      "13": "King"
+    },
+    "short": {
+      "1": "A",
+      "11": "J",
+      "12": "Q",
+      "13": "K"
+    },
+    "suits": {
+      "spades": "spades",
+      "hearts": "hearts",
+      "clubs": "clubs",
+      "diamonds": "diamonds"
+    }
+  }
+}

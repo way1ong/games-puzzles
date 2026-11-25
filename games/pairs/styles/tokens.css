@@ -1,0 +1,73 @@
+/*
+ * Pairs: the only file with colour values of the screen (the pictures on the tiles take theirs from
+ * art/palette.ts). Light and dark themes follow the system unless the player chooses one in the settings; a page
+ * that hosts the game (e.g. a claude.ai test page) may force one too — both with data-theme="light" | "dark" on
+ * <html>. A tile is a thing on the table: its face stays light in both themes (docs/pairs/SPEC.md, "Плитки").
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #e9efe6;
+  --surface: #ffffff;
+  --text: #18221d;
+  --muted: #4b5751;
+  --line: #77837b;
+  --accent: #23694a;
+  --on-accent: #ffffff;
+  --focus: #1f4f99;
+
+  /* Tiles: the face (free, blocked and shaded, chosen, shown by a hint), its border and its side. */
+  --tile-face: #fffbf0;
+  --tile-blocked: #cdc5b4;
+  --tile-selected: #bfe3d2;
+  --tile-hint: #ffe9a8;
+  --tile-line: #5c4d3c;
+  --tile-side: #8f7d5a;
+  /* Marks on a tile (both themes: the face is light in both): the chosen frame, the hint's frame, the focus. */
+  --tile-ring: #1d5c40;
+  --tile-hint-ring: #8a4f00;
+  --tile-focus: #1f4f99;
+
+  --backdrop: rgb(20 24 22 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #141a17;
+    --surface: #1e2622;
+    --text: #e7eee9;
+    --muted: #a9b6ae;
+    --line: #6f7d75;
+    --accent: #7cc9a1;
+    --on-accent: #0c241a;
+    --focus: #9cc4ff;
+
+    --tile-blocked: #b3ab9b;
+    --tile-side: #a8987a;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  }
+}
+
+/* The same dark values when the player or the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #141a17;
+  --surface: #1e2622;
+  --text: #e7eee9;
+  --muted: #a9b6ae;
+  --line: #6f7d75;
+  --accent: #7cc9a1;
+  --on-accent: #0c241a;
+  --focus: #9cc4ff;
+
+  --tile-blocked: #b3ab9b;
+  --tile-side: #a8987a;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+}

@@ -1,0 +1,176 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Pasziánsz – kártyajáték reklám nélkül",
+    "description": "Klondike pasziánsz nagy, jól olvasható lapokkal. Alapértelmezés szerint minden leosztás kirakható; a tipp és a visszavonás ingyenes és korlátlan. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Pasziánsz",
+    "menu": "Menü",
+    "back": "Vissza a kezdéshez",
+    "close": "Bezárás"
+  },
+  "home": {
+    "play": "Játék",
+    "game": "Klondike",
+    "start": "Új leosztás",
+    "begin": "Kezdés",
+    "continue": "Folytatás",
+    "done": "Kész",
+    "drawOne": "Egyesével húzva",
+    "drawThree": "Hármasával húzva",
+    "dailyTitle": "A nap leosztása · {date}",
+    "dailyNote": "Ma mindenkinek ugyanaz",
+    "streak": {
+      "one": "{n} nap egymás után",
+      "other": "{n} nap egymás után"
+    }
+  },
+  "game": {
+    "title": "Klondike",
+    "daily": "A nap leosztása",
+    "table": "Kártyaasztal",
+    "preparing": "Osztom a lapokat…",
+    "tip": "Koppintson egy lapra: oda kerül, ahová a legjobban illik. Vagy húzza át. Tegye az összes lapot a négy alapkupacra, ásztól királyig.",
+    "stock": {
+      "one": "Pakli: {n} lap",
+      "other": "Pakli: {n} lap"
+    },
+    "stockTurn": "A pakli üres: koppintson a lapok visszafordításához",
+    "stockNone": "A pakli üres",
+    "waste": "{card}, a felfordított lapok teteje",
+    "column": "{card}, {n}. oszlop",
+    "foundation": "{card}, alapkupac",
+    "foundationEmpty": "Alapkupac – {suit}: üres",
+    "columnEmpty": "{n}. oszlop: üres",
+    "toColumn": "{n}. oszlop",
+    "toFoundation": "alapkupac",
+    "moved": "{card} → {target}.",
+    "turnedUp": "Felfordult: {card}.",
+    "drawn": "A pakliból: {card}.",
+    "turnedOver": "A felfordított lapok visszakerültek a pakliba.",
+    "noPlace": "{card}: ennek a lapnak most nincs helye.",
+    "faceDown": "Ez a lap le van fordítva: felfordul, ha semmi sem fekszik rajta.",
+    "fromHome": "Ha egy lapot vissza szeretne venni az alapkupacról, húzza át.",
+    "cantDrop": "{card}: ide nem tehető.",
+    "undone": "Lépés visszavonva.",
+    "nothingToUndo": "Nincs mit visszavonni.",
+    "finishNote": "Minden lap fel van fordítva: a többi magától az alapkupacokra kerülhet.",
+    "finish": "Befejezés",
+    "newSure": "Koppintson újra az új leosztáshoz: ez a leosztás lejátszottnak számít."
+  },
+  "tools": {
+    "label": "Eszközök",
+    "hint": "Tipp",
+    "undo": "Vissza",
+    "newDeal": "Új leosztás"
+  },
+  "hint": {
+    "thinking": "Utat keresek…",
+    "move": "{card} → {target}.",
+    "draw": "Fordítson lapokat a pakliból.",
+    "finish": "Minden lap az alapkupacokra kerülhet: koppintson a „Befejezés” gombra.",
+    "stuck": {
+      "one": "A játék innen nem talál utat a végéig. Vonjon vissza {n} lépést, vagy osszon újra.",
+      "other": "A játék innen nem talál utat a végéig. Vonjon vissza {n} lépést, vagy osszon újra."
+    },
+    "stuckFar": "A játék innen nem talál utat a végéig. Osszon újra, vagy vonjon vissza több lépést.",
+    "unsure": "A játék nem látott el a végéig; ez a lépés jónak tűnik: {card} → {target}.",
+    "unsureDraw": "A játék nem látott el a végéig; próbáljon lapokat fordítani a pakliból.",
+    "undoMoves": {
+      "one": "{n} lépés visszavonása",
+      "other": "{n} lépés visszavonása"
+    }
+  },
+  "end": {
+    "title": "Kirakva!",
+    "clean": "Tipp nélkül",
+    "hints": "Tippek: {n}",
+    "time": "Idő: {time}",
+    "streak": {
+      "one": "A nap leosztása: {n} nap egymás után",
+      "other": "A nap leosztása: {n} nap egymás után"
+    },
+    "newDeal": "Új leosztás",
+    "home": "Vissza a kezdéshez",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "shareClean": "{name} · {date}: kirakva tipp nélkül",
+    "share": "{name} · {date}: kirakva · tippek: {hints}"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "play": "Játék",
+    "draw": "A pakliból",
+    "drawOne": "Egy lap",
+    "drawThree": "Három lap",
+    "deals": "Leosztások",
+    "dealsWinnable": "Csak kirakhatók",
+    "dealsAny": "Bármilyen, ahogy a pakli adja",
+    "time": "Az idő mutatása",
+    "look": "Megjelenés",
+    "leftHand": "Bal kézhez (pakli a bal oldalon)",
+    "fourColours": "Négyszínű lapok",
+    "big": "Nagy jelek a lapokon és nagy gombok",
+    "theme": "Téma",
+    "themeSystem": "A rendszer szerint",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
+    "reset": "Előrehaladás törlése",
+    "resetSure": "Koppintson újra a leosztások, az eredmények és a statisztika törléséhez",
+    "resetDone": "Törölve"
+  },
+  "stats": {
+    "title": "Statisztika",
+    "kind": "Pakli",
+    "played": "Lejátszva",
+    "won": "Kirakva",
+    "clean": "Tipp nélkül",
+    "best": "Legjobb idő",
+    "none": "—",
+    "longest": {
+      "one": "A nap leosztása – leghosszabb sorozat: {n} nap",
+      "other": "A nap leosztása – leghosszabb sorozat: {n} nap"
+    }
+  },
+  "about": {
+    "title": "A játékról",
+    "rules": "Tegye az összes lapot a négy alapkupacra, minden színt ásztól királyig. Az oszlopokban a lapok csökkenő sorrendben, váltakozó színnel kerülnek egymásra (piros kilences fekete tízesre); több, sorrendben fekvő felfordított lap együtt is áthelyezhető. Üres oszlopba csak király tehető. A lefordított lap felfordul, ha semmi sem fekszik rajta. A pakli koppintásra lapokat fordít; ha kiürül, a felfordított lapok visszafordulnak.",
+    "text": "Pasziánsz reklám, fiók és nyomkövetés nélkül. Az előrehaladása ezen az eszközön marad. Internet nélkül is működik.",
+    "keys": "Billentyűzet: nyilak – lépés a lapok és helyek között, Enter vagy szóköz – mint a koppintás, D – pakli, H – tipp, Ctrl+Z – visszavonás, F – befejezés, N – új leosztás, Esc – bezárás.",
+    "credit": "Készítette: way1ong"
+  },
+  "cards": {
+    "name": "{suit} {rank}",
+    "ranks": {
+      "1": "ász",
+      "2": "kettes",
+      "3": "hármas",
+      "4": "négyes",
+      "5": "ötös",
+      "6": "hatos",
+      "7": "hetes",
+      "8": "nyolcas",
+      "9": "kilences",
+      "10": "tízes",
+      "11": "bubi",
+      "12": "dáma",
+      "13": "király"
+    },
+    "short": {
+      "1": "A",
+      "11": "B",
+      "12": "D",
+      "13": "K"
+    },
+    "suits": {
+      "spades": "Pikk",
+      "hearts": "Kőr",
+      "clubs": "Treff",
+      "diamonds": "Káró"
+    }
+  }
+}
