@@ -6,8 +6,10 @@ import type { Size } from '../config.ts';
 export const EMPTY_PIXEL = '.';
 
 export interface Picture {
-  /** Its key in the dictionaries (pictures.<id>) and in saved progress; never changes once published. */
+  /** Its key in saved progress, unique in the album; never changes once published (art/pictures.ts: "<name>-<size>"). */
   id: string;
+  /** What it shows: its key in the dictionaries (pictures.<name>); two sizes may show the same thing. */
+  name: string;
   size: Size;
   /** The rows from the top: `EMPTY_PIXEL` for an empty cell, a letter of art/palette.ts for a filled one. */
   rows: readonly string[];

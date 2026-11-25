@@ -6,7 +6,7 @@ import { EMPTY, FILLED, UNKNOWN, type Know } from './line.ts';
 import { solutionOf, type Picture } from './picture.ts';
 import { fitsLine, solvableByLines, solveGrid } from './solve.ts';
 
-const picture = (rows: string[]): Picture => ({ id: 'test', size: rows.length as 5, rows });
+const picture = (rows: string[]): Picture => ({ id: 'test-5', name: 'test', size: rows.length as 5, rows });
 
 describe('solveGrid', () => {
   it('solves a picture with one answer to the end, by steps that together decide every cell', () => {

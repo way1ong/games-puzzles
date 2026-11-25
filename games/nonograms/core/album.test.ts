@@ -6,7 +6,7 @@ import { addTime, countHint, newPlay } from './play.ts';
 import type { Picture } from './picture.ts';
 import { emptyStats, recordSolved } from './stats.ts';
 
-const fake = (id: string, size: Size): Picture => ({ id, size, rows: Array.from({ length: size }, () => '#'.repeat(size)) });
+const fake = (id: string, size: Size): Picture => ({ id, name: id, size, rows: Array.from({ length: size }, () => '#'.repeat(size)) });
 const PICTURES = [fake('a', 5), fake('b', 10), fake('c', 5), fake('d', 10), fake('e', 15), fake('f', 10), fake('g', 10)];
 
 describe('album', () => {

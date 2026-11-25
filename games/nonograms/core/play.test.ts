@@ -12,7 +12,7 @@ import { solutionOf, type Picture } from './picture.ts';
 // # # # # #
 // . # # # .
 // . . # . .
-const HEART: Picture = { id: 'heart', size: 5, rows: ['.r.r.', 'rrrrr', 'rrrrr', '.rrr.', '..r..'] };
+const HEART: Picture = { id: 'heart-5', name: 'heart', size: 5, rows: ['.r.r.', 'rrrrr', 'rrrrr', '.rrr.', '..r..'] };
 const CLUES = cluesOf(solutionOf(HEART), 5);
 const PLAIN: StrokeOptions = { mode: 'fill', secondTap: 'clear', autoCross: false };
 const at = (row: number, col: number) => row * 5 + col;
