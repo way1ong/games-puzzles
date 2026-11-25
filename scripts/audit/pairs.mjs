@@ -70,6 +70,9 @@ function lastPair() {
 
 const tap = (page, i) => page.locator(`.tile[data-i="${i}"]`).click();
 
+/** In the open menu: the n-th choice of shuffles a layout (PAIRS.shuffleLimits: no limit, 3, 1, none). */
+const shuffleLimit = (page, n) => page.locator('dialog[open] .choices').nth(1).locator('button').nth(n).click();
+
 async function takePair(page, find = freePair) {
   const pair = await page.evaluate(find);
   if (!pair) return false;
@@ -141,10 +144,11 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       }
       await page.keyboard.press('h');
       await check(page, `${label} hint`);
-      // the widest settings: the time and the large mode
+      // the widest settings: the time and the large mode; one shuffle a layout — the button tells how many are left
       await page.locator('.top .icon-btn').nth(1).click();
       await check(page, `${label} menu`);
       for (const n of [2, 3]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
+      await shuffleLimit(page, 1);
       await page.locator('dialog[open] .dialog__actions .btn--primary').click();
       await check(page, `${label} large mode, time`);
       await shot(page, `${width}x${height}-${locale}-${colorScheme}`);
@@ -222,6 +226,17 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await page.keyboard.press('h');
       await side('the hint: undo moves, large mode');
       await shot(page, `side-${width}x${height}-stuck`);
+      // no shuffle allowed: the hint offers only the moves to undo; opened again, the game offers them unasked
+      await page.locator('.top .icon-btn').nth(1).click();
+      await shuffleLimit(page, 3);
+      await page.locator('dialog[open] .dialog__actions .btn--primary').click();
+      await side('the hint with no shuffle left, large mode');
+      await page.locator('.top .icon-btn').first().click();
+      await page.waitForSelector('.pick');
+      await page.locator('.pick').first().click();
+      await page.waitForSelector('.tile:not([hidden])');
+      await page.waitForSelector('.note__actions button');
+      await side('no pair and no shuffle left, large mode');
     }
     await ctx.close();
   }

@@ -71,9 +71,20 @@ export function undo(play: PairsPlay): PairsPlay {
   return { ...play, present, history, done: false };
 }
 
-/** The pictures left laid again so that the rest can be won; counted. Unchanged if no way was found. */
-export function shuffle(play: PairsPlay): PairsPlay {
-  if (play.done) return play;
+/**
+ * Shuffles left under a limit (PAIRS.shuffleLimits; null — no limit, then null): a shuffle taken back by undo still
+ * counts, so undo cannot buy shuffles back.
+ */
+export function shufflesLeft(play: PairsPlay, limit: number | null): number | null {
+  return limit === null ? null : Math.max(0, limit - play.shuffles);
+}
+
+/**
+ * The pictures left laid again so that the rest can be won; counted. Unchanged if no way was found, or if no shuffle
+ * is left under the limit.
+ */
+export function shuffle(play: PairsPlay, limit: number | null = null): PairsPlay {
+  if (play.done || shufflesLeft(play, limit) === 0) return play;
   const table = tableFor(play.layout);
   // Each shuffle draws from its own seed: the game's seed and how many shuffles came before.
   for (let attempt = 0; attempt < 8; attempt++) {

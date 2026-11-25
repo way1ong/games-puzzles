@@ -36,6 +36,10 @@
     "noPairs": "nincs levehető pár",
     "tip": "Koppintson két szabad, azonos képű lapkára. Egy lapka szabad, ha semmi sem fekszik rajta, és a bal vagy a jobb oldala szabad.",
     "stuck": "Nincs levehető pár. Keverje meg a lapkákat, vagy vonjon vissza egy lépést.",
+    "noShuffles": "Erre a kirakásra nem maradt több keverés.",
+    "stuckNoShuffle": "Nincs levehető pár, és keverés sem maradt.",
+    "restart": "Újrakezdés",
+    "restarted": "A kirakás elölről kezdődik.",
     "tileFree": "{picture}, szabad",
     "tileHint": "{picture}, szabad, tipp",
     "tileBlocked": "{picture}, zárt",
@@ -57,7 +61,8 @@
     "label": "Eszközök",
     "hint": "Tipp",
     "undo": "Vissza",
-    "shuffle": "Keverés"
+    "shuffle": "Keverés",
+    "shuffleLeft": "Keverés ({n})"
   },
   "hint": {
     "pair": "Vegye le a két kiemelt lapkát ({picture}): utánuk az asztal még kiüríthető.",
@@ -67,6 +72,11 @@
       "other": "Innen az asztal nem üríthető ki. Vonjon vissza {n} lépést, vagy keverje meg a lapkákat."
     },
     "stuckFar": "Innen az asztal nem üríthető ki. Keverje meg a lapkákat, vagy vonjon vissza több lépést.",
+    "stuckUndo": {
+      "one": "Innen az asztal nem üríthető ki. Vonjon vissza {n} lépést.",
+      "other": "Innen az asztal nem üríthető ki. Vonjon vissza {n} lépést."
+    },
+    "stuckStart": "Innen az asztal nem üríthető ki. Kezdje elölről a kirakást.",
     "undoMoves": {
       "one": "{n} lépés visszavonása",
       "other": "{n} lépés visszavonása"
@@ -96,6 +106,9 @@
     "dim": "A zárt lapkák halványítása",
     "pairs": "Mutassa, hány pár vehető le",
     "time": "Az idő mutatása",
+    "shuffles": "Keverések kirakásonként",
+    "shufflesAny": "Korlátlan",
+    "shufflesNone": "Egy sem",
     "look": "Megjelenés",
     "big": "Nagy lapkák és gombok",
     "theme": "Téma",

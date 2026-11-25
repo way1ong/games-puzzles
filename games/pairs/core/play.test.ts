@@ -3,7 +3,7 @@ import { PAIRS } from '../config.ts';
 import type { Pair } from './deal.ts';
 import { makeDaily, makeLevel, stepOf } from './level.ts';
 import { LAYOUTS, slotsOf } from './layouts.ts';
-import { addTime, anyPair, countHint, hintFor, newPlay, shuffle, standing, tableFor, take, undo, type PairsPlay } from './play.ts';
+import { addTime, anyPair, countHint, hintFor, newPlay, shuffle, shufflesLeft, standing, tableFor, take, undo, type PairsPlay } from './play.ts';
 import { solve } from './solve.ts';
 import { freePlaces, isFree } from './table.ts';
 
@@ -81,6 +81,31 @@ describe('playing a layout', () => {
     expect(undo(back3)).toBe(back3);
     // the shuffle stays counted
     expect(back3.shuffles).toBe(1);
+  });
+
+  it('shuffles only as many times as the limit chosen; undo does not give a shuffle back', () => {
+    const play = take(fresh(), ...anyPair(tableFor(fresh().layout), fresh())!).play;
+    expect(PAIRS.shuffleLimits).toContain(null);
+    expect(shufflesLeft(play, null)).toBeNull();
+    // no limit: as many as wanted
+    let free = play;
+    for (let k = 0; k < 5; k++) free = shuffle(free, null);
+    expect(free.shuffles).toBe(5);
+    // a limit of one: the first works, the second does not
+    expect(shufflesLeft(play, 1)).toBe(1);
+    const once = shuffle(play, 1);
+    expect(once.shuffles).toBe(1);
+    expect(shufflesLeft(once, 1)).toBe(0);
+    expect(shuffle(once, 1)).toBe(once);
+    // taken back, it still counts
+    const back = undo(once);
+    expect(back.kinds).toEqual(play.kinds);
+    expect(shufflesLeft(back, 1)).toBe(0);
+    expect(shuffle(back, 1)).toBe(back);
+    // none at all
+    expect(shuffle(play, 0)).toBe(play);
+    // a limit lowered below the shuffles made: none left, never fewer than none
+    expect(shufflesLeft(free, 3)).toBe(0);
   });
 
   it('a shuffle keeps the pictures on the table, lays them anew, and the game can be won from there', () => {

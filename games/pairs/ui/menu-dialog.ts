@@ -43,6 +43,18 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
         langs.append(b);
       }
 
+      // Shuffles a layout may have: no limit, or a few — a harder game for whoever wants it (decision of 25.11).
+      const limits = h('div', { class: 'choices', role: 'group', 'aria-label': s.shuffles });
+      for (const limit of PAIRS.shuffleLimits) {
+        const text = limit === null ? s.shufflesAny : limit === 0 ? s.shufflesNone : num(lang, limit);
+        const b = h('button', { class: 'choices__btn', type: 'button', 'aria-pressed': String(limit === settings.shuffles) }, text);
+        b.addEventListener('click', () => {
+          for (const other of limits.querySelectorAll('button')) other.setAttribute('aria-pressed', String(other === b));
+          actions.set({ shuffles: limit });
+        });
+        limits.append(b);
+      }
+
       const themes = h('div', { class: 'choices', role: 'group', 'aria-label': s.theme });
       const themeOptions: { value: Theme; text: string }[] = [
         { value: 'system', text: s.themeSystem },
@@ -114,6 +126,8 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           toggle(s.dim, settings.dim, (on) => actions.set({ dim: on })),
           toggle(s.pairs, settings.pairs, (on) => actions.set({ pairs: on })),
           toggle(s.time, settings.time, (on) => actions.set({ time: on })),
+          h('p', { class: 'dialog__label' }, s.shuffles),
+          limits,
           h('h3', {}, s.look),
           toggle(s.big, settings.big, (on) => actions.set({ big: on })),
           h('p', { class: 'dialog__label' }, s.theme),

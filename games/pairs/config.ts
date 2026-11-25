@@ -71,4 +71,10 @@ export const PAIRS = {
   solveSteps: 200_000,
   /** Steps back a hint looks through for "it can be won again after N steps back" (C). */
   lookBack: 30,
+  /**
+   * Shuffles a layout may have — a choice in the menu, for whoever wants a harder game (decision of 25.11: «Що до
+   * перемішування, додай можливість вибору обмеження кількості перемішувань»). null — no limit, the default; the
+   * other choices (C).
+   */
+  shuffleLimits: [null, 3, 1, 0] as readonly (number | null)[],
 } as const;

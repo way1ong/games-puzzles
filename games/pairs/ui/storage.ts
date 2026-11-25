@@ -2,7 +2,7 @@
 // of the day, the results of the days, statistics. Nothing leaves the device (docs/pairs/SPEC.md, "Що
 // зберігається"). Every read survives a missing or broken value; a saved layout carries a format version, and
 // one in another format (or one that does not fit its layout) is dropped rather than break the game.
-import { PICTURES } from '../config.ts';
+import { PAIRS, PICTURES } from '../config.ts';
 import { LAYOUTS, isLayoutName, slotsOf } from '../core/layouts.ts';
 import type { PairsPlay, Step } from '../core/play.ts';
 import { emptyStats, type Stats } from '../core/stats.ts';
@@ -47,6 +47,8 @@ export interface Settings {
   time: boolean;
   big: boolean;
   theme: Theme;
+  /** Shuffles a layout may have (one of PAIRS.shuffleLimits); null — no limit. */
+  shuffles: number | null;
 }
 
 /** As approved on 25.11 (docs/pairs/SPEC.md, "Налаштування"). */
@@ -57,6 +59,7 @@ export const DEFAULT_SETTINGS: Settings = {
   time: false,
   big: false,
   theme: 'system',
+  shuffles: null,
 };
 
 const oneOf = <T extends string>(value: unknown, options: readonly T[], fallback: T): T =>
@@ -74,6 +77,7 @@ export function loadSettings(): Settings {
     time: flag(s.time, d.time),
     big: flag(s.big, d.big),
     theme: oneOf(s.theme, ['system', 'light', 'dark'], d.theme),
+    shuffles: PAIRS.shuffleLimits.includes(s.shuffles ?? null) ? (s.shuffles ?? null) : d.shuffles,
   };
 }
 
