@@ -14,7 +14,8 @@ import { createBonusDialog } from './bonus-dialog.ts';
 import { createCrosswordView } from './crossword-view.ts';
 import { loadDictionary } from './dict-load.ts';
 import { createEndDialog } from './end-dialog.ts';
-import { createHintDialog, type HintKind } from './hint-dialog.ts';
+import { createFieldScreen, type FieldScreenName } from './field-screen.ts';
+import { createHintDialog } from './hint-dialog.ts';
 import { homeView } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
 import { backSign, bonusSign, checkSign, clearSign, hintSign, reportSign, shuffleSign } from './icons.ts';
@@ -82,6 +83,31 @@ export function startApp(root: HTMLElement): void {
   const endDialog = createEndDialog();
   const hintDialog = createHintDialog();
   const bonusDialog = createBonusDialog();
+  /** The Word Field screen (second mode), when one of its routes is open. */
+  let fieldOn: FieldScreenName | null = null;
+  const field = createFieldScreen({
+    texts: () => d,
+    lang: () => lang,
+    settings: () => settings,
+    track,
+    today: () => today,
+    dateText: (key, style) => dateText(key, style),
+    loadDictionary,
+    setTitle: (text) => (title.textContent = text),
+    focusTitle: () => title.focus(),
+    announce: (text) => announce(text),
+    feedback: (kind) => feedback(kind),
+    openHints: (options, choose) => hintDialog.open(d, options, choose),
+    openBonus: (words) => bonusDialog.open(d, words, lang),
+    openEnd: (content) => endDialog.open(content),
+    home: closeRoute,
+    reported: (entry) => store.addReported(entry),
+    tipDone: () => tipDone,
+    markTipDone: () => {
+      tipDone = true;
+      store.saveTipDone();
+    },
+  });
 
   const leftEl = h('span', { class: 'info__left' });
   const timeEl = h('span', { class: 'info__time', role: 'timer' });
@@ -109,13 +135,15 @@ export function startApp(root: HTMLElement): void {
   const wheelTools = h('div', { class: 'wheel-tools' }, shuffleBtn, checkBtn, clearBtn);
   // One line above the wheel: the word being made; else the verdict of the last try; else how to play.
   const statusEl = h('div', { class: 'status' }, currentEl, verdictEl, tipEl);
-  const playArea = h('div', { class: 'play-area' }, statusEl, wheelView.el, wheelTools);
+  // The wheel's own place: on a phone on its side the wheel takes as much of it as is free (a box only there).
+  const wheelBox = h('div', { class: 'wheel-box' }, wheelView.el);
+  const playArea = h('div', { class: 'play-area' }, statusEl, wheelBox, wheelTools);
   const playView = h('div', { class: 'play' }, info, chooseBar, stage, playArea);
 
   backBtn.addEventListener('click', closeRoute);
   menuBtn.addEventListener('click', openMenu);
   hintBtn.addEventListener('click', () => {
-    if (play && !play.done) hintDialog.open(d, useHint);
+    if (play && !play.done) openHints();
   });
   bonusBtn.addEventListener('click', () => {
     if (play) bonusDialog.open(d, play.bonus, lang);
@@ -183,9 +211,26 @@ export function startApp(root: HTMLElement): void {
 
   const tipText = () => (settings.input === 'swipe' ? d.game.tipSwipe : settings.input === 'tap' ? d.game.tipTap : d.game.tipBoth);
 
+  type HintKind = 'firstLetter' | 'chooseCell' | 'wholeWord';
+  const openHints = () =>
+    hintDialog.open<HintKind>(
+      d,
+      [
+        { kind: 'firstLetter', label: d.hint.firstLetter },
+        { kind: 'chooseCell', label: d.hint.chooseCell },
+        { kind: 'wholeWord', label: d.hint.wholeWord },
+      ],
+      useHint,
+    );
+
   // ---------- screens ----------
   function show(): void {
     const route = currentRoute();
+    if (route === 'field' || route === 'field-daily') {
+      if (route !== fieldOn) openField(route);
+      else field.render();
+      return;
+    }
     const next: Screen | null = route === 'level' || route === 'daily' ? route : null;
     if (!next) {
       leave();
@@ -203,6 +248,18 @@ export function startApp(root: HTMLElement): void {
     screen = null;
     play = null;
     choosing = false;
+    field.leave();
+    fieldOn = null;
+  }
+
+  function openField(next: FieldScreenName): void {
+    leave();
+    fieldOn = next;
+    store.saveLast(next);
+    applyLook();
+    backBtn.hidden = false;
+    if (content.firstChild !== field.el) content.replaceChildren(field.el);
+    field.open(next);
   }
 
   function open(next: Screen): void {
@@ -278,22 +335,42 @@ export function startApp(root: HTMLElement): void {
     applyLook();
     backBtn.hidden = true;
     title.textContent = d.app.name;
+    const grace = settings.grace ? WORDS.graceDays : 0;
     const days = store.loadDays();
-    const playedDays = Object.keys(days).filter((date) => days[date]?.[lang]);
     const daily = store.loadPlay(track(), today);
-    const solvedToday = !!days[today]?.[lang] || !!daily?.done;
+    const fieldDays = store.loadFieldDays();
+    const fieldDaily = store.loadFieldPlay(track(), today);
+    const date = dateText(today, 'long');
     content.replaceChildren(
       homeView(
-        {
-          level: store.loadLevelReached(track()),
-          levelsDone: store.loadStats()[lang].levels,
-          daily: solvedToday ? 'solved' : daily ? 'started' : 'new',
-          date: dateText(today, 'long'),
-          streak: streakWithGrace(playedDays, today, settings.grace ? WORDS.graceDays : 0),
-        },
+        [
+          {
+            mode: 'wheel',
+            title: d.home.wheel,
+            note: d.home.wheelNote,
+            level: store.loadLevelReached(track()),
+            levelsDone: store.loadStats()[lang].levels,
+            daily: days[today]?.[lang] || daily?.done ? 'solved' : daily ? 'started' : 'new',
+            streak: streakWithGrace(Object.keys(days).filter((day) => days[day]?.[lang]), today, grace),
+            dailyLabel: fmt(d.game.dailyTitle, { date }),
+            play: () => openRoute('level'),
+            openDaily: () => openRoute('daily'),
+          },
+          {
+            mode: 'field',
+            title: d.home.field,
+            note: d.home.fieldNote,
+            level: store.loadFieldReached(track()),
+            levelsDone: store.loadFieldStats()[lang].levels,
+            daily: fieldDays[today]?.[lang] || fieldDaily?.done ? 'solved' : fieldDaily ? 'started' : 'new',
+            streak: streakWithGrace(Object.keys(fieldDays).filter((day) => fieldDays[day]?.[lang]), today, grace),
+            dailyLabel: fmt(d.field.dailyTitle, { date }),
+            play: () => openRoute('field'),
+            openDaily: () => openRoute('field-daily'),
+          },
+        ],
         d,
         lang,
-        { level: () => openRoute('level'), daily: () => openRoute('daily') },
       ),
     );
   }
@@ -502,7 +579,7 @@ export function startApp(root: HTMLElement): void {
   // ---------- menu ----------
   function openMenu(): void {
     menuDialog.open(
-      { d, lang, settings, stats: store.loadStats(), reported: store.loadReported(), tip: tipText() },
+      { d, lang, settings, stats: store.loadStats(), fieldStats: store.loadFieldStats(), reported: store.loadReported(), tip: tipText() },
       {
         setLang(code) {
           lang = asLang(code);
@@ -519,15 +596,20 @@ export function startApp(root: HTMLElement): void {
           store.saveSettings(settings);
           if (tilesChanged) reopen();
           else if (screen) renderGame();
-          else renderHome();
+          else if (fieldOn) {
+            applyLook();
+            field.render();
+          } else renderHome();
         },
         clearProgress() {
           // The level on the screen is stopped (and saved) first, so nothing is saved again after the clearing.
           const was = screen;
+          const wasField = fieldOn;
           leave();
           store.clearAll();
           tipDone = false;
           if (was) open(was);
+          else if (wasField) openField(wasField);
           else renderHome();
         },
       },
@@ -537,13 +619,19 @@ export function startApp(root: HTMLElement): void {
   /** The language or the tiles changed: the screen shows that language's level or start. */
   function reopen(): void {
     if (screen) open(screen);
+    else if (fieldOn) openField(fieldOn);
     else renderHome();
   }
 
   // ---------- keys ----------
   document.addEventListener('keydown', (event) => {
-    if (!play || !screen || menuDialog.el.open || endDialog.el.open || hintDialog.el.open || bonusDialog.el.open) return;
+    if (menuDialog.el.open || endDialog.el.open || hintDialog.el.open || bonusDialog.el.open) return;
     if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (fieldOn) {
+      field.key(event);
+      return;
+    }
+    if (!play || !screen) return;
     if (event.key === 'Escape') {
       if (choosing) choosing = false;
       else onSelect([]);
@@ -569,7 +657,7 @@ export function startApp(root: HTMLElement): void {
     }
     if (event.key === '?') {
       event.preventDefault();
-      if (!play.done) hintDialog.open(d, useHint);
+      if (!play.done) openHints();
       return;
     }
     const key = event.key.toLowerCase();
@@ -587,6 +675,7 @@ export function startApp(root: HTMLElement): void {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       stopClock();
+      field.hidden(true);
       return;
     }
     const now = localDateKey(new Date());
@@ -596,9 +685,14 @@ export function startApp(root: HTMLElement): void {
         open('daily');
         return;
       }
-      if (!screen) renderHome();
+      if (fieldOn === 'field-daily') {
+        openField('field-daily');
+        return;
+      }
+      if (!screen && !fieldOn) renderHome();
     }
     startClock();
+    field.hidden(false);
   });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyLook);
   watchRoute(show);

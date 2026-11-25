@@ -839,6 +839,139 @@
   }
 }
 
+/* A phone on its side (a short, wide screen; decision of 25.11). Only while the screen is at least 26 of the
+   player's text sizes wide: with very large text the one column stays. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 29.99rem) {
+  @container app (min-width: 26rem) {
+    /* Every pixel of height counts here (a browser's own bar takes part of it): slimmer top and bottom edges. */
+    .app {
+      max-width: 64rem;
+      padding-top: max(0.375rem, env(safe-area-inset-top));
+      padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+    }
+
+    /* Looking over the room: the room on the left as tall as the screen; back, the case's name and the menu,
+       what to look for, the words about the last find and the list on the right — the list scrolls by itself,
+       the page never does. */
+    .app--search {
+      --side: clamp(14rem, 34vw, 19rem);
+      display: grid;
+      grid-template-areas:
+        'room top'
+        'room panel';
+      grid-template-columns: minmax(0, 1fr) var(--side);
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 0.375rem 0.75rem;
+      height: 100vh;
+      height: 100dvh;
+      max-width: none;
+    }
+
+    .app--search > .top {
+      grid-area: top;
+    }
+
+    .app--search > .content,
+    .app--search .search {
+      display: contents;
+    }
+
+    .app--search .room {
+      grid-area: room;
+      min-height: 0;
+    }
+
+    /* The list scrolls inside the side; the head above it and, once all is found, the way on below it stay in
+       view. (Positioned, so the words for screen readers inside the list stay inside it too.) */
+    .app--search .panel {
+      display: flex;
+      position: relative;
+      grid-area: panel;
+      flex-direction: column;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    /* Only the list gives way; with very large text the whole side scrolls rather than run over itself. */
+    .app--search .panel > * {
+      flex: none;
+    }
+
+    .app--search .panel > .things {
+      position: relative;
+      flex: 1 1 auto;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: start;
+      min-height: 0;
+      overflow: auto;
+      overscroll-behavior: contain;
+    }
+
+    /* The list of cases: two columns. */
+    .app--home .cases {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* A case's story: the room's picture on the left, the story and the start on the right. */
+    .intro {
+      position: relative;
+      padding-left: calc(52% + 1rem);
+    }
+
+    .intro__picture {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 52%;
+    }
+
+    /* The suspects: what is known on the left (the page scrolls with it); the people on the right stay in view,
+       smaller, so that all of them fit beside it. */
+    .suspects {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+      column-gap: 1rem;
+      row-gap: 0;
+      align-items: start;
+    }
+
+    .suspects > * {
+      grid-column: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .suspects > .people {
+      position: sticky;
+      top: 0.375rem;
+      grid-column: 2;
+      grid-row: 1 / span 12;
+      grid-template-columns: repeat(auto-fill, minmax(min(6rem, 100%), 1fr));
+      gap: 0.5rem;
+      margin-bottom: 0;
+    }
+
+    .suspects .person {
+      padding: 0.375rem 0.25rem 0.5rem;
+    }
+
+    .suspects .person .portrait {
+      width: min(100%, 4rem);
+      margin-bottom: 0.25rem;
+    }
+
+    .suspects .person__name {
+      font-size: 0.9375rem;
+    }
+
+    .suspects .person__role {
+      font-size: 0.8125rem;
+    }
+
+    .suspects .badge--aside {
+      top: 0.5rem;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hint,
   .found-flash,

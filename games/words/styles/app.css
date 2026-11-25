@@ -318,6 +318,11 @@ html.big .crossword {
   text-align: center;
 }
 
+/* The wheel's place is a box of its own only on a phone on its side (see the end of this file). */
+.wheel-box {
+  display: contents;
+}
+
 /* The wheel fits the width and, on a short phone, the height too: the letters stay under the thumb. */
 .wheel {
   position: relative;
@@ -566,6 +571,201 @@ html.big .wheel__letter {
   overflow-wrap: anywhere;
 }
 
+/* ---------- the Word Field (second mode) ---------- */
+.field-play {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.stage--field {
+  min-height: 12rem;
+}
+
+/* The cells grow with the space left, up to a comfortable size; the bands of the words lie under them. */
+.field {
+  --gap: 4px;
+  --cell: min(calc((100cqw - var(--gap) * (var(--cols) - 1)) / var(--cols)), calc((100cqh - var(--gap) * (var(--rows) - 1)) / var(--rows)), 4.5rem);
+  position: relative;
+}
+
+html.big .field {
+  --cell: min(calc((100cqw - var(--gap) * (var(--cols) - 1)) / var(--cols)), calc((100cqh - var(--gap) * (var(--rows) - 1)) / var(--rows)), 5.5rem);
+}
+
+.field__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.field__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--gap);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* A word's band: a wide line through its cells with a darker edge — colour and shape both tell the words apart. */
+.field__line {
+  fill: none;
+  stroke-width: calc(var(--cell) * 0.8);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.field__line.fw-1 {
+  stroke: var(--fw-1);
+  filter: drop-shadow(0 0 1.5px var(--fw-1-line)) drop-shadow(0 0 1px var(--fw-1-line));
+}
+
+.field__line.fw-2 {
+  stroke: var(--fw-2);
+  filter: drop-shadow(0 0 1.5px var(--fw-2-line)) drop-shadow(0 0 1px var(--fw-2-line));
+}
+
+.field__line.fw-3 {
+  stroke: var(--fw-3);
+  filter: drop-shadow(0 0 1.5px var(--fw-3-line)) drop-shadow(0 0 1px var(--fw-3-line));
+}
+
+.field__line.fw-4 {
+  stroke: var(--fw-4);
+  filter: drop-shadow(0 0 1.5px var(--fw-4-line)) drop-shadow(0 0 1px var(--fw-4-line));
+}
+
+.field__line--making {
+  stroke: var(--making);
+  filter: drop-shadow(0 0 1.5px var(--accent)) drop-shadow(0 0 1px var(--accent));
+}
+
+.fw-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--cell-line);
+  border-radius: 0.5rem;
+  background: var(--cell);
+  color: var(--text);
+  font: 800 calc(var(--cell) * 0.5) / 1 var(--font);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.fw-cell.is-pair {
+  font-size: calc(var(--cell) * 0.38);
+}
+
+/* Cells of a placed word and of the word being made show the band beneath them. */
+.fw-cell.is-placed,
+.fw-cell.is-making {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
+}
+
+.fw-cell.is-making {
+  cursor: pointer;
+}
+
+/* A hint: the cells shown, numbered in the word's order, with a dashed frame (not only a colour). */
+.fw-cell.is-hinted {
+  border: 3px dashed var(--opened);
+}
+
+.fw-cell.is-hinted::after {
+  position: absolute;
+  top: 0.125rem;
+  right: 0.25rem;
+  color: var(--opened);
+  font-size: calc(var(--cell) * 0.24);
+  font-style: normal;
+  content: attr(data-step);
+}
+
+.field-side {
+  display: grid;
+  justify-items: center;
+  gap: 0.375rem;
+}
+
+.field-tools {
+  display: flex;
+  gap: 0.375rem;
+  width: 100%;
+  container-type: inline-size;
+}
+
+.field-tools .tool {
+  flex: 1 1 0;
+  min-width: 0;
+  font-size: min(0.875rem, 4cqi);
+}
+
+/* A phone (or anything) on its side: the field on the left as tall as the screen; words left, the hint, the word
+   and the buttons on the right. */
+@media (orientation: landscape) and (min-width: 36rem) {
+  .app:has(.field-play) {
+    max-width: 64rem;
+  }
+
+  .field-play {
+    display: grid;
+    grid-template-areas:
+      'stage info'
+      'stage side';
+    grid-template-columns: minmax(0, 7fr) minmax(12rem, 4fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 0.5rem 1rem;
+  }
+
+  .field-play .field-tools {
+    flex-wrap: wrap;
+  }
+
+  .field-play .field-tools .tool {
+    flex: 1 1 40%;
+    font-size: 0.875rem;
+  }
+
+  .field-play .info {
+    grid-area: info;
+  }
+
+  .field-play .stage {
+    grid-area: stage;
+    min-height: 0;
+  }
+
+  .field-play .field-side {
+    grid-area: side;
+    align-content: center;
+  }
+
+  /* The line above the buttons keeps one height: the buttons stay where the finger left them. */
+  .field-play .status {
+    height: 4.5rem;
+    align-content: end;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 32rem) {
+  .app:has(.field-play) {
+    height: 100vh;
+    height: 100dvh;
+  }
+}
+
 /* Wide screens (laptop, tablet on its side): the crossword on the left as tall as the screen; the word and the
    wheel on the right. */
 @media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
@@ -609,6 +809,246 @@ html.big .wheel__letter {
   .status {
     height: 4.5rem;
     align-content: end;
+  }
+}
+
+/* A phone on its side (a short, wide screen; decision of 25.11): the crossword on the left as tall as the screen;
+   on the right, under the right thumb, the word being made, the wheel and its buttons beside it. Back and the
+   menu stay in the corners; the level's name with the words left, Bonus words and Hint share the top line.
+   Only while the screen is at least 26 of the player's text sizes wide: with very large text the one column. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 29.99rem) {
+  @container app (min-width: 26rem) {
+    /* Every pixel of height counts here (a browser's own bar takes part of it): slimmer top and bottom edges. */
+    .app {
+      max-width: 64rem;
+      padding-top: max(0.375rem, env(safe-area-inset-top));
+      padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+    }
+
+    /* The start screen: the two modes side by side, a little closer together. */
+    .home {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem 1.5rem;
+      align-items: start;
+    }
+
+    .home__part {
+      gap: 0.375rem;
+    }
+
+    .home__main {
+      padding: 0.625rem 1rem;
+    }
+
+    .app:has(> .content > .play) {
+      /* The right side: wide enough for the wheel with its buttons, narrow enough for a crossword of
+         nine columns to keep 24 px cells on a 640 px screen. */
+      --side: min(46vw, 24rem);
+      display: grid;
+      grid-template-areas:
+        'back title tools menu'
+        'back left tools menu'
+        'stage stage area area';
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      grid-template-rows: auto auto minmax(14rem, 1fr);
+      gap: 0 0.5rem;
+      max-width: 64rem;
+    }
+
+    .app:has(> .content > .play) > .top,
+    .app:has(> .content > .play) > .content,
+    .play,
+    .play .info {
+      display: contents;
+    }
+
+    .top > .icon-btn:first-child {
+      grid-area: back;
+      align-self: center;
+    }
+
+    .app:has(> .content > .play) .top__name {
+      grid-area: title;
+      align-self: end;
+    }
+
+    .top > .icon-btn:last-child {
+      grid-area: menu;
+      align-self: center;
+    }
+
+    .play .info__text {
+      grid-area: left;
+      align-self: start;
+    }
+
+    .play .info__tools {
+      grid-area: tools;
+      justify-content: flex-end;
+      min-width: calc(var(--side) - 3.25rem);
+    }
+
+    .play .stage,
+    .play .choose-bar,
+    .play .play-area {
+      margin-top: 0.375rem;
+    }
+
+    .play .stage {
+      grid-area: stage;
+      min-height: 0;
+    }
+
+    /* Its text must not widen the right side (and so narrow the crossword) while the player chooses a cell. */
+    .play .choose-bar {
+      grid-area: area;
+      align-self: center;
+      contain: inline-size;
+    }
+
+    /* Choosing a cell for a hint: the crossword takes the whole height, the bar its whole side (back, the name and
+       the buttons above wait until a cell is chosen or the bar closed). */
+    .app:has(.choose-bar:not([hidden])) .play .stage,
+    .app:has(.choose-bar:not([hidden])) .play .choose-bar {
+      grid-row: 1 / -1;
+      margin-top: 0;
+    }
+
+    .app:has(.choose-bar:not([hidden])) > .top > .icon-btn,
+    .app:has(.choose-bar:not([hidden])) .play .info > * {
+      visibility: hidden;
+    }
+
+    /* The level's name stays for screen readers (the page's heading), out of the crossword's way. */
+    .app:has(.choose-bar:not([hidden])) .top__name {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    /* The word being made above, the wheel and its buttons side by side below; the wheel as big as its place
+       allows. Large system text makes the line above taller and the wheel smaller — nothing overlaps; the page
+       may scroll. */
+    .play .play-area {
+      display: grid;
+      grid-area: area;
+      grid-template-areas:
+        'status status'
+        'wheel tools';
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-rows: auto minmax(min-content, 1fr);
+      gap: 0.5rem;
+      align-items: center;
+      min-height: 0;
+      /* Its contents must not widen the right side (and so narrow the crossword): the screen's grid sizes it. */
+      contain: size;
+    }
+
+    /* One height for every line the game shows here (how to play, a verdict with Report, the word being made),
+       so the wheel never moves under the finger; only very large text makes it taller. */
+    .play .status {
+      grid-area: status;
+      min-height: 4.5rem;
+      align-content: end;
+    }
+
+    html.big .play .status {
+      min-height: 4.25rem;
+    }
+
+    .play .wheel-box {
+      display: grid;
+      grid-area: wheel;
+      place-items: center;
+      place-self: stretch;
+      min-width: 0;
+      min-height: 0;
+      container-type: size;
+    }
+
+    .play .wheel {
+      width: min(100cqw, 100cqh, 17.5rem);
+    }
+
+    html.big .play .wheel {
+      width: min(100cqw, 100cqh, 22rem);
+    }
+
+    .play .wheel-tools {
+      grid-area: tools;
+      grid-template-columns: minmax(0, 1fr);
+      width: auto;
+      min-width: 5.5rem;
+    }
+
+    /* The buttons stacked beside the wheel and the two above: a little lower than elsewhere, still 44 px. */
+    .play .wheel-tools .tool,
+    .play .info__tools .tool {
+      min-height: 2.75rem;
+      padding-block: 0.125rem;
+    }
+
+    .play .wheel-tools .tool {
+      font-size: 0.8125rem;
+    }
+
+    .play .wheel-tools .sign,
+    .play .info__tools .sign {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    /* The Word Field: the field as tall as the whole screen on the left; back, the name and the menu, the words
+       left, the word and the buttons on the right. */
+    .app:has(> .content > .field-play) {
+      --field-side: clamp(13rem, 34vw, 20rem);
+      display: grid;
+      grid-template-areas:
+        'stage top'
+        'stage info'
+        'stage side';
+      grid-template-columns: minmax(0, 1fr) var(--field-side);
+      grid-template-rows: auto auto minmax(0, 1fr);
+      gap: 0.25rem 1rem;
+    }
+
+    .app:has(> .content > .field-play) > .top {
+      grid-area: top;
+    }
+
+    .app:has(> .content > .field-play) > .content,
+    .field-play {
+      display: contents;
+    }
+
+    /* The buttons at the bottom of the side: the line above them fills what is left, its text next to them. A
+       text too long for that (how to play, on the lowest screens) pushes the buttons down rather than running
+       over the words left: the page then scrolls a little. The field does not move, whatever that line says. */
+    .field-play .field-side {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .field-play .status {
+      flex: 1 0 auto;
+      height: auto;
+      min-height: 3rem;
+      align-content: end;
+    }
+
+    /* The four buttons: a little lower than elsewhere, still 44 px. */
+    .field-play .field-tools .tool {
+      min-height: 2.75rem;
+      padding-block: 0.125rem;
+    }
+
+    .field-play .field-tools .sign {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
   }
 }
 

@@ -1,5 +1,5 @@
-// Browser audit of Blocks: every size and look, the modes, the menu, the large mode, large system text,
-// the keyboard.
+// Browser audit of Blocks: every size and look, the modes, the menu, the large mode, phones on their side, large
+// system text, the keyboard.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -46,6 +46,55 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     }
   }
 
+  // phones on their side (decision of 25.11): the board on the left, the pieces and buttons on the right — nothing
+  // to scroll, the pieces (and in the calm mode their turn buttons) inside the tray, in every mode and the large
+  // mode; 740 × 290 and 640 × 290 are phones in a browser whose own bar takes part of the height
+  for (const [width, height, locale, colorScheme] of [
+    [640, 360, 'uk-UA', 'light'],
+    [740, 360, 'hu-HU', 'dark'],
+    [915, 412, 'en-GB', 'light'],
+    [740, 290, 'uk-UA', 'dark'],
+    [640, 290, 'en-GB', 'light'],
+  ]) {
+    const label = `${width}×${height} side ${locale} ${colorScheme}`;
+    const ctx = await browser.newContext({ viewport: { width, height }, locale, colorScheme, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    watch(page, `blocks ${label}`, origin, fail);
+    const side = async (what) => {
+      await check(page, `${label} ${what}`);
+      const m = await page.evaluate(() => {
+        const tray = document.querySelector('.tray').getBoundingClientRect();
+        const board = document.querySelector('.board').getBoundingClientRect();
+        const outside = [...document.querySelectorAll('.tray__grab, .tray__turn')].filter((e) => e.getClientRects().length && !e.closest('[hidden]')).some((e) => {
+          const b = e.getBoundingClientRect();
+          return b.top < tray.top - 1 || b.bottom > tray.bottom + 1;
+        });
+        return { scroll: document.scrollingElement.scrollHeight - innerHeight, outside, beside: board.right <= tray.left };
+      });
+      if (m.scroll > 1) fail(`blocks ${label} ${what}: the page scrolls ${m.scroll} px`);
+      if (m.outside) fail(`blocks ${label} ${what}: a piece or its turn button sticks out of the tray`);
+      if (!m.beside) fail(`blocks ${label} ${what}: the board is not beside the pieces`);
+    };
+    await page.goto(base);
+    await page.waitForSelector('.board .cell');
+    await side('start');
+    await page.keyboard.press('1');
+    await side('piece chosen');
+    await page.keyboard.press('Escape');
+    for (const mode of [1, 2]) {
+      await page.locator('.seg__btn').nth(mode).click();
+      await side(`mode ${mode + 1}`);
+    }
+    await page.locator('.seg__btn').nth(1).click();
+    await page.locator('.icon-btn').click();
+    await check(page, `${label} menu`);
+    await page.locator('dialog[open] input[type=checkbox]').first().check();
+    await page.locator('dialog[open] .btn--primary').click();
+    await side('large mode, calm');
+    if (shots) await page.screenshot({ path: join(shots, `blocks-side-${width}x${height}.png`) });
+    await ctx.close();
+  }
+
   // large system text and the keyboard
   for (const [width, height, size] of [
     [320, 640, 150],
@@ -68,5 +117,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await checkFocusVisible(page, 14, fail, 'blocks keyboard');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, large text, keyboard`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks, phones on their side, large text, keyboard`;
 }

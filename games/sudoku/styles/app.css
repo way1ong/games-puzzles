@@ -651,6 +651,115 @@ html.big .pad__btn {
   }
 }
 
+/* A phone on its side (a short, wide screen; decision of 25.11): the board on the left as tall as the screen; back,
+   the name and the menu, the line about the puzzle, the tools and the digits on the right — the digits low, under
+   the right thumb. Only while the screen is at least 26 of the player's text sizes wide: with very large text the
+   one column stays. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 29.99rem) {
+  @container app (min-width: 26rem) {
+    /* Every pixel of height counts here (a browser's own bar takes part of it): slimmer top and bottom edges. */
+    .app {
+      max-width: 64rem;
+      padding-top: max(0.375rem, env(safe-area-inset-top));
+      padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+    }
+
+    /* The start screen: the levels and the daily puzzles side by side (the daily ones two in a row). */
+    .home {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      column-gap: 1.5rem;
+    }
+
+    .daily {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .app:has(> .content > .play) {
+      --right: clamp(15rem, 40vw, 24rem);
+      display: grid;
+      grid-template-areas:
+        'stage top'
+        'stage info'
+        'stage note'
+        'stage controls';
+      grid-template-columns: minmax(0, 1fr) var(--right);
+      grid-template-rows: auto auto auto minmax(min-content, 1fr);
+      gap: 0.375rem 1rem;
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    .app:has(> .content > .play) > .top {
+      grid-area: top;
+    }
+
+    .app:has(> .content > .play) > .content,
+    .play {
+      display: contents;
+    }
+
+    .play .info {
+      grid-area: info;
+    }
+
+    .play .stage {
+      grid-area: stage;
+      align-items: center;
+      min-height: 0;
+    }
+
+    .play .board-note {
+      grid-area: note;
+    }
+
+    .play .controls {
+      grid-area: controls;
+      align-content: end;
+    }
+
+    /* The hint in place of the tools and digits: a little tighter, its two buttons on one line. */
+    .play .hint {
+      gap: 0.375rem;
+      padding: 0.625rem 0.75rem;
+    }
+
+    .play .hint__actions .btn {
+      padding-inline: 0.75rem;
+    }
+
+    /* A hint longer than its place (large letters on the lowest screens) scrolls by itself; the page does not. */
+    .app:has(.play .hint:not([hidden])) {
+      grid-template-rows: auto auto auto minmax(0, 1fr);
+    }
+
+    .play .controls:has(> .hint:not([hidden])) {
+      min-height: 0;
+    }
+
+    .play .hint {
+      max-height: 100%;
+      overflow-y: auto;
+    }
+
+    /* The lowest screens (a browser's own bar takes part of the height): the buttons a little lower, still
+       44 px — so that the large mode fits too. */
+    @media (max-height: 20rem) {
+      .play .tool,
+      .play .pad__btn,
+      html.big .play .pad__btn {
+        min-height: 2.75rem;
+      }
+
+      /* With the large letters there the line under the board gives way while it only says how to play (the menu
+         says it too); news about mistakes or the end, with their button, always show. */
+      html.big .play .board-note:has(> .btn[hidden]) {
+        display: none;
+      }
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cell.is-flash {
     animation: none;

@@ -2,7 +2,8 @@
 // room, a hint, every thing found, the suspects, a wrong and a right name, the end), the menu and the large
 // mode, the night case, every other story case from the story to the end (a harder case — by naming a reason
 // for everybody set aside; the harder case again on every size and look), every room of free search, the
-// case of the day, a saved game after a reload, the keyboard, large system text. And the drawings
+// case of the day, a saved game after a reload, the keyboard, large system text; phones on their side (a case and
+// a harder one to the end, nothing to scroll while the room is looked over). And the drawings
 // themselves: in every case and room every thing stays inside its size and rests on its line.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
@@ -458,6 +459,100 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await ctx.close();
   }
 
+  // ---------- phones on their side (decision of 25.11) ----------
+  // The room on the left as tall as the screen and the list beside it: the page never scrolls while the room is
+  // looked over, and once all is found the way on is in view; the people stay in view beside what is known; a
+  // story and a harder case to the end. 740 × 290 is a phone in a browser whose own bar takes part of the height.
+  for (const [width, height, locale, colorScheme] of [
+    [640, 360, 'uk-UA', 'light'],
+    [740, 360, 'hu-HU', 'dark'],
+    [863, 360, 'en-GB', 'light'],
+    [915, 412, 'uk-UA', 'dark'],
+    [740, 290, 'en-GB', 'light'],
+  ]) {
+    const label = `${width}×${height} side ${locale} ${colorScheme}`;
+    const ctx = await browser.newContext({ viewport: { width, height }, locale, colorScheme, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    watch(page, `detective ${label}`, origin, fail);
+    const shot = async (name) => {
+      if (shots) await page.screenshot({ path: join(shots, `detective-side-${width}x${height}-${name}.png`) });
+    };
+    const noScroll = async (what) => {
+      const scroll = await page.evaluate(() => document.scrollingElement.scrollHeight - innerHeight);
+      if (scroll > 1) fail(`detective ${label} ${what}: the page scrolls ${scroll} px`);
+    };
+    await page.goto(base);
+    await page.waitForSelector('.case-card');
+    await check(page, `${label} cases`);
+    await page.locator('.cases .case-card').first().click();
+    await page.waitForSelector('.intro');
+    await check(page, `${label} story`);
+    await shot('1-story');
+    await page.locator('.intro .btn--primary').click();
+    await page.waitForSelector('.room__scroll .scene');
+    await page.waitForFunction(() => Number(document.querySelector('.room__scroll .scene').getAttribute('width')) > 0);
+    await check(page, `${label} room`);
+    await noScroll('room');
+    const room = await page.evaluate(() => document.querySelector('.room__scroll').getBoundingClientRect().height);
+    if (room < height * 0.6) fail(`detective ${label}: the room is only ${Math.round(room)} px tall`);
+    await page.locator('.panel__head .btn').click();
+    await findEverything(page, true, label);
+    await page.waitForSelector('.panel__end .btn--primary');
+    await check(page, `${label} everything found`);
+    await noScroll('everything found');
+    const way = await page.evaluate(() => {
+      const b = document.querySelector('.panel__end .btn--primary').getBoundingClientRect();
+      const e = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+      return b.bottom <= innerHeight + 1 && !!e?.closest('.panel__end');
+    });
+    if (!way) fail(`detective ${label}: once all is found, the way to the suspects is not in view`);
+    await shot('2-found');
+    await page.locator('.panel__end .btn--primary').click();
+    await page.waitForSelector('.people');
+    await check(page, `${label} suspects`);
+    const people = await page.evaluate(() => [...document.querySelectorAll('.person')].every((p) => p.getBoundingClientRect().bottom <= innerHeight + 1));
+    if (!people && height >= 340) fail(`detective ${label}: not every person is in view on the suspects' screen`);
+    await shot('3-suspects');
+    await page.locator('.person').nth(0).click();
+    await page.waitForSelector('dialog[open]');
+    await check(page, `${label} a person`);
+    await page.locator('dialog[open] .btn--primary').click();
+    await page.waitForFunction(() => document.querySelector('dialog[open] .person-card__note')?.textContent.trim());
+    await page.locator('dialog[open] .btn--ghost').first().click();
+    await page.locator('.person').nth(1).click();
+    await page.locator('dialog[open] .btn--ghost').nth(1).click();
+    await page.locator('.person').nth(2).click();
+    await page.locator('dialog[open] .btn--primary').click();
+    await page.waitForSelector('.result');
+    await check(page, `${label} solved`);
+    await shot('4-solved');
+    if (harder.length && width === 740) {
+      // a harder case from its suspects to the end (its room is the same as above)
+      await page.locator('.result .btn--primary').click();
+      await page.waitForSelector('.case-card');
+      await page.locator('.cases').first().locator('.case-card').nth(harder.at(-1)).click();
+      await page.waitForSelector('.intro');
+      await check(page, `${label} harder story`);
+      await page.locator('.intro .btn--primary').click();
+      await page.waitForSelector('.room__scroll .scene');
+      await page.evaluate(() => {
+        const key = Object.keys(localStorage).find((k) => k.includes(':case:') && JSON.parse(localStorage.getItem(k)).stage === 'search');
+        const saved = JSON.parse(localStorage.getItem(key));
+        saved.found = [...document.querySelectorAll('.room__scroll [data-thing]')].map((e) => e.getAttribute('data-thing'));
+        saved.stage = 'suspects';
+        localStorage.setItem(key, JSON.stringify(saved));
+      });
+      await page.reload();
+      await page.waitForSelector('.people');
+      await check(page, `${label} harder suspects`);
+      const inView = await page.evaluate(() => [...document.querySelectorAll('.person')].every((p) => p.getBoundingClientRect().bottom <= innerHeight + 1));
+      if (!inView && height >= 340) fail(`detective ${label}: in a harder case not every person is in view beside what is known`);
+      await shot('5-harder');
+      await playHarder(page, `${label} harder`, (what) => check(page, what));
+    }
+    await ctx.close();
+  }
+
   // ---------- large system text ----------
   for (const [width, height, size] of [
     [320, 640, 150],
@@ -493,5 +588,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, `${label} a person`);
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks through a whole case and through ${harder.length} harder ones from the suspects on, ${stories} story cases and ${searches} rooms of free search, the case of the day, a reload, keyboard, large text`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks through a whole case and through ${harder.length} harder ones from the suspects on, ${stories} story cases and ${searches} rooms of free search, the case of the day, a reload, keyboard, large text, phones on their side`;
 }

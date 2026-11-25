@@ -25,7 +25,11 @@
     "levelsDone": {
       "one": "{n} level done",
       "other": "{n} levels done"
-    }
+    },
+    "wheel": "Wheel",
+    "wheelNote": "Make words from the letters on the wheel and fill the crossword.",
+    "field": "Word Field",
+    "fieldNote": "The whole field splits into words — find them all."
   },
   "game": {
     "level": "Level {n}",
@@ -61,6 +65,24 @@
     "unknown": "Not in the word list: {word}",
     "report": "Report “{word}”",
     "reported": "Reported: {word}. Thank you!"
+  },
+  "field": {
+    "level": "Word Field · Level {n}",
+    "dailyTitle": "Word Field · {date}",
+    "tipBoth": "Swipe across a word’s letters from the first to the last — or tap them one by one, then “Check”.",
+    "tipSwipe": "Swipe across a word’s letters from the first to the last; let go and the word is checked.",
+    "tipTap": "Tap a word’s letters one by one, then “Check”.",
+    "other": "Counted: {word} — another real word",
+    "stuck": "{word} is a real word, but with it the rest of the field cannot be filled. It counts as a bonus word.",
+    "notOnField": "{word}: there is no such path on the field",
+    "hintStart": "Where a word starts",
+    "hintNext": "One more letter",
+    "hintWord": "A whole word",
+    "bonus": "Bonus words",
+    "row": "Row {n}: {letters}",
+    "label": "Word Field",
+    "howToType": "Type a word from the field and press Enter. Taken cells are shown as dashes.",
+    "placedList": "Found: {words}"
   },
   "tools": {
     "shuffle": "Shuffle",
@@ -154,7 +176,9 @@
     "words": "Words found",
     "bonus": "Bonus words",
     "hints": "Hints",
-    "dailies": "Daily puzzles solved"
+    "dailies": "Daily puzzles solved",
+    "fieldLevels": "Word Field: levels done",
+    "fieldDailies": "Word Field: daily puzzles solved"
   },
   "about": {
     "title": "About the game",
@@ -168,6 +192,7 @@
     "dictionaries": "Dictionaries",
     "dictionariesNote": "The word lists come from these sources (their authors and licences):",
     "licence": "The full text of the GNU LGPL 2.1 licence",
-    "credit": "Made by way1ong"
+    "credit": "Made by way1ong",
+    "fieldRules": "Word Field: the whole field splits into hidden words; a word goes through neighbouring cells up, down, left or right, never diagonally. Another real word counts too if the rest of the field can still be filled with words."
   }
 }

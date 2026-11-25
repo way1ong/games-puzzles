@@ -24,6 +24,8 @@ export interface MenuContent {
   lang: string;
   settings: Settings;
   stats: Stats;
+  /** The Word Field's statistics (second mode). */
+  fieldStats: Stats;
   reported: Reported[];
   /** How to make a word, as the input setting says. */
   tip: string;
@@ -136,6 +138,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
       }
 
       const st = stats[lang as WordLang] ?? stats.en;
+      const fst = content.fieldStats[lang as WordLang] ?? content.fieldStats.en;
       const statsList = h(
         'dl',
         { class: 'stats' },
@@ -146,6 +149,8 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
             [d.stats.bonus, st.bonus],
             [d.stats.hints, st.hints],
             [d.stats.dailies, st.dailies],
+            [d.stats.fieldLevels, fst.levels],
+            [d.stats.fieldDailies, fst.dailies],
           ] as const
         ).flatMap(([label, value]) => [h('dt', {}, label), h('dd', {}, num(lang, value))]),
       );
@@ -197,6 +202,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           h('h2', {}, d.about.title),
           h('p', {}, plural(lang, WORDS.minWord, d.about.rules, { n: WORDS.minWord })),
           h('p', {}, d.about.forms),
+          h('p', {}, d.about.fieldRules),
           h('p', {}, content.tip),
           h('p', {}, d.about.text),
           h('p', { class: 'dialog__note' }, d.about.keys),

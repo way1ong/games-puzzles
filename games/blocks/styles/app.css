@@ -408,6 +408,96 @@ html.dragging * {
   }
 }
 
+/* A phone on its side (a short, wide screen; decision of 25.11): the board on the left as tall as the screen; the
+   name and the menu, the modes, the pieces in a row and the buttons on the right, under the right thumb. Only
+   while the screen is at least 26 of the player's text sizes wide: with very large text the one column stays. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 29.99rem) {
+  @container app (min-width: 26rem) {
+    .app,
+    html.big .app {
+      --right: clamp(17rem, 40vw, 24rem);
+      display: grid;
+      grid-template-areas:
+        'stage top'
+        'stage seg'
+        'stage modenote'
+        'stage tray'
+        'stage actions';
+      grid-template-columns: minmax(0, 1fr) var(--right);
+      grid-template-rows: auto auto auto minmax(min-content, 1fr) auto;
+      gap: 0.375rem 1rem;
+      height: 100vh;
+      height: 100dvh;
+      max-width: 64rem;
+      padding-top: max(0.375rem, env(safe-area-inset-top));
+      padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+    }
+
+    .top {
+      grid-area: top;
+    }
+
+    .seg {
+      grid-area: seg;
+    }
+
+    .mode-note {
+      grid-area: modenote;
+    }
+
+    .stage {
+      grid-area: stage;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    /* The pieces in a row, as tall as the place allows (never under 44 px; with very large text the page scrolls
+       rather than the pieces run over the buttons). */
+    .tray {
+      grid-area: tray;
+      min-height: 0;
+    }
+
+    .tray__slot {
+      min-height: 0;
+    }
+
+    .tray__grab {
+      flex: 1 1 0;
+      aspect-ratio: auto;
+      max-height: 8rem;
+    }
+
+    .actions {
+      grid-area: actions;
+    }
+
+    /* The lowest screens (a browser's own bar takes part of the height): the game's name is left to screen
+       readers and the menu joins the modes' line, so the pieces keep their height (and the turn buttons theirs). */
+    @media (max-height: 20rem) {
+      .app,
+      html.big .app {
+        grid-template-areas:
+          'stage seg top'
+          'stage modenote modenote'
+          'stage tray tray'
+          'stage actions actions';
+        grid-template-columns: minmax(0, 1fr) minmax(0, calc(var(--right) - 3.75rem)) auto;
+        grid-template-rows: auto auto minmax(min-content, 1fr) auto;
+      }
+
+      .top__name {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cell.flash {
     animation: none;

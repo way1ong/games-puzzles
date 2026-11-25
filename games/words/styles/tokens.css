@@ -28,6 +28,16 @@
   /* Verdicts: a bonus word; a word not in the list. */
   --bonus: #7a3f00;
   --bad: #a3211a;
+  /* Word Field: the band of each placed word (four, so touching words differ) and its edge; the word being made. */
+  --fw-1: #cfe8da;
+  --fw-1-line: #2e7d56;
+  --fw-2: #d6e4f5;
+  --fw-2-line: #2f62a8;
+  --fw-3: #f6e2c8;
+  --fw-3-line: #9a5b12;
+  --fw-4: #ead9f2;
+  --fw-4-line: #7a3f9a;
+  --making: #fff1a8;
 
   --backdrop: rgb(20 24 28 / 0.45);
   --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
@@ -54,6 +64,15 @@
     --tile: #25322b;
     --bonus: #f3b95a;
     --bad: #ffa69e;
+    --fw-1: #1f4134;
+    --fw-1-line: #62cfa0;
+    --fw-2: #1f3550;
+    --fw-2-line: #7fb3f0;
+    --fw-3: #4a3518;
+    --fw-3-line: #f3b95a;
+    --fw-4: #3d2a4d;
+    --fw-4-line: #c79be0;
+    --making: #5a5320;
 
     --backdrop: rgb(0 0 0 / 0.6);
     --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
@@ -81,6 +100,15 @@
   --tile: #25322b;
   --bonus: #f3b95a;
   --bad: #ffa69e;
+  --fw-1: #1f4134;
+  --fw-1-line: #62cfa0;
+  --fw-2: #1f3550;
+  --fw-2-line: #7fb3f0;
+  --fw-3: #4a3518;
+  --fw-3-line: #f3b95a;
+  --fw-4: #3d2a4d;
+  --fw-4-line: #c79be0;
+  --making: #5a5320;
 
   --backdrop: rgb(0 0 0 / 0.6);
   --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
