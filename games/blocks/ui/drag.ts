@@ -24,6 +24,10 @@ export function attachDrag(el: HTMLElement, callbacks: DragCallbacks): void {
     dragging = false;
     el.setPointerCapture(event.pointerId);
   });
+  // A finger here is handled by the pointer events alone: no gestures of the browser for it. Otherwise a quick drag
+  // counts as a fling, and the browser swallows the next tap on a button for a moment («Скасувати» right after a
+  // piece is put down did nothing; found by the finger tests, docs/STATUS.md).
+  el.addEventListener('touchstart', (event) => event.preventDefault(), { passive: false });
 
   el.addEventListener('pointermove', (event) => {
     if (event.pointerId !== pointerId) return;

@@ -128,6 +128,10 @@ export function createWheelView(actions: WheelActions): WheelView {
     ring.setPointerCapture(event.pointerId);
     slide = { pointer: event.pointerId, path: [i], moved: false, x: event.clientX, y: event.clientY };
   });
+  // A finger on the wheel is handled by the pointer events alone: no gestures of the browser for it. Otherwise a
+  // quick slide counts as a fling, and the browser swallows the next tap on a button for a moment (found by the
+  // finger tests, docs/STATUS.md).
+  ring.addEventListener('touchstart', (event) => event.preventDefault(), { passive: false });
 
   ring.addEventListener('pointermove', (event) => {
     if (!slide || event.pointerId !== slide.pointer || state.input === 'tap') return;
