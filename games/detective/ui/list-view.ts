@@ -19,5 +19,17 @@ export function thingList(d: Dict, def: CaseDef, progress: Progress): HTMLUListE
     item.append(found ? checkSign() : svg(thingIcon(thing)), text);
     list.append(item);
   }
+  scrollableByKeys(list);
   return list;
+}
+
+/**
+ * On a phone on its side the list scrolls by itself: then it takes the keyboard's focus too, so that the arrow keys
+ * scroll it. Upright it does not scroll and is no stop for the Tab key.
+ */
+function scrollableByKeys(list: HTMLElement): void {
+  new ResizeObserver(() => {
+    if (list.scrollHeight > list.clientHeight + 1) list.tabIndex = 0;
+    else list.removeAttribute('tabindex');
+  }).observe(list);
 }
