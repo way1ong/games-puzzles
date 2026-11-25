@@ -23,4 +23,6 @@ export const NONOGRAMS = {
   zoomMaxCell: 88,
   /** Pixels a finger or the mouse travels before a press becomes a drag along a line (C). */
   dragStart: 6,
+  /** A short buzz when a stroke fills cells, ms (a setting, off by default; as Blocks' placing of a piece) (C). */
+  vibrateMs: 12,
 } as const;

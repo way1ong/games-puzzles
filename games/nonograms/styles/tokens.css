@@ -1,0 +1,88 @@
+/*
+ * Nonograms: the only file with colour values of the screen. Light and dark themes follow the system unless the
+ * player chooses one in the settings; a page that hosts the game (e.g. a claude.ai test page) may force one too — both
+ * with data-theme="light" | "dark" on <html>. The grid is a sheet of paper on the table: light in both themes (a little
+ * dimmer in the dark one), and its ink, crosses and lines read on it. The colours of the solved pictures themselves are
+ * in art/palette.ts.
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #e8ecf2;
+  --surface: #ffffff;
+  --text: #172031;
+  --muted: #4a5468;
+  --line: #687286;
+  --accent: #2a4c9c;
+  --on-accent: #ffffff;
+  --focus: #a64700;
+
+  /* The sheet: a cell, the ink of a filled one, a cross, the lines between cells and every five, the row and column
+     under the finger. */
+  --sheet: #ffffff;
+  --ink: #1b2538;
+  --cross: #566175;
+  --grid-line: #6a7487;
+  --grid-thick: #283246;
+  --sheet-line: #e2eaf7;
+  /* A hint: the line it speaks of, and the ring of a mistake (shown at once or by a hint). */
+  --hint-bg: #fdeeb9;
+  --hint-mark: #7f4800;
+  --bad: #b3202a;
+  /* The keys' focus on a cell: the sheet is light in both themes, so one colour for both. */
+  --sheet-focus: #a64700;
+  /* The numbers' strips: the row and column under the finger, and the line of a hint. */
+  --clue-line: #dce6f6;
+  --clue-hint: #fde7a2;
+
+  --backdrop: rgb(16 22 34 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #111722;
+    --surface: #1b2231;
+    --text: #e6ebf3;
+    --muted: #a9b3c5;
+    --line: #6f7b91;
+    --accent: #9ab8ff;
+    --on-accent: #0c1628;
+    --focus: #ffb469;
+
+    --sheet: #e9e6dd;
+    --sheet-line: #d2dae7;
+    --hint-bg: #f1dd9d;
+
+    --clue-line: #2b3854;
+    --clue-hint: #463b15;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  }
+}
+
+/* The same dark values when the player or the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #111722;
+  --surface: #1b2231;
+  --text: #e6ebf3;
+  --muted: #a9b3c5;
+  --line: #6f7b91;
+  --accent: #9ab8ff;
+  --on-accent: #0c1628;
+  --focus: #ffb469;
+
+  --sheet: #e9e6dd;
+  --sheet-line: #d2dae7;
+  --hint-bg: #f1dd9d;
+
+  --clue-line: #2b3854;
+  --clue-hint: #463b15;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+}

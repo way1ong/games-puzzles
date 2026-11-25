@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { cluesOf } from './clues.ts';
 import { hintFor } from './hint.ts';
-import { BLANK, CROSS, FILL, addTime, countHint, fittingLines, fullButWrong, isSolved, mistakes, newPlay, put, stroke, targetOf, undo, type Play, type StrokeOptions } from './play.ts';
+import { BLANK, CROSS, FILL, addTime, clear, countHint, fittingLines, fullButWrong, isSolved, mistakes, newPlay, put, stroke, targetOf, undo, type Play, type StrokeOptions } from './play.ts';
 import { solutionOf, type Picture } from './picture.ts';
 
 // . # . # .
@@ -77,6 +77,19 @@ describe('marks', () => {
     expect(wrong.done).toBe(false);
     expect(fullButWrong(wrong, CLUES)).toBe(true);
     expect(fullButWrong(newPlay(HEART), CLUES)).toBe(false);
+  });
+
+  it('Backspace clears filled and crossed cells as one step, crosses coming by themselves when a line fits again', () => {
+    let p = stroke(newPlay(HEART), CLUES, [at(4, 2)], PLAIN);
+    p = stroke(p, CLUES, [at(4, 0)], PLAIN); // the bottom row "1" with one cell too many
+    p = stroke(p, CLUES, [at(3, 0)], { ...PLAIN, mode: 'cross' });
+    const cleared = clear(p, CLUES, [at(4, 0), at(3, 0), at(3, 1)], true);
+    expect(cleared.marks[at(4, 0)]).toBe(CROSS); // the row fits again: its blank cells get crosses
+    expect(cleared.marks.slice(20, 25)).toEqual([CROSS, CROSS, FILL, CROSS, CROSS]);
+    expect(cleared.marks[at(3, 0)]).toBe(BLANK);
+    expect(cleared.history.length).toBe(p.history.length + 1);
+    expect(undo(cleared).marks).toEqual(p.marks);
+    expect(clear(p, CLUES, [at(0, 0)], true)).toBe(p); // nothing to clear: no step
   });
 
   it('counts hints and time', () => {

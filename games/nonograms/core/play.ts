@@ -129,6 +129,12 @@ export function put(play: Play, clues: Clues, fill: readonly number[], cross: re
   return change(play, clues, updates, autoCross);
 }
 
+/** Clears cells (the Backspace key): filled and crossed alike — one step, like a move. */
+export function clear(play: Play, clues: Clues, cells: readonly number[], autoCross: boolean): Play {
+  if (play.done) return play;
+  return change(play, clues, new Map(cells.map((c) => [c, BLANK] as const)), autoCross);
+}
+
 /** Takes the last step back (a whole stroke at once). */
 export function undo(play: Play): Play {
   const last = play.history.at(-1);

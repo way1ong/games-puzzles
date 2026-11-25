@@ -1,4 +1,164 @@
 {
+  "meta": {
+    "langName": "English",
+    "title": "Nonograms — picture puzzles without ads",
+    "description": "Fill in cells by the numbers and a picture appears. Every picture is solved by reasoning alone, without guessing; hints are free. Grids of 5×5, 10×10 and 15×15 and a picture of the day. No ads, accounts or tracking; works offline."
+  },
+  "app": {
+    "name": "Nonograms",
+    "menu": "Menu",
+    "back": "Back",
+    "close": "Close"
+  },
+  "home": {
+    "continue": "Continue",
+    "album": "Album",
+    "progress": "{n} of {total} solved",
+    "dailyTitle": "Picture of the day · {date}",
+    "dailyNote": "The same for everybody today",
+    "begin": "Start",
+    "started": "Continue",
+    "done": "Solved",
+    "streak": {
+      "one": "{n} day in a row",
+      "other": "{n} days in a row"
+    }
+  },
+  "album": {
+    "size": "{size} × {size}",
+    "picture": "Picture {n}",
+    "solved": "solved",
+    "started": "started",
+    "item": "{name}, {state}"
+  },
+  "game": {
+    "daily": "Picture of the day",
+    "grid": "Grid, {size} × {size}",
+    "tip": "The numbers tell how many cells in a row are filled, in order. Tap a cell to fill it; run your finger along a line to fill several.",
+    "tipZoom": "The grid is zoomed in: move and zoom it with two fingers, or drag a strip of numbers. “Whole picture” shows all of it.",
+    "tiny": "The grid is small now: a tap zooms in there.",
+    "fullWrong": "As many cells are filled as the numbers ask, but there is a mistake somewhere. “Hint” shows where.",
+    "nothingToUndo": "Nothing to undo.",
+    "undone": "Undone.",
+    "solved": "Solved: {name}",
+    "filled": {
+      "one": "{n} cell filled",
+      "other": "{n} cells filled"
+    },
+    "crossed": {
+      "one": "{n} cross put",
+      "other": "{n} crosses put"
+    },
+    "cleared": {
+      "one": "{n} cell cleared",
+      "other": "{n} cells cleared"
+    },
+    "lineDone": "{line} fits its numbers."
+  },
+  "cell": {
+    "label": "Row {row}, column {col}: {state}. Row numbers: {rowClue}; column numbers: {colClue}",
+    "blank": "empty",
+    "fill": "filled",
+    "cross": "crossed",
+    "bad": "a mistake",
+    "hintFill": "hint: fill",
+    "hintCross": "hint: cross"
+  },
+  "tools": {
+    "label": "Actions",
+    "mode": "What a tap puts",
+    "fill": "Fill",
+    "cross": "Cross",
+    "undo": "Undo",
+    "hint": "Hint",
+    "whole": "Whole picture"
+  },
+  "hint": {
+    "row": "Row {n}",
+    "col": "Column {n}",
+    "line": "{line} (numbers {clue}): {what}.",
+    "fill": {
+      "one": "fill {n} cell",
+      "other": "fill {n} cells"
+    },
+    "cross": {
+      "one": "cross {n} cell",
+      "other": "cross {n} cells"
+    },
+    "and": "{a} and {b}",
+    "again": "Press “Hint” again and the game puts them.",
+    "mistakeFill": "A mistake here: this cell should be filled.",
+    "mistakeEmpty": "A mistake here: this cell should be empty.",
+    "againFix": "Press “Hint” again and the game fixes it."
+  },
+  "end": {
+    "title": "Solved!",
+    "clean": "Without hints",
+    "hints": "Hints: {n}",
+    "time": "Time: {time}",
+    "streak": {
+      "one": "Pictures of the day: {n} day in a row",
+      "other": "Pictures of the day: {n} days in a row"
+    },
+    "next": "Next picture",
+    "album": "To the album",
+    "home": "To the start",
+    "allDone": "Every picture of this size is solved!",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "shareClean": "{name} · {date}: picture of the day solved without hints",
+    "share": "{name} · {date}: picture of the day solved · hints: {hints}"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "play": "Playing",
+    "secondTap": "A second tap on a filled cell",
+    "secondClear": "Clears it",
+    "secondCross": "Puts a cross",
+    "mistakes": "Show mistakes at once",
+    "autoCross": "Crosses by themselves in finished lines",
+    "time": "Show the time",
+    "vibration": "Vibration when filling",
+    "look": "Look",
+    "fade": "Numbers of finished lines fade",
+    "highlight": "Highlight the row and column",
+    "name": "The picture’s name",
+    "nameAfter": "After solving",
+    "nameFirst": "From the start",
+    "colour": "The picture in colour at the end",
+    "leftHand": "Buttons left of the grid when the phone lies on its side",
+    "big": "Large numbers and cells",
+    "theme": "Theme",
+    "themeSystem": "As the system",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap “Share”, then add the game to the Home Screen.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear started and solved pictures, the days’ results and statistics",
+    "resetDone": "Progress cleared"
+  },
+  "stats": {
+    "title": "Statistics",
+    "size": "Grid",
+    "solved": "Solved",
+    "hints": "Hints",
+    "best": "Best time",
+    "none": "—",
+    "longest": {
+      "one": "Pictures of the day — longest streak: {n} day",
+      "other": "Pictures of the day — longest streak: {n} days"
+    }
+  },
+  "about": {
+    "title": "About the game",
+    "rules": "The numbers beside a row and above a column are the lengths of its groups of filled cells, in order, with at least one empty cell between groups: “3 1” is three filled cells in a row, then an empty one, then one filled. Fill the cells so every row and column fits its numbers, and a picture appears. A cross is a note for yourself: “empty here”; it does not change the result.",
+    "text": "Every picture is solved by reasoning, line after line, without guessing. Hints are free and without limits. No ads, accounts or tracking: progress stays on this device. Works offline.",
+    "zoom": "Large grids on a phone: move and zoom with two fingers; the strips of numbers can be dragged with one; “Whole picture” shows all of the grid. With a mouse: the wheel moves the grid, Ctrl and the wheel zoom.",
+    "keys": "Keyboard: arrows — move over the cells, Space or Enter — like a tap, X — cross, Backspace — clear, H — hint, Ctrl+Z — undo, F — whole picture, Esc — close.",
+    "credit": "Made by way1ong"
+  },
   "pictures": {
     "anchor": "Anchor",
     "apple": "Apple",
