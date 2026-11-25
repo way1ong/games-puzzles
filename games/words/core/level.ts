@@ -1,11 +1,11 @@
 // Making a level from the language's words and a seed. A level has a main word (the longest), whose tiles —
 // shuffled — make the wheel; its crossword holds common words made of those tiles. Level N is the same for every
-// player of a language (and of the same Hungarian tile setting), and main words do not repeat until the
+// player of a language (in Hungarian: of the same tile setting), and main words do not repeat until the
 // language has no more of that length. Pure, no DOM.
 import { seedFromText } from '../../../shared/core/rng.ts';
 import { WORDS, type LevelStep, type WordLang } from '../config.ts';
 import { layout, type Crossword } from './crossword.ts';
-import { maskOf, type Dictionary, type Word } from './dictionary.ts';
+import { maskOf, tileMode, type Dictionary, type Word } from './dictionary.ts';
 import { makeRand, shuffled, type Rand } from './rand.ts';
 
 export interface Level extends Crossword {
@@ -61,7 +61,7 @@ export function mainWords(dict: Dictionary, letters: number, minWords: number): 
     seen.add(w.key); // one main word for each set of tiles
     return makeable(dict, w.tiles, minWords).length >= minWords;
   });
-  const rand = makeRand(seedFromText(`way1ong-words:${dict.lang}:${dict.options.huTiles ? 'tiles' : 'letters'}:main:${letters}`));
+  const rand = makeRand(seedFromText(`way1ong-words:${dict.lang}:${tileMode(dict)}:main:${letters}`));
   const ordered: Word[] = [];
   for (let i = 0; i < candidates.length; i += WORDS.levelGroup) ordered.push(...shuffled(rand, candidates.slice(i, i + WORDS.levelGroup)));
   byLength.set(key, ordered);
@@ -97,8 +97,6 @@ function build(dict: Dictionary, main: Word, words: { min: number; max: number }
   const grid = crosswordOf(dict, main, words, rand);
   return { ...grid, lang: dict.lang, number, daily, letters: wheelOf(main, rand) };
 }
-
-const tileMode = (dict: Dictionary) => (dict.options.huTiles ? 'tiles' : 'letters');
 
 /** Level `number` (from 1) of the language's sequence. */
 export function makeLevel(dict: Dictionary, number: number): Level {

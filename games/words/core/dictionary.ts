@@ -28,6 +28,14 @@ export interface Dictionary {
   makeableFrom(tiles: readonly string[]): Word[];
 }
 
+/**
+ * The tile setting as it matters for the dictionary's language, for the seeds of levels and fields: Hungarian cuts
+ * words into tiles in two ways (the setting), the other languages in one — so their levels and daily puzzles do not
+ * depend on the Hungarian setting (decision of 25.11). They keep the order of the default, "tiles".
+ */
+export const tileMode = (dict: Pick<Dictionary, 'lang' | 'options'>): 'tiles' | 'letters' =>
+  dict.lang === 'hu' && !dict.options.huTiles ? 'letters' : 'tiles';
+
 const SEP = '\u0000';
 export const keyOf = (tiles: readonly string[]): string => [...tiles].sort().join(SEP);
 

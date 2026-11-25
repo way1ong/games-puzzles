@@ -70,8 +70,8 @@ describe.each(LANGS)('the meanings of %s', (lang) => {
 
   it(`has a meaning for every crossword word of levels 1–${WORDS.meanings.trialLevels}`, () => {
     const missing = new Set<string>();
-    // the Hungarian tile setting seeds the levels of every language (games/words/core/level.ts): both of them
-    for (const huTiles of [true, false]) {
+    // Hungarian has a sequence of levels for each tile setting; the other languages one (dictionary.ts, tileMode)
+    for (const huTiles of lang === 'hu' ? [true, false] : [true]) {
       const dict = makeDictionary(lang, files.answers, files.accepted, { huTiles });
       for (let n = 1; n <= WORDS.meanings.trialLevels; n++) {
         for (const placed of makeLevel(dict, n).words) if (meaningOf(meanings, placed.word.text) === null) missing.add(placed.word.text);

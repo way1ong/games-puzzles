@@ -99,6 +99,15 @@ describe('the Word Field: making a field', () => {
     }
   });
 
+  it('gives Ukrainian and English one sequence of fields, whatever the Hungarian tile setting; Hungarian one for each', () => {
+    const shape = (f: Field) => f.words.map((w) => w.text).join(' ');
+    for (const lang of ['uk', 'en'] as const) {
+      for (const n of [1, 11]) expect(shape(makeFieldLevel(dict(lang, false), n))).toBe(shape(makeFieldLevel(dict(lang, true), n)));
+      expect(shape(makeFieldDaily(dict(lang, false), '2026-11-25'))).toBe(shape(makeFieldDaily(dict(lang, true), '2026-11-25')));
+    }
+    expect([1, 2, 3].some((n) => shape(makeFieldLevel(dict('hu', false), n)) !== shape(makeFieldLevel(dict('hu', true), n)))).toBe(true);
+  });
+
   it('gives the same field for the same level and day, another for another', () => {
     const d = dict('en');
     expect(makeFieldLevel(d, 12)).toEqual(makeFieldLevel(d, 12));

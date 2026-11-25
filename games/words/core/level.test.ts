@@ -76,6 +76,15 @@ describe('crossword layout', () => {
 });
 
 describe('levels', () => {
+  it('gives Ukrainian and English one sequence of levels and daily puzzles, whatever the Hungarian tile setting; Hungarian one for each', () => {
+    const texts = (level: { words: readonly { word: { text: string } }[] }) => level.words.map((p) => p.word.text).join(' ');
+    for (const lang of ['uk', 'en'] as const) {
+      for (const n of [1, 11, 31, 81]) expect(texts(makeLevel(dict(lang, false), n))).toBe(texts(makeLevel(dict(lang, true), n)));
+      expect(texts(makeDaily(dict(lang, false), '2026-11-25'))).toBe(texts(makeDaily(dict(lang, true), '2026-11-25')));
+    }
+    expect([1, 2, 3, 4, 5].some((n) => texts(makeLevel(dict('hu', false), n)) !== texts(makeLevel(dict('hu', true), n)))).toBe(true);
+  });
+
   for (const lang of ['en', 'hu', 'uk'] as const) {
     it(`${lang}: levels grow, hold common words made of the wheel, lay out cleanly and do not repeat`, () => {
       const d = dict(lang);
