@@ -198,7 +198,10 @@ export function startApp(root: HTMLElement): void {
     const clues = cluesOf(solution, picture.size);
     const day = daily ? today : null;
     open = { picture, clues, solution, daily, route };
-    game = store.loadPlay(picture, clues, day) ?? newPlay(picture, day);
+    const saved = store.loadPlay(picture, clues, day);
+    game = saved ?? newPlay(picture, day);
+    // A new one is kept at once: a new day's picture takes the place of yesterday's.
+    if (!saved) store.savePlay(game, picture);
     store.saveResume(route);
     mode = 'fill';
     board.setPuzzle(picture.size, clues, store.loadWhole()[picture.size] ?? false);
