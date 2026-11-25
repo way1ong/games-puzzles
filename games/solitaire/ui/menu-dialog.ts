@@ -5,7 +5,7 @@ import { install, installWay } from '../../../shared/ui/install.ts';
 import { DRAWS, SOLITAIRE, type Draw } from '../config.ts';
 import type { Stats } from '../core/stats.ts';
 import { dict, LANGS, num, plural, type Dict } from './i18n.ts';
-import type { Deals, Settings, Theme } from './storage.ts';
+import type { Deals, Look, Settings, Theme } from './storage.ts';
 import { clockText } from './time.ts';
 
 export interface MenuActions {
@@ -80,6 +80,15 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
         toggle(s.time, settings.time, (on) => actions.set({ time: on })),
       ];
       const look = [
+        ...choices<Look>(
+          s.style,
+          [
+            { value: 'drawn', text: s.styleDrawn },
+            { value: 'simple', text: s.styleSimple },
+          ],
+          settings.look,
+          (value) => actions.set({ look: value }),
+        ),
         toggle(s.leftHand, settings.leftHand, (on) => actions.set({ leftHand: on })),
         toggle(s.fourColours, settings.fourColours, (on) => actions.set({ fourColours: on })),
         toggle(s.big, settings.big, (on) => actions.set({ big: on })),

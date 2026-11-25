@@ -35,6 +35,11 @@ function inspectSolitaire() {
       if (i.right > c.right + 1 || i.bottom > c.bottom + 1) out.push('a card corner does not fit its card');
     }
     if ([...table.querySelectorAll('.card, .slot')].filter((n) => n.tabIndex === 0).length !== 1) out.push('the table is not one Tab stop');
+    // the drawn look: a face-down card must not show the figure of a jack, queen or king
+    for (const f of table.querySelectorAll('.card.is-down .card__figure')) {
+      const st = getComputedStyle(f);
+      if (st.display !== 'none' && st.visibility !== 'hidden') out.push('a face-down card shows its figure');
+    }
   }
   return out;
 }
@@ -94,6 +99,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await check(page, `${label} menu`);
       for (const n of [0, 1, 2, 3]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
       await page.locator('dialog[open] .choices__btn').filter({ hasText: /3|три|Három|Three/i }).first().click();
+      // the simple look (the drawn one is the default): in one of the looks of every size
+      if (locale === 'hu-HU') await page.locator('dialog[open] .choices__btn', { hasText: 'Egyszerű' }).click();
       await page.locator('dialog[open] .dialog__actions .btn--primary').click();
       await page.waitForSelector('.table .card:not(.is-down)', { timeout: 60000 });
       await check(page, `${label} three a turn, time, four colours, large, left hand`);

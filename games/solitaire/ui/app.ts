@@ -2,8 +2,10 @@
 // turns taps, drags and keys into moves and draws the result. The rules themselves are in ../core (pure functions);
 // the work that takes time (finding a deal that can be won, a hint) goes in slices (maker.ts).
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
+import { setTextures } from '../../../shared/ui/textures.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { TEXTURES } from '../art/textures.ts';
 import { SOLITAIRE } from '../config.ts';
 import { dailySeed, winnableSeed } from '../core/deals.ts';
 import { hintSearch, type Hint } from '../core/hint.ts';
@@ -112,6 +114,7 @@ export function startApp(root: HTMLElement): void {
   }
   new ResizeObserver(noteByKeys).observe(note);
 
+  setTextures(document.documentElement, TEXTURES);
   root.replaceChildren(
     h('main', { class: 'app' }, h('header', { class: 'top' }, backBtn, title, menuBtn), content, live, menuDialog.el, endDialog.el),
   );
@@ -122,6 +125,7 @@ export function startApp(root: HTMLElement): void {
     html.lang = lang;
     html.classList.toggle('big', settings.big);
     html.classList.toggle('four', settings.fourColours);
+    html.classList.toggle('drawn', settings.look === 'drawn');
     if (settings.theme === 'system') delete html.dataset.theme;
     else html.dataset.theme = settings.theme;
     document.title = d.meta.title;

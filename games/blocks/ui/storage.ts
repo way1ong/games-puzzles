@@ -22,15 +22,24 @@ function write(key: string, value: unknown): void {
   }
 }
 
+/** The game's look (decision of 25.11): drawn (a wooden board, wooden blocks) or simple, as at first. */
+export type Look = 'drawn' | 'simple';
+
 export interface Settings {
   lang: string | null;
   big: boolean;
   vibration: boolean;
+  look: Look;
 }
 
 export function loadSettings(): Settings {
   const s = read<Partial<Settings>>('settings') ?? {};
-  return { lang: typeof s.lang === 'string' ? s.lang : null, big: s.big === true, vibration: s.vibration === true };
+  return {
+    lang: typeof s.lang === 'string' ? s.lang : null,
+    big: s.big === true,
+    vibration: s.vibration === true,
+    look: s.look === 'simple' ? 'simple' : 'drawn',
+  };
 }
 
 export function saveSettings(settings: Settings): void {

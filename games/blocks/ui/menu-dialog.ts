@@ -1,10 +1,10 @@
-// Menu: language, large board, vibration, installing, clear progress, about the game and the "Made by
-// way1ong" line.
+// Menu: language, the game's look (drawn or simple), large board, vibration, installing, clear progress, about the game
+// and the "Made by way1ong" line.
 import { BLOCKS } from '../config.ts';
 import { h } from '../../../shared/ui/dom.ts';
 import { dict, LANGS, type Dict } from './i18n.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
-import type { Settings } from './storage.ts';
+import type { Look, Settings } from './storage.ts';
 
 /**
  * Vibration only where it can work: the phone supports it and the game is not shown inside another site's
@@ -16,6 +16,7 @@ function canVibrate(): boolean {
 
 export interface MenuActions {
   setLang(lang: string): void;
+  setLook(look: Look): void;
   setBig(on: boolean): void;
   setVibration(on: boolean): void;
   clearProgress(): void;
@@ -31,6 +32,20 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang:
         const b = h('button', { class: 'choices__btn', type: 'button', lang: code, 'aria-pressed': String(code === lang) }, dict(code).meta.langName);
         b.addEventListener('click', () => actions.setLang(code));
         langs.append(b);
+      }
+
+      // The look: one of two buttons is chosen.
+      const looks = h('div', { class: 'choices', role: 'group', 'aria-label': d.settings.style });
+      for (const [value, text] of [
+        ['drawn', d.settings.styleDrawn],
+        ['simple', d.settings.styleSimple],
+      ] as const) {
+        const b = h('button', { class: 'choices__btn', type: 'button', 'aria-pressed': String(settings.look === value) }, text);
+        b.addEventListener('click', () => {
+          for (const other of looks.querySelectorAll('button')) other.setAttribute('aria-pressed', String(other === b));
+          actions.setLook(value);
+        });
+        looks.append(b);
       }
 
       const toggle = (label: string, checked: boolean, onChange: (on: boolean) => void) => {
@@ -79,6 +94,8 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang:
           h('h2', { id: 'menu-title' }, d.settings.title),
           h('p', { class: 'dialog__label' }, d.settings.language),
           langs,
+          h('p', { class: 'dialog__label' }, d.settings.style),
+          looks,
           toggle(d.settings.big, settings.big, actions.setBig),
           canVibrate() ? toggle(d.settings.vibration, settings.vibration, actions.setVibration) : null,
           installPart,

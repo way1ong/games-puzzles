@@ -2,6 +2,7 @@
 import './styles/tokens.css';
 import '../../shared/styles/ui.css';
 import './styles/app.css';
+import './styles/drawn.css';
 import { startApp } from './ui/app.ts';
 import { watchInstall } from '../../shared/ui/install.ts';
 import { keepOffline } from '../../shared/ui/offline.ts';

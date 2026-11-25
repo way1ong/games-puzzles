@@ -38,6 +38,8 @@ function remove(key: string): void {
 
 export type Theme = 'system' | 'light' | 'dark';
 export type Deals = 'winnable' | 'any';
+/** The game's look (decision of 25.11): drawn (felt, paper, figures) or simple, as at first. */
+export type Look = 'drawn' | 'simple';
 
 export interface Settings {
   lang: string | null;
@@ -48,6 +50,7 @@ export interface Settings {
   fourColours: boolean;
   big: boolean;
   theme: Theme;
+  look: Look;
 }
 
 /** As approved on 25.11 (docs/solitaire/SPEC.md, "Налаштування"). */
@@ -60,6 +63,7 @@ export const DEFAULT_SETTINGS: Settings = {
   fourColours: false,
   big: false,
   theme: 'system',
+  look: 'drawn',
 };
 
 const oneOf = <T extends string | number>(value: unknown, options: readonly T[], fallback: T): T =>
@@ -79,6 +83,7 @@ export function loadSettings(): Settings {
     fourColours: flag(s.fourColours, d.fourColours),
     big: flag(s.big, d.big),
     theme: oneOf(s.theme, ['system', 'light', 'dark'] as const, d.theme),
+    look: oneOf(s.look, ['drawn', 'simple'] as const, d.look),
   };
 }
 

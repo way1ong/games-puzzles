@@ -39,8 +39,10 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await page.locator('.icon-btn').click();
       await check(page, `${label} menu`);
       await page.locator('dialog[open] input[type=checkbox]').first().check();
+      // the simple look (the drawn one is the default): in one of the looks of every size
+      if (locale === 'hu-HU') await page.locator('dialog[open] .choices__btn', { hasText: 'Egyszerű' }).click();
       await page.locator('dialog[open] .btn--primary').click();
-      await check(page, `${label} large mode`);
+      await check(page, `${label} large mode${locale === 'hu-HU' ? ', simple look' : ''}`);
       if (shots) await page.screenshot({ path: join(shots, `blocks-${width}x${height}-${locale}-${colorScheme}.png`) });
       await ctx.close();
     }

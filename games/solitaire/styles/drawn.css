@@ -1,0 +1,75 @@
+/* Solitaire, the drawn look (decision of 25.11; html.drawn, the default; "Simple" in the menu takes it off): a felt mat
+   under the cards, cards of paper with a deeper shadow, an ornament on the back, the figures of the jack, queen and
+   king (art/courts.ts). Colours only from tokens.css; the textures are noise drawn in code (art/textures.ts, CSS
+   variables --tex-felt and --tex-paper). */
+
+/* The felt: a mat a little larger than the table, so the cards do not touch its edge — at the sides no more than the
+   page's own margin (in the large mode, 0.25rem), so the page never grows wider than the screen. On it, the empty
+   places and where a dragged card would land take the felt's own colours. */
+html.drawn .stage {
+  --slot-line: var(--felt-line);
+  --drop: var(--felt-drop);
+}
+
+html.drawn .stage::before {
+  content: '';
+  position: absolute;
+  inset: -0.375rem -0.25rem;
+  border-radius: 0.875rem;
+  background-color: var(--felt);
+  background-image: var(--tex-felt), radial-gradient(ellipse at 50% 35%, transparent 55%, var(--felt-edge));
+  box-shadow: inset 0 0 0 1px var(--felt-edge);
+}
+
+html.drawn .table-wait {
+  color: var(--felt-text);
+}
+
+/* A card: paper, and a shadow that lifts it off the felt. */
+html.drawn .card {
+  background-image: var(--tex-paper);
+  box-shadow: var(--card-shadow), var(--card-shadow-deep);
+}
+
+/* The back: a light margin, a gold line, a lattice and a medallion in the middle. */
+html.drawn .card.is-down {
+  background-color: var(--back-drawn);
+  background-image:
+    radial-gradient(
+      circle at 50% 50%,
+      var(--back-drawn-line) 0 8%,
+      var(--back-drawn) 8.5% 12%,
+      var(--back-drawn-line) 12.5% 14.5%,
+      transparent 15%
+    ),
+    repeating-linear-gradient(45deg, var(--back-drawn-line) 0 1px, transparent 1px calc(var(--cw) * 0.1)),
+    repeating-linear-gradient(-45deg, var(--back-drawn-line) 0 1px, transparent 1px calc(var(--cw) * 0.1));
+  box-shadow:
+    inset 0 0 0 calc(var(--cw) * 0.05) var(--card-face),
+    inset 0 0 0 calc(var(--cw) * 0.07) var(--back-drawn-line),
+    var(--card-shadow),
+    var(--card-shadow-deep);
+}
+
+/* The jack, the queen and the king: a figure under the corner sign, in place of the big letter. */
+.card__figure {
+  display: none;
+}
+
+html.drawn .card__figure {
+  position: absolute;
+  top: 30%;
+  left: 14%;
+  display: block;
+  width: 82%;
+  height: 70%;
+}
+
+html.drawn .card__middle--face {
+  display: none;
+}
+
+/* Face down, the figure is hidden like the signs: the back must not tell the card. */
+html.drawn .card.is-down .card__figure {
+  visibility: hidden;
+}

@@ -121,7 +121,10 @@
     "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
     "reset": "Előrehaladás törlése",
     "resetSure": "Koppintson újra a leosztások, az eredmények és a statisztika törléséhez",
-    "resetDone": "Törölve"
+    "resetDone": "Törölve",
+    "style": "A játék kinézete",
+    "styleDrawn": "Rajzolt",
+    "styleSimple": "Egyszerű"
   },
   "stats": {
     "title": "Statisztika",
