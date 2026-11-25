@@ -2,6 +2,7 @@
 // today's daily puzzle, daily results, statistics, reported words. Nothing leaves the device. Every read
 // survives a missing or broken value; saved plays carry a format version, and an unknown one is dropped.
 import { WORD_LANGS, type WordLang } from '../config.ts';
+import type { FieldPlay } from '../core/field-play.ts';
 import type { Play } from '../core/play.ts';
 
 const PREFIX = 'way1ong-words:v1:';
@@ -213,13 +214,17 @@ export function addReported(entry: Reported): void {
   if (!list.some((r) => r.lang === entry.lang && r.word === entry.word)) write('reported', [...list, entry]);
 }
 
+/** The screens of the game besides the start: a level or the daily puzzle of each mode. */
+export type ScreenName = 'level' | 'daily' | 'field' | 'field-daily';
+export const SCREENS: readonly ScreenName[] = ['level', 'daily', 'field', 'field-daily'];
+
 /** Whether the screen was ever opened on a daily puzzle or a level: where to open next time. */
-export function loadLast(): 'level' | 'daily' | null {
+export function loadLast(): ScreenName | null {
   const v = read<string>('last');
-  return v === 'level' || v === 'daily' ? v : null;
+  return SCREENS.find((s) => s === v) ?? null;
 }
 
-export function saveLast(last: 'level' | 'daily' | null): void {
+export function saveLast(last: ScreenName | null): void {
   if (last) write('last', last);
   else remove('last');
 }
@@ -230,6 +235,96 @@ export function loadTipDone(): boolean {
 
 export function saveTipDone(): void {
   write('tipDone', true);
+}
+
+// ---------- the Word Field (second mode) ----------
+
+/** The next Word Field level to play in this track (from 1). */
+export function loadFieldReached(track: Track): number {
+  const n = read<number>(`field-reached:${trackKey(track)}`);
+  return typeof n === 'number' && Number.isInteger(n) && n >= 1 ? n : 1;
+}
+
+export function saveFieldReached(track: Track, n: number): void {
+  write(`field-reached:${trackKey(track)}`, n);
+}
+
+interface SavedField {
+  version: number;
+  play: FieldPlay;
+}
+
+const FIELD_VERSION = 1;
+
+function validFieldPlay(play: unknown): play is FieldPlay {
+  const p = play as Partial<FieldPlay> | null;
+  const f = p?.field;
+  return (
+    !!p &&
+    !!f &&
+    Number.isInteger(f.cols) &&
+    Number.isInteger(f.rows) &&
+    Array.isArray(f.cells) &&
+    f.cells.length === f.cols * f.rows &&
+    Array.isArray(f.words) &&
+    Array.isArray(p.placed) &&
+    Array.isArray(p.plan) &&
+    Array.isArray(p.bonus) &&
+    typeof p.hints === 'number' &&
+    typeof p.ms === 'number' &&
+    typeof p.done === 'boolean'
+  );
+}
+
+/** The Word Field being played in a track; the daily one only if it is today's. */
+export function loadFieldPlay(track: Track, daily: string | null): FieldPlay | null {
+  const saved = read<SavedField>(`${daily ? 'field-daily' : 'field'}:${trackKey(track)}`);
+  if (!saved || saved.version !== FIELD_VERSION || !validFieldPlay(saved.play) || saved.play.field.lang !== track.lang) return null;
+  if (saved.play.field.daily !== daily) return null;
+  return saved.play;
+}
+
+export function saveFieldPlay(track: Track, play: FieldPlay): void {
+  write(`${play.field.daily ? 'field-daily' : 'field'}:${trackKey(track)}`, { version: FIELD_VERSION, play } satisfies SavedField);
+}
+
+export function dropFieldPlay(track: Track): void {
+  remove(`field:${trackKey(track)}`);
+}
+
+export function loadFieldDays(): Days {
+  const v = read<Days>('field-days');
+  return v && typeof v === 'object' ? v : {};
+}
+
+export function saveFieldDayResult(date: string, lang: WordLang, result: { hints: number; ms: number }): void {
+  const days = loadFieldDays();
+  write('field-days', { ...days, [date]: { ...days[date], [lang]: result } });
+}
+
+export function loadFieldStats(): Stats {
+  const v = read<Partial<Stats>>('field-stats') ?? {};
+  const out = Object.fromEntries(WORD_LANGS.map((lang) => [lang, emptyLang()])) as Stats;
+  for (const lang of WORD_LANGS) {
+    const s = v[lang];
+    if (!s) continue;
+    for (const k of Object.keys(out[lang]) as (keyof LangStats)[]) if (typeof s[k] === 'number') out[lang][k] = s[k];
+  }
+  return out;
+}
+
+/** Adds a finished Word Field (or daily field) to its statistics. */
+export function recordFieldDone(play: FieldPlay): void {
+  const stats = loadFieldStats();
+  const s = stats[play.field.lang];
+  stats[play.field.lang] = {
+    levels: s.levels + (play.field.daily ? 0 : 1),
+    words: s.words + play.placed.filter((p) => p.by === 'player').length,
+    bonus: s.bonus + play.bonus.length,
+    hints: s.hints + play.hints,
+    dailies: s.dailies + (play.field.daily ? 1 : 0),
+  };
+  write('field-stats', stats);
 }
 
 /** Clears everything but the settings. */

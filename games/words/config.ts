@@ -16,6 +16,17 @@ export interface LevelStep {
   words: { min: number; max: number };
 }
 
+/** A step of the Word Field levels (docs/words/SPEC.md, "Поле слів"). */
+export interface FieldStep {
+  /** From this level number on (counted from 1). */
+  from: number;
+  /** Columns and rows of a phone held upright (on its side the field is shown turned). */
+  cols: number;
+  rows: number;
+  /** The shortest and the longest hidden word, in tiles. */
+  word: { min: number; max: number };
+}
+
 export const WORDS = {
   /** The game's name where it is installed and in the shared daily result (decision of 24.11). */
   name: 'way1ong Words',
@@ -53,6 +64,35 @@ export const WORDS = {
   huTiles: ['cs', 'gy', 'ly', 'ny', 'sz', 'ty', 'zs'],
   /** A missed day the daily streak forgives when the setting is on (C). */
   graceDays: 1,
+  /** The second mode, "Word Field" (decision of 25.11). */
+  field: {
+    /**
+     * How the fields grow (C). At most 6 cells in a row on a phone, so that a cell keeps 44 px even on a 320 px
+     * screen; longer words on the bigger fields.
+     */
+    levels: [
+      { from: 1, cols: 4, rows: 4, word: { min: 3, max: 5 } },
+      { from: 11, cols: 5, rows: 5, word: { min: 3, max: 6 } },
+      { from: 31, cols: 5, rows: 6, word: { min: 3, max: 6 } },
+      { from: 81, cols: 6, rows: 7, word: { min: 4, max: 7 } },
+      { from: 151, cols: 6, rows: 8, word: { min: 4, max: 7 } },
+    ] satisfies FieldStep[],
+    /** The daily field (C). */
+    daily: { cols: 5, rows: 6, word: { min: 3, max: 6 } } satisfies Omit<FieldStep, 'from'>,
+    /**
+     * Hidden words come from this many of the most frequent crossword words, all lengths together (C): rarer
+     * words of a length the language has few common ones of (a short coin name among the three-letter words)
+     * stay out. Every length still has well over a hundred.
+     */
+    common: 2500,
+    /** Moves that bend the field's path, per cell: the more, the less regular the words' shapes (C). */
+    bends: 60,
+    /**
+     * How long the game may look for a way to fill the rest of the field after another real word (C): steps of
+     * the search. Past it, the word counts as a bonus word — the field stays solvable.
+     */
+    solveSteps: 200000,
+  },
   /** Which words the lists hold (scripts/words/build.ts). */
   dictionary: {
     /** Crossword words: the most frequent dictionary forms, this many per language (C). */

@@ -59,8 +59,6 @@ export function createWheelView(actions: WheelActions): WheelView {
    * the line to the finger). Other fingers are ignored meanwhile — a hand holding the phone may touch the screen.
    */
   let slide: { pointer: number; path: number[]; moved: boolean; x: number; y: number } | null = null;
-  /** A pointer tap was handled: the click that follows it is ignored. */
-  let tapped = false;
 
   const centre = (b: HTMLElement) => {
     const r = b.getBoundingClientRect();
@@ -149,8 +147,6 @@ export function createWheelView(actions: WheelActions): WheelView {
     if (!slide || event.pointerId !== slide.pointer) return;
     const { path, moved } = slide;
     slide = null;
-    tapped = true;
-    window.setTimeout(() => (tapped = false), 0);
     if (cancelled) actions.change([...state.selected]);
     else if (moved) actions.submit([...path]);
     else if (state.input !== 'swipe') toggle(path[0]!);
@@ -165,9 +161,10 @@ export function createWheelView(actions: WheelActions): WheelView {
     actions.change(sel.at(-1) === i ? sel.slice(0, -1) : sel.includes(i) ? [...sel] : [...sel, i]);
   }
 
-  // Keyboard and screen readers press the letters as buttons.
+  // Keyboard and screen readers press the letters as buttons: their clicks have no pointer behind them
+  // (detail 0). A finger's or a mouse's tap was already handled on lifting it — its click would count it twice.
   ring.addEventListener('click', (event) => {
-    if (tapped || slide) return;
+    if (event.detail !== 0 || slide) return;
     const b = (event.target as HTMLElement).closest<HTMLButtonElement>('.wheel__letter');
     if (b) toggle(buttons.indexOf(b));
   });

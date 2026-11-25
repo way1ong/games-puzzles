@@ -84,6 +84,11 @@ const TEXT: [string, string][] = [
   ['--bonus', '--surface'],
   ['--bad', '--bg'],
   ['--text', '--lit'],
+  ['--text', '--fw-1'],
+  ['--text', '--fw-2'],
+  ['--text', '--fw-3'],
+  ['--text', '--fw-4'],
+  ['--text', '--making'],
 ];
 const MARKS: [string, string][] = [
   ['--focus', '--bg'],
@@ -95,6 +100,16 @@ const MARKS: [string, string][] = [
   ['--line', '--wheel'],
   ['--accent', '--wheel'],
   ['--accent', '--tile'],
+  ['--fw-1-line', '--fw-1'],
+  ['--fw-2-line', '--fw-2'],
+  ['--fw-3-line', '--fw-3'],
+  ['--fw-4-line', '--fw-4'],
+  ['--fw-1-line', '--bg'],
+  ['--fw-2-line', '--bg'],
+  ['--fw-3-line', '--bg'],
+  ['--fw-4-line', '--bg'],
+  ['--accent', '--making'],
+  ['--opened', '--cell'],
 ];
 
 for (const [theme, t] of Object.entries(themes)) {

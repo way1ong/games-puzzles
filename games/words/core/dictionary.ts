@@ -20,6 +20,8 @@ export interface Dictionary {
   options: TileOptions;
   /** Crossword words, the most frequent first. */
   answers: readonly Word[];
+  /** Every word the game accepts, crossword words first (each text once). */
+  all: readonly Word[];
   /** Whether a word (as tiles joined) is accepted. */
   accepts(text: string): boolean;
   /** Accepted words that can be made of these tiles (bonus words of a level). */
@@ -83,18 +85,16 @@ export function makeDictionary(lang: WordLang, answersText: string, acceptedText
     .map((m) => makeWord(lang, m, options))
     .filter(fits);
   const texts = new Set([...accepted.map((w) => w.text), ...answers.map((w) => w.text)]);
+  const seenAll = new Set<string>();
+  const all = [...answers, ...accepted].filter((w) => !seenAll.has(w.text) && !!seenAll.add(w.text));
   return {
     lang,
     options,
     answers,
+    all,
     accepts: (text) => texts.has(text),
     makeableFrom(tiles) {
-      const seen = new Set<string>();
-      return [...answers, ...accepted].filter((w) => {
-        if (seen.has(w.text) || w.tiles.length > tiles.length || !canMake(w.tiles, tiles)) return false;
-        seen.add(w.text);
-        return true;
-      });
+      return all.filter((w) => w.tiles.length <= tiles.length && canMake(w.tiles, tiles));
     },
   };
 }

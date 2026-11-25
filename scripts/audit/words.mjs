@@ -1,6 +1,8 @@
 // Browser audit of Words: every size and look — the start screen, a level, a word made by sliding, the hint
 // window, choosing a cell for a hint, the menu with the large letters, the daily puzzle; large system text;
-// the keyboard; one level played to the end; a level kept when the language is switched there and back.
+// the keyboard; one level played to the end; a level kept when the language is switched there and back. The Word
+// Field (second mode): every size and look and phones on their side — a field, a word placed, a hint, the menu,
+// the daily field; large text; the keyboard.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -43,8 +45,37 @@ function inspectWords() {
 }
 
 async function openLevel(page) {
-  await page.locator('.home__main').click();
+  await page.locator('.home__main[data-mode=wheel]').click();
   await page.waitForSelector('.wheel__letter', { timeout: 30000 });
+}
+
+/** Runs in the page: Word Field cells keep 44 px and the field stays in its place. */
+function inspectField() {
+  const out = [];
+  const field = document.querySelector('.field');
+  if (!field || !field.getClientRects().length) return out;
+  const stage = field.closest('.stage').getBoundingClientRect();
+  const f = field.getBoundingClientRect();
+  if (f.right > stage.right + 1 || f.bottom > stage.bottom + 1 || f.left < stage.left - 1 || f.top < stage.top - 1) out.push('the field sticks out of its place');
+  const cell = document.querySelector('.fw-cell').getBoundingClientRect();
+  if (cell.width < 44 || cell.height < 44) out.push(`small field cells ${Math.round(cell.width)}×${Math.round(cell.height)}`);
+  return out;
+}
+
+async function openField(page, daily = false) {
+  await page.locator(`.home__${daily ? 'daily' : 'main'}[data-mode=field]`).click();
+  await page.waitForSelector('.fw-cell', { timeout: 30000 });
+  await page.waitForFunction((k) => Object.keys(localStorage).some((x) => x.startsWith(k)), `${STORE}field`);
+}
+
+/** Types a word of the field's plan (the keys go to the field) and checks it. */
+async function typeFieldWord(page, lang, daily = false) {
+  const plan = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).play.plan, `${STORE}${daily ? 'field-daily' : 'field'}:${lang}:tiles`);
+  await page.evaluate((text) => {
+    for (const ch of text) document.dispatchEvent(new KeyboardEvent('keydown', { key: ch, bubbles: true, cancelable: true }));
+  }, plan[0].text);
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(50);
 }
 
 /** The tiles of the level's words, from the saved game. */
@@ -79,6 +110,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     const problems = [
       ...(await page.evaluate(inspectScreen, { width: page.viewportSize().width, dense: DENSE })),
       ...(await page.evaluate(inspectWords)),
+      ...(await page.evaluate(inspectField)),
       ...(await axe(page)),
     ];
     for (const p of problems) fail(`words ${label}: ${p}`);
@@ -116,9 +148,27 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       if (shots) await page.screenshot({ path: join(shots, `words-${width}x${height}-${locale}-${colorScheme}.png`) });
       await page.locator('.top .icon-btn').first().click();
       await page.waitForSelector('.home__daily');
-      await page.locator('.home__daily').click();
+      await page.locator('.home__daily[data-mode=wheel]').click();
       await page.waitForSelector('.wheel__letter', { timeout: 30000 });
       await check(page, `${label} daily`);
+      // the Word Field
+      await page.evaluate(() => document.documentElement.classList.remove('big'));
+      await page.locator('.top .icon-btn').first().click();
+      await page.waitForSelector('.home__main');
+      await openField(page);
+      await check(page, `${label} field`);
+      await typeFieldWord(page, lang);
+      await check(page, `${label} field, a word placed`);
+      await page.locator('.field-tools .tool').first().click();
+      await check(page, `${label} field hint window`);
+      await page.locator('dialog[open] .hint-option').first().click();
+      await check(page, `${label} field hint shown`);
+      if (!(await page.locator('.fw-cell.is-hinted').count())) fail(`words ${label}: a field hint shows no cell`);
+      if (shots) await page.screenshot({ path: join(shots, `words-field-${width}x${height}-${locale}-${colorScheme}.png`) });
+      await page.locator('.top .icon-btn').first().click();
+      await page.waitForSelector('.home__main');
+      await openField(page, true);
+      await check(page, `${label} daily field`);
       await ctx.close();
     }
   }
@@ -136,7 +186,40 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, `${width}×${height} text ${size}% start`);
     await openLevel(page);
     await check(page, `${width}×${height} text ${size}% level`);
+    await page.locator('.top .icon-btn').first().click();
+    await page.waitForSelector('.home__main');
+    await openField(page);
+    await check(page, `${width}×${height} text ${size}% field`);
     await ctx.close();
+  }
+
+  // The Word Field on phones held sideways: a small field, the biggest (turned) and a word placed.
+  for (const [width, height] of [
+    [640, 360],
+    [863, 360],
+    [915, 412],
+  ]) {
+    for (const [level, colorScheme] of [
+      [1, 'light'],
+      [151, 'dark'],
+    ]) {
+      const label = `${width}×${height} side, field level ${level} ${colorScheme}`;
+      const ctx = await browser.newContext({ viewport: { width, height }, locale: 'uk-UA', colorScheme, isMobile: true, hasTouch: true });
+      const page = await ctx.newPage();
+      watch(page, `words ${label}`, origin, fail);
+      await page.goto(base);
+      await page.evaluate(([key, n]) => localStorage.setItem(key, String(n)), [`${STORE}field-reached:uk:tiles`, level]);
+      await page.goto(base);
+      await page.waitForSelector('.home__main');
+      await check(page, `${label} start`);
+      await openField(page);
+      await check(page, label);
+      if (level > 80 && !(await page.$eval('.field', (f) => f.classList.contains('is-turned')))) fail(`words ${label}: a tall field is not turned on a wide screen`);
+      await typeFieldWord(page, 'uk');
+      await check(page, `${label}, a word placed`);
+      if (shots) await page.screenshot({ path: join(shots, `words-field-side-${width}x${height}-${level}.png`) });
+      await ctx.close();
+    }
   }
 
   // The keyboard, and a level to the end with the keys (English: the test browser's own keys).
@@ -176,5 +259,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     if (!(await page.locator('.cw-cell.is-found').count())) fail('words: after switching the language and back, no found cells');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, large text, keyboard, a level to the end, a level kept across languages`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks (Wheel and Word Field), phones on their side, large text, keyboard, a level to the end, a level kept across languages`;
 }

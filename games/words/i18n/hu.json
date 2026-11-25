@@ -25,7 +25,11 @@
     "levelsDone": {
       "one": "{n} szint kész",
       "other": "{n} szint kész"
-    }
+    },
+    "wheel": "Kerék",
+    "wheelNote": "Rakjon ki szavakat a kerék betűiből, és töltse ki a keresztrejtvényt.",
+    "field": "Betűmező",
+    "fieldNote": "Az egész mező szavakra bomlik – keresse meg mindet."
   },
   "game": {
     "level": "{n}. szint",
@@ -61,6 +65,24 @@
     "unknown": "Nincs a szólistában: {word}",
     "report": "„{word}” megjelölése",
     "reported": "Megjelölve: {word}. Köszönjük!"
+  },
+  "field": {
+    "level": "Betűmező · {n}. szint",
+    "dailyTitle": "Betűmező · {date}",
+    "tipBoth": "Húzza végig az ujját a szó betűin az elsőtől az utolsóig – vagy koppintson rájuk sorban, majd az „Ellenőrzés” gombra.",
+    "tipSwipe": "Húzza végig az ujját a szó betűin az elsőtől az utolsóig; ha elengedi, a szó ellenőrződik.",
+    "tipTap": "Koppintson a szó betűire sorban, majd az „Ellenőrzés” gombra.",
+    "other": "Elfogadva: {word} – egy másik létező szó",
+    "stuck": "„{word}”: létező szó, de vele a mező többi része nem rakható ki. Bónuszszó lett.",
+    "notOnField": "„{word}”: ilyen út nincs a mezőn",
+    "hintStart": "Hol kezdődik egy szó",
+    "hintNext": "Még egy betű",
+    "hintWord": "Egy egész szó",
+    "bonus": "Bónusz",
+    "row": "{n}. sor: {letters}",
+    "label": "Betűmező",
+    "howToType": "Írjon be egy szót a mezőből a billentyűzeten, és nyomja meg az Entert. A foglalt mezőket kötőjel jelöli.",
+    "placedList": "Megtalált szavak: {words}"
   },
   "tools": {
     "shuffle": "Keverés",
@@ -154,7 +176,9 @@
     "words": "Megtalált szavak",
     "bonus": "Bónuszszavak",
     "hints": "Tippek",
-    "dailies": "Megoldott napi feladványok"
+    "dailies": "Megoldott napi feladványok",
+    "fieldLevels": "Betűmező: teljesített szintek",
+    "fieldDailies": "Betűmező: megoldott napi rejtvények"
   },
   "about": {
     "title": "A játékról",
@@ -168,6 +192,7 @@
     "dictionaries": "Szótárak",
     "dictionariesNote": "A szólisták forrásai (szerzők és licencek):",
     "licence": "A GNU LGPL 2.1 licenc teljes szövege",
-    "credit": "Készítette: way1ong"
+    "credit": "Készítette: way1ong",
+    "fieldRules": "Betűmező: az egész mező rejtett szavakra bomlik; egy szó szomszédos mezőkön halad felfelé, lefelé, balra vagy jobbra, átlósan nem. A játék egy másik létező szót is elfogad, ha a mező többi része még kirakható szavakból."
   }
 }
