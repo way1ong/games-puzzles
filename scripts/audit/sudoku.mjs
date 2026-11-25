@@ -1,6 +1,6 @@
 // Browser audit of Sudoku: every size and look — the start screen, a game, a digit, notes, a hint, the menu
-// with the widest settings (five tools, the time, the large mode), the daily puzzle; large system text; the
-// keyboard; one puzzle played to the end.
+// with the widest settings (five tools, the time, the large mode), the daily puzzle; phones on their side; large
+// system text; the keyboard; one puzzle played to the end.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -98,6 +98,53 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     }
   }
 
+  // phones on their side (decision of 25.11): the board on the left as tall as the screen, the tools and digits on
+  // the right — nothing to scroll in play, also with a hint open, five tools, the time and the large mode; 740 × 290
+  // and 640 × 290 are phones in a browser whose own bar takes part of the height
+  for (const [width, height, locale, colorScheme] of [
+    [640, 360, 'uk-UA', 'light'],
+    [740, 360, 'hu-HU', 'dark'],
+    [915, 412, 'en-GB', 'light'],
+    [740, 290, 'uk-UA', 'dark'],
+    [640, 290, 'en-GB', 'light'],
+  ]) {
+    const label = `${width}×${height} side ${locale} ${colorScheme}`;
+    const ctx = await browser.newContext({ viewport: { width, height }, locale, colorScheme, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    watch(page, `sudoku ${label}`, origin, fail);
+    const side = async (what) => {
+      await check(page, `${label} ${what}`);
+      const m = await page.evaluate(() => {
+        const board = document.querySelector('.board').getBoundingClientRect();
+        const controls = document.querySelector('.controls').getBoundingClientRect();
+        return { scroll: document.scrollingElement.scrollHeight - innerHeight, beside: board.right <= controls.left };
+      });
+      if (m.scroll > 1) fail(`sudoku ${label} ${what}: the page scrolls ${m.scroll} px in play`);
+      if (!m.beside) fail(`sudoku ${label} ${what}: the board is not beside the digits`);
+    };
+    await page.goto(base);
+    await page.waitForSelector('.level');
+    await check(page, `${label} start`);
+    await openLevel(page, 0);
+    await side('game');
+    const empties = await page.$$eval('.cell', (cells) => cells.flatMap((c, i) => (c.classList.contains('is-given') ? [] : [i])));
+    await page.locator('.cell').nth(empties[0]).click();
+    await page.keyboard.press('5');
+    await page.keyboard.press('h');
+    await side('hint');
+    await page.locator('.hint .btn--primary').click();
+    await side('hint explained');
+    await page.keyboard.press('Escape');
+    await page.locator('.top .icon-btn').nth(1).click();
+    for (const n of [1, 5, 6]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
+    await page.locator('dialog[open] .dialog__actions .btn--primary').click();
+    await side('large mode, five tools, time');
+    await page.keyboard.press('h');
+    await side('large mode, hint');
+    await shot(page, `side-${width}x${height}`);
+    await ctx.close();
+  }
+
   // large system text
   for (const [width, height, size] of [
     [320, 640, 150],
@@ -143,5 +190,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await shot(page, 'solved');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, large text, keyboard, a puzzle to the end`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks, phones on their side, large text, keyboard, a puzzle to the end`;
 }
