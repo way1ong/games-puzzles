@@ -20,6 +20,9 @@ export interface Slot {
 const grid = (columns: number, rows: number): string[] => Array.from({ length: rows }, () => '#'.repeat(columns));
 
 export const LAYOUTS = {
+  // Layouts no step deals any more (decision of 25.11, "Пари дуже прості": nearly every tile of them soon lies free,
+  // so their deals are easy whatever the pictures) stay here for the layouts saved before: hills, castle, tower,
+  // citadel.
   // ---------- small: 16–24 tiles ----------
   cross: [
     { dx: 0, dy: 0, rows: ['.##.', '####', '####', '.##.'] },
@@ -85,7 +88,30 @@ export const LAYOUTS = {
     { dx: 2, dy: 2, rows: grid(4, 4) },
     { dx: 4, dy: 4, rows: grid(2, 2) },
   ],
+  // Large ones with fewer tiles free at a time (decision of 25.11): rows of six, the layers above shifted by half a tile.
+  dome: [
+    { dx: 0, dy: 0, rows: grid(6, 5) },
+    { dx: 1, dy: 1, rows: ['.###.', '#####', '#####', '.###.'] },
+    { dx: 3, dy: 2, rows: grid(3, 2) },
+  ],
+  slope: [
+    { dx: 0, dy: 0, rows: grid(6, 4) },
+    { dx: 1, dy: 1, rows: grid(5, 3) },
+    { dx: 2, dy: 2, rows: grid(4, 2) },
+    { dx: 3, dy: 3, rows: grid(3, 1) },
+  ],
+  ridge: [
+    { dx: 0, dy: 0, rows: grid(6, 4) },
+    { dx: 1, dy: 0, rows: grid(5, 4) },
+    { dx: 2, dy: 1, rows: grid(4, 3) },
+  ],
   // ---------- the biggest: 60 tiles and more ----------
+  peak: [
+    { dx: 0, dy: 0, rows: grid(6, 6) },
+    { dx: 1, dy: 1, rows: grid(5, 4) },
+    { dx: 2, dy: 2, rows: grid(4, 3) },
+    { dx: 3, dy: 3, rows: grid(3, 2) },
+  ],
   ziggurat: [
     { dx: 0, dy: 0, rows: grid(6, 5) },
     { dx: 1, dy: 1, rows: grid(5, 4) },

@@ -160,18 +160,18 @@ describe('levels and the layout of the day', () => {
     const size = (n: number) => makeLevel(n).kinds.length;
     for (const [n, step] of [
       [1, 0],
-      [10, 0],
-      [11, 1],
-      [30, 1],
-      [31, 2],
-      [80, 2],
-      [81, 3],
+      [3, 0],
+      [4, 1],
+      [10, 1],
+      [11, 2],
+      [30, 2],
+      [31, 3],
       [500, 3],
     ] as const) {
       expect(stepOf(n)).toBe(PAIRS.levels[step]);
       expect(PAIRS.levels[step]!.layouts).toContain(makeLevel(n).layout);
     }
-    expect(Math.max(...[1, 2, 3, 4, 5].map(size))).toBeLessThan(Math.min(...[31, 32, 33, 34, 35].map(size)));
+    expect(Math.max(...[1, 2, 3].map(size))).toBeLessThan(Math.min(...[31, 32, 33, 34, 35].map(size)));
   });
 
   it('the same level and the same day give the same game; other days other ones', () => {
@@ -189,7 +189,7 @@ describe('levels and the layout of the day', () => {
   it('levels use the layouts of their step in turns of their seeds: the first ten more than one, later every one', () => {
     const first = new Set(Array.from({ length: 10 }, (_, i) => makeLevel(i + 1).layout));
     expect(first.size).toBeGreaterThanOrEqual(3);
-    const later = new Set(Array.from({ length: 30 }, (_, i) => makeLevel(81 + i).layout));
-    expect(later.size).toBe(stepOf(81).layouts.length);
+    const later = new Set(Array.from({ length: 30 }, (_, i) => makeLevel(31 + i).layout));
+    expect(later.size).toBe(stepOf(31).layouts.length);
   });
 });

@@ -53,6 +53,7 @@ games/words/core/field.ts, field-solve.ts, field-play.ts  «Поле слів»:
 games/words/meanings/<мова>.txt  короткі значення слів кросворду (власний текст: слово, табуляція, значення); core/meanings.ts — читання, meanings.test.ts — правила тексту й повнота для рівнів проби
 games/words/dict/<мова>/  списки слів (answers — для кросворда, accepted — усі, що зараховуються), NOTICE і ліцензії; окремі файли (так хочуть ліцензії); руками не правити — їх складає scripts/words/
 games/pairs/core/layouts.ts, table.ts  розклади «Пар» (шари, зсув на пів плитки); які плитки вільні
+games/pairs/core/difficulty.ts, level.ts  як часто випадковий гравець очищує стіл (складність роздачі); рівні й розклад дня: з кількох роздач — та, що пасує рівню
 games/pairs/core/deal.ts, solve.ts, play.ts  розклад, що завжди проходиться (будується від кінця); розв'язувач для підказки; хід гри: пари, скасування, перемішування, підказка
 games/pairs/art/          малюнки плиток кодом (SVG): palette.ts — усі кольори, tiles.ts — 24 малюнки (символи `pairs-<малюнок>`)
 games/solitaire/core/klondike.ts, tap.ts  правила Косинки (колода й скид — один ряд `talon`), куди йде карта від торкання
