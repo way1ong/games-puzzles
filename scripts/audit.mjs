@@ -13,7 +13,7 @@ import { preview } from 'vite';
 import { auditApps } from './audit/apps.mjs';
 import { createAxe, createReport } from './audit/common.mjs';
 
-const GAMES = ['blocks', 'detective', 'sudoku', 'words'];
+const GAMES = ['blocks', 'detective', 'pairs', 'sudoku', 'words'];
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const option = (name) => {

@@ -1,0 +1,155 @@
+{
+  "meta": {
+    "langName": "English",
+    "title": "Pairs — a calm tile game without ads",
+    "description": "Take pairs of matching tiles off the table until it is empty. Every layout can be finished; hints, undo and shuffle are free. No ads, no accounts, no tracking; works offline."
+  },
+  "app": {
+    "name": "Pairs",
+    "menu": "Menu",
+    "back": "Back to start",
+    "close": "Close"
+  },
+  "home": {
+    "play": "Play",
+    "start": "Start",
+    "continue": "Continue",
+    "done": "Done",
+    "passed": {
+      "one": "{n} level passed",
+      "other": "{n} levels passed"
+    },
+    "first": "Take pairs of the same picture off the table until it is empty.",
+    "dailyTitle": "Layout of the day · {date}",
+    "dailyNote": "The same for everyone today",
+    "streak": {
+      "one": "{n} day in a row",
+      "other": "{n} days in a row"
+    }
+  },
+  "game": {
+    "level": "Level {n}",
+    "daily": "Layout of the day",
+    "board": "Table of tiles",
+    "left": "Tiles: {n}",
+    "pairs": "pairs to take: {n}",
+    "noPairs": "no pairs to take",
+    "tip": "Tap two free tiles with the same picture. A tile is free when nothing lies on it and its left or right side is open.",
+    "stuck": "No pairs to take. Shuffle the tiles or undo a move.",
+    "tileFree": "{picture}, free",
+    "tileHint": "{picture}, free, hint",
+    "tileBlocked": "{picture}, blocked",
+    "chosen": "{picture} chosen",
+    "unchosen": "Choice removed",
+    "covered": "{picture} is blocked: another tile lies on it.",
+    "sides": "{picture} is blocked on both sides.",
+    "taken": "Pair taken: {picture}.",
+    "undone": "Move undone.",
+    "undoneMany": {
+      "one": "{n} move undone.",
+      "other": "{n} moves undone."
+    },
+    "nothingToUndo": "Nothing to undo.",
+    "shuffled": "Tiles shuffled.",
+    "shuffleFailed": "The tiles could not be shuffled. Undo a move and try again."
+  },
+  "tools": {
+    "label": "Tools",
+    "hint": "Hint",
+    "undo": "Undo",
+    "shuffle": "Shuffle"
+  },
+  "hint": {
+    "pair": "Take the two highlighted tiles ({picture}): after them the table can still be cleared.",
+    "any": "The highlighted tiles ({picture}) can be taken; the game could not look further ahead.",
+    "stuck": {
+      "one": "From here the table cannot be cleared. Undo {n} move, or shuffle the tiles.",
+      "other": "From here the table cannot be cleared. Undo {n} moves, or shuffle the tiles."
+    },
+    "stuckFar": "From here the table cannot be cleared. Shuffle the tiles, or undo several moves.",
+    "undoMoves": {
+      "one": "Undo {n} move",
+      "other": "Undo {n} moves"
+    }
+  },
+  "end": {
+    "title": "Layout cleared!",
+    "clean": "Without hints or shuffles",
+    "hints": "Hints: {n}",
+    "shuffles": "Shuffles: {n}",
+    "time": "Time: {time}",
+    "streak": {
+      "one": "Layouts of the day: {n} day in a row",
+      "other": "Layouts of the day: {n} days in a row"
+    },
+    "next": "Next level",
+    "home": "To the start",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "shareClean": "{name} · {date}: cleared without hints or shuffles",
+    "share": "{name} · {date}: cleared · hints: {hints} · shuffles: {shuffles}"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "play": "Playing",
+    "dim": "Shade the blocked tiles",
+    "pairs": "Show how many pairs can be taken",
+    "time": "Show the time",
+    "look": "Look",
+    "big": "Large tiles and buttons",
+    "theme": "Theme",
+    "themeSystem": "As the system",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap “Share”, then add the game to the Home Screen.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear levels, results and statistics",
+    "resetDone": "Progress cleared"
+  },
+  "stats": {
+    "title": "Statistics",
+    "passed": "Passed",
+    "clean": "Without hints or shuffles",
+    "levels": "Levels",
+    "days": "Layouts of the day",
+    "longest": {
+      "one": "Longest streak: {n} day",
+      "other": "Longest streak: {n} days"
+    }
+  },
+  "about": {
+    "title": "About the game",
+    "rules": "Tiles lie on the table in layers. A tile is free when nothing lies on it, not even by a corner, and its left or right side is open. Tap two free tiles with the same picture and they are taken off. The layout is done when the table is empty. Every layout can be finished; hints, undo and shuffle have no limits.",
+    "text": "Pairs without ads, accounts or tracking. Progress stays on this device. Works offline.",
+    "keys": "Keyboard: arrows — move between free tiles, Enter or Space — choose, H — hint, Ctrl+Z — undo, S — shuffle, Esc — remove the choice or close.",
+    "credit": "Made by way1ong"
+  },
+  "pictures": {
+    "apple": "Apple",
+    "pear": "Pear",
+    "cherries": "Cherries",
+    "lemon": "Lemon",
+    "grapes": "Grapes",
+    "strawberry": "Strawberry",
+    "carrot": "Carrot",
+    "mushroom": "Mushroom",
+    "cucumber": "Cucumber",
+    "key": "Key",
+    "bell": "Bell",
+    "cup": "Mug",
+    "umbrella": "Umbrella",
+    "house": "House",
+    "boat": "Boat",
+    "star": "Star",
+    "moon": "Moon",
+    "sun": "Sun",
+    "heart": "Heart",
+    "fish": "Fish",
+    "flower": "Flower",
+    "leaf": "Leaf",
+    "tree": "Fir tree",
+    "drop": "Drop"
+  }
+}
