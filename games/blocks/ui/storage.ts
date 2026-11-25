@@ -22,7 +22,7 @@ function write(key: string, value: unknown): void {
   }
 }
 
-/** The game's look (decision of 25.11): drawn (a wooden board, wooden blocks) or simple, as at first. */
+/** The game's look (decisions of 25.11): simple, as at first (the default), or drawn (a wooden board, wooden blocks). */
 export type Look = 'drawn' | 'simple';
 
 export interface Settings {
@@ -38,7 +38,7 @@ export function loadSettings(): Settings {
     lang: typeof s.lang === 'string' ? s.lang : null,
     big: s.big === true,
     vibration: s.vibration === true,
-    look: s.look === 'simple' ? 'simple' : 'drawn',
+    look: s.look === 'drawn' ? 'drawn' : 'simple',
   };
 }
 
