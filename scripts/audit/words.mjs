@@ -1,6 +1,6 @@
-// Browser audit of Words: every size and look — the start screen, a level, a word made by sliding, the hint
-// window, choosing a cell for a hint, the menu with the large letters, the daily puzzle; large system text;
-// the keyboard; one level played to the end; a level kept when the language is switched there and back; phones on
+// Browser audit of Words: every size and look — the start screen, a level, a word made by sliding and what it
+// means (a tap on it), the hint window, choosing a cell for a hint, the menu with the large letters, the daily puzzle; large system text;
+// the keyboard; one level played to the end, its words' meanings opened by the keyboard; a level kept when the language is switched there and back; phones on
 // their side — nothing to scroll in play, the wheel standing still. The Word Field (second mode): every size and
 // look and phones on their side — a field, a word placed, a hint, the menu, the daily field; large text; the
 // keyboard.
@@ -135,6 +135,11 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await slide(page, words[0]);
       await page.waitForTimeout(50);
       await check(page, `${label} word found`);
+      // what the found word means (docs/words/SPEC.md, "Значення слів"): a tap on one of its cells
+      await page.locator('.cw-cell.is-found').first().click();
+      await page.waitForSelector('dialog[open] .meanings', { timeout: 5000 }).catch(() => fail(`words ${label}: no meaning window after a tap on a found word`));
+      await check(page, `${label} meaning`);
+      await page.locator('dialog[open] .dialog__actions .btn--primary').click();
       await page.locator('.info__tools .tool').last().click();
       await check(page, `${label} hint window`);
       await page.locator('.hint-option').nth(1).click();
@@ -286,6 +291,15 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     }
     await page.waitForSelector('dialog[open]', { timeout: 5000 }).catch(() => fail('words keyboard: no "level done" window'));
     await check(page, 'level done');
+    // the level's words with their meanings, folded under a line that opens them
+    const fold = page.locator('dialog[open] .end-words summary');
+    if (!(await fold.count())) fail('words keyboard: no "what the words mean" in the "level done" window');
+    else {
+      await fold.focus();
+      await page.keyboard.press('Enter');
+      if (!(await page.locator('dialog[open] .end-words[open] .meanings dd').count())) fail('words keyboard: the meanings did not open by the keyboard');
+      await check(page, 'level done, the meanings open');
+    }
     const reached = await page.evaluate((key) => localStorage.getItem(key), `${STORE}reached:en:tiles`);
     if (reached !== '2') fail(`words keyboard: the next level is not 2 (${reached})`);
     if (shots) await page.screenshot({ path: join(shots, 'words-done.png') });

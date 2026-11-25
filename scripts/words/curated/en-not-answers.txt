@@ -4,3 +4,47 @@ sic
 ere
 nee
 tao
+# The words of levels 1–30, checked for the trial word meanings (25.11): a crossword word is one an adult
+# speaker knows without a dictionary. These stay accepted as bonus words.
+# archaic or only in set phrases
+fro
+thy
+thee
+nigh
+wan
+# narrow terms, slang, short forms
+mesa
+emo
+eta
+wee
+stat
+bas
+nom
+tor
+nit
+sine
+yen
+# second round of the same check
+ado
+ding
+don
+ethos
+lam
+sec
+tad
+whit
+# the levels of the other tile setting (it seeds the levels of every language)
+aye
+chum
+meg
+meh
+nay
+tat
+tho
+times
+yea
+err
+hank
+khan
+lee
+lei

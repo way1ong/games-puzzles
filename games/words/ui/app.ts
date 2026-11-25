@@ -7,6 +7,7 @@ import { h } from '../../../shared/ui/dom.ts';
 import { WORDS, WORD_LANGS, type WordLang } from '../config.ts';
 import type { Dictionary } from '../core/dictionary.ts';
 import { makeDaily, makeLevel } from '../core/level.ts';
+import { meaningOf } from '../core/meanings.ts';
 import { addTime, missing, newPlay, openCell, openFirstLetter, openWord, tryWord, type Play, type Verdict } from '../core/play.ts';
 import { streakWithGrace } from '../core/streak.ts';
 import { typeKey, type Typing } from '../core/typing.ts';
@@ -19,6 +20,8 @@ import { createHintDialog } from './hint-dialog.ts';
 import { homeView } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
 import { backSign, bonusSign, checkSign, clearSign, hintSign, reportSign, shuffleSign } from './icons.ts';
+import { createMeaningDialog, meaningList, type WordMeaning } from './meaning-dialog.ts';
+import { loadMeanings } from './meanings-load.ts';
 import { createMenuDialog } from './menu-dialog.ts';
 import { closeRoute, currentRoute, openRoute, watchRoute } from './route.ts';
 import { playSound, type SoundKind } from './sound.ts';
@@ -83,6 +86,7 @@ export function startApp(root: HTMLElement): void {
   const endDialog = createEndDialog();
   const hintDialog = createHintDialog();
   const bonusDialog = createBonusDialog();
+  const meaningDialog = createMeaningDialog();
   /** The Word Field screen (second mode), when one of its routes is open. */
   let fieldOn: FieldScreenName | null = null;
   const field = createFieldScreen({
@@ -115,7 +119,7 @@ export function startApp(root: HTMLElement): void {
   const bonusCount = h('span', { class: 'tool__count' });
   const bonusBtn = h('button', { class: 'tool', type: 'button' }, bonusSign(), h('span', { class: 'tool__label' }), bonusCount);
   const info = h('div', { class: 'info' }, h('p', { class: 'info__text' }, leftEl, timeEl), h('div', { class: 'info__tools' }, bonusBtn, hintBtn));
-  const crossword = createCrosswordView(onCell);
+  const crossword = createCrosswordView(onCell, showMeanings);
   crossword.el.style.setProperty('--lit-ms', `${LIGHT_MS}ms`);
   const chooseNote = h('p', { class: 'choose-note' });
   const chooseCancel = h('button', { class: 'btn btn--ghost', type: 'button' });
@@ -168,6 +172,7 @@ export function startApp(root: HTMLElement): void {
       endDialog.el,
       hintDialog.el,
       bonusDialog.el,
+      meaningDialog.el,
     ),
   );
 
@@ -275,6 +280,7 @@ export function startApp(root: HTMLElement): void {
       .then((loaded) => {
         if (mine !== generation) return;
         dictionary = loaded;
+        void loadMeanings(lang); // ready by the time a word is tapped or the level ends
         // Level-making takes a moment the first time: after the "making the level" line is drawn.
         window.setTimeout(() => {
           if (mine !== generation) return;
@@ -557,18 +563,32 @@ export function startApp(root: HTMLElement): void {
       share = { label: d.end.copy, done: d.end.copied, text: WORDS.links.game ? `${text}\n${WORDS.links.game}` : text };
     }
     const home = { label: d.end.home, action: closeRoute };
-    window.setTimeout(
-      () =>
+    const words = p.level.words.map((placed) => placed.word.text);
+    const wordsLang = lang;
+    window.setTimeout(() => {
+      void loadMeanings(wordsLang).then((meanings) => {
+        const known: WordMeaning[] = words.map((word) => ({ word, meaning: meaningOf(meanings, word) }));
         endDialog.open({
           title: daily ? d.end.dailyTitle : fmt(d.end.title, { n: p.level.number ?? 0 }),
           highlight: null,
           lines,
+          // only where some of the words have meanings already (docs/words/SPEC.md, "Значення слів")
+          words: known.some((k) => k.meaning) ? { label: d.end.meanings, list: meaningList(known, d, wordsLang) } : null,
           share,
           secondary: daily ? null : home,
           primary: daily ? home : { label: d.end.next, action: nextLevel },
-        }),
-      reducedMotion() ? 0 : LIGHT_MS,
-    );
+        });
+      });
+    }, reducedMotion() ? 0 : LIGHT_MS);
+  }
+
+  /** A found word tapped in the crossword: what it means — or the two words through a crossing cell. */
+  function showMeanings(words: string[]): void {
+    const wordsLang = lang;
+    void loadMeanings(wordsLang).then((meanings) => {
+      if (wordsLang !== lang || !play) return;
+      meaningDialog.open(d, words.map((word) => ({ word, meaning: meaningOf(meanings, word) })), wordsLang);
+    });
   }
 
   function nextLevel(): void {
@@ -625,7 +645,7 @@ export function startApp(root: HTMLElement): void {
 
   // ---------- keys ----------
   document.addEventListener('keydown', (event) => {
-    if (menuDialog.el.open || endDialog.el.open || hintDialog.el.open || bonusDialog.el.open) return;
+    if (menuDialog.el.open || endDialog.el.open || hintDialog.el.open || bonusDialog.el.open || meaningDialog.el.open) return;
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (fieldOn) {
       field.key(event);

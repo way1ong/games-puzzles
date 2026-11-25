@@ -1,2 +1,30 @@
 # odd as crossword words
 tao
+# The words of levels 1–30, checked for the trial word meanings (25.11): a crossword word is one an adult
+# speaker knows without a dictionary; to confirm with a Hungarian speaker. These stay accepted as bonus words.
+# rare, literary or dialect forms
+óva
+hál
+esz
+taj
+som
+tat
+lat
+# foreign words, peoples, names, religion
+jen
+inka
+mari
+tóra
+zsidó
+stop
+# slang
+kan
+# second round of the same check (peoples' names that are common adjectives stay: arab, kínai, római, szláv, ukrán)
+aga
+kapta
+kun
+mór
+roma
+tor
+var
+varga

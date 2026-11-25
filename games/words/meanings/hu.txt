@@ -1,0 +1,185 @@
+# A keresztrejtvény szavainak rövid jelentése (docs/words/SPEC.md, «Значення слів»): szó, tabulátor, jelentés.
+# A way1ong saját szövege, nem más szótárakból. Próbaváltozat (25.11): az 1–30. szint szavai.
+akar	Szeretne valamit, kíván valamit.
+akár	Mindegy, melyik; azt is jelentheti: még ... is.
+alig	Csak nagyon kevéssé, éppen hogy.
+alt	Mély női vagy gyermekhang; a kórus ilyen szólama.
+alvó	Aki vagy ami éppen alszik.
+apu	Apa, ahogy a gyerek becézve szólítja.
+arab	Közel-keleti és észak-afrikai nép tagja; e nép nyelve.
+belső	Valaminek a belsejében lévő, nem kívül található.
+beszél	Szavakkal mond valamit, társalog.
+bolt	Üzlet, ahol árut lehet vásárolni.
+bot	Hosszú, vékony fadarab, amire támaszkodni lehet; számítógépes program is.
+bél	Az emésztőrendszer hosszú, cső alakú része; a kenyér puha belseje is.
+bír	Elég erős valamihez, el tud viselni valamit.
+bíró	Aki a bíróságon ítélkezik; sportban a játékvezető.
+csal	Becsap valakit, hogy előnyhöz jusson; nem tartja be a szabályokat.
+család	A szülők és gyermekeik, a rokonok közössége.
+dal	Énekelt zenemű, ének.
+dara	Durvára őrölt gabona, például búzából; ebből készül a tejbegríz.
+darab	Valaminek egy része, egy egység belőle; színpadi mű is.
+egér	Kis, szürke rágcsáló; a számítógép kézi irányítóeszköze is.
+eke	Mezőgazdasági eszköz, amellyel a földet szántják.
+elem	Valaminek egy alkotórésze; áramforrás is, például a zseblámpában.
+elme	Az ember gondolkodó képessége, értelme.
+emel	Valamit magasabbra visz vagy tesz.
+eső	Égből hulló vízcseppek.
+fiú	Férfi gyermek; valakinek a fia.
+fúj	Erősen kiengedi a levegőt a száján; a szél is így mozog.
+gaz	Haszontalan, kiirtandó növény a kertben; régiesen gonosz.
+hal	Vízben élő, kopoltyúval lélegző állat.
+hall	Hangot érzékel a fülével; előcsarnok is.
+halál	Az élet vége.
+holt	Halott, élettelen.
+hotel	Szálloda.
+hála	Köszönet érzése azért, amit valaki tett.
+ifjú	Fiatal; fiatal ember.
+iga	Járom, amellyel az állatokat befogják; átvitt értelemben elnyomás.
+igaz	A valóságnak megfelelő; becsületes.
+igazi	Valódi, nem hamis.
+ima	Istenhez szóló kérés vagy köszönet; imádság.
+int	Kézzel jelt ad, például köszönésként; figyelmeztet.
+irány	Az az út vagy oldal, amerre valami halad.
+kap	Valaki ad neki valamit, és ő elfogadja.
+kapu	Nagy ajtó a kerítésen vagy a falon; sportban a gól helye.
+kar	Testrész a vállától a csuklóig; egyetemi szervezeti egység is.
+kel	Felkel az ágyból; a nap is így jelenik meg reggel.
+kelet	Az az égtáj, ahol a nap felkel.
+kelt	Felébreszt valakit; érzést vált ki, például reményt.
+kor	Életkor; egy történelmi időszak is.
+korán	Hamar, a szokásosnál előbb.
+kupa	Serleg, amelyet a győztes kap; sportverseny is.
+kár	Veszteség, rongálás; sajnálatos dolog.
+kép	Festmény, rajz vagy fénykép.
+képes	Tud valamit, alkalmas rá; képekkel díszített is.
+kés	Éles pengéjű eszköz vágásra.
+kész	Befejezett; felkészült, várja, hogy kezdhessen.
+készül	Felkészül valamire; éppen elkészítés alatt áll.
+kéz	A kar vége az ujjakkal.
+köt	Csomóval összeerősít; fonalból kötőtűvel ruhát készít.
+köz	Keskeny utca, átjáró; két dolog közötti hely.
+közép	Valaminek a központi része, a széleitől egyenlő távolságra.
+lakás	Otthon, ahol valaki él egy házban.
+les	Rejtekhely a vadász számára; titkon figyel valamit.
+lett	Valamivé vált; Lettországhoz tartozó.
+liga	Sportbajnokság, amelyben csapatok mérkőznek; szövetség is.
+láda	Nagy, fedeles doboz fából vagy fémből.
+lét	Létezés, élet.
+mai	A mostani napra vonatkozó, ma történő.
+mar	Harap, csíp; erős anyag roncsol, például a sav.
+meleg	Kellemesen langyos vagy forró, nem hideg.
+mos	Vízzel tisztít valamit.
+más	Nem ugyanaz, hanem egy másik.
+mély	Messze lefelé nyúló, nem sekély; nagyon erős, például érzés.
+mér	Megállapítja valaminek a nagyságát, súlyát vagy idejét.
+méret	Valaminek a nagysága, hossza, szélessége.
+mész	Fehér építőanyag, amellyel a falat meszelik.
+méter	A hosszúság alapegysége.
+nyár	A legmelegebb évszak, a tavasz és az ősz között.
+nyári	A nyárhoz tartozó, nyáron történő.
+nép	Egy ország vagy nemzet lakossága; emberek.
+néz	A szemével figyel valamit.
+olt	Tüzet elfojt; oltóanyagot ad betegség ellen.
+por	Apró szemcsék, amelyek a bútorokra rakódnak.
+pár	Kettő, ami összetartozik; néhány.
+párt	Politikai szervezet, amely választáson indul.
+pék	Aki kenyeret és péksüteményt süt.
+pénz	Fizetőeszköz: érmék és bankjegyek.
+rab	Fogoly, akit bezártak.
+rak	Valahová tesz, helyez valamit.
+rossz	Nem jó; hibás vagy gonosz.
+rost	Vékony szál a növényekben, az izmokban vagy a szövetekben.
+rozs	Gabonanövény, amelyből sötét kenyér készül.
+rák	Ollós vízi állat; súlyos betegség is.
+rév	Átkelőhely a folyón, ahol komp jár; kikötő.
+római	Rómából való vagy Rómához tartozó.
+sakál	Rókára hasonlító ragadozó állat, Afrikában és Ázsiában él.
+seb	Sérülés a bőrön vagy a testen.
+sima	Egyenletes felületű, nem érdes vagy göröngyös.
+skála	Fokozatok sora, például egy hőmérőn; hangsor is.
+sor	Egymás mögé vagy mellé állított dolgok vagy emberek; a soron következés is.
+sors	Ami az emberrel az életben történik; végzet.
+sort	Rövid nadrág.
+sport	Testmozgás és verseny, például futás vagy labdarúgás.
+szab	Ruhaanyagot minta szerint kivág; feltételt állít.
+szabó	Aki ruhát varr.
+szel	Vágással szeletekre oszt, például kenyeret.
+szem	A látás szerve.
+személy	Egy ember, egyén.
+szent	Isteni, megszentelt; az egyház által tisztelt ember.
+szint	Magasság, fok; egy épület emelete is.
+szinte	Majdnem, csaknem.
+szám	Mennyiséget kifejező jel; zeneszám is.
+számos	Sok, nagy számú.
+szék	Ülőbútor támlával.
+szél	Mozgó levegő; valaminek a pereme is.
+széles	Tágas, nem keskeny.
+szó	A beszéd értelmes egysége.
+szól	Beszél, mond valamit; hang hallatszik.
+szóval	Tehát, vagyis; röviden.
+szül	Gyermeket hoz világra.
+sál	Hosszú, meleg kendő a nyak körül.
+sár	Nedves, ragacsos föld.
+sáv	Hosszú, keskeny csík; az út egyik része, ahol az autók haladnak.
+sír	Könnyezik a bánattól; a halott nyughelye is.
+sül	Hő hatására elkészül, például a kenyér a sütőben.
+sült	Sütéssel készült hús vagy étel.
+süt	Sütőben ételt készít; a nap is így ad fényt és meleget.
+talál	Rálel valamire, amit keresett.
+talán	Lehet, hogy; valószínűleg.
+tan	Tanítás, elmélet; tudományos tétel.
+tart	Kézben fog valamit; valameddig eltart.
+tartó	Eszköz, amiben vagy amin valamit tárolnak vagy rögzítenek.
+tele	Teljesen megtöltött, nincs benne több hely.
+telek	Földterület, amelyre házat lehet építeni.
+telt	Kerek, gömbölyded; olyan, amiben minden hely foglalt.
+tenisz	Labdajáték ütővel, háló fölött.
+tol	Maga előtt mozgat, nyom valamit.
+tál	Mély, széles edény ételnek.
+tán	Talán, lehet hogy (választékos szó).
+tár	Raktár, gyűjtemény; a fegyver töltényeket tartó része.
+táv	Távolság, amit meg kell tenni.
+távol	Messze, nagy távolságra.
+tél	A leghidegebb évszak.
+tök	Nagy, kerek, narancssárga zöldség.
+tölt	Folyadékot önt egy edénybe; időt eltölt.
+tör	Darabokra zúz, eltör.
+török	Törökországból való; ilyen ember vagy nyelv.
+való	Igazi, létező; valamire alkalmas.
+volt	A múltban létezett; egykori.
+vált	Megváltozik valamivé; pénzt cserél más pénznemre.
+vár	Erődített épület; vagy türelmesen időzik, amíg valami történik.
+város	Nagy település, sok lakossal.
+vég	Valaminek a legutolsó része, befejezése.
+végre	Hosszú várakozás után, végül.
+vér	A testben keringő piros folyadék.
+zab	Gabonanövény; a lovak kedvelt eledele, belőle készül a müzli is.
+zár	Szerkezet, amellyel ajtót lehet lezárni; becsuk.
+zárt	Becsukott, nem nyitott.
+áll	A lábán egyenesen van; az arc alsó része is.
+állat	Élőlény, amely mozog és táplálkozik, de nem ember.
+által	Valaki vagy valami révén, segítségével.
+árny	Árnyék; homályos alak.
+árok	Hosszú, mély vájat a földben, például az út mellett.
+árt	Kárt okoz, rosszat tesz.
+ásó	Kerti szerszám a föld felásásához.
+éger	Nedves helyeken növő lombos fa.
+ékes	Díszes, szép; választékos, például beszéd.
+éles	Jól vágó; tiszta, pontos.
+élet	Az élőlények létezése a születéstől a halálig.
+érem	Kitüntetés, amelyet versenyen nyernek; pénzérme is.
+érme	Fémpénz.
+ész	Értelem, gondolkodási képesség.
+étel	Amit eszünk.
+éter	Könnyen párolgó, erős szagú folyadék; a rádióhullámok közege is.
+írás	Betűk leírása; leírt szöveg.
+író	Aki könyveket ír.
+óra	Időmérő eszköz; az idő egysége; tanítási foglalkozás is.
+órai	A tanórán történő; az órához kapcsolódó.
+órás	Aki órákat javít; valahány óráig tartó.
+óta	Attól az időtől kezdve.
+ökör	Kiherélt bika, igavonó állat.
+ölt	Öltéssel varr; ruhát vesz fel; a nyelvét kinyújtja.
+örök	Soha véget nem érő, mindig tartó.
+ötlet	Hirtelen gondolat, javaslat.

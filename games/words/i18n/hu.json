@@ -103,6 +103,10 @@
     "title": "Bónuszszavak",
     "none": "Még nincs bónuszszó. Itt gyűlnek a betűkből kirakható létező szavak, amelyek nincsenek a rejtvényben."
   },
+  "meaning": {
+    "title": "Jelentés",
+    "none": "Ennek a szónak még nincs leírása."
+  },
   "end": {
     "title": "{n}. szint teljesítve!",
     "dailyTitle": "A nap feladványa megoldva!",
@@ -132,7 +136,8 @@
     "shareHints": {
       "one": "{name} · {date}: megoldva {n} tippel",
       "other": "{name} · {date}: megoldva {n} tippel"
-    }
+    },
+    "meanings": "Mit jelentenek a szavak?"
   },
   "settings": {
     "title": "Beállítások",
@@ -193,6 +198,7 @@
     "dictionariesNote": "A szólisták forrásai (szerzők és licencek):",
     "licence": "A GNU LGPL 2.1 licenc teljes szövege",
     "credit": "Készítette: way1ong",
-    "fieldRules": "Betűmező: az egész mező rejtett szavakra bomlik; egy szó szomszédos mezőkön halad felfelé, lefelé, balra vagy jobbra, átlósan nem. A játék egy másik létező szót is elfogad, ha a mező többi része még kirakható szavakból."
+    "fieldRules": "Betűmező: az egész mező rejtett szavakra bomlik; egy szó szomszédos mezőkön halad felfelé, lefelé, balra vagy jobbra, átlósan nem. A játék egy másik létező szót is elfogad, ha a mező többi része még kirakható szavakból.",
+    "meanings": "Érintse meg a keresztrejtvény egy kitalált szavát, és megtudja, mit jelent. Egyelőre az 1–{n}. szint szavainak van leírása."
   }
 }

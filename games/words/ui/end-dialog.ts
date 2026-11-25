@@ -1,4 +1,5 @@
-// End of a level: words, bonus words, hints, time; for the daily puzzle — the streak and "copy result".
+// End of a level: words, bonus words, hints, time, what the words mean; for the daily puzzle — the streak and "copy
+// result".
 import { copyControl, type ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
 
@@ -10,6 +11,8 @@ interface Action {
 export interface EndContent {
   title: string;
   lines: string[];
+  /** The level's words with their meanings, folded under a line that opens them (docs/words/SPEC.md, "Значення слів"). */
+  words?: { label: string; list: HTMLElement } | null;
   highlight: string | null;
   share: ShareText | null;
   /** A quieter second button (e.g. "Close" next to "New game"). */
@@ -35,6 +38,7 @@ export function createEndDialog(): { el: HTMLDialogElement; open(content: EndCon
       const body = h('div', { class: 'dialog__body' }, h('h2', { id: 'end-title' }, content.title));
       if (content.highlight) body.append(h('p', { class: 'dialog__highlight' }, content.highlight));
       for (const line of content.lines) body.append(h('p', {}, line));
+      if (content.words) body.append(h('details', { class: 'end-words' }, h('summary', {}, content.words.label), content.words.list));
       const actions = h('div', { class: 'dialog__actions' });
       if (content.share) {
         const copy = copyControl(content.share);
