@@ -1,0 +1,24 @@
+/*
+ * Solitaire as a claude.ai test page (scripts/claude-page.mjs adds this file; the game itself never loads it).
+ * The page there sits in a frame that already pads the top and bottom screen edges (safe areas) and sets
+ * the page height; the side gutter is at least 16px.
+ */
+html,
+body,
+#app {
+  height: 100%;
+}
+
+.app,
+html.big .app {
+  min-height: 100%;
+  padding-block: 0.5rem 0.75rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
+  .app {
+    height: 100%;
+  }
+}

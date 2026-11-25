@@ -1,0 +1,84 @@
+/*
+ * Solitaire: the only file with colour values. Light and dark themes follow the system unless the player chooses one
+ * in the settings; a page that hosts the game (e.g. a claude.ai test page) may force one too — both with
+ * data-theme="light" | "dark" on <html>. A card is a thing on the table: its face stays light in both themes, and its
+ * value and suit are read on it as text (docs/solitaire/SPEC.md, "Карти").
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* The page is the table. */
+  --bg: #dfe9e0;
+  --surface: #ffffff;
+  --text: #17231b;
+  --muted: #4a5850;
+  --line: #6f7d74;
+  --accent: #1f6a45;
+  --on-accent: #ffffff;
+  --focus: #1f4f99;
+
+  /* Cards: the face (plain, shown by a hint, lifted by a finger), the edge, the back and its pattern; an empty place. */
+  --card-face: #fffdf7;
+  --card-hint: #ffe9a8;
+  --card-lifted: #dcecf8;
+  --card-line: #85806f;
+  --card-back: #2e5f8a;
+  --card-back-line: #9cc0e0;
+  --slot-line: #6c7a70;
+  /* Suits: two colours, or four (a setting). */
+  --suit-black: #1c1f22;
+  --suit-red: #b3202a;
+  --suit-blue: #1d4fa8;
+  --suit-green: #1d6b35;
+  /* Marks on a card (both themes, the face is light): the hint's frame, the keys' focus. */
+  --hint-ring: #8a4f00;
+  --card-focus: #1f4f99;
+  /* Where a dragged card would land. */
+  --drop: #1f6a45;
+
+  --backdrop: rgb(20 24 22 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #10231a;
+    --surface: #1b2a22;
+    --text: #e6efe9;
+    --muted: #a7b7ad;
+    --line: #6d7f75;
+    --accent: #7fd0a3;
+    --on-accent: #0b2016;
+    --focus: #9cc4ff;
+
+    --slot-line: #7f9387;
+    --drop: #7fd0a3;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+    --card-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+  }
+}
+
+/* The same dark values when the player or the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #10231a;
+  --surface: #1b2a22;
+  --text: #e6efe9;
+  --muted: #a7b7ad;
+  --line: #6d7f75;
+  --accent: #7fd0a3;
+  --on-accent: #0b2016;
+  --focus: #9cc4ff;
+
+  --slot-line: #7f9387;
+  --drop: #7fd0a3;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  --card-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+}

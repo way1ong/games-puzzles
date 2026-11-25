@@ -6,6 +6,8 @@ import { DETECTIVE } from './games/detective/config.ts';
 import detectiveEn from './games/detective/i18n/en.json' with { type: 'json' };
 import { PAIRS } from './games/pairs/config.ts';
 import pairsEn from './games/pairs/i18n/en.json' with { type: 'json' };
+import { SOLITAIRE } from './games/solitaire/config.ts';
+import solitaireEn from './games/solitaire/i18n/en.json' with { type: 'json' };
 import { SUDOKU } from './games/sudoku/config.ts';
 import sudokuEn from './games/sudoku/i18n/en.json' with { type: 'json' };
 import { WORDS } from './games/words/config.ts';
@@ -19,6 +21,7 @@ const GAMES: GameApp[] = [
   { game: 'blocks', name: BLOCKS.name, shortName: blocksEn.app.name, description: blocksEn.meta.description, lang: 'en' },
   { game: 'detective', name: DETECTIVE.name, shortName: detectiveEn.app.name, description: detectiveEn.meta.description, lang: 'en' },
   { game: 'pairs', name: PAIRS.name, shortName: pairsEn.app.name, description: pairsEn.meta.description, lang: 'en' },
+  { game: 'solitaire', name: SOLITAIRE.name, shortName: solitaireEn.app.name, description: solitaireEn.meta.description, lang: 'en' },
   { game: 'sudoku', name: SUDOKU.name, shortName: sudokuEn.app.name, description: sudokuEn.meta.description, lang: 'en' },
   { game: 'words', name: WORDS.name, shortName: wordsEn.app.name, description: wordsEn.meta.description, lang: 'en' },
 ];
