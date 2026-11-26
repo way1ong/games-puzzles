@@ -2,6 +2,7 @@
 // stage and turns touches and presses into moves. The rules themselves are in ../core (pure functions).
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { DETECTIVE } from '../config.ts';
 import { STORIES, STORY_IDS, type CaseDef, type StoryId, type Time } from '../core/cases.ts';
 import { dailyCase, searchCase } from '../core/daily.ts';
@@ -54,6 +55,8 @@ export function startApp(root: HTMLElement): void {
   const status = h('p', { class: 'status', role: 'status' });
   const personDialog = createPersonDialog();
   const menuDialog = createMenuDialog();
+  // A new version: asked on the start screen only, never in play (shared/ui/update-view.ts).
+  const updates = offerUpdates(() => !def || !progress, () => d.update);
   const main = h('main', { class: 'app' }, h('header', { class: 'top' }, backBtn, title, menuBtn), content, personDialog.el, menuDialog.el);
 
   backBtn.addEventListener('click', closeRoute);
@@ -116,6 +119,7 @@ export function startApp(root: HTMLElement): void {
     if (!def || !progress) {
       main.className = 'app app--home';
       content.replaceChildren(home());
+      updates.check();
     } else if (progress.stage === 'intro') {
       main.className = 'app app--page';
       content.replaceChildren(introView(d, lang, def, start));

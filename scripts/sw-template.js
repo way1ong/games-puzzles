@@ -24,10 +24,15 @@ self.addEventListener('install', (event) => {
           await cache.put(url, plain);
         }),
       );
-      // The running page already has its code; the new files serve from the next opening on.
-      await self.skipWaiting();
     })(),
   );
+  // A new version waits: the old one keeps serving the page in play, with all its files, until the player asks
+  // for the new one (shared/ui/update.ts). The first version of a fresh visit has nothing to wait for.
+});
+
+// The player's "Update" (TAKE_OVER in shared/ui/update.ts).
+self.addEventListener('message', (event) => {
+  if (event.data === 'way1ong:take-over') self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {

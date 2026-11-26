@@ -4,6 +4,7 @@
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { PAIRS, PICTURES } from '../config.ts';
 import { makeDaily, makeLevel } from '../core/level.ts';
 import { nearest, type Direction } from '../core/nearest.ts';
@@ -70,6 +71,8 @@ export function startApp(root: HTMLElement): void {
   const content = h('div', { class: 'content' });
   const live = h('p', { class: 'visually-hidden', 'aria-live': 'polite' });
   const menuDialog = createMenuDialog();
+  // A new version: asked on the start screen only, never in play (shared/ui/update-view.ts).
+  const updates = offerUpdates(() => !isSlot(currentRoute()), () => d.update);
   const endDialog = createEndDialog();
 
   const infoText = h('span', { class: 'info__text' });
@@ -219,6 +222,7 @@ export function startApp(root: HTMLElement): void {
         (s) => openRoute(s),
       ),
     );
+    updates.check();
   }
 
   function renderGame(): void {

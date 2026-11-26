@@ -3,6 +3,7 @@
 // ../core (pure functions).
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { LEVELS, SUDOKU, type Level } from '../config.ts';
 import { dailySeed } from '../core/daily.ts';
@@ -102,6 +103,8 @@ export function startApp(root: HTMLElement): void {
   const content = h('div', { class: 'content' });
   const live = h('p', { class: 'visually-hidden', 'aria-live': 'polite' });
   const menuDialog = createMenuDialog();
+  // A new version: asked on the start screen only, never in play (shared/ui/update-view.ts).
+  const updates = offerUpdates(() => !slotOf(currentRoute()), () => d.update);
   const endDialog = createEndDialog();
 
   const infoText = h('span', { class: 'info__text' });
@@ -297,6 +300,7 @@ export function startApp(root: HTMLElement): void {
     content.replaceChildren(
       homeView({ started, daily, date: dateText(today, 'long'), streak: streak(played, today) }, d, lang, (s) => openRoute(routeOf(s))),
     );
+    updates.check();
   }
 
   function renderGame(): void {

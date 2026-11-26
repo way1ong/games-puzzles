@@ -1,5 +1,6 @@
 // Menu: language, large mode, installing, clear progress, about the game and the "Made by way1ong" line.
 import { h } from '../../../shared/ui/dom.ts';
+import { updateLine } from '../../../shared/ui/update-view.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
 import { DETECTIVE } from '../config.ts';
 import { dict, LANGS, type Dict } from './i18n.ts';
@@ -64,6 +65,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang:
           'div',
           { class: 'dialog__body' },
           h('h2', { id: 'menu-title' }, d.settings.title),
+          updateLine(d.update),
           h('p', { class: 'dialog__label' }, d.settings.language),
           langs,
           h('label', { class: 'toggle' }, big, h('span', {}, d.settings.big)),

@@ -376,5 +376,11 @@
   },
   "actions": {
     "close": "Close"
+  },
+  "update": {
+    "title": "A new version of the game is ready",
+    "text": "The game will open again where you left off.",
+    "apply": "Update",
+    "later": "Later"
   }
 }

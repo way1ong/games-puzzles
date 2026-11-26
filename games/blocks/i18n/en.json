@@ -94,5 +94,11 @@
     "text": "A puzzle without ads, accounts or tracking. Your records stay on this device. Works offline.",
     "keys": "Keyboard: 1–3 choose a piece, arrows move it, Enter places it, R turns it, Ctrl+Z takes a move back (calm mode).",
     "credit": "Made by way1ong"
+  },
+  "update": {
+    "title": "A new version of the game is ready",
+    "text": "The game will open again where you left off.",
+    "apply": "Update",
+    "later": "Later"
   }
 }

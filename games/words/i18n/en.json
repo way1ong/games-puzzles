@@ -200,5 +200,11 @@
     "credit": "Made by way1ong",
     "fieldRules": "Word Field: the whole field splits into hidden words; a word goes through neighbouring cells up, down, left or right, never diagonally. Another real word counts too if the rest of the field can still be filled with words.",
     "meanings": "Tap a found word in the crossword to see what it means. For now, the words of levels 1–{n} have descriptions."
+  },
+  "update": {
+    "title": "A new version of the game is ready",
+    "text": "The game will open again where you left off.",
+    "apply": "Update",
+    "later": "Later"
   }
 }

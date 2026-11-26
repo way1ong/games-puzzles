@@ -1,0 +1,217 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Aknakereső – találgatás és reklám nélkül",
+    "description": "Fedjen fel minden akna nélküli cellát: a szám megmutatja, hány akna van körülötte. Minden tábla megoldható gondolkodással, találgatás nélkül; a tippek ingyenesek. Három szint és a nap táblái. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Aknakereső",
+    "menu": "Menü",
+    "back": "Vissza",
+    "close": "Bezárás"
+  },
+  "levels": {
+    "easy": "Könnyű",
+    "medium": "Közepes",
+    "hard": "Nehéz"
+  },
+  "home": {
+    "levels": "Szintek",
+    "size": {
+      "one": "{width} × {height}, {mines} akna",
+      "other": "{width} × {height}, {mines} akna"
+    },
+    "start": "Új tábla",
+    "continue": "Folytatás",
+    "dailyTitle": "A nap táblái · {date}",
+    "dailyNote": "Ma mindenkinek ugyanaz",
+    "begin": "Kezdés",
+    "started": "Folytatás",
+    "done": "Kész",
+    "streak": {
+      "one": "A nap táblái: {n} nap egymás után",
+      "other": "A nap táblái: {n} nap egymás után"
+    }
+  },
+  "game": {
+    "daily": "A nap táblája",
+    "dailyInfo": "{level} · {date}",
+    "field": "Tábla: {width} × {height}",
+    "making": "A tábla készül…",
+    "tipPlayer": "Koppintson oda, ahol kezdeni szeretne: az első hely mindig biztonságos.",
+    "tipZoom": "A táblát egy ujjal mozgathatja, kettővel nagyíthatja.",
+    "tiny": "A cellák túl kicsik a koppintáshoz: koppintson a táblára, és felnagyítja.",
+    "restarted": "A tábla elölről kezdődik.",
+    "undone": "A lépés visszavonva.",
+    "won": "A tábla kész!",
+    "opened": {
+      "one": "{n} cella felfedve",
+      "other": "{n} cella felfedve"
+    },
+    "flagOn": "Zászló kitűzve",
+    "flagOff": "Zászló levéve",
+    "nothing": "Egy szám akkor fedi fel a szomszédait, ha annyi zászló van körülötte, amennyit mutat.",
+    "newSure": "Koppintson újra az „Új tábla” gombra: ez a tábla lejátszottnak számít."
+  },
+  "themes": {
+    "mines": {
+      "name": "Aknák",
+      "left": "Aknák: {n}",
+      "number": {
+        "one": "{n} akna körülötte",
+        "other": "{n} akna körülötte"
+      },
+      "hidden": "akna",
+      "boom": "Itt akna volt.",
+      "boomRestart": "Itt akna volt. Kezdje újra ugyanezt a táblát, vagy válasszon újat.",
+      "boomDaily": "Itt akna volt. Kezdje újra a nap tábláját.",
+      "boomUndo": "Itt akna volt. Vonja vissza a lépést, és játsszon tovább.",
+      "wrongFlags": {
+        "one": "Ez alatt a zászló alatt nincs akna.",
+        "other": "{n} zászló alatt nincs akna."
+      },
+      "wrongFlag": "zászló akna nélkül",
+      "hintMine": "tipp: akna",
+      "singleMines": "Az itteni szám ({n}) körül annyi zárt cella maradt, ahány akna: {what}.",
+      "mines": {
+        "one": "{n} cellában akna van",
+        "other": "{n} cellában akna van"
+      },
+      "allCount": "{n} akna maradt, és az összes szám együtt megmutatja: {what}.",
+      "tip": "Koppintson egy zárt cellára, és felfedi. A szám megmutatja, hány akna van körülötte. Tartsa rajta az ujját egy cellán, és zászlót tűz egy aknára.",
+      "rules": "Egy felfedett cella száma megmutatja, hány akna van a körülötte lévő nyolc cellában. Fedjen fel minden akna nélküli cellát. A zászló csak emlékeztető („itt akna van”); az eredményre nincs hatása."
+    },
+    "flowers": {
+      "name": "Virágok",
+      "left": "Virágok: {n}",
+      "number": {
+        "one": "{n} virág körülötte",
+        "other": "{n} virág körülötte"
+      },
+      "hidden": "virág",
+      "boom": "Itt virág nőtt.",
+      "boomRestart": "Itt virág nőtt. Kezdje újra ugyanezt a táblát, vagy válasszon újat.",
+      "boomDaily": "Itt virág nőtt. Kezdje újra a nap tábláját.",
+      "boomUndo": "Itt virág nőtt. Vonja vissza a lépést, és játsszon tovább.",
+      "wrongFlags": {
+        "one": "Ez alatt a zászló alatt nincs virág.",
+        "other": "{n} zászló alatt nincs virág."
+      },
+      "wrongFlag": "zászló virág nélkül",
+      "hintMine": "tipp: virág",
+      "singleMines": "Az itteni szám ({n}) körül annyi zárt cella maradt, ahány virág: {what}.",
+      "mines": {
+        "one": "{n} cellában virág van",
+        "other": "{n} cellában virág van"
+      },
+      "allCount": "{n} virág maradt, és az összes szám együtt megmutatja: {what}.",
+      "tip": "Koppintson egy zárt cellára, és felfedi. A szám megmutatja, hány virág nő körülötte. Tartsa rajta az ujját egy cellán, és zászlót tűz egy virágra.",
+      "rules": "Egy felfedett cella száma megmutatja, hány virág nő a körülötte lévő nyolc cellában. Fedjen fel minden virág nélküli cellát. A zászló csak emlékeztető („itt virág van”); az eredményre nincs hatása."
+    }
+  },
+  "tools": {
+    "label": "Eszközök",
+    "mode": "Mit tesz a koppintás",
+    "open": "Felfedés",
+    "flag": "Zászló",
+    "hint": "Tipp",
+    "doHint": "Megteszi",
+    "new": "Új tábla",
+    "whole": "Egész tábla",
+    "restart": "Újrakezdés",
+    "undoMove": "Lépés vissza"
+  },
+  "cell": {
+    "label": "{row}. sor, {col}. oszlop: {state}",
+    "closed": "zárt",
+    "flag": "zászló",
+    "empty": "üres",
+    "boom": "ezt Ön fedte fel",
+    "hintSafe": "tipp: biztonságos",
+    "hintFrom": "a tipp erre a számra épül"
+  },
+  "hint": {
+    "safeOnly": "Ez a cella biztonságos.",
+    "singleSafe": "Az itteni szám ({n}) körül már minden zászló a helyén: {what}.",
+    "pair": "Két szám, {a} és {b}, közös szomszédokkal; együtt megmutatják: {what}.",
+    "all": "A környező számok együtt megmutatják: {what}.",
+    "safe": {
+      "one": "{n} cella biztonságos",
+      "other": "{n} cella biztonságos"
+    },
+    "and": "{a}, és {b}"
+  },
+  "end": {
+    "title": "A tábla kész!",
+    "clean": "Hiba és tipp nélkül",
+    "hints": "Tippek: {n}",
+    "mistakes": "Hibák: {n}",
+    "time": "Idő: {time}",
+    "streak": {
+      "one": "A nap táblái: {n} nap egymás után",
+      "other": "A nap táblái: {n} nap egymás után"
+    },
+    "new": "Új tábla",
+    "home": "Vissza a kezdéshez",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "shareClean": "{name} · {date} · {level}: a nap táblája kész, hiba és tipp nélkül",
+    "share": "{name} · {date} · {level}: a nap táblája kész · tippek: {hints} · hibák: {mistakes}"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "play": "Játék",
+    "field": "Mi rejtőzik a táblán",
+    "start": "Az első hely",
+    "startGame": "A játék fedi fel",
+    "startPlayer": "Én választom",
+    "startNote": "A nap táblája mindig onnan indul, ahol a játék fedi fel, így mindenkinek ugyanaz.",
+    "afterMine": "Ha aknát fedett fel",
+    "afterRestart": "Újrakezdés",
+    "afterUndo": "Lépés vissza",
+    "chord": "Számra koppintva felfedi a szomszédait",
+    "wrongFlags": "A rossz zászlók azonnali mutatása",
+    "time": "Az idő mutatása",
+    "vibration": "Rezgés zászló kitűzésekor",
+    "look": "Megjelenés",
+    "big": "Nagy számok és cellák",
+    "leftHand": "Gombok a táblától balra, ha a telefon fekszik",
+    "theme": "Téma",
+    "themeSystem": "A rendszer szerint",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
+    "reset": "Előrehaladás törlése",
+    "resetSure": "Koppintson újra az elkezdett táblák, a napi eredmények és a statisztika törléséhez",
+    "resetDone": "Törölve"
+  },
+  "stats": {
+    "title": "Statisztika",
+    "level": "Szint",
+    "played": "Játszott",
+    "won": "Kész",
+    "clean": "Hibátlan",
+    "cleanNote": "„Hibátlan” – hiba és tipp nélkül.",
+    "best": "Legjobb idő",
+    "none": "—",
+    "longest": {
+      "one": "A nap táblái – leghosszabb sorozat: {n} nap",
+      "other": "A nap táblái – leghosszabb sorozat: {n} nap"
+    }
+  },
+  "about": {
+    "title": "A játékról",
+    "text": "Minden tábla megoldható gondolkodással az első helytől a végéig, találgatás nélkül. A tippek ingyenesek és korlátlanok. Reklám, fiók és nyomkövetés nélkül: az előrehaladása ezen az eszközön marad. Internet nélkül is működik.",
+    "zoom": "Nagy táblák telefonon: egy ujjal mozgathatja, kettővel nagyíthatja; az „Egész tábla” a teljes táblát mutatja. Egérrel: a görgő mozgatja a táblát, a Ctrl és a görgő nagyít.",
+    "keys": "Billentyűzet: nyilak – lépés a cellák között, szóköz vagy Enter – mint a koppintás, F – zászló, H – tipp, N – új tábla, Ctrl+Z – az aknára lépés visszavonása, Esc – bezárás.",
+    "credit": "Készítette: way1ong"
+  },
+  "update": {
+    "title": "Elérhető a játék új verziója",
+    "text": "A játék újra megnyílik ott, ahol abbahagyta.",
+    "apply": "Frissítés",
+    "later": "Később"
+  }
+}

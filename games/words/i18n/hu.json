@@ -200,5 +200,11 @@
     "credit": "Készítette: way1ong",
     "fieldRules": "Betűmező: az egész mező rejtett szavakra bomlik; egy szó szomszédos mezőkön halad felfelé, lefelé, balra vagy jobbra, átlósan nem. A játék egy másik létező szót is elfogad, ha a mező többi része még kirakható szavakból.",
     "meanings": "Érintse meg a keresztrejtvény egy kitalált szavát, és megtudja, mit jelent. Egyelőre az 1–{n}. szint szavainak van leírása."
+  },
+  "update": {
+    "title": "Elérhető a játék új verziója",
+    "text": "A játék újra megnyílik ott, ahol abbahagyta.",
+    "apply": "Frissítés",
+    "later": "Később"
   }
 }

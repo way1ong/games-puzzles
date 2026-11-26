@@ -2,6 +2,7 @@
 // where the browser can (26.11); installing; clearing progress; statistics for each way of turning the stock and each
 // number of Spider's suits; about the game and the "Made by way1ong" line (docs/solitaire/SPEC.md, "Налаштування").
 import { h } from '../../../shared/ui/dom.ts';
+import { updateLine } from '../../../shared/ui/update-view.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
 import { DRAWS, SOLITAIRE, SPIDER_SUITS, type Draw, type SpiderSuits } from '../config.ts';
 import type { SpiderStats } from '../core/spider-stats.ts';
@@ -212,6 +213,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           'div',
           { class: 'dialog__body' },
           h('div', { class: 'dialog__head' }, h('h2', { id: 'menu-title' }, s.title), close),
+          updateLine(d.update),
           h('p', { class: 'dialog__label' }, s.language),
           langs,
           h('h3', {}, s.play),
