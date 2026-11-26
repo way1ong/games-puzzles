@@ -1,0 +1,97 @@
+/*
+ * Mines: the only file with colour values. Light and dark themes follow the system unless the player chooses one in
+ * the settings; a page that hosts the game (e.g. a claude.ai test page) may force one too — both with
+ * data-theme="light" | "dark" on <html>. The field is light in both themes (a little dimmer in the dark one): a closed
+ * cell is a raised tile with a light and a dark edge, an open one is flat; the numbers, the mine, the flower and the
+ * flag read on them.
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #e8ecf2;
+  --surface: #ffffff;
+  --text: #172031;
+  --muted: #4a5468;
+  --line: #687286;
+  --accent: #2a4c9c;
+  --on-accent: #ffffff;
+  --focus: #a64700;
+
+  /* The field: an open cell and the lines between open cells; a closed cell, its light and its dark edge. */
+  --open: #f6f7f9;
+  --grid: #6f7c92;
+  --closed: #c9d3e0;
+  --closed-light: #f1f4f8;
+  --closed-dark: #56657c;
+  /* The numbers: how many mines around, each its own colour (and its own digit). */
+  --n1: #1f4fd1;
+  --n2: #17692a;
+  --n3: #b7222b;
+  --n4: #1b2f86;
+  --n5: #7f1a1a;
+  --n6: #0c5f61;
+  --n7: #1a1a1a;
+  --n8: #4b525c;
+  /* The mine, its shine; the flower's petals and heart; the flag's cloth and pole. */
+  --mine: #1d2330;
+  --mine-shine: #ffffff;
+  --petal: #a81f63;
+  --flower-heart: #f2c230;
+  --flag: #c42b1c;
+  --pole: #2b3340;
+  /* The mine opened (its cell's ground), a flag without a mine (a cross over it), a hint's ring. */
+  --boom: #f6c4c4;
+  --bad: #b3202a;
+  --hint-mark: #7f4800;
+  /* The keys' focus on a cell: the field is light in both themes, so one colour for both. */
+  --cell-focus: #a64700;
+
+  --backdrop: rgb(16 22 34 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #111722;
+    --surface: #1b2231;
+    --text: #e6ebf3;
+    --muted: #a9b3c5;
+    --line: #6f7b91;
+    --accent: #9ab8ff;
+    --on-accent: #0c1628;
+    --focus: #ffb469;
+
+    --open: #e3e5e9;
+    --closed: #b6c1cf;
+    --closed-light: #dde3eb;
+    --closed-dark: #46536a;
+    --boom: #efb9b9;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  }
+}
+
+/* The same dark values when the player or the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #111722;
+  --surface: #1b2231;
+  --text: #e6ebf3;
+  --muted: #a9b3c5;
+  --line: #6f7b91;
+  --accent: #9ab8ff;
+  --on-accent: #0c1628;
+  --focus: #ffb469;
+
+  --open: #e3e5e9;
+  --closed: #b6c1cf;
+  --closed-light: #dde3eb;
+  --closed-dark: #46536a;
+  --boom: #efb9b9;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+}

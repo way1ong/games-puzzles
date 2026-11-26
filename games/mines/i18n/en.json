@@ -1,0 +1,211 @@
+{
+  "meta": {
+    "langName": "English",
+    "title": "Mines — without guessing and without ads",
+    "description": "Open every cell without a mine: a number tells how many mines lie around it. Every field is solved by reasoning alone, never by guessing; hints are free. Three levels and fields of the day. No ads, accounts or tracking; works offline."
+  },
+  "app": {
+    "name": "Mines",
+    "menu": "Menu",
+    "back": "Back",
+    "close": "Close"
+  },
+  "levels": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "home": {
+    "levels": "Levels",
+    "size": {
+      "one": "{width} × {height}, {mines} mine",
+      "other": "{width} × {height}, {mines} mines"
+    },
+    "start": "New field",
+    "continue": "Continue",
+    "dailyTitle": "Fields of the day · {date}",
+    "dailyNote": "The same for everyone today",
+    "begin": "Start",
+    "started": "Continue",
+    "done": "Cleared",
+    "streak": {
+      "one": "Fields of the day: {n} day in a row",
+      "other": "Fields of the day: {n} days in a row"
+    }
+  },
+  "game": {
+    "daily": "Field of the day",
+    "dailyInfo": "{level} · {date}",
+    "field": "Field {width} by {height}",
+    "making": "Preparing the field…",
+    "tipPlayer": "Tap where you want to start: the first place is always safe.",
+    "tipZoom": "Move the field with one finger; zoom with two.",
+    "tiny": "The cells are too small to tap: tap the field to zoom in.",
+    "restarted": "The field starts over.",
+    "undone": "The move is undone.",
+    "won": "Field cleared!",
+    "opened": {
+      "one": "{n} cell opened",
+      "other": "{n} cells opened"
+    },
+    "flagOn": "Flag put",
+    "flagOff": "Flag taken off",
+    "nothing": "A number opens its neighbours when it has as many flags around as it says.",
+    "newSure": "Tap “New field” again: this field will count as played."
+  },
+  "themes": {
+    "mines": {
+      "name": "Mines",
+      "left": "Mines: {n}",
+      "number": {
+        "one": "{n} mine around",
+        "other": "{n} mines around"
+      },
+      "hidden": "mine",
+      "boom": "There was a mine here.",
+      "boomRestart": "There was a mine here. Start over — the same field — or take a new one.",
+      "boomDaily": "There was a mine here. Start the field of the day over.",
+      "boomUndo": "There was a mine here. Undo the move and go on.",
+      "wrongFlags": {
+        "one": "There is no mine under this flag.",
+        "other": "There are no mines under these {n} flags."
+      },
+      "wrongFlag": "a flag without a mine",
+      "hintMine": "the hint: a mine",
+      "singleMines": "The {n} has as many closed cells left around it as mines: {what}.",
+      "mines": {
+        "one": "{n} cell holds a mine",
+        "other": "{n} cells hold mines"
+      },
+      "allCount": "{n} mines are left, and all the numbers together show: {what}.",
+      "tip": "Tap a closed cell to open it. A number tells how many mines lie around it. Hold a cell to put a flag on a mine.",
+      "rules": "A number on an open cell tells how many mines lie in the eight cells around it. Open every cell without a mine. A flag is a note for yourself: “a mine here”; it does not change the result."
+    },
+    "flowers": {
+      "name": "Flowers",
+      "left": "Flowers: {n}",
+      "number": {
+        "one": "{n} flower around",
+        "other": "{n} flowers around"
+      },
+      "hidden": "flower",
+      "boom": "A flower grew here.",
+      "boomRestart": "A flower grew here. Start over — the same field — or take a new one.",
+      "boomDaily": "A flower grew here. Start the field of the day over.",
+      "boomUndo": "A flower grew here. Undo the move and go on.",
+      "wrongFlags": {
+        "one": "There is no flower under this flag.",
+        "other": "There are no flowers under these {n} flags."
+      },
+      "wrongFlag": "a flag without a flower",
+      "hintMine": "the hint: a flower",
+      "singleMines": "The {n} has as many closed cells left around it as flowers: {what}.",
+      "mines": {
+        "one": "{n} cell holds a flower",
+        "other": "{n} cells hold flowers"
+      },
+      "allCount": "{n} flowers are left, and all the numbers together show: {what}.",
+      "tip": "Tap a closed cell to open it. A number tells how many flowers grow around it. Hold a cell to put a flag on a flower.",
+      "rules": "A number on an open cell tells how many flowers grow in the eight cells around it. Open every cell without a flower. A flag is a note for yourself: “a flower here”; it does not change the result."
+    }
+  },
+  "tools": {
+    "label": "Tools",
+    "mode": "What a tap does",
+    "open": "Open",
+    "flag": "Flag",
+    "hint": "Hint",
+    "doHint": "Do it",
+    "new": "New field",
+    "whole": "Whole field",
+    "restart": "Start over",
+    "undoMove": "Undo the move"
+  },
+  "cell": {
+    "label": "Row {row}, column {col}: {state}",
+    "closed": "closed",
+    "flag": "flag",
+    "empty": "empty",
+    "boom": "opened by you",
+    "hintSafe": "the hint: safe",
+    "hintFrom": "the hint rests on this number"
+  },
+  "hint": {
+    "safeOnly": "This cell is safe.",
+    "singleSafe": "The {n} already has all its flags around it: {what}.",
+    "pair": "The {a} and the {b} share neighbours; together they show: {what}.",
+    "all": "All the numbers around together show: {what}.",
+    "safe": {
+      "one": "{n} cell is safe",
+      "other": "{n} cells are safe"
+    },
+    "and": "{a}, and {b}"
+  },
+  "end": {
+    "title": "Field cleared!",
+    "clean": "No mistakes, no hints",
+    "hints": "Hints: {n}",
+    "mistakes": "Mistakes: {n}",
+    "time": "Time: {time}",
+    "streak": {
+      "one": "Fields of the day: {n} day in a row",
+      "other": "Fields of the day: {n} days in a row"
+    },
+    "new": "New field",
+    "home": "To the start",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "shareClean": "{name} · {date} · {level}: field of the day cleared without mistakes or hints",
+    "share": "{name} · {date} · {level}: field of the day cleared · hints: {hints} · mistakes: {mistakes}"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "play": "Playing",
+    "field": "What hides in the field",
+    "start": "The first place",
+    "startGame": "The game opens it",
+    "startPlayer": "I choose",
+    "startNote": "A field of the day always starts where the game opens it, so it is the same for everyone.",
+    "afterMine": "After opening a mine",
+    "afterRestart": "Start over",
+    "afterUndo": "Undo the move",
+    "chord": "Tapping a number opens its neighbours",
+    "wrongFlags": "Show wrong flags at once",
+    "time": "Show the time",
+    "vibration": "Vibration with a flag",
+    "look": "Look",
+    "big": "Large numbers and cells",
+    "leftHand": "Buttons left of the field when the phone lies on its side",
+    "theme": "Theme",
+    "themeSystem": "As the system",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap “Share”, then add the game to the Home Screen.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear started fields, the days’ results and statistics",
+    "resetDone": "Progress cleared"
+  },
+  "stats": {
+    "title": "Statistics",
+    "level": "Level",
+    "played": "Played",
+    "won": "Cleared",
+    "clean": "Clean",
+    "cleanNote": "“Clean” — without mistakes or hints.",
+    "best": "Best time",
+    "none": "—",
+    "longest": {
+      "one": "Fields of the day — longest streak: {n} day",
+      "other": "Fields of the day — longest streak: {n} days"
+    }
+  },
+  "about": {
+    "title": "About the game",
+    "text": "Every field is solved by reasoning from the first place to the end, never by guessing. Hints are free and without limits. No ads, accounts or tracking: progress stays on this device. Works offline.",
+    "zoom": "Large fields on a phone: one finger moves the field, two zoom it; “Whole field” shows all of it. With a mouse: the wheel moves the field, Ctrl and the wheel zoom.",
+    "keys": "Keyboard: arrows — move over the cells, Space or Enter — like a tap, F — flag, H — hint, N — new field, Ctrl+Z — undo the move onto a mine, Esc — close.",
+    "credit": "Made by way1ong"
+  }
+}

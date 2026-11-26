@@ -1,0 +1,704 @@
+/* Mines screen. Colours only from tokens.css; the page reset and common controls are in shared/styles/ui.css.
+   One column, centred; a phone in portrait first: the field under the top, a note and the tools under it. */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: max(0.5rem, env(safe-area-inset-top)) max(0.5rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom)) max(0.5rem, env(safe-area-inset-left));
+}
+
+/* Large mode: the field as wide as the screen. */
+html.big .app {
+  max-width: 46rem;
+  padding-left: max(0.25rem, env(safe-area-inset-left));
+  padding-right: max(0.25rem, env(safe-area-inset-right));
+}
+
+/* A field fills the screen's height: the field takes what the rest leaves. */
+.app:has(> .content > .play) {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* ---------- top: back, name, menu ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top__name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+/* The heading takes the focus when the screen changes (for screen readers); it is not a control. */
+.top__name:focus {
+  outline: none;
+}
+
+.sign {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------- the start screen ---------- */
+.home {
+  display: grid;
+  gap: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.home__part {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.home__streak {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.pick {
+  display: grid;
+  grid-template-areas:
+    'name state'
+    'info info';
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.125rem 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--surface);
+  text-align: start;
+  cursor: pointer;
+}
+
+.pick__name {
+  grid-area: name;
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.pick__state {
+  display: flex;
+  grid-area: state;
+  align-items: center;
+  align-self: center;
+  gap: 0.25rem;
+  color: var(--accent);
+  font-weight: 700;
+  text-align: end;
+}
+
+.pick__state .sign {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.pick__info {
+  grid-area: info;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* A field to continue and a field of the day begun: a frame in the accent colour, dashed; cleared — whole. */
+.pick--resume,
+.pick.is-started {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+
+.pick.is-done {
+  border-color: var(--accent);
+}
+
+/* ---------- a field ---------- */
+.play {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 0.75rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* The mines left, and the time when it is shown: at the end of the line. */
+.info__left {
+  margin-inline-start: auto;
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.info__time {
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A word about the game (how to play, a hint, a mine, the end). It keeps one height while the field is played — two
+   lines; a longer word scrolls by itself — so the field above never moves when it speaks (.claude/rules/design.md);
+   at the end, with the tools gone, it may grow. */
+.note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem 0.75rem;
+  min-height: calc(2.8em + 1rem);
+  max-height: calc(2.8em + 1rem);
+  overflow-y: auto;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--surface);
+  text-align: center;
+}
+
+.play.is-done .note {
+  max-height: 9.5rem;
+}
+
+.note.is-empty {
+  visibility: hidden;
+}
+
+.note__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.note__actions:empty {
+  display: none;
+}
+
+/* The field takes the room that is left; its measures are worked out from that room (ui/zoom.ts). On a phone held
+   upright the easy field is as wide as the screen but a slim edge, so its cells come to 44 px from 360 px across. */
+.stage {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 12rem;
+  margin-inline: -0.25rem;
+}
+
+.board {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.board__clip {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 0.25rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  grid-auto-rows: var(--cell);
+}
+
+/* The pictures of the field, kept once for the page. */
+.art-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.art-spike {
+  fill: none;
+  stroke: var(--mine);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.art-mine {
+  fill: var(--mine);
+}
+
+.art-shine {
+  fill: var(--mine-shine);
+}
+
+.art-petal {
+  fill: var(--petal);
+}
+
+.art-heart {
+  fill: var(--flower-heart);
+  stroke: var(--mine);
+  stroke-width: 0.6;
+}
+
+.art-pole {
+  fill: none;
+  stroke: var(--pole);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.art-flag {
+  fill: var(--flag);
+  stroke: var(--pole);
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+}
+
+/* A closed cell is a raised tile: a light edge above and on the left, a dark one below and on the right. */
+.cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--cell);
+  height: var(--cell);
+  margin: 0;
+  padding: 0;
+  border: calc(var(--cell) * 0.1) solid;
+  border-color: var(--closed-light) var(--closed-dark) var(--closed-dark) var(--closed-light);
+  border-radius: 0;
+  background: var(--closed);
+  color: var(--text);
+  font-size: calc(var(--cell) * 0.58);
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.cell.is-pressed {
+  border-color: var(--closed-dark) var(--closed-light) var(--closed-light) var(--closed-dark);
+}
+
+/* An open cell is flat, with a thin line round it; its number in its own colour. */
+.cell.is-open,
+.cell.is-hidden {
+  border: 1px solid var(--grid);
+  background: var(--open);
+  cursor: default;
+}
+
+.cell.n1 {
+  color: var(--n1);
+}
+
+.cell.n2 {
+  color: var(--n2);
+}
+
+.cell.n3 {
+  color: var(--n3);
+}
+
+.cell.n4 {
+  color: var(--n4);
+}
+
+.cell.n5 {
+  color: var(--n5);
+}
+
+.cell.n6 {
+  color: var(--n6);
+}
+
+.cell.n7 {
+  color: var(--n7);
+}
+
+.cell.n8 {
+  color: var(--n8);
+}
+
+.art {
+  width: 78%;
+  height: 78%;
+  pointer-events: none;
+}
+
+/* The mine opened: its cell's ground, and a ring. */
+.cell.is-boom {
+  background: var(--boom);
+  box-shadow: inset 0 0 0 calc(var(--cell) * 0.08) var(--bad);
+}
+
+/* A flag without a mine: a cross over it. */
+.cell.is-wrong::after {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  background:
+    linear-gradient(45deg, transparent 44%, var(--bad) 44% 56%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, var(--bad) 44% 56%, transparent 56%);
+}
+
+/* A hint: a ring inside the cells it speaks of; a safe one gets a dot, a mine an outlined flag shape; the numbers it
+   rests on a ring too. */
+.cell.is-hint-safe,
+.cell.is-hint-mine,
+.cell.is-hint-from {
+  box-shadow:
+    inset 0 0 0 calc(var(--cell) * 0.04) var(--open),
+    inset 0 0 0 calc(var(--cell) * 0.12) var(--hint-mark);
+}
+
+.cell.is-hint-safe::before {
+  content: '';
+  width: 26%;
+  height: 26%;
+  border-radius: 50%;
+  background: var(--hint-mark);
+}
+
+.cell.is-hint-mine::before {
+  content: '!';
+  color: var(--hint-mark);
+  font-size: calc(var(--cell) * 0.5);
+  font-weight: 900;
+}
+
+.cell:focus-visible {
+  z-index: 1;
+  outline: 3px solid var(--cell-focus);
+  outline-offset: -3px;
+}
+
+/* Cleared: nothing to press. */
+.board.is-done .cell {
+  cursor: default;
+}
+
+/* ---------- the tools ---------- */
+/* Open or flag — two halves of one switch — on a row of their own; under them the hint, a new field (not in a field
+   of the day) and, on a field that can be zoomed, the whole field. */
+.tools {
+  --tool-h: 3.25rem;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.5rem;
+  container-type: inline-size;
+}
+
+/* A short phone (640 px tall and so): slimmer gaps, so that the easy field fits whole with cells of 44 px. */
+@media (max-height: 44rem) {
+  .app,
+  .play {
+    gap: 0.375rem;
+  }
+}
+
+.modes {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tools > .tool {
+  grid-column: span 6;
+}
+
+.tools[data-count='2'] > .tool {
+  grid-column: span 3;
+}
+
+.tools[data-count='3'] > .tool {
+  grid-column: span 2;
+}
+
+.modes .tool:first-child {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.modes .tool:last-child {
+  border-inline-start-width: 0;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+/* The words get a little smaller rather than break: they follow the row's width. */
+.tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  min-width: 0;
+  min-height: var(--tool-h, 3.25rem);
+  padding: 0.25rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-size: min(0.9375rem, 4.4cqi);
+  font-weight: 650;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.tool[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* "Do it" while a hint is shown; after a mine, what follows it — the first of the row. */
+.tool.is-ready,
+.tool--main {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* After a mine: start over (or undo the move) and a new field, side by side, as tall as the two rows they stand in
+   for. */
+.tools.is-boom > .tool {
+  grid-column: span 3;
+  min-height: calc(2 * var(--tool-h) + 0.5rem);
+}
+
+.tools.is-boom[data-count='1'] > .tool {
+  grid-column: 1 / -1;
+}
+
+/* ---------- the end ---------- */
+.dialog__highlight {
+  font-weight: 700;
+}
+
+/* ---------- menu ---------- */
+.dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.dialog h3 {
+  margin: 0.5rem 0 0;
+  font-size: 1.0625rem;
+}
+
+.stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats th,
+.stats td {
+  padding: 0.375rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+  text-align: end;
+  vertical-align: bottom;
+}
+
+.stats th[scope='row'],
+.stats thead th:first-child {
+  text-align: start;
+}
+
+/* Wide screens (laptop, tablet on its side): the field on the left as tall as the screen; the line about the field,
+   the note and the tools on the right. */
+@media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
+  .app {
+    max-width: calc(100dvh * 1.1 + 22rem);
+  }
+
+  .play {
+    display: grid;
+    grid-template-areas:
+      'stage info'
+      'stage note'
+      'stage tools'
+      'stage .';
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    column-gap: 1.5rem;
+    row-gap: 0.75rem;
+  }
+
+  .info {
+    grid-area: info;
+  }
+
+  .note {
+    grid-area: note;
+  }
+
+  .stage {
+    grid-area: stage;
+    min-height: 0;
+  }
+
+  .tools {
+    grid-area: tools;
+  }
+}
+
+/* A phone on its side (a short, wide screen; decision of 25.11 — a new game has it from the start): the field on the
+   left as tall as the screen; back, the name and the menu, the line about the field, the note and the tools on the
+   right — the tools low, under the right thumb (on the left with the left-hand setting). As the solitaires' (decision
+   of 26.11), the panel is narrow: on its side the height limits the cells. Only while the screen is at least 26 of
+   the player's text sizes wide: with very large text the one column stays. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 29.99rem) {
+  @container app (min-width: 26rem) {
+    /* Every pixel of height counts here (a browser's own bar takes part of it): slimmer top and bottom edges. */
+    .app {
+      max-width: 72rem;
+      padding-top: max(0.375rem, env(safe-area-inset-top));
+      padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+    }
+
+    /* The start screen: the levels and the fields of the day side by side. */
+    .home {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      column-gap: 1.5rem;
+    }
+
+    .app:has(> .content > .play) {
+      --side: clamp(11rem, 28vw, 15rem);
+      display: grid;
+      grid-template-areas:
+        'stage top'
+        'stage info'
+        'stage note'
+        'stage tools';
+      grid-template-columns: minmax(0, 1fr) var(--side);
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: 0.375rem 0.75rem;
+    }
+
+    html.left-hand .app:has(> .content > .play) {
+      grid-template-areas:
+        'top stage'
+        'info stage'
+        'note stage'
+        'tools stage';
+      grid-template-columns: var(--side) minmax(0, 1fr);
+    }
+
+    .app:has(> .content > .play) > .top {
+      grid-area: top;
+    }
+
+    .app:has(> .content > .play) > .content,
+    .play {
+      display: contents;
+    }
+
+    .play .info {
+      grid-area: info;
+    }
+
+    /* The note takes the room between the line about the field and the tools. */
+    .play .note {
+      grid-area: note;
+      align-self: start;
+      min-height: 0;
+      max-height: 100%;
+    }
+
+    .play .stage {
+      grid-area: stage;
+      min-height: 0;
+    }
+
+    .play .stage {
+      margin-inline: 0;
+    }
+
+    /* The tools in two columns, as few rows as can be: open or flag across, then the hint and a new field side by
+       side, and the whole field across (alone, the hint goes across too). */
+    .play .tools,
+    .play .tools[data-count] {
+      grid-area: tools;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.375rem;
+    }
+
+    .play .tools > .tool,
+    .play .tools[data-count] > .tool {
+      grid-column: span 1;
+    }
+
+    .play .tools[data-count='1'] > .tool,
+    .play .tools[data-count='3'] > .tool:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .play .tool,
+    .play .tools.is-boom > .tool {
+      min-height: 2.75rem;
+      padding: 0.125rem 0.25rem;
+      font-size: min(0.9375rem, 8cqi);
+    }
+
+    .play .tools.is-boom > .tool {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+/* The lowest screens on their side (a browser's own bar takes part of the height): the line about the field gives its
+   room to the note — the mines left and the time stay; in the large mode the letters grow, not the buttons. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 19.99rem) {
+  @container app (min-width: 26rem) {
+    .play .info__text {
+      display: none;
+    }
+
+    html.big .app:has(> .content > .play) > .top .icon-btn {
+      width: 44px;
+      height: 44px;
+    }
+
+    html.big .play .tool {
+      min-height: 44px;
+      padding-block: 0.125rem;
+    }
+  }
+}
