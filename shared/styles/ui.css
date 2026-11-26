@@ -89,6 +89,8 @@ button {
 }
 
 .choices__btn {
+  /* a one-digit choice (a number of shuffles) is still a whole target */
+  min-width: 2.75rem;
   min-height: 2.75rem;
   padding: 0.5rem 1rem;
   border: 2px solid var(--line);

@@ -301,7 +301,6 @@ mű|szaki
 név
 nevet
 valódi
-zsidó
 dél
 díj
 egy|kori
@@ -416,7 +415,6 @@ galéria
 plusz
 sikerül
 terv
-varga
 baba
 egyedi
 eső
@@ -508,7 +506,6 @@ cél
 el|hunyt
 hang
 iskolai
-kapta
 korán
 naponta
 távol
@@ -729,7 +726,6 @@ más|nap
 minimum
 okoz
 oldalt
-roma
 unió
 arab
 arc
@@ -1376,7 +1372,6 @@ köt
 masszázs
 por
 posta
-stop
 szel
 születik
 alkalmi
@@ -1385,7 +1380,6 @@ csepp
 gramm
 kaland
 kis|kun
-kun
 lakik
 mű|tét
 pusztán
@@ -1554,7 +1548,6 @@ intim
 járvány
 lopott
 memória
-mór
 mosoly
 paprika
 patak
@@ -1858,7 +1851,6 @@ készülék
 ki|tartó
 kígyó
 kórus
-mari
 nevelő
 piramis
 próba
@@ -2167,7 +2159,6 @@ szalag
 szamár
 szinkron
 termel
-var
 vétel
 állomány
 balog
@@ -2462,7 +2453,6 @@ fickó
 funkció
 füzet
 galamb
-hál
 halom
 hiányos
 imád
@@ -2653,7 +2643,6 @@ fodrász
 hang|súly
 joghurt
 kamra
-kan
 kérdő|ív
 kezel
 maci
@@ -2760,7 +2749,6 @@ oltár
 selyem
 szeles
 szelíd
-tóra
 türelem
 váll
 angyali
@@ -3220,7 +3208,6 @@ iszonyat
 jámbor
 jázmin
 jelölő
-jen
 jezsuita
 jó|kora
 kalács
@@ -3271,7 +3258,6 @@ olvad
 spenót
 sugároz
 tág
-taj
 tatár
 tollas
 vitás
@@ -3510,7 +3496,6 @@ bélyeg
 dicséret
 dilemma
 élet|mű
-esz
 eszme
 foszfor
 futó|mű
@@ -3595,7 +3580,6 @@ ipar|ág
 jóság
 juh
 kultusz
-lat
 macedón
 más|féle
 mozdony
@@ -3867,7 +3851,6 @@ rész|vény
 rokoni
 sérül
 tabu
-tor
 toszkán
 viszály
 víz|szint
@@ -3905,7 +3888,6 @@ tárnok
 tréfás
 vágány
 vésett
-aga
 ál|arc
 be|vont
 blúz
@@ -4127,7 +4109,6 @@ papság
 rozsda
 rúzs
 sín
-som
 szenny|víz
 szónok
 szürkés
@@ -4581,7 +4562,6 @@ heroin
 hüllő
 huzat
 ihlet
-inka
 irgalom
 járom
 kamarás
@@ -4600,7 +4580,6 @@ obszcén
 óvatlan
 pacsirta
 rítus
-tat
 többlet
 utánzó
 vétkes
@@ -5171,7 +5150,6 @@ nyomul
 okmány
 ondó
 öreg|úr
-óva
 pardon
 patinás
 perzselő

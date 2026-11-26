@@ -2,6 +2,7 @@
 // same, and no colour is written anywhere but tokens.css.
 import { expect, it } from 'vitest';
 import app from './app.css?raw';
+import drawn from './drawn.css?raw';
 import tokens from './tokens.css?raw';
 
 const COLOUR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(/i;
@@ -30,9 +31,11 @@ it('defines every dark token in the light block too', () => {
   for (const name of systemDark.keys()) expect(light.has(name), name).toBe(true);
 });
 
-it('keeps colours out of app.css', () => {
-  const line = app.split('\n').find((l) => COLOUR.test(l));
-  expect(line).toBeUndefined();
+it('keeps colours out of app.css and drawn.css', () => {
+  for (const sheet of [app, drawn]) {
+    const line = sheet.split('\n').find((l) => COLOUR.test(l));
+    expect(line).toBeUndefined();
+  }
 });
 
 // ---------- contrast (WCAG 2): text 4.5:1, what marks controls and the board 3:1 ----------
@@ -86,6 +89,10 @@ const MARKS: [string, string][] = [
   ['--line', '--bg'],
   ['--glow', '--cell'],
   ['--bad', '--cell'],
+  // the drawn look: the wooden board and its sunk cells, and what is marked on them
+  ['--wood-board', '--wood-cell'],
+  ['--wood-glow', '--wood-cell'],
+  ['--bad', '--wood-cell'],
 ];
 
 for (const [theme, t] of Object.entries(themes)) {
@@ -108,6 +115,16 @@ for (const [theme, t] of Object.entries(themes)) {
   it(`${theme}: a block stands out from an empty cell by its colour or its edge`, () => {
     const cell = solid('--cell');
     const edge = parse(t.get('--bevel-dark') as string);
+    for (const name of ['--c1', '--c2', '--c3', '--c4', '--c5', '--c6']) {
+      const fill = solid(name);
+      const best = Math.max(ratio(fill, cell), ratio(over(edge, fill), cell));
+      expect(best, name).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it(`${theme}: in the drawn look too, on the wooden board`, () => {
+    const cell = solid('--wood-cell');
+    const edge = parse(t.get('--blk-edge') as string);
     for (const name of ['--c1', '--c2', '--c3', '--c4', '--c5', '--c6']) {
       const fill = solid(name);
       const best = Math.max(ratio(fill, cell), ratio(over(edge, fill), cell));

@@ -1,0 +1,199 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Japán rejtvény – képrejtvények reklám nélkül",
+    "description": "Fesse be a cellákat a számok szerint, és előbukkan egy kép. Minden kép megoldható gondolkodással, találgatás nélkül; a tippek ingyenesek. 5×5-ös, 10×10-es és 15×15-ös rácsok és a nap képe. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Japán rejtvény",
+    "menu": "Menü",
+    "back": "Vissza",
+    "close": "Bezárás"
+  },
+  "home": {
+    "continue": "Folytatás",
+    "album": "Album",
+    "progress": "Megoldva: {n} / {total}",
+    "dailyTitle": "A nap képe · {date}",
+    "dailyNote": "Ma mindenkinek ugyanaz",
+    "begin": "Kezdés",
+    "started": "Folytatás",
+    "done": "Megoldva",
+    "streak": {
+      "one": "{n} nap egymás után",
+      "other": "{n} nap egymás után"
+    }
+  },
+  "album": {
+    "size": "{size} × {size}",
+    "picture": "{n}. kép",
+    "solved": "megoldva",
+    "started": "elkezdve",
+    "item": "{name}, {state}"
+  },
+  "game": {
+    "daily": "A nap képe",
+    "grid": "Rács, {size} × {size}",
+    "tip": "A számok megmutatják, hány cella van egymás után befestve, sorrendben. Koppintson egy cellára a befestéshez; húzza végig az ujját egy soron, és többet fest be.",
+    "tipZoom": "A rács nagyítva van: két ujjal mozgathatja és nagyíthatja, vagy húzzon egy számsávot. Az „Egész kép” a teljes rácsot mutatja.",
+    "tiny": "A rács most kicsi: a koppintás ráközelít erre a helyre.",
+    "fullWrong": "Annyi cella van befestve, amennyit a számok kérnek, de valahol hiba van. A „Tipp” megmutatja, hol.",
+    "nothingToUndo": "Nincs mit visszavonni.",
+    "undone": "Visszavonva.",
+    "solved": "Megoldva: {name}",
+    "filled": {
+      "one": "{n} cella befestve",
+      "other": "{n} cella befestve"
+    },
+    "crossed": {
+      "one": "{n} X jel téve",
+      "other": "{n} X jel téve"
+    },
+    "cleared": {
+      "one": "{n} cella törölve",
+      "other": "{n} cella törölve"
+    },
+    "lineDone": "{line} megfelel a számainak."
+  },
+  "cell": {
+    "label": "{row}. sor, {col}. oszlop: {state}. A sor számai: {rowClue}; az oszlopé: {colClue}",
+    "blank": "üres",
+    "fill": "befestve",
+    "cross": "X jel",
+    "bad": "hiba",
+    "hintFill": "tipp: befesteni",
+    "hintCross": "tipp: X jel"
+  },
+  "tools": {
+    "label": "Műveletek",
+    "mode": "Mit tegyen a koppintás",
+    "fill": "Festés",
+    "cross": "X jel",
+    "undo": "Visszavonás",
+    "hint": "Tipp",
+    "whole": "Egész kép"
+  },
+  "hint": {
+    "row": "{n}. sor",
+    "col": "{n}. oszlop",
+    "line": "{line} (számok: {clue}): {what}.",
+    "fill": {
+      "one": "fessen be {n} cellát",
+      "other": "fessen be {n} cellát"
+    },
+    "cross": {
+      "one": "tegyen {n} X jelet",
+      "other": "tegyen {n} X jelet"
+    },
+    "and": "{a} és {b}",
+    "again": "Koppintson újra a „Tipp” gombra, és a játék beteszi őket.",
+    "mistakeFill": "Itt hiba van: ezt a cellát be kell festeni.",
+    "mistakeEmpty": "Itt hiba van: ennek a cellának üresnek kell lennie.",
+    "againFix": "Koppintson újra a „Tipp” gombra, és a játék kijavítja."
+  },
+  "end": {
+    "title": "Megoldva!",
+    "clean": "Tipp nélkül",
+    "hints": "Tippek: {n}",
+    "time": "Idő: {time}",
+    "streak": {
+      "one": "A nap képe: {n} nap egymás után",
+      "other": "A nap képe: {n} nap egymás után"
+    },
+    "next": "Következő kép",
+    "album": "Vissza az albumhoz",
+    "home": "Vissza a kezdéshez",
+    "allDone": "Ennek a méretnek minden képét megoldotta!",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "shareClean": "{name} · {date}: a nap képe megoldva tipp nélkül",
+    "share": "{name} · {date}: a nap képe megoldva · tippek: {hints}"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "play": "Játék",
+    "secondTap": "Második koppintás befestett cellán",
+    "secondClear": "Törli",
+    "secondCross": "X jelet tesz",
+    "mistakes": "A hibák azonnali mutatása",
+    "autoCross": "X jelek maguktól a kész sorokban",
+    "time": "Az idő mutatása",
+    "vibration": "Rezgés festéskor",
+    "look": "Megjelenés",
+    "fade": "A kész sorok számai halványulnak",
+    "highlight": "A sor és az oszlop kiemelése",
+    "name": "A kép neve",
+    "nameAfter": "A megoldás után",
+    "nameFirst": "Rögtön",
+    "colour": "Színes kép a végén",
+    "leftHand": "Gombok a rácstól balra, ha a telefon fekszik",
+    "big": "Nagy számok és cellák",
+    "theme": "Téma",
+    "themeSystem": "A rendszer szerint",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
+    "reset": "Előrehaladás törlése",
+    "resetSure": "Koppintson újra az elkezdett és megoldott képek, a napi eredmények és a statisztika törléséhez",
+    "resetDone": "Törölve"
+  },
+  "stats": {
+    "title": "Statisztika",
+    "size": "Rács",
+    "solved": "Megoldva",
+    "hints": "Tippek",
+    "best": "Legjobb idő",
+    "none": "—",
+    "longest": {
+      "one": "A nap képe – leghosszabb sorozat: {n} nap",
+      "other": "A nap képe – leghosszabb sorozat: {n} nap"
+    }
+  },
+  "about": {
+    "title": "A játékról",
+    "rules": "A sor melletti és az oszlop feletti számok a benne lévő befestett cellacsoportok hosszát adják meg, sorrendben; a csoportok között legalább egy üres cella van: a „3 1” három befestett cella egymás után, utána egy üres, majd egy befestett. Fesse be a cellákat úgy, hogy minden sor és oszlop megfeleljen a számainak – és előbukkan a kép. Az X jel csak emlékeztető („itt üres”); az eredményre nincs hatása.",
+    "text": "Minden kép megoldható gondolkodással, sorról sorra, találgatás nélkül. A tippek ingyenesek és korlátlanok. Reklám, fiók és nyomkövetés nélkül: az előrehaladása ezen az eszközön marad. Internet nélkül is működik.",
+    "zoom": "Nagy rácsok telefonon: két ujjal mozgathatja és nagyíthatja a rácsot; a számsávok egy ujjal is húzhatók; az „Egész kép” a teljes rácsot mutatja. Egérrel: a görgő mozgatja a rácsot, a Ctrl és a görgő nagyít.",
+    "keys": "Billentyűzet: nyilak – lépés a cellák között, szóköz vagy Enter – mint a koppintás, X – X jel, Backspace – törlés, H – tipp, Ctrl+Z – visszavonás, F – egész kép, Esc – bezárás.",
+    "credit": "Készítette: way1ong"
+  },
+  "pictures": {
+    "anchor": "Horgony",
+    "apple": "Alma",
+    "arrow": "Nyíl",
+    "bell": "Csengő",
+    "bird": "Madár",
+    "butterfly": "Pillangó",
+    "carrot": "Sárgarépa",
+    "cat": "Macska",
+    "cherries": "Cseresznye",
+    "drop": "Csepp",
+    "envelope": "Boríték",
+    "fir": "Fenyő",
+    "fish": "Hal",
+    "flag": "Zászló",
+    "glasses": "Szemüveg",
+    "grapes": "Szőlő",
+    "heart": "Szív",
+    "house": "Házikó",
+    "key": "Kulcs",
+    "leaf": "Levél",
+    "moon": "Hold",
+    "mug": "Bögre",
+    "mushroom": "Gomba",
+    "note": "Hangjegy",
+    "owl": "Bagoly",
+    "pear": "Körte",
+    "sailboat": "Vitorlás",
+    "smile": "Mosoly",
+    "snail": "Csiga",
+    "star": "Csillag",
+    "strawberry": "Eper",
+    "sun": "Nap",
+    "tree": "Fa",
+    "tulip": "Tulipán",
+    "umbrella": "Esernyő"
+  }
+}

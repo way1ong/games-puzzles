@@ -4,7 +4,7 @@
 // Field N is the same for every player of a language (and of the same Hungarian tile setting). Pure, no DOM.
 import { seedFromText } from '../../../shared/core/rng.ts';
 import { WORDS, type FieldStep, type WordLang } from '../config.ts';
-import type { Dictionary, Word } from './dictionary.ts';
+import { tileMode, type Dictionary, type Word } from './dictionary.ts';
 import { makeRand, type Rand } from './rand.ts';
 
 export interface FieldWord {
@@ -144,8 +144,6 @@ function build(dict: Dictionary, shape: Shape, seed: string, number: number | nu
   }
   return { lang: dict.lang, number, daily, cols, rows, cells, words };
 }
-
-const tileMode = (dict: Dictionary) => (dict.options.huTiles ? 'tiles' : 'letters');
 
 /** Word Field level `number` (from 1) of the language. */
 export function makeFieldLevel(dict: Dictionary, number: number): Field {

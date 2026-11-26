@@ -1,0 +1,230 @@
+# Short meanings of the crossword words (docs/words/SPEC.md, «Значення слів»): word, tab, meaning.
+# Own text of way1ong, not taken from other dictionaries. Trial of 25.11: the words of levels 1–30.
+about	Concerning a subject; also roughly, nearly.
+after	Later than something; behind in order.
+all	The whole number or amount; every one.
+ant	A small insect that lives in large, busy colonies.
+apt	Fitting, suitable; also likely to do something.
+auto	A car; also done by itself, automatic.
+best	Better than all the others.
+bet	Money risked on what will happen; a wager.
+boat	A small vessel for travelling on water.
+bout	A short spell of something, such as an illness; also a boxing match.
+day	The time between sunrise and sunset; also a date in the calendar.
+dig	To make a hole in the ground, for example with a spade.
+dog	A tame animal that barks, kept as a pet or for work.
+doing	An action or activity; what someone does.
+dot	A small round mark or spot.
+due	Expected or owed at a certain time.
+dune	A hill of sand made by the wind.
+east	The direction where the sun rises.
+eat	To put food in the mouth and swallow it.
+ether	A strong-smelling liquid that evaporates fast; also the air as a carrier of radio.
+ever	At any time.
+every	Each one, without leaving any out.
+eye	The part of the body you see with.
+fate	What will happen, as if decided in advance; destiny.
+fear	The feeling of being afraid of danger.
+first	Coming before all others.
+fist	A hand with the fingers tightly closed.
+fit	Healthy and strong; also of the right size or shape.
+for	Intended to belong to or be used by someone; also because of.
+form	The shape of something; also a paper with spaces to fill in.
+from	Showing where something starts or comes out.
+god	A being worshipped as having power over nature and people.
+goo	A sticky, soft substance.
+good	Of high quality; also kind and right.
+grit	Tiny bits of stone or sand; also courage and determination.
+her	Used for a woman or girl already mentioned, as an object or owner.
+here	In or to this place.
+hero	A person admired for bravery or great deeds.
+hit	To strike with force; also a big success, such as a popular song.
+hoe	A garden tool with a thin blade for weeding.
+hose	A long flexible tube for water.
+host	Someone who receives guests; also a large number.
+house	A building where people live.
+ice	Frozen water.
+into	To the inside of something.
+ion	An atom or molecule with an electric charge.
+kit	A set of tools or clothes for a purpose.
+knit	To make clothes from yarn with long needles.
+list	A number of items written one under another.
+mall	A large building with many shops.
+more	A greater amount; also again, further.
+nerd	Informal: a person very keen on study or computers.
+nice	Pleasant, kind.
+nod	To move the head down and up to say yes or to greet.
+not	Used to make a word or sentence negative.
+ore	Rock from which metal is taken.
+other	Different from the one already mentioned.
+out	Away from the inside; also not at home.
+owe	To have to pay or give something back.
+part	A piece of a whole.
+pore	A tiny opening in the skin.
+power	Strength or the ability to control; also electricity.
+pro	Informal: a professional; also an argument in favour.
+rap	A quick knock; also music with rhythmic spoken words.
+rate	Speed or frequency; also a price or charge.
+rev	To make an engine run faster.
+rift	A crack or split; also a break in a friendship.
+rig	Equipment for a special job, such as drilling for oil; also to arrange dishonestly.
+right	Correct; also the side opposite to left.
+roe	Fish eggs; also a small deer.
+rope	A thick, strong cord.
+rot	To go bad and decay.
+rude	Not polite.
+rune	A letter of an old alphabet once used in northern Europe.
+same	Not different; exactly alike.
+sea	A large area of salt water.
+seam	The line where two pieces of cloth are sewn together.
+seat	A place to sit.
+set	A group of things that belong together; also to put in place.
+she	The word for a woman or girl already mentioned.
+sheet	A large piece of cloth for a bed; also a piece of paper.
+shoe	A covering for the foot.
+shot	The firing of a gun; also an attempt or a photo.
+sift	To shake through a sieve to remove lumps.
+sill	The flat shelf at the bottom of a window.
+silt	Fine mud carried by a river.
+sin	A wrong act against moral or religious law.
+since	From a time in the past until now; also because.
+slam	To shut with a loud bang.
+slit	A long, narrow cut or opening.
+small	Little in size.
+state	A condition; also a country or its government.
+still	Not moving; also even now.
+stir	To mix a liquid with a spoon.
+take	To get hold of something and carry it or accept it.
+tan	Brown skin colour from the sun; also a light brown.
+taste	The flavour of food; also a sense of what is good.
+tea	A hot drink made from dried leaves.
+tear	A drop of water from the eye; also to rip.
+tee	A small peg that holds a golf ball.
+test	A set of questions or a trial to check something.
+the	Used before a noun for something already known.
+there	In or to that place.
+these	Used for the things here, near the speaker.
+they	The word for people or things already mentioned.
+thin	Not thick; with little fat.
+think	To use the mind to consider something.
+those	Used for things or people over there.
+three	The number that comes after two.
+tie	To fasten with a knot; also a strip of cloth worn round the neck.
+till	Until; also a cash drawer in a shop.
+toad	An animal like a frog with dry, bumpy skin.
+today	On this day.
+toy	Something children play with.
+trap	A device for catching animals; also a trick.
+tree	A tall plant with a wooden trunk and branches.
+under	Below something; also less than.
+use	To do something with a thing for a purpose.
+veer	To change direction suddenly.
+very	Extremely, really.
+want	To wish to have something.
+wet	Covered with water; not dry.
+white	The colour of snow or milk.
+wit	The ability to say clever, funny things.
+with	Accompanied by someone; also using something.
+yet	Up to now; also still, even so.
+ace	The highest card in many games; also an expert.
+ache	A dull, lasting pain.
+again	Once more.
+any	One or some, no matter which.
+art	Painting, music and other works made with skill and imagination.
+bat	A flying animal active at night; also a stick for hitting a ball.
+beg	To ask humbly and eagerly for something.
+begin	To start.
+being	A living creature; also existence.
+bin	A container for rubbish.
+binge	A short time of doing too much of something, such as eating.
+cape	A sleeveless cloak; also land jutting into the sea.
+den	A wild animal's home; also a cosy room.
+din	A loud, unpleasant noise.
+down	Towards a lower place.
+each	Every one, taken separately.
+elf	A small magical creature in stories.
+elk	A very large deer.
+emit	To send out light, heat, sound or gas.
+end	The final part of something.
+eve	The day or evening before an event.
+fee	Money paid for a service.
+feel	To touch; also to experience an emotion.
+file	A folder of papers or a computer document; also a tool for smoothing.
+fin	A thin flat part on a fish that helps it swim.
+find	To discover something you were looking for.
+flee	To run away from danger.
+fond	Having warm feelings for someone.
+found	To start an organisation; also the past of find.
+fund	Money saved or collected for a purpose.
+gain	To get or increase something.
+gig	A live music performance.
+gin	A strong, clear alcoholic drink.
+going	The act of leaving; also how easy progress is.
+gong	A metal disc that rings when struck.
+hey	A call to get attention or to say hello.
+hint	A small clue or suggestion.
+hot	Having a high temperature.
+item	A single thing in a list or group.
+know	To have information in the mind.
+lace	Fine net-like fabric; also a shoelace.
+leap	A big jump.
+lie	To say something untrue; also to rest flat.
+life	The state of being alive.
+like	To enjoy; also similar to.
+lint	Small bits of fluff from cloth.
+lit	Lighted; burning or full of light.
+man	An adult male person.
+many	A large number of.
+mite	A tiny creature like a spider; also a small child or amount.
+nag	To keep complaining or urging; also an old horse.
+need	To require something.
+nib	The metal point of a pen.
+nil	Nothing; zero.
+now	At this moment.
+ode	A poem praising someone or something.
+order	A request for goods; also arrangement or neatness.
+our	Belonging to us.
+over	Above; also finished.
+own	Belonging to oneself; also to possess.
+pace	The speed of walking or moving; also a single step.
+pale	Light in colour; with little colour in the face.
+par	The normal level; in golf, the expected number of strokes.
+pin	A thin pointed piece of metal for fastening.
+pint	A measure of liquid, especially for beer or milk.
+pit	A deep hole in the ground; also the stone of a fruit.
+place	A particular area or position.
+point	A sharp end; also the main idea; also a unit of score.
+pot	A deep round container for cooking.
+rat	A rodent larger than a mouse.
+red	The colour of blood.
+redo	To do again.
+rod	A long thin stick or bar.
+rye	A cereal grass used for bread and whisky.
+show	A performance; also to let someone see.
+sow	To plant seeds; also a female pig.
+star	A ball of burning gas seen as a point of light at night; also a famous person.
+start	To begin.
+sue	To take legal action against someone.
+tank	A large container for liquid; also an armoured military vehicle.
+tar	Thick, black, sticky liquid used on roads.
+tart	A pastry with a filling; also sour in taste.
+than	Used in comparisons.
+thank	To say you are grateful.
+thing	An object or fact not named exactly.
+time	What passes as things happen; also the hour shown by a clock.
+tin	A soft silver-coloured metal; also a can for food.
+tip	A pointed end; also money given for good service; also advice.
+toe	One of the digits at the end of the foot.
+undo	To unfasten; also to reverse an action.
+unit	A single thing; also a standard of measurement.
+until	Up to the time when.
+urn	A tall vase, often for ashes.
+used	Not new; also accustomed.
+war	Armed fighting between countries or groups.
+water	The clear liquid that falls as rain and fills seas.
+wear	To have clothes on the body.
+who	Which person.
+won	The past of win; also the money of Korea.
+yam	A starchy root vegetable.
+you	The person or people spoken to.
+your	Belonging to you.

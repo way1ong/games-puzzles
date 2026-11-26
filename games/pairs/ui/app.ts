@@ -7,7 +7,7 @@ import { h } from '../../../shared/ui/dom.ts';
 import { PAIRS, PICTURES } from '../config.ts';
 import { makeDaily, makeLevel } from '../core/level.ts';
 import { nearest, type Direction } from '../core/nearest.ts';
-import { addTime, countHint, hintFor, shuffle, standing, tableFor, take, undo, type Hint, type PairsPlay } from '../core/play.ts';
+import { addTime, countHint, hintFor, shuffle, shufflesLeft, standing, tableFor, take, undo, type Hint, type PairsPlay } from '../core/play.ts';
 import { isClean, longestStreak, recordDone } from '../core/stats.ts';
 import { freePlaces, isFree } from '../core/table.ts';
 import { createBoardView } from './board-view.ts';
@@ -54,6 +54,11 @@ export function startApp(root: HTMLElement): void {
   let hint: Hint | null = null;
   /** A short word about the last tap (a blocked tile, nothing to undo), shown until the next move. */
   let message: string | null = null;
+  /**
+   * No pairs and no shuffles left (the limit chosen in the menu): how far back the table can be cleared again — worked
+   * out once for this state, unasked, and not counted as a hint (null — not within the steps looked at).
+   */
+  let wayBack: { at: PairsPlay; back: number | null } | null = null;
   let tipDone = store.loadTipDone();
   /** When the current stretch of play started (performance.now()); null — the clock stands. */
   let clockFrom: number | null = null;
@@ -242,22 +247,38 @@ export function startApp(root: HTMLElement): void {
 
   /**
    * What the line above the table says now, and what it offers to do there. Shuffling is offered by the tool
-   * under the table, which then stands out (`shuffle`): the line keeps only what no tool does (undo N moves).
+   * under the table, which then stands out (`shuffle`): the line keeps only what no tool does (undo N moves). With no
+   * shuffle left (the limit chosen in the menu) it offers only what can still be done: undo N moves, or start over.
    */
   function noteNow(p: PairsPlay, pairs: number): { text: string; actions: NoteAction[]; shuffle: boolean } | null {
     if (p.done) {
       const action = slot === 'level' ? { label: d.end.next, run: nextLevel } : { label: d.end.home, run: closeRoute };
       return { text: d.end.title, actions: [action], shuffle: false };
     }
+    const canShuffle = shufflesLeft(p, settings.shuffles) !== 0;
+    const undoMoves = (back: number): NoteAction => ({ label: plural(lang, back, d.hint.undoMoves, { n: back }), run: () => takeBackMany(back) });
+    const startOver: NoteAction = { label: d.game.restart, run: restart };
     if (hint?.kind === 'pair') return { text: fmt(d.hint.pair, { picture: pictureName(p.kinds[hint.pair[0]]!) }), actions: [], shuffle: false };
     if (hint?.kind === 'unknown' && hint.pair) {
       return { text: fmt(d.hint.any, { picture: pictureName(p.kinds[hint.pair[0]]!) }), actions: [], shuffle: false };
     }
     if (hint?.kind === 'stuck') {
       const back = hint.back;
+      if (!canShuffle) {
+        if (back === null) return { text: d.hint.stuckStart, actions: [startOver], shuffle: false };
+        return { text: plural(lang, back, d.hint.stuckUndo, { n: back }), actions: [undoMoves(back)], shuffle: false };
+      }
       if (back === null) return { text: d.hint.stuckFar, actions: [], shuffle: true };
-      const undoMoves = { label: plural(lang, back, d.hint.undoMoves, { n: back }), run: () => takeBackMany(back) };
-      return { text: plural(lang, back, d.hint.stuck, { n: back }), actions: [undoMoves], shuffle: true };
+      return { text: plural(lang, back, d.hint.stuck, { n: back }), actions: [undoMoves(back)], shuffle: true };
+    }
+    if (pairs === 0 && !canShuffle) {
+      // the way out, unasked: the moves to undo, else from the start
+      if (wayBack?.at !== p) {
+        const found = hintFor(p);
+        wayBack = { at: p, back: found.kind === 'stuck' ? found.back : null };
+      }
+      const back = wayBack.back;
+      return { text: d.game.stuckNoShuffle, actions: [back === null ? startOver : undoMoves(back)], shuffle: false };
     }
     if (message) return { text: message, actions: [], shuffle: pairs === 0 };
     if (pairs === 0) return { text: d.game.stuck, actions: [], shuffle: true };
@@ -300,7 +321,7 @@ export function startApp(root: HTMLElement): void {
       }),
     );
     tools.el.hidden = p.done;
-    tools.render({ canUndo: p.history.length > 0, suggestShuffle: now?.shuffle ?? false }, d);
+    tools.render({ canUndo: p.history.length > 0, suggestShuffle: now?.shuffle ?? false, shufflesLeft: shufflesLeft(p, settings.shuffles) }, d);
     noteByKeys();
   }
 
@@ -415,9 +436,26 @@ export function startApp(root: HTMLElement): void {
     announce(`${plural(lang, steps, d.game.undoneMany, { n: steps })} ${standingText(next)}.`);
   }
 
+  /** The layout from its start: every step taken back (the shuffles made still count). */
+  function restart(): void {
+    if (!play || play.done) return;
+    let next = play;
+    while (next.history.length > 0) next = undo(next);
+    selected = null;
+    commit(next);
+    announce(`${d.game.restarted} ${standingText(next)}.`);
+  }
+
   function mix(): void {
     if (!play || play.done) return;
-    const next = shuffle(play);
+    if (shufflesLeft(play, settings.shuffles) === 0) {
+      // the button says so rather than vanish under the finger
+      message = d.game.noShuffles;
+      announce(message);
+      render();
+      return;
+    }
+    const next = shuffle(play, settings.shuffles);
     if (next === play) {
       message = d.game.shuffleFailed;
       announce(message);
@@ -431,6 +469,13 @@ export function startApp(root: HTMLElement): void {
 
   function askHint(): void {
     if (!play || !slot || play.done) return;
+    if (standing(play).pairs === 0 && shufflesLeft(play, settings.shuffles) === 0) {
+      // the line has already said it, with the way out: not counted as a hint
+      message = null;
+      render();
+      announce(noteText.textContent ?? '');
+      return;
+    }
     const found = hintFor(play);
     if (found.kind === 'done') return;
     play = countHint(play);

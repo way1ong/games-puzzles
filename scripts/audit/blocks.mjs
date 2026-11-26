@@ -3,6 +3,9 @@
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
+/** The drawn look's button in the menu, for the languages the audit turns it on in. */
+const DRAWN = { 'en-GB': 'Drawn', 'hu-HU': 'Rajzolt' };
+
 /** Runs in the page: what must hold on the Blocks screen besides the common checks. */
 function inspectBlocks() {
   const out = [];
@@ -39,8 +42,11 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await page.locator('.icon-btn').click();
       await check(page, `${label} menu`);
       await page.locator('dialog[open] input[type=checkbox]').first().check();
+      // the drawn look (the simple one is the default), in both themes: English light, Hungarian dark
+      const drawn = DRAWN[locale];
+      if (drawn) await page.locator('dialog[open] .choices__btn', { hasText: drawn }).click();
       await page.locator('dialog[open] .btn--primary').click();
-      await check(page, `${label} large mode`);
+      await check(page, `${label} large mode${drawn ? ', drawn look' : ''}`);
       if (shots) await page.screenshot({ path: join(shots, `blocks-${width}x${height}-${locale}-${colorScheme}.png`) });
       await ctx.close();
     }

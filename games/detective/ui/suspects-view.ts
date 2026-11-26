@@ -1,5 +1,5 @@
-// "Who did it?": the evidence found (with the place of each), on a harder level the circumstances too, and
-// the suspects as cards. A card opens the person (person-dialog.ts).
+// "Who did it?": the evidence found (with the place of each), on a harder level the circumstances too and how to
+// find the one who did it, step by step; the suspects as cards. A card opens the person (person-dialog.ts).
 import { h, svg } from '../../../shared/ui/dom.ts';
 import { portraitSvg } from '../art/people/portrait.ts';
 import { thingIcon } from '../art/things.ts';
@@ -46,6 +46,19 @@ export interface SuspectsExtras {
   note: string;
 }
 
+/** A harder case: what to do, in three steps with an example, and the one thing to beware of (decision of 25.11). */
+function howTo(d: Dict, level: 'medium' | 'hard'): HTMLElement {
+  const s = d.suspects;
+  const steps = level === 'hard' ? [s.hard1, s.hard2, s.hard3] : [s.medium1, s.medium2, s.medium3];
+  return h(
+    'section',
+    { class: 'suspects__how', 'aria-labelledby': 'how-title' },
+    h('h3', { class: 'suspects__part', id: 'how-title' }, s.stepsTitle),
+    h('ol', { class: 'suspects__steps' }, ...steps.map((step) => h('li', {}, step))),
+    h('p', { class: 'suspects__beware' }, level === 'hard' ? s.hardNote : s.mediumNote),
+  );
+}
+
 export function suspectsView(d: Dict, def: CaseDef, progress: Progress, open: (suspect: number) => void, extras: SuspectsExtras): HTMLElement {
   const people = h('ul', { class: 'people' });
   def.suspects.forEach((suspect, i) => {
@@ -70,7 +83,7 @@ export function suspectsView(d: Dict, def: CaseDef, progress: Progress, open: (s
     'section',
     { class: 'suspects' },
     title,
-    h('p', { class: 'suspects__lead' }, def.level === 'hard' ? d.suspects.leadHard : d.suspects.leadMedium),
+    howTo(d, def.level === 'hard' ? 'hard' : 'medium'),
     h('h3', { class: 'suspects__part', id: 'circumstances-title' }, d.suspects.circumstances),
     circumstanceList(d, extras.lang, def),
     h('h3', { class: 'suspects__part' }, d.search.evidence),

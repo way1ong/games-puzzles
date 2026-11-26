@@ -220,6 +220,11 @@ html.big .crossword {
   background: var(--found);
 }
 
+/* A found word's cell: a tap shows what the word means. */
+.cw-cell.is-found[data-cell] {
+  cursor: pointer;
+}
+
 /* A letter opened by a hint: its own colour, slanted, and a dot in the corner. */
 .cw-cell.is-opened {
   color: var(--opened);
@@ -532,7 +537,8 @@ html.big .wheel__letter {
   font-weight: 650;
 }
 
-.licence summary {
+.licence summary,
+.end-words summary {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -543,20 +549,48 @@ html.big .wheel__letter {
   cursor: pointer;
 }
 
-.licence summary::-webkit-details-marker {
+.licence summary::-webkit-details-marker,
+.end-words summary::-webkit-details-marker {
   display: none;
 }
 
 /* The sign that the text opens: points right when closed, down when open. */
-.licence summary::before {
+.licence summary::before,
+.end-words summary::before {
   flex: none;
   border-block: 0.375rem solid transparent;
   border-inline-start: 0.5rem solid currentColor;
   content: '';
 }
 
-.licence[open] summary::before {
+.licence[open] summary::before,
+.end-words[open] summary::before {
   transform: rotate(90deg);
+}
+
+/* What the words mean (docs/words/SPEC.md, "Значення слів"): each word in capitals, its meaning under it. */
+.meanings {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+}
+
+.meanings dt {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.meanings dt:not(:first-child) {
+  margin-top: 0.5rem;
+}
+
+.meanings dd {
+  margin: 0;
+}
+
+.meanings__none {
+  color: var(--muted);
 }
 
 .notice {

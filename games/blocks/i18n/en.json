@@ -84,7 +84,10 @@
     "installIos": "On iPhone or iPad: tap Share, then add the game to the Home Screen.",
     "reset": "Clear progress",
     "resetSure": "Tap again to clear records and saved games",
-    "resetDone": "Progress cleared"
+    "resetDone": "Progress cleared",
+    "style": "Game style",
+    "styleDrawn": "Drawn",
+    "styleSimple": "Simple"
   },
   "about": {
     "title": "About",

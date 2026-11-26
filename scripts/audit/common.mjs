@@ -15,12 +15,14 @@ export function createReport() {
 /**
  * Runs in the page: everything a player could meet that is wrong on any screen right now. `width` — the
  * width of the screen: a phone shows a wider page shrunk, and then the page's own measure of the window
- * grows with it. Or { width, dense }: `dense` — a selector of targets that cannot all be 44 px on a phone
- * (the 81 cells of a sudoku board), checked against the smaller size `dense.min` instead.
+ * grows with it. Or { width, dense, skip }: `dense` — a selector of targets that cannot all be 44 px on a phone
+ * (the 81 cells of a sudoku board), checked against the smaller size `dense.min` instead; `skip` — a selector of
+ * targets the game's own check measures (the cells of a zoomed grid lie partly beyond the screen by design).
  */
 export function inspectScreen(arg) {
   const width = typeof arg === 'number' ? arg : arg.width;
   const dense = typeof arg === 'number' ? null : arg.dense;
+  const skip = typeof arg === 'number' ? null : arg.skip;
   const out = [];
   const doc = document.scrollingElement;
   if (doc.scrollWidth > width + 1 || window.innerWidth > width + 1) out.push(`the page is ${Math.max(doc.scrollWidth, window.innerWidth)} px wide on a ${width} px screen`);
@@ -30,7 +32,7 @@ export function inspectScreen(arg) {
     return b.width > 0 && getComputedStyle(el).visibility !== 'hidden' && (!dialog || dialog.open) && !(document.querySelector('dialog[open]') && !dialog);
   };
   for (const el of document.querySelectorAll('button, .tray__grab, a, input')) {
-    if (!visible(el)) continue;
+    if (!visible(el) || (skip && el.matches(skip))) continue;
     const box = (el.tagName === 'INPUT' ? el.closest('label') : el).getBoundingClientRect();
     const name = (el.getAttribute('aria-label') || el.textContent).trim().slice(0, 24);
     const min = dense && el.matches(dense.selector) ? dense.min : 44;

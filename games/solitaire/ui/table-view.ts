@@ -4,6 +4,7 @@
 // where it is let go); the keys move between cards and places. The table only shows and passes on what the player
 // does: the game decides.
 import { h, svg } from '../../../shared/ui/dom.ts';
+import { courtSymbols } from '../art/courts.ts';
 import { suitSymbolId, suitSymbols } from '../art/suits.ts';
 import { SOLITAIRE } from '../config.ts';
 import { DECK, SUITS, cardOf, type Card } from '../core/cards.ts';
@@ -66,7 +67,7 @@ interface Press {
 
 export function createTableView(handlers: TableHandlers): TableView {
   const el = h('div', { class: 'table', role: 'group' });
-  const sprite = svg(`<svg xmlns="${SVG_NS}" class="table__sprite" aria-hidden="true" focusable="false">${suitSymbols()}</svg>`);
+  const sprite = svg(`<svg xmlns="${SVG_NS}" class="table__sprite" aria-hidden="true" focusable="false">${suitSymbols()}${courtSymbols()}</svg>`);
   const views: CardView[] = Array.from({ length: DECK }, (_, c) => createCardView(c));
   const stockSlot = h('button', { class: 'slot slot--stock', type: 'button', tabindex: -1 }, turnSign());
   const wasteSlot = h('div', { class: 'slot slot--waste', 'aria-hidden': 'true' });

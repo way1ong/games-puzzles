@@ -24,6 +24,12 @@ export const SOLITAIRE = {
   dealTries: 64,
   /** How far back the hint looks for a position that can still be won, in moves. */
   lookBack: 200,
+  /**
+   * The stock turned over this many times with nothing changed (no card off the waste or home, no face-down card
+   * turned up): the player is going round in circles, and the game checks, unasked, whether the deal can still be
+   * won (decision of 25.11, «Так на пасьянс»).
+   */
+  circles: 2,
   /** Deals made in advance for each way of turning the stock. */
   readyPerDraw: 1,
 } as const;

@@ -1,7 +1,7 @@
-// The tools under the table (one-handed play): hint, undo, shuffle — free and without limits (decision of 25.11).
-// Each has a sign and a word.
+// The tools under the table (one-handed play): hint, undo, shuffle — free and without limits (decision of 25.11);
+// shuffles may be limited in the menu, then the button tells how many are left. Each has a sign and a word.
 import { h } from '../../../shared/ui/dom.ts';
-import type { Dict } from './i18n.ts';
+import { fmt, type Dict } from './i18n.ts';
 import { hintSign, shuffleSign, undoSign } from './icons.ts';
 
 export interface ToolActions {
@@ -14,6 +14,8 @@ export interface ToolsState {
   canUndo: boolean;
   /** No pairs to take, or no way to clear the table from here: the shuffle stands out. */
   suggestShuffle: boolean;
+  /** Shuffles left under the limit chosen; null — no limit. */
+  shufflesLeft: number | null;
 }
 
 export interface ToolsView {
@@ -39,10 +41,12 @@ export function createToolsView(actions: ToolActions): ToolsView {
       el.setAttribute('aria-label', d.tools.label);
       hint.label.textContent = d.tools.hint;
       undo.label.textContent = d.tools.undo;
-      shuffle.label.textContent = d.tools.shuffle;
+      shuffle.label.textContent = state.shufflesLeft === null ? d.tools.shuffle : fmt(d.tools.shuffleLeft, { n: state.shufflesLeft });
       // Nothing to undo: the button says so when pressed rather than vanish under the finger.
       undo.button.setAttribute('aria-disabled', String(!state.canUndo));
-      shuffle.button.classList.toggle('is-suggested', state.suggestShuffle);
+      // none left: the button says so when pressed, like undo with nothing to undo
+      shuffle.button.setAttribute('aria-disabled', String(state.shufflesLeft === 0));
+      shuffle.button.classList.toggle('is-suggested', state.suggestShuffle && state.shufflesLeft !== 0);
     },
   };
 }

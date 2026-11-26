@@ -1,5 +1,5 @@
-// The crossword on the screen. Cells of found words show their letters with a full frame; letters opened by a
-// hint are marked by a dot as well as by colour; empty cells are boxes (or hidden, if the player chose so).
+// The crossword on the screen. Cells of found words show their letters with a full frame, and a tap on one shows
+// what the word means; letters opened by a hint are marked by a dot as well as by colour; empty cells are boxes (or hidden, if the player chose so).
 // While the player chooses a cell for a hint, the empty cells become buttons. Readers of the screen get the
 // words as a list (which are found, which letters are open).
 import { h } from '../../../shared/ui/dom.ts';
@@ -20,10 +20,22 @@ export interface CrosswordView {
   render(play: Play, options: CrosswordOptions, d: Dict): void;
 }
 
-export function createCrosswordView(onCell: (row: number, col: number) => void): CrosswordView {
+/**
+ * `onCell` — a cell chosen for a hint; `onWord` — a tap on a found word's cell: the found words through it, to show
+ * what they mean (docs/words/SPEC.md, "Значення слів"; the same meanings come at the end of the level for keys).
+ */
+export function createCrosswordView(onCell: (row: number, col: number) => void, onWord: (words: string[]) => void): CrosswordView {
   const grid = h('div', { class: 'crossword', 'aria-hidden': 'true' });
   const list = h('ol', { class: 'visually-hidden' });
   const el = h('section', { class: 'crossword-wrap' }, grid, list);
+  /** The found words through each cell, by "row,col" (none while a cell is being chosen for a hint). */
+  let foundAt = new Map<string, string[]>();
+
+  grid.addEventListener('click', (event) => {
+    const cell = (event.target as Element).closest<HTMLElement>('.cw-cell.is-found');
+    const words = cell?.dataset.cell ? foundAt.get(cell.dataset.cell) : undefined;
+    if (words?.length) onWord(words);
+  });
 
   return {
     el,
@@ -40,10 +52,13 @@ export function createCrosswordView(onCell: (row: number, col: number) => void):
       const justFound = level.words.find((p) => p.word.text === options.justFound);
       if (justFound) for (const c of cellsOf(justFound)) lit.add(`${c.row},${c.col}`);
       const items: HTMLElement[] = [];
+      foundAt = new Map();
       for (const [key, cell] of cells) {
         const shown = isShown(play, cell.row, cell.col);
         const opened = play.opened.includes(key);
-        const found = cell.words.some((p) => play.found.includes(p.word.text));
+        const foundWords = cell.words.map((p) => p.word.text).filter((w) => play.found.includes(w));
+        const found = foundWords.length > 0;
+        if (found && !options.choosing) foundAt.set(key, foundWords);
         const style = `grid-row: ${cell.row + 1}; grid-column: ${cell.col + 1}`;
         const classes = ['cw-cell', shown ? 'is-shown' : 'is-empty', found ? 'is-found' : '', opened && !found ? 'is-opened' : '', lit.has(key) ? 'is-lit' : '']
           .filter(Boolean)
@@ -54,7 +69,9 @@ export function createCrosswordView(onCell: (row: number, col: number) => void):
           items.push(b);
         } else {
           const hidden = !shown && !options.showCells;
-          items.push(h('span', { class: `${classes}${hidden ? ' is-hidden' : ''}`, style }, shown ? cell.tile.toUpperCase() : ''));
+          const span = h('span', { class: `${classes}${hidden ? ' is-hidden' : ''}`, style }, shown ? cell.tile.toUpperCase() : '');
+          if (foundAt.has(key)) span.dataset.cell = key;
+          items.push(span);
         }
       }
       grid.replaceChildren(...items);

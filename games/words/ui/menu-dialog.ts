@@ -202,6 +202,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           h('h2', {}, d.about.title),
           h('p', {}, plural(lang, WORDS.minWord, d.about.rules, { n: WORDS.minWord })),
           h('p', {}, d.about.forms),
+          h('p', {}, fmt(d.about.meanings, { n: WORDS.meanings.trialLevels })),
           h('p', {}, d.about.fieldRules),
           h('p', {}, content.tip),
           h('p', {}, d.about.text),

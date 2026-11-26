@@ -2,6 +2,7 @@
 // same, no colour is written anywhere but tokens.css, and what must be seen is seen in both themes.
 import { expect, it } from 'vitest';
 import app from './app.css?raw';
+import drawn from './drawn.css?raw';
 import tokens from './tokens.css?raw';
 
 const COLOUR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(/i;
@@ -30,9 +31,11 @@ it('defines every dark token in the light block too', () => {
   for (const name of systemDark.keys()) expect(light.has(name), name).toBe(true);
 });
 
-it('keeps colours out of app.css', () => {
-  const line = app.split('\n').find((l) => COLOUR.test(l));
-  expect(line).toBeUndefined();
+it('keeps colours out of app.css and drawn.css', () => {
+  for (const sheet of [app, drawn]) {
+    const line = sheet.split('\n').find((l) => COLOUR.test(l));
+    expect(line).toBeUndefined();
+  }
 });
 
 // ---------- contrast (WCAG 2): text 4.5:1, what marks controls and the tiles 3:1 ----------
@@ -69,6 +72,7 @@ const themes = { light, dark: new Map([...light, ...systemDark]) };
 const FACES = ['--card-face', '--card-hint', '--card-lifted'];
 const SUIT_INKS = ['--suit-black', '--suit-red', '--suit-blue', '--suit-green'];
 const TEXT: [string, string][] = [
+  ['--felt-text', '--felt'],
   ['--text', '--bg'],
   ['--text', '--surface'],
   ['--muted', '--bg'],
@@ -88,6 +92,9 @@ const MARKS: [string, string][] = [
   ...FACES.map((face): [string, string] => ['--card-line', face]),
   ['--slot-line', '--bg'],
   ['--drop', '--bg'],
+  // the drawn look: the empty places and where a dragged card lands, on the felt
+  ['--felt-line', '--felt'],
+  ['--felt-drop', '--felt'],
   ['--hint-ring', '--card-hint'],
   ['--hint-ring', '--card-face'],
   ...FACES.map((face): [string, string] => ['--card-focus', face]),
@@ -116,5 +123,9 @@ for (const [theme, t] of Object.entries(themes)) {
       const byEdge = ratio(solid('--card-line'), solid('--bg'));
       expect(Math.max(byFace, byEdge), face).toBeGreaterThanOrEqual(3);
     }
+  });
+
+  it(`${theme}: on the felt of the drawn look a card stands out by its face (face down, by its light margin)`, () => {
+    for (const face of [...FACES, '--card-face']) expect(ratio(solid(face), solid('--felt')), face).toBeGreaterThanOrEqual(3);
   });
 }

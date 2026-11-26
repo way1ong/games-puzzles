@@ -27,7 +27,7 @@ const loaded = new Map<string, Promise<Dictionary>>();
  * A file's text. The one-file build (the claude.ai test page) carries the files inside the page as data:
  * addresses, and a page there may not fetch even those: they are read here instead.
  */
-async function text(url: string): Promise<string> {
+export async function loadText(url: string): Promise<string> {
   if (url.startsWith('data:')) return fromDataUrl(url);
   const response = await fetch(url);
   if (!response.ok) throw new Error(`${url}: ${response.status}`);
@@ -52,7 +52,7 @@ export function loadDictionary(lang: WordLang, huTiles: boolean): Promise<Dictio
   let promise = loaded.get(key);
   if (!promise) {
     const files = FILES[lang];
-    promise = Promise.all([text(files.answers), text(files.accepted)]).then(([answers, accepted]) =>
+    promise = Promise.all([loadText(files.answers), loadText(files.accepted)]).then(([answers, accepted]) =>
       makeDictionary(lang, answers, accepted, { huTiles }),
     );
     promise.catch(() => loaded.delete(key));
@@ -63,7 +63,7 @@ export function loadDictionary(lang: WordLang, huTiles: boolean): Promise<Dictio
 
 /** The sources and licences of a language's lists, as written next to them. */
 export function loadNotice(lang: WordLang): Promise<string> {
-  return text(FILES[lang].notice);
+  return loadText(FILES[lang].notice);
 }
 
 /** Whether a language's lists come with a full licence text to show. */
@@ -72,5 +72,5 @@ export const hasLicence = (lang: WordLang): boolean => FILES[lang].licence !== n
 /** The full licence text that comes with a language's lists. */
 export function loadLicence(lang: WordLang): Promise<string> {
   const url = FILES[lang].licence;
-  return url ? text(url) : Promise.reject(new Error(`No licence text for ${lang}`));
+  return url ? loadText(url) : Promise.reject(new Error(`No licence text for ${lang}`));
 }

@@ -507,6 +507,36 @@
   color: var(--muted);
 }
 
+/* A harder case: how to find the one who did it, in steps, and what to beware of. */
+.suspects__how {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.suspects__how .suspects__part {
+  margin: 0;
+}
+
+.suspects__steps {
+  display: grid;
+  gap: 0.375rem;
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.suspects__steps li::marker {
+  font-weight: 800;
+}
+
+.suspects__beware {
+  margin: 0;
+  color: var(--muted);
+}
+
 .clues {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(13.5rem, 100%), 1fr));
@@ -637,6 +667,24 @@
 
 .reason[aria-pressed='true'] .reason__name::before {
   content: '✓ ';
+}
+
+/* Above the reasons: who the person is — the traits, what is known, what they say — to compare without going back. */
+.reasons-who {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 4px solid var(--line);
+  color: var(--muted);
+}
+
+.reasons-who p {
+  margin: 0;
+}
+
+.reasons-who__label {
+  color: var(--text);
+  font-weight: 700;
 }
 
 /* Under the reasons: the game's answer and the buttons, held at the bottom of the window. */

@@ -1,0 +1,73 @@
+// The pictures of the album (docs/nonograms/SPEC.md, "Малюнки"): own pixel pictures, each row a string — '.' an empty
+// cell, a letter a filled one of that colour (palette.ts). Every one is solved to the end line by line, without a
+// guess, so it has one answer (art.test.ts). In each size the easier ones come first (fewer steps of line-by-line
+// reasoning); new pictures go to the end of their size, so the album keeps its order. An id never changes once
+// published: saved progress is kept by it. Names: pictures.<name> in the dictionaries; two sizes may share one.
+import type { Size } from '../config.ts';
+import type { Picture } from '../core/picture.ts';
+
+const P = (size: Size, name: string, rows: string[]): Picture => ({ id: `${name}-${size}`, name, size, rows });
+
+export const PICTURES: readonly Picture[] = [
+  // ---------- 5 × 5 ----------
+  P(5, 'tree', ['..g..', '.ggg.', 'ggggg', '..n..', '..n..']),
+  P(5, 'flag', ['rrrr.', 'rrrr.', 'k....', 'k....', 'k....']),
+  P(5, 'arrow', ['..b..', '.bbb.', 'b.b.b', '..b..', '..b..']),
+  P(5, 'mushroom', ['.rrr.', 'rrrrr', 'rrrrr', '..t..', '.ttt.']),
+  P(5, 'cherries', ['...g.', '..g..', '.g.g.', 'rr.rr', 'rr.rr']),
+  P(5, 'envelope', ['lllll', 'll.ll', 'l.l.l', 'l...l', 'lllll']),
+  P(5, 'mug', ['bbb..', 'bbbbb', 'bbb.b', 'bbbbb', '.bb..']),
+  P(5, 'umbrella', ['.vvv.', 'vvvvv', '..n..', '..n..', '.nn..']),
+  P(5, 'bell', ['..y..', '.yyy.', '.yyy.', 'yyyyy', '..y..']),
+  P(5, 'sailboat', ['..y..', '..yy.', '..y..', 'nnnnn', '.nnn.']),
+  P(5, 'key', ['yy...', 'yyyyy', 'yy.y.', '.....', '.....']),
+  P(5, 'heart', ['.r.r.', 'rrrrr', 'rrrrr', '.rrr.', '..r..']),
+  P(5, 'house', ['..r..', '.rrr.', 'rrrrr', '.nnn.', '.n.n.']),
+  P(5, 'fish', ['.....', '.oo.o', 'oooo.', '.oo.o', '.....']),
+  P(5, 'moon', ['.yyy.', 'yy...', 'y....', 'yy...', '.yyy.']),
+  P(5, 'smile', ['.yyy.', 'y.y.y', 'yyyyy', 'y...y', '.yyy.']),
+  P(5, 'star', ['..y..', '..y..', 'yyyyy', '.yyy.', '.y.y.']),
+  P(5, 'note', ['..kk.', '..k.k', '..k..', 'kkk..', 'kkk..']),
+
+  // ---------- 10 × 10 ----------
+  P(10, 'key', ['..........', '..........', '.yyy......', 'yyyyy.....', 'yy.yyyyyyy', 'yyyyy..y.y', '.yyy...y.y', '..........', '..........', '..........']),
+  P(10, 'sun', ['....yy....', '....yy....', '..oooooo..', '..oooooo..', 'yyooooooyy', 'yyooooooyy', '..oooooo..', '..oooooo..', '....yy....', '....yy....']),
+  P(10, 'bell', ['....yy....', '...yyyy...', '..yyyyyy..', '..yyyyyy..', '..yyyyyy..', '.yyyyyyyy.', '.yyyyyyyy.', 'yyyyyyyyyy', 'yyyyyyyyyy', '....yy....']),
+  P(10, 'sailboat', ['....y.....', '....yy....', '....yyy...', '....yyyy..', '....y.....', 'nnnnnnnnnn', '.nnnnnnnn.', '..nnnnnn..', 'l.l.l.l.l.', 'llllllllll']),
+  P(10, 'carrot', ['...g.g.g..', '....ggg...', '...oooo...', '...oooo...', '...oooo...', '....ooo...', '....oo....', '....oo....', '.....o....', '.....o....']),
+  P(10, 'cat', ['.k......k.', '.kk....kk.', '.kkkkkkkk.', 'kkkkkkkkkk', 'kk.kkkk.kk', 'kkkkkkkkkk', 'kkkk..kkkk', '.kkkkkkkk.', '..kkkkkk..', '..........']),
+  P(10, 'mug', ['...l..l...', '...l..l...', '..........', '.bbbbbb...', '.bbbbbbbb.', '.bbbbbb.b.', '.bbbbbb.b.', '.bbbbbbbb.', '.bbbbbb...', '..bbbb....']),
+  P(10, 'mushroom', ['...rrrr...', '.rrrrrrrr.', 'rrr.rrr.rr', 'rrrrrrrrrr', '..eeeeee..', '...eeee...', '...eeee...', '...eeee...', '...eeee...', '..eeeeee..']),
+  P(10, 'glasses', ['..........', '..........', '.kkkk.kkkk', 'kk..kkk..k', 'k...k.k..k', 'k...k.k..k', 'kk..k.kk.k', '.kkkk..kkk', '..........', '..........']),
+  P(10, 'anchor', ['....ss....', '...s..s...', '....ss....', '..ssssss..', '....ss....', '....ss....', 's...ss...s', 'ss..ss..ss', 'ssssssssss', '...ssss...']),
+  P(10, 'strawberry', ['...g.g.g..', '....ggg...', '..rrrrrrr.', '.rrrrrrrrr', '.rr.rrr.rr', '.rrrrrrrrr', '..rr.r.rr.', '...rrrrr..', '....rrr...', '.....r....']),
+  P(10, 'tree', ['....dd....', '...dddd...', '..dddddd..', '.dddddddd.', '..dddddd..', '.dddddddd.', 'dddddddddd', '....nn....', '....nn....', '...nnnn...']),
+  P(10, 'snail', ['..........', '.....ttt..', '....t...t.', '...t.ttt.t', 'k..t.t.t.t', 'kk.t.t...t', '.k..t.ttt.', '.kkkkkkkkk', 'kkkkkkkkkk', '..........']),
+  P(10, 'pear', ['.....n....', '.....n.g..', '....yyyg..', '....yyy...', '...yyyyy..', '..yyyyyyy.', '.yyyyyyyyy', '.yyyyyyyyy', '.yyyyyyyyy', '..yyyyyyy.']),
+  P(10, 'heart', ['..........', '.rrr..rrr.', 'rrrrrrrrrr', 'rrrrrrrrrr', 'rrrrrrrrrr', '.rrrrrrrr.', '..rrrrrr..', '...rrrr...', '....rr....', '..........']),
+  P(10, 'apple', ['....n.....', '....ngg...', '..rrnrrr..', '.rrrrrrrr.', 'rrrrrrrrrr', 'rrrrrrrrrr', 'rrrrrrrrrr', 'rrrrrrrrrr', '.rrrrrrrr.', '..rrr.rr..']),
+  P(10, 'drop', ['....l.....', '....l.....', '...lll....', '..lllll...', '..lllll...', '.lllllll..', '.lllllll..', '.lllllll..', '..lllll...', '...lll....']),
+  P(10, 'moon', ['..yyyy....', '.yyyyy....', 'yyyy......', 'yyy.......', 'yyy.......', 'yyy.......', 'yyy.......', 'yyyy......', '.yyyyy....', '..yyyy....']),
+  P(10, 'house', ['....rr....', '...rrrr...', '..rrrrrr..', '.rrrrrrrr.', 'rrrrrrrrrr', '.nnnnnnnn.', '.n..nn..n.', '.n..nn..n.', '.nnnnnnnn.', '.nnn..nnn.']),
+  P(10, 'tulip', ['..p.pp.p..', '..pppppp..', '..pppppp..', '..pppppp..', '...pppp...', '....g.....', '.gg.g.gg..', '..g.g.g...', '...ggg....', '....g.....']),
+  P(10, 'leaf', ['....gg....', '...ggdg...', '..gggdgg..', '.ggggdggg.', '.ggggdggg.', '.ggggdggg.', '..gggdgg..', '...ggdg...', '....dd....', '....dd....']),
+  P(10, 'fish', ['..........', '...ooo....', '..ooooo..o', '.o.ooooooo', 'oooooooo..', '.oooooooo.', '..ooooo..o', '...ooo....', '..........', '..........']),
+  P(10, 'cherries', ['......gg..', '.....ngg..', '....nn.n..', '...n...n..', '..n....n..', '.rrr..rrr.', 'rrrrr.rrrr', 'rrrrr.rrrr', 'rrrrr..rr.', '.rrr......']),
+  P(10, 'umbrella', ['....v.....', '..vvvvv...', '.vvvvvvv..', 'vvvvvvvvv.', 'v.v.v.v.v.', '....n.....', '....n.....', '....n.....', '.n..n.....', '..nn......']),
+  P(10, 'bird', ['..........', '....kk....', '...kkkk...', '..kk.kkoo.', '..kkkkk...', 'kkkkkkk...', '.kkkkkkk..', '..kkkkkk..', '....o.o...', '...oo.oo..']),
+  P(10, 'star', ['....yy....', '....yy....', '...yyyy...', 'yyyyyyyyyy', '.yyyyyyyy.', '..yyyyyy..', '..yyyyyy..', '.yyy..yyy.', '.yy....yy.', 'yy......yy']),
+
+  // ---------- 15 × 15 ----------
+  P(15, 'mushroom', ['.....rrrrr.....', '...rrrrrrrrr...', '..rrr.rrrrr.rr.', '.rrrrrrrr.rrrr.', 'rrrr.rrrrrrrrrr', 'rrrrrrrrrrrrrrr', '.rrrrrrrrrrrrr.', '.....eeeee.....', '.....eeeee.....', '.....eeeee.....', '....eeeeeee....', '....eeeeeee....', '....eeeeeee....', '.....eeeee.....', 'ggggggggggggggg']),
+  P(15, 'sailboat', ['.......r.......', '.......nee.....', '.......neee....', '.......neeee...', '.......neeeee..', '.......neeeeee.', '.......n.......', '.......n.......', 'nnnnnnnnnnnnnnn', '.nnnnnnnnnnnnn.', '..nnnnnnnnnnn..', '...nnnnnnnnn...', '...............', 'l.l.l.l.l.l.l.l', 'lllllllllllllll']),
+  P(15, 'grapes', ['.......n.......', '.......n.gg....', '......nnggg....', '....vvvnvvv....', '...vvvvvvvvv...', '...vvvvvvvvv...', '...vv.vvv.vv...', '....vvvvvvv....', '....vvvvvvv....', '....vv.v.vv....', '.....vvvvv.....', '.....vvvvv.....', '......vvv......', '......vvv......', '.......v.......']),
+  P(15, 'fish', ['...............', '...............', '....bbbbb......', '..bbbbbbbbb...b', '.bbbbbbbbbbb.bb', 'bb.bbbbbbbbbbbb', 'bbbbbllbbllbbbb', 'bbbbbllbbllbbbb', '.bbbbbbbbbbbbbb', '..bbbbbbbbbb.bb', '...bbbbbbbb...b', '....bbbbbb.....', '...............', '...............', '...............']),
+  P(15, 'butterfly', ['...............', '.vvv.k...k.vvv.', 'vvvvv.k.k.vvvvv', 'vvvvvv.k.vvvvvv', 'vvyvvvvkvvvvyvv', 'vvvvvvvkvvvvvvv', '.vvvvvvkvvvvvv.', '..vvvvvkvvvvv..', '...vvvvkvvvv...', '..ppppkkkpppp..', '.pppppkkkppppp.', '.ppppp.k.ppppp.', '..ppp..k..ppp..', '.......k.......', '...............']),
+  P(15, 'house', ['.......r.......', '......rrr......', '.....rrrrr.....', '....rrrrrrr....', '...rrrrrrrrr...', '..rrrrrrrrrrr..', '.rrrrrrrrrrrrr.', '..ttttttttttt..', '..t..ttttt..t..', '..t..ttttt..t..', '..ttttttttttt..', '..tttt...tttt..', '..tttt...tttt..', '..tttt...tttt..', 'ggggggggggggggg']),
+  P(15, 'fir', ['.......d.......', '......ddd......', '.....ddddd.....', '....ddddddd....', '......ddd......', '.....ddddd.....', '....ddddddd....', '...ddddddddd...', '.....ddddd.....', '....ddddddd....', '...ddddddddd...', '..ddddddddddd..', '.ddddddddddddd.', '......nnn......', '......nnn......']),
+  P(15, 'cat', ['.ss.........ss.', '.sss.......sss.', '.ssss.....ssss.', '.sssssssssssss.', 'sssssssssssssss', 'sss..sssss..sss', 'sss..sssss..sss', 'sssssssssssssss', 'ssssss...ssssss', 'sssssss.sssssss', '.sssssssssssss.', '.sssssssssssss.', '..sssssssssss..', '...sssssssss...', '.....sssss.....']),
+  P(15, 'owl', ['..nn.......nn..', '..nnn.....nnn..', '..nnnnnnnnnnn..', '.nnnnnnnnnnnnn.', '.nn...nnn...nn.', '.nn.k.nnn.k.nn.', '.nn...nnn...nn.', '.nnnnnnynnnnnn.', '.nnnnnnynnnnnn.', '.nntnnnnnnntnn.', '.ntttnnnnntttn.', '.nntttttttttnn.', '..nnnnnnnnnnn..', '...nnnnnnnnn...', '...yy.....yy...']),
+  P(15, 'pear', ['.......n.......', '.......n..gg...', '......yyy.g....', '......yyy......', '.....yyyyy.....', '.....yyyyy.....', '....yyyyyyy....', '...yyyyyyyyy...', '..yyyyyyyyyyy..', '.yyyyyyyyyyyyy.', '.yyyyyyyyyyyyy.', '.yyyyyyyyyyyyy.', '.yyyyyyyyyyyyy.', '..yyyyyyyyyyy..', '....yyyyyyy....']),
+  P(15, 'apple', ['.......n.......', '.......n.ggg...', '.......nggg....', '...rrrrnrrrr...', '..rrrrrrrrrrr..', '.rrrrrrrrrrrrr.', '.rrppprrrrrrrr.', 'rrrpprrrrrrrrrr', 'rrrprrrrrrrrrrr', 'rrrrrrrrrrrrrrr', 'rrrrrrrrrrrrrrr', '.rrrrrrrrrrrrr.', '.rrrrrrrrrrrrr.', '..rrrrr.rrrrr..', '...rrr...rrr...']),
+  P(15, 'strawberry', ['....g..g..g....', '.....ggggg.....', '...rrrgggrrr...', '..rrrrrrrrrrr..', '.rrryrrrrryrrr.', '.rrrrrryrrrrrr.', '.rryrrrrrrryrr.', '..rrrrryrrrrr..', '..rryrrrrryrr..', '...rrrrrrrrr...', '...rrryrrrrr...', '....rrrrrrr....', '.....rrrrr.....', '......rrr......', '.......r.......']),
+];

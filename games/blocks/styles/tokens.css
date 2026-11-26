@@ -38,6 +38,17 @@
   --bevel-dark: rgb(0 0 0 / 0.25);
   --dot: rgb(0 0 0 / 0.5);
   --dot-ring: rgb(255 255 255 / 0.75);
+
+  /* The drawn look (decision of 25.11, html.drawn): a wooden board — its frame and gaps, the empty cells sunk into it,
+     the glow of lines a move would clear on them — a sheen and a darker edge on a block (it stands out from an empty
+     cell by its edge), the shadow of a sunk cell. */
+  --wood-board: #8a5e34;
+  --wood-cell: #e8d2b0;
+  --wood-glow: #9a4a00;
+  --sheen-light: rgb(255 255 255 / 0.38);
+  --sheen-dark: rgb(0 0 0 / 0.18);
+  --blk-edge: rgb(0 0 0 / 0.55);
+  --recess: rgb(0 0 0 / 0.3);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -61,6 +72,11 @@
     --backdrop: rgb(0 0 0 / 0.6);
     --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
     --drop: 0 6px 12px rgb(0 0 0 / 0.6);
+
+    --wood-board: #8a6a48;
+    --wood-cell: #2a1d12;
+    --wood-glow: #ffc94d;
+    --recess: rgb(0 0 0 / 0.55);
   }
 }
 
@@ -85,4 +101,9 @@
   --backdrop: rgb(0 0 0 / 0.6);
   --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
   --drop: 0 6px 12px rgb(0 0 0 / 0.6);
+
+  --wood-board: #8a6a48;
+  --wood-cell: #2a1d12;
+  --wood-glow: #ffc94d;
+  --recess: rgb(0 0 0 / 0.55);
 }

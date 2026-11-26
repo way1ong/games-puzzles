@@ -40,6 +40,22 @@
   --backdrop: rgb(20 24 22 / 0.45);
   --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
   --card-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+
+  /* The drawn look (decision of 25.11, html.drawn): the felt mat under the cards, its edge, what is seen on it; a
+     deeper shadow under a card; the back of a card; the figures of the jack, queen and king (on the light face of a
+     card: the same in both themes). */
+  --felt: #2f6a47;
+  --felt-edge: #1d4630;
+  --felt-line: #cfe4d6;
+  --felt-text: #f2f8f4;
+  --felt-drop: #ffe38a;
+  --card-shadow-deep: 0 3px 8px rgb(0 0 0 / 0.22);
+  --back-drawn: #1f3d73;
+  --back-drawn-line: #d9b45f;
+  --court-gold: #d6a21e;
+  --court-skin: #f3cfaa;
+  --court-hair: #5b3a1f;
+  --court-line: #2b2420;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -60,6 +76,13 @@
     --backdrop: rgb(0 0 0 / 0.6);
     --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
     --card-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+
+    --felt: #1d4a33;
+    --felt-edge: #0e2a1b;
+    --felt-line: #a9d0b6;
+    --felt-text: #e6f2ea;
+    --felt-drop: #ffd75e;
+    --card-shadow-deep: 0 3px 10px rgb(0 0 0 / 0.6);
   }
 }
 
@@ -81,4 +104,11 @@
   --backdrop: rgb(0 0 0 / 0.6);
   --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
   --card-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+
+  --felt: #1d4a33;
+  --felt-edge: #0e2a1b;
+  --felt-line: #a9d0b6;
+  --felt-text: #e6f2ea;
+  --felt-drop: #ffd75e;
+  --card-shadow-deep: 0 3px 10px rgb(0 0 0 / 0.6);
 }

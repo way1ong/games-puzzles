@@ -101,4 +101,10 @@ export const WORDS = {
     enAnswerSize: 50,
     enAcceptedSize: 70,
   },
+  /**
+   * Short meanings of the crossword words (docs/words/SPEC.md, "Значення слів"; trial of 25.11): in
+   * games/words/meanings/<lang>.txt, for every crossword word of the wheel's levels up to `trialLevels` (C); a
+   * meaning has at most `max` characters, so it reads at a glance (C).
+   */
+  meanings: { trialLevels: 30, max: 100 },
 } as const;

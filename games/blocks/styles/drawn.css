@@ -1,0 +1,40 @@
+/* Blocks, the drawn look (decision of 25.11; html.drawn, the default; "Simple" in the menu takes it off): a wooden
+   board with the empty cells sunk into it, and blocks of painted wood — grain, a sheen from the top left, a darker
+   edge. The colours and the dots that tell the shapes apart stay as they are. Colours only from tokens.css; the grain
+   is noise drawn in code (ui/textures.ts, CSS variables --tex-grain and --tex-grain-fine). */
+
+html.drawn {
+  --board: var(--wood-board);
+  --cell: var(--wood-cell);
+  --glow: var(--wood-glow);
+}
+
+html.drawn .board {
+  background-image: var(--tex-grain);
+  box-shadow: inset 0 0 0 1px var(--recess);
+}
+
+/* An empty cell: sunk into the board. */
+html.drawn .cell:not(.blk, .ghost) {
+  background-image: var(--tex-grain-fine);
+  box-shadow:
+    inset 0 2px 3px var(--recess),
+    inset 0 -1px 0 var(--sheen-light);
+}
+
+/* A block: painted wood. */
+html.drawn .blk {
+  border-radius: 0.3rem;
+  background-image: var(--tex-grain-fine), linear-gradient(135deg, var(--sheen-light), transparent 45%, var(--sheen-dark));
+  box-shadow:
+    inset 0 -3px 0 var(--bevel-dark),
+    inset 0 2px 0 var(--bevel-light),
+    inset 0 0 0 1.5px var(--blk-edge);
+}
+
+html.drawn .blk:is(.s7, .s8, .s9, .s10, .s11, .s12) {
+  background-image:
+    radial-gradient(circle, var(--dot) 0 16%, var(--dot-ring) 17% 27%, transparent 28%),
+    var(--tex-grain-fine),
+    linear-gradient(135deg, var(--sheen-light), transparent 45%, var(--sheen-dark));
+}

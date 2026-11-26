@@ -103,6 +103,10 @@
     "title": "Bonus words",
     "none": "No bonus words yet. Real words made of these letters that are not in the crossword are kept here."
   },
+  "meaning": {
+    "title": "Meaning",
+    "none": "No description of this word yet."
+  },
   "end": {
     "title": "Level {n} done!",
     "dailyTitle": "Daily puzzle solved!",
@@ -132,7 +136,8 @@
     "shareHints": {
       "one": "{name} · {date}: solved with {n} hint",
       "other": "{name} · {date}: solved with {n} hints"
-    }
+    },
+    "meanings": "What the words mean"
   },
   "settings": {
     "title": "Settings",
@@ -193,6 +198,7 @@
     "dictionariesNote": "The word lists come from these sources (their authors and licences):",
     "licence": "The full text of the GNU LGPL 2.1 licence",
     "credit": "Made by way1ong",
-    "fieldRules": "Word Field: the whole field splits into hidden words; a word goes through neighbouring cells up, down, left or right, never diagonally. Another real word counts too if the rest of the field can still be filled with words."
+    "fieldRules": "Word Field: the whole field splits into hidden words; a word goes through neighbouring cells up, down, left or right, never diagonally. Another real word counts too if the rest of the field can still be filled with words.",
+    "meanings": "Tap a found word in the crossword to see what it means. For now, the words of levels 1–{n} have descriptions."
   }
 }

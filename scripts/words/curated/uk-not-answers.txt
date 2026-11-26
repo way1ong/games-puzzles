@@ -5,3 +5,130 @@
 # slang or an old spelling
 інет
 міт
+# bookish (flame, ardour); frequent in the data probably as the Russian «fell»; hard to guess on level 1 (decision of 25.11)
+пал
+# The words of levels 1–30, checked for the trial word meanings (25.11): a crossword word is one an adult
+# speaker knows without a dictionary. These stay accepted when found, as bonus words.
+# rare, bookish, dialect or old
+кап
+мит
+діл
+ост
+мор
+жак
+мая
+гар
+гра
+вар
+тес
+угар
+ази
+бат
+# foreign or narrow terms
+спот
+сабо
+тако
+арго
+гран
+дао
+дон
+дот
+тора
+таро
+бета
+стек
+его
+анти
+ест
+тор
+рол
+# colloquial short forms, insults, names
+лор
+бос
+ірод
+орк
+# unpleasant
+кал
+# second round of the same check
+агро
+бер
+бор
+борд
+брі
+взад
+гер
+грей
+груд
+гуд
+йон
+літ
+ліф
+мате
+мачо
+мол
+мора
+пут
+рад
+роб
+скит
+стик
+унт
+чос
+# third round of the same check
+алан
+арт
+ват
+влад
+воло
+дорн
+лов
+лого
+логос
+маз
+радон
+рус
+сук
+чота
+іон
+# fourth round of the same check
+голо
+дог
+каре
+ларі
+лес
+пер
+перс
+тук
+# fifth round of the same check
+жим
+зоб
+рим
+слот
+стало
+тві
+тол
+яро
+# sixth round of the same check
+брит
+кант
+лат
+# a form of «сам», not a word of its own
+само
+кок
+# the levels of the other tile setting (it seeds the levels of every language)
+кін
+лорі
+міс
+місо
+опал
+прям
+інк
+інь
+лік
+пат
+рея
+сап
+сер
+спа
+сір
+тік

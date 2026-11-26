@@ -54,6 +54,8 @@
     "fromHome": "Ha egy lapot vissza szeretne venni az alapkupacról, húzza át.",
     "cantDrop": "{card}: ide nem tehető.",
     "undone": "Lépés visszavonva.",
+    "deadEnd": "Nincs több célravezető lépés.",
+    "restarted": "A leosztás elölről kezdődik.",
     "nothingToUndo": "Nincs mit visszavonni.",
     "finishNote": "Minden lap fel van fordítva: a többi magától az alapkupacokra kerülhet.",
     "finish": "Befejezés",
@@ -63,7 +65,8 @@
     "label": "Eszközök",
     "hint": "Tipp",
     "undo": "Vissza",
-    "newDeal": "Új leosztás"
+    "newDeal": "Új leosztás",
+    "restart": "Újrakezdés"
   },
   "hint": {
     "thinking": "Utat keresek…",
@@ -78,8 +81,8 @@
     "unsure": "A játék nem látott el a végéig; ez a lépés jónak tűnik: {card} → {target}.",
     "unsureDraw": "A játék nem látott el a végéig; próbáljon lapokat fordítani a pakliból.",
     "undoMoves": {
-      "one": "{n} lépés visszavonása",
-      "other": "{n} lépés visszavonása"
+      "one": "{n} lépés vissza",
+      "other": "{n} lépés vissza"
     }
   },
   "end": {
@@ -121,7 +124,10 @@
     "installIos": "iPhone-on vagy iPaden: koppintson a Megosztás gombra, majd adja hozzá a játékot a főképernyőhöz.",
     "reset": "Előrehaladás törlése",
     "resetSure": "Koppintson újra a leosztások, az eredmények és a statisztika törléséhez",
-    "resetDone": "Törölve"
+    "resetDone": "Törölve",
+    "style": "A játék kinézete",
+    "styleDrawn": "Rajzolt",
+    "styleSimple": "Egyszerű"
   },
   "stats": {
     "title": "Statisztika",

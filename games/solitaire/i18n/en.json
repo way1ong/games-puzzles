@@ -54,6 +54,8 @@
     "fromHome": "To bring a card back from the foundation, drag it.",
     "cantDrop": "{card} cannot go there.",
     "undone": "Move undone.",
+    "deadEnd": "No moves left that lead to the end.",
+    "restarted": "The deal starts over.",
     "nothingToUndo": "Nothing to undo.",
     "finishNote": "Every card is open: the rest can go home by itself.",
     "finish": "Finish",
@@ -63,7 +65,8 @@
     "label": "Tools",
     "hint": "Hint",
     "undo": "Undo",
-    "newDeal": "New deal"
+    "newDeal": "New deal",
+    "restart": "Start over"
   },
   "hint": {
     "thinking": "Looking for a way…",
@@ -121,7 +124,10 @@
     "installIos": "On iPhone or iPad: tap “Share”, then add the game to the Home Screen.",
     "reset": "Clear progress",
     "resetSure": "Tap again to clear deals, results and statistics",
-    "resetDone": "Progress cleared"
+    "resetDone": "Progress cleared",
+    "style": "Game style",
+    "styleDrawn": "Drawn",
+    "styleSimple": "Simple"
   },
   "stats": {
     "title": "Statistics",

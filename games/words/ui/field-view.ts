@@ -100,6 +100,10 @@ export function createFieldView(actions: FieldActions): FieldView {
     grid.setPointerCapture(event.pointerId);
     slide = { pointer: event.pointerId, path: [i], moved: false, x: event.clientX, y: event.clientY };
   });
+  // A finger on the field is handled by the pointer events alone: no gestures of the browser for it. Otherwise a
+  // quick slide counts as a fling, and the browser swallows the next tap on a button for a moment (found by the
+  // finger tests, docs/STATUS.md).
+  grid.addEventListener('touchstart', (event) => event.preventDefault(), { passive: false });
 
   grid.addEventListener('pointermove', (event) => {
     if (!slide || event.pointerId !== slide.pointer || !state || state.input === 'tap') return;

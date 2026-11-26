@@ -36,6 +36,10 @@
     "noPairs": "no pairs to take",
     "tip": "Tap two free tiles with the same picture. A tile is free when nothing lies on it and its left or right side is open.",
     "stuck": "No pairs to take. Shuffle the tiles or undo a move.",
+    "noShuffles": "No shuffles are left for this layout.",
+    "stuckNoShuffle": "No pairs to take, and no shuffles are left.",
+    "restart": "Start over",
+    "restarted": "The layout starts over.",
     "tileFree": "{picture}, free",
     "tileHint": "{picture}, free, hint",
     "tileBlocked": "{picture}, blocked",
@@ -57,7 +61,8 @@
     "label": "Tools",
     "hint": "Hint",
     "undo": "Undo",
-    "shuffle": "Shuffle"
+    "shuffle": "Shuffle",
+    "shuffleLeft": "Shuffle ({n})"
   },
   "hint": {
     "pair": "Take the two highlighted tiles ({picture}): after them the table can still be cleared.",
@@ -67,6 +72,11 @@
       "other": "From here the table cannot be cleared. Undo {n} moves, or shuffle the tiles."
     },
     "stuckFar": "From here the table cannot be cleared. Shuffle the tiles, or undo several moves.",
+    "stuckUndo": {
+      "one": "From here the table cannot be cleared. Undo {n} move.",
+      "other": "From here the table cannot be cleared. Undo {n} moves."
+    },
+    "stuckStart": "From here the table cannot be cleared. Start the layout over.",
     "undoMoves": {
       "one": "Undo {n} move",
       "other": "Undo {n} moves"
@@ -96,6 +106,9 @@
     "dim": "Shade the blocked tiles",
     "pairs": "Show how many pairs can be taken",
     "time": "Show the time",
+    "shuffles": "Shuffles per layout",
+    "shufflesAny": "No limit",
+    "shufflesNone": "None",
     "look": "Look",
     "big": "Large tiles and buttons",
     "theme": "Theme",

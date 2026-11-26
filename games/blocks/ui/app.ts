@@ -3,6 +3,7 @@
 import { BLOCKS } from '../config.ts';
 import { canPlace, fullLines, place as placeOnBoard } from '../core/board.ts';
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
+import { setTextures } from '../../../shared/ui/textures.ts';
 import { dailySeed } from '../core/daily.ts';
 import { MODES, newGame, placePiece, shapeCode, turnPiece, undo, type GameState, type Mode } from '../core/game.ts';
 import type { Cells } from '../core/shapes.ts';
@@ -15,6 +16,7 @@ import { dict, fmt, num, pickLang, plural, type Dict } from './i18n.ts';
 import { createMenuDialog } from './menu-dialog.ts';
 import { pieceElement, pieceSize } from './piece-view.ts';
 import * as store from './storage.ts';
+import { TEXTURES } from './textures.ts';
 import { createTray, renderTray, type TraySlot } from './tray-view.ts';
 
 /** How long cleared lines light up, ms (the same value drives the CSS animation). */
@@ -84,6 +86,8 @@ export function startApp(root: HTMLElement): void {
     document.title = d.meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute('content', d.meta.description);
     document.documentElement.classList.toggle('big', settings.big);
+    document.documentElement.classList.toggle('drawn', settings.look === 'drawn');
+    setTextures(document.documentElement, TEXTURES);
 
     const menuBtn = h(
       'button',
@@ -573,6 +577,11 @@ export function startApp(root: HTMLElement): void {
         menuDialog.el.close();
         build();
         openMenu();
+      },
+      setLook(look) {
+        settings = { ...settings, look };
+        store.saveSettings(settings);
+        document.documentElement.classList.toggle('drawn', look === 'drawn');
       },
       setBig(on) {
         settings = { ...settings, big: on };

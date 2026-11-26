@@ -33,10 +33,14 @@ export const PICTURES = [
 ] as const;
 export type Picture = (typeof PICTURES)[number];
 
-/** A step of the levels: from this level on, one of these layouts (chosen by the level's seed). */
+/**
+ * A step of the levels: from this level on, one of these layouts (chosen by the level's seed), dealt as hard as `rate`
+ * says — the share of random players who would clear the table (see PAIRS.difficulty).
+ */
 export interface LevelStep {
   from: number;
   layouts: readonly string[];
+  rate: number;
 }
 
 export const PAIRS = {
@@ -56,19 +60,34 @@ export const PAIRS = {
   max: { columns: 6, rows: 6, layers: 4 },
   /** Each picture comes this many times at most: two pairs (C). */
   copies: 4,
-  /** How the layouts grow, from the first level (C). */
+  /**
+   * How the layouts grow, from the first level, and how hard their deals are (decision of 25.11, «Пари дуже прості,
+   * ніякої важкості»: small layouts only to learn, then quickly bigger and harder) (C: the numbers).
+   */
   levels: [
-    { from: 1, layouts: ['cross', 'hills', 'square', 'frame', 'bridge'] },
-    { from: 11, layouts: ['steps', 'gate', 'pyramid', 'flower', 'rings'] },
-    { from: 31, layouts: ['diamond', 'terrace', 'castle', 'tower'] },
-    { from: 81, layouts: ['ziggurat', 'mountain', 'citadel'] },
+    { from: 1, layouts: ['cross', 'square', 'frame', 'bridge'], rate: 0.8 },
+    { from: 4, layouts: ['steps', 'gate', 'pyramid', 'flower', 'rings'], rate: 0.5 },
+    { from: 11, layouts: ['diamond', 'terrace', 'dome', 'slope', 'ridge'], rate: 0.35 },
+    { from: 31, layouts: ['ziggurat', 'mountain', 'peak'], rate: 0.25 },
   ] satisfies LevelStep[],
-  /** The layout of the day: one of these, chosen by the date (C). */
-  daily: { layouts: ['diamond', 'terrace', 'castle', 'tower'] },
+  /** The layout of the day: one of these, chosen by the date, and among the hardest deals (C). */
+  daily: { layouts: ['diamond', 'terrace', 'dome', 'slope'], rate: 0.2 },
+  /**
+   * Choosing a deal by how hard it is (decision of 25.11): of `candidates` deals in a row from the level's seed, the
+   * one whose clear rate — how often a player who takes any matching pair at random clears the table, out of `plays`
+   * such plays — is nearest the step's `rate` (C).
+   */
+  difficulty: { candidates: 8, plays: 60 },
   /** Attempts at a way to an empty table before taking the next seed (C) — tests show far fewer are needed. */
   dealTries: 400,
   /** The solver's steps (a hint, "can it still be won?") before it says "do not know" (C). */
   solveSteps: 200_000,
   /** Steps back a hint looks through for "it can be won again after N steps back" (C). */
   lookBack: 30,
+  /**
+   * Shuffles a layout may have — a choice in the menu, for whoever wants a harder game (decision of 25.11: «Що до
+   * перемішування, додай можливість вибору обмеження кількості перемішувань»). null — no limit, the default; the
+   * other choices (C).
+   */
+  shuffleLimits: [null, 3, 1, 0] as readonly (number | null)[],
 } as const;
