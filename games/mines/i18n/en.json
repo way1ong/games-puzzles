@@ -207,5 +207,11 @@
     "zoom": "Large fields on a phone: one finger moves the field, two zoom it; “Whole field” shows all of it. With a mouse: the wheel moves the field, Ctrl and the wheel zoom.",
     "keys": "Keyboard: arrows — move over the cells, Space or Enter — like a tap, F — flag, H — hint, N — new field, Ctrl+Z — undo the move onto a mine, Esc — close.",
     "credit": "Made by way1ong"
+  },
+  "update": {
+    "title": "A new version of the game is ready",
+    "text": "The game will open again where you left off.",
+    "apply": "Update",
+    "later": "Later"
   }
 }

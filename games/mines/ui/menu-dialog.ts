@@ -3,6 +3,7 @@
 // statistics for each level; about the game and the "Made by way1ong" line.
 import { h } from '../../../shared/ui/dom.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
+import { updateLine } from '../../../shared/ui/update-view.ts';
 import { LEVELS, MINES, type AfterMine, type Start, type Theme } from '../config.ts';
 import type { MinesStats } from '../core/stats.ts';
 import { dict, LANGS, num, plural, type Dict } from './i18n.ts';
@@ -187,6 +188,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           'div',
           { class: 'dialog__body' },
           h('div', { class: 'dialog__head' }, h('h2', { id: 'menu-title' }, s.title), close),
+          updateLine(d.update),
           h('p', { class: 'dialog__label' }, s.language),
           langs,
           h('h3', {}, s.play),

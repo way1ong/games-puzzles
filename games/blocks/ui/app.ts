@@ -367,6 +367,7 @@ export function startApp(root: HTMLElement): void {
         share: dailyShare(),
         secondary: null,
         primary: { label: d.actions.close, action: () => undefined },
+        update: d.update,
       });
       return;
     }
@@ -383,6 +384,7 @@ export function startApp(root: HTMLElement): void {
       share: null,
       secondary: { label: d.actions.close, action: () => undefined },
       primary: { label: d.actions.newGame, action: restart },
+      update: d.update,
     });
   }
 

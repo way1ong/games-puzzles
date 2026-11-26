@@ -164,5 +164,11 @@
     "leaf": "Falevél",
     "tree": "Fenyőfa",
     "drop": "Csepp"
+  },
+  "update": {
+    "title": "Elérhető a játék új verziója",
+    "text": "A játék újra megnyílik ott, ahol abbahagyta.",
+    "apply": "Frissítés",
+    "later": "Később"
   }
 }

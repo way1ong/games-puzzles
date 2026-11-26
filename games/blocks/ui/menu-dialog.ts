@@ -2,6 +2,7 @@
 // and the "Made by way1ong" line.
 import { BLOCKS } from '../config.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { updateLine } from '../../../shared/ui/update-view.ts';
 import { dict, LANGS, type Dict } from './i18n.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
 import type { Look, Settings } from './storage.ts';
@@ -92,6 +93,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(d: Dict, lang:
           'div',
           { class: 'dialog__body' },
           h('h2', { id: 'menu-title' }, d.settings.title),
+          updateLine(d.update),
           h('p', { class: 'dialog__label' }, d.settings.language),
           langs,
           h('p', { class: 'dialog__label' }, d.settings.style),

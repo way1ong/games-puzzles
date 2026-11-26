@@ -4,6 +4,7 @@
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { PALETTE, PAPER, type Colour } from '../art/palette.ts';
 import { PICTURES } from '../art/pictures.ts';
 import { NONOGRAMS, SIZES, type Size } from '../config.ts';
@@ -102,6 +103,8 @@ export function startApp(root: HTMLElement): void {
   const content = h('div', { class: 'content' });
   const live = h('p', { class: 'visually-hidden', 'aria-live': 'polite' });
   const menuDialog = createMenuDialog();
+  // A new version: asked on the start screen only, never in play (shared/ui/update-view.ts).
+  const updates = offerUpdates(() => screenOf(currentRoute()).kind === 'home', () => d.update);
   const endDialog = createEndDialog();
 
   const infoText = h('span', { class: 'info__text' });
@@ -280,6 +283,7 @@ export function startApp(root: HTMLElement): void {
         openRoute,
       ),
     );
+    updates.check();
   }
 
   function renderAlbum(size: Size): void {

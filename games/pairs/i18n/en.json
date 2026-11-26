@@ -164,5 +164,11 @@
     "leaf": "Leaf",
     "tree": "Fir tree",
     "drop": "Drop"
+  },
+  "update": {
+    "title": "A new version of the game is ready",
+    "text": "The game will open again where you left off.",
+    "apply": "Update",
+    "later": "Later"
   }
 }

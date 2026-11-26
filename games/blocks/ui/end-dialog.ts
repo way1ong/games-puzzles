@@ -1,6 +1,8 @@
-// End of a game: score, best or streak; for the daily puzzle — "copy result".
+// End of a game: score, best or streak; for the daily puzzle — "copy result". Blocks has no start screen, so a new
+// version that waits is told here, between games, as well as in the menu (decision of 26.11).
 import { copyControl, type ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { updateLine, type UpdateTexts } from '../../../shared/ui/update-view.ts';
 
 interface Action {
   label: string;
@@ -15,6 +17,8 @@ export interface EndContent {
   /** A quieter second button (e.g. "Close" next to "New game"). */
   secondary: Action | null;
   primary: Action;
+  /** Texts of the line about a new version (shown only while one waits). */
+  update: UpdateTexts;
 }
 
 export function createEndDialog(): { el: HTMLDialogElement; open(content: EndContent): void } {
@@ -41,6 +45,8 @@ export function createEndDialog(): { el: HTMLDialogElement; open(content: EndCon
         actions.append(copy.button);
         body.append(copy.out);
       }
+      const update = updateLine(content.update);
+      if (update) body.append(update);
       if (content.secondary) actions.append(button(content.secondary, 'btn--ghost'));
       const primary = button(content.primary, 'btn--primary');
       actions.append(primary);

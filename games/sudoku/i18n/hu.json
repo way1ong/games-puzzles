@@ -288,5 +288,11 @@
     "text": "Sudoku reklám, fiók és nyomkövetés nélkül. Az előrehaladása ezen az eszközön marad. Internet nélkül is működik.",
     "keys": "Billentyűzet: nyilak – cella kiválasztása, 1–9 – szám, Backspace, Delete vagy 0 – törlés, N – jegyzetek, H – tipp, Ctrl+Z – visszavonás, Ctrl+Y – ismétlés, Esc – bezárás.",
     "credit": "Készítette: way1ong"
+  },
+  "update": {
+    "title": "Elérhető a játék új verziója",
+    "text": "A játék újra megnyílik ott, ahol abbahagyta.",
+    "apply": "Frissítés",
+    "later": "Később"
   }
 }

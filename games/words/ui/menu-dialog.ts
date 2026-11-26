@@ -3,6 +3,7 @@
 // the "Made by way1ong" line.
 import { copyControl } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { updateLine } from '../../../shared/ui/update-view.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
 import { WORDS, WORD_LANGS, type WordLang } from '../config.ts';
 import { hasLicence, loadLicence, loadNotice } from './dict-load.ts';
@@ -187,6 +188,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           'div',
           { class: 'dialog__body' },
           h('div', { class: 'dialog__head' }, h('h2', { id: 'menu-title' }, s.title), close),
+          updateLine(d.update),
           h('p', { class: 'dialog__label' }, s.language),
           langs,
           h('h3', {}, s.play),

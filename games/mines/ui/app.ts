@@ -4,6 +4,7 @@
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { LEVELS, MINES, type Level } from '../config.ts';
 import { mineMap, numbers, type Field } from '../core/field.ts';
 import { applyHint, findHint, type MinesHint } from '../core/hint.ts';
@@ -117,6 +118,11 @@ export function startApp(root: HTMLElement): void {
 
   backBtn.addEventListener('click', goBack);
   menuBtn.addEventListener('click', openMenu);
+  // A new version: asked on the start screen only, never over a field.
+  const updates = offerUpdates(
+    () => screenOf(currentRoute()).kind === 'home',
+    () => d.update,
+  );
 
   /** A note longer than its place scrolls by itself: then the keys reach it. */
   function noteByKeys(): void {
@@ -298,6 +304,7 @@ export function startApp(root: HTMLElement): void {
       }),
     ) as Record<Level, DayState>;
     content.replaceChildren(homeView({ started: begun, daily, date: dateText(today, 'long'), streak: streak(Object.keys(days), today) }, d, lang, openRoute));
+    updates.check();
   }
 
   // ---------- the field ----------

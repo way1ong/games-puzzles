@@ -207,5 +207,11 @@
     "zoom": "Nagy táblák telefonon: egy ujjal mozgathatja, kettővel nagyíthatja; az „Egész tábla” a teljes táblát mutatja. Egérrel: a görgő mozgatja a táblát, a Ctrl és a görgő nagyít.",
     "keys": "Billentyűzet: nyilak – lépés a cellák között, szóköz vagy Enter – mint a koppintás, F – zászló, H – tipp, N – új tábla, Ctrl+Z – az aknára lépés visszavonása, Esc – bezárás.",
     "credit": "Készítette: way1ong"
+  },
+  "update": {
+    "title": "Elérhető a játék új verziója",
+    "text": "A játék újra megnyílik ott, ahol abbahagyta.",
+    "apply": "Frissítés",
+    "later": "Később"
   }
 }

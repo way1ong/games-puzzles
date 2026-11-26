@@ -4,6 +4,7 @@
 import { localDateKey } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { WORDS, WORD_LANGS, type WordLang } from '../config.ts';
 import type { Dictionary } from '../core/dictionary.ts';
 import { makeDaily, makeLevel } from '../core/level.ts';
@@ -83,6 +84,8 @@ export function startApp(root: HTMLElement): void {
   const content = h('div', { class: 'content' });
   const live = h('p', { class: 'visually-hidden', 'aria-live': 'polite' });
   const menuDialog = createMenuDialog();
+  // A new version: asked on the start screen only, never in play (shared/ui/update-view.ts).
+  const updates = offerUpdates(() => !['field', 'field-daily', 'level', 'daily'].includes(currentRoute()), () => d.update);
   const endDialog = createEndDialog();
   const hintDialog = createHintDialog();
   const bonusDialog = createBonusDialog();
@@ -379,6 +382,7 @@ export function startApp(root: HTMLElement): void {
         lang,
       ),
     );
+    updates.check();
   }
 
   function renderGame(): void {

@@ -288,5 +288,11 @@
     "text": "Sudoku without ads, accounts or tracking. Progress stays on this device. Works offline.",
     "keys": "Keyboard: arrows — choose a cell, 1–9 — digit, Backspace, Delete or 0 — erase, N — notes, H — hint, Ctrl+Z — undo, Ctrl+Y — redo, Esc — close.",
     "credit": "Made by way1ong"
+  },
+  "update": {
+    "title": "A new version of the game is ready",
+    "text": "The game will open again where you left off.",
+    "apply": "Update",
+    "later": "Later"
   }
 }

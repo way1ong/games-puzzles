@@ -1,6 +1,7 @@
 // Menu: language; the settings approved on 24.11 (playing, look and sound); "new puzzle" while a game is open;
 // installing; clearing progress; statistics; about the game and the "Made by way1ong" line.
 import { h } from '../../../shared/ui/dom.ts';
+import { updateLine } from '../../../shared/ui/update-view.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
 import { LEVELS, SUDOKU } from '../config.ts';
 import type { Stats } from '../core/stats.ts';
@@ -203,6 +204,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           'div',
           { class: 'dialog__body' },
           h('div', { class: 'dialog__head' }, h('h2', { id: 'menu-title' }, s.title), close),
+          updateLine(d.update),
           h('p', { class: 'dialog__label' }, s.language),
           langs,
           ...thisGame,

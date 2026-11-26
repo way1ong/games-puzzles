@@ -94,5 +94,11 @@
     "text": "Fejtörő reklám, fiók és nyomkövetés nélkül. A rekordjai ezen az eszközön maradnak. Internet nélkül is működik.",
     "keys": "Billentyűzet: 1–3 elem kiválasztása, nyilak mozgatás, Enter lerakás, R forgatás, Ctrl+Z visszavonás (nyugodt mód).",
     "credit": "Készítette: way1ong"
+  },
+  "update": {
+    "title": "Elérhető a játék új verziója",
+    "text": "A játék újra megnyílik ott, ahol abbahagyta.",
+    "apply": "Frissítés",
+    "later": "Később"
   }
 }
