@@ -44,7 +44,8 @@ export interface CardView {
   paint(d: Dict): void;
 }
 
-export function createCardView(card: Card): CardView {
+/** `id` tells the card apart on the table: in Spider the same face comes up to eight times (core/spider.ts). */
+export function createCardView(card: Card, id: number = card): CardView {
   const rank = rankOf(card);
   const corner = h('span', { class: 'card__rank' });
   const letter = h('span', { class: 'card__letter' });
@@ -56,7 +57,7 @@ export function createCardView(card: Card): CardView {
   middle.setAttribute('aria-hidden', 'true');
   const index = h('span', { class: 'card__index', 'aria-hidden': 'true' }, corner, suitSign(card, 'card__pip'));
   const el = h('button', { class: `card suit-${suitOf(card)}`, type: 'button', tabindex: -1 }, index, middle, rank >= FACES ? figure(rank as 11 | 12 | 13) : null);
-  el.dataset.card = String(card);
+  el.dataset.card = String(id);
   return {
     el,
     paint(d) {

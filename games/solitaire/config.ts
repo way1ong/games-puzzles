@@ -6,6 +6,10 @@ import { gameAddress } from '../../shared/core/address.ts';
 export const DRAWS = [1, 3] as const;
 export type Draw = (typeof DRAWS)[number];
 
+/** How many suits Spider's cards have (docs/solitaire/SPEC.md, "Павук"): one (spades), two (spades, hearts) or four. */
+export const SPIDER_SUITS = [1, 2, 4] as const;
+export type SpiderSuits = (typeof SPIDER_SUITS)[number];
+
 export const SOLITAIRE = {
   name: 'way1ong Solitaire',
   links: { site: null as string | null, game: gameAddress('solitaire') },
@@ -32,4 +36,30 @@ export const SOLITAIRE = {
   circles: 2,
   /** Deals made in advance for each way of turning the stock. */
   readyPerDraw: 1,
+  /**
+   * Spider (docs/solitaire/SPEC.md, "Павук"; decision of 26.11): two decks; ten columns and the cards dealt to each
+   * at the start (the top one face up); the rest is the stock, a card to each column a deal; eight runs from the
+   * king down to the ace, one suit each, win. One suit by default, the easiest (decision of 26.11).
+   */
+  spider: {
+    decks: 2,
+    columns: 10,
+    deal: [6, 6, 6, 6, 5, 5, 5, 5, 5, 5],
+    runs: 8,
+    defaultSuits: 1 as SpiderSuits,
+    /**
+     * The suits whose deals are checked to be winnable before they are shown (decision of 26.11, «варіант А»): with four
+     * the solver wins too few deals in its time (2–4 of 20), so those are dealt as the cards fall.
+     */
+    checked: [1, 2] as readonly SpiderSuits[],
+    /**
+     * Solving (C): positions a search may look at — for a deal before it is shown, for a hint, for each look back when
+     * the hint counts the moves to undo — and how many searches, each along another order of equal moves, it may make.
+     */
+    solve: { deal: 10_000, hint: 20_000, back: 4_000, attempts: 10 },
+    /** Seeds tried, one after another, for one deal that can be won. */
+    dealTries: 32,
+    /** How far back the hint looks for a position that can still be won, in moves. */
+    lookBack: 200,
+  },
 } as const;

@@ -70,9 +70,10 @@ function widthFor(arrangement: Arrangement, room: { width: number; height: numbe
     const across = COLS + (COLS - 1) * GAP;
     return Math.min(room.width / across, room.height / ((1 + GAP + long) * ratio));
   }
-  // side: the stock's column, the columns, the foundations' column
+  // side: the stock's column, the columns, the foundations' column — the four foundations, one under another, fit too
   const across = COLS + 2 + (COLS + 1) * GAP + 2 * GAP;
-  return Math.min(room.width / across, room.height / (long * ratio));
+  const homes = SUITS * (ratio + 0.6 * GAP);
+  return Math.min(room.width / across, room.height / (long * ratio), room.height / homes);
 }
 
 export function chooseArrangement(room: { width: number; height: number }): Arrangement {

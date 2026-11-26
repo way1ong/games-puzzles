@@ -60,6 +60,11 @@ games/solitaire/core/klondike.ts, tap.ts  правила Косинки (кол�
 games/solitaire/core/solve.ts, deals.ts, hint.ts  розв’язувач (знає всі карти, частинами); роздачі, які можна пройти, і роздача дня; підказка
 games/solitaire/core/stuck.ts  коли гра сама каже, що шляху до кінця немає: гравець явно застряг (корисних ходів немає чи колоду двічі перегорнуто без змін)
 games/solitaire/ui/layout.ts  де лежить кожна карта: розмір карт, два розклади (ряд над стовпцями або колода й основи по боках — що дає більші карти), смужки стовпців
+games/solitaire/core/spider.ts, spider-solve.ts, spider-search.ts  Павук: правила (дві колоди, 10 стовпців, колода не роздає на порожній стовпець); розв’язувач (знає всі карти, частинами; випрямляє знайдений шлях); пошук кількома спробами
+games/solitaire/core/spider-deals.ts, spider-hint.ts  роздачі, що проходяться (1 і 2 масті; з 4 — будь-які), роздача дня; підказка — шляхом, який гра пам’ятає, поки гравець іде за нею
+games/solitaire/core/spider-tap.ts, spider-stuck.ts, spider-stats.ts  куди йде торкнутий ряд; глухий кут; статистика за мастями
+games/solitaire/ui/spider-screen.ts, spider-table-view.ts, spider-layout.ts, spider-storage.ts  екран Павука: стіл (торкання, перетягування, клавіші), розклад карт, збереження за мастями
+games/solitaire/ui/fullscreen.ts  «Лежачи на весь екран» (Android): весь екран і поворот; де браузер не вміє — кнопки немає
 games/solitaire/art/suits.ts  обриси мастей (SVG, колір дає карта — tokens.css)
 games/solitaire/art/courts.ts, textures.ts  вигляд «Мальований»: фігури валета, дами й короля (кольори — змінні tokens.css), фактури сукна й паперу
 games/<гра>/styles/drawn.css  вигляд «Мальований» (html.drawn): лише змінні з tokens.css і фактури; «Простий» — без нього («Пасьянси», Blocks)

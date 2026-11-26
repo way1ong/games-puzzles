@@ -1,7 +1,8 @@
 // Browser audit of Solitaire: every size and look — the start screen, a deal, the stock turned, a hint, a face-down
 // card touched, the menu with the widest settings (the time, four colours, the large mode, the left hand), three cards
-// a turn, the deal of the day, and the deal of the day where no way to the end is left; phones on their side; large
-// system text; the keyboard; a deal played to the end.
+// a turn, the deal of the day, and the deal of the day where no way to the end is left; Spider: a deal ("Turn the
+// phone" on a phone upright), the stock dealt, a hint, four suits, Spider of the day where no way is left; phones on
+// their side; large system text; the keyboard; a deal of each played to the end.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
@@ -18,6 +19,11 @@ const STORE = 'way1ong-solitaire:v1:';
  * moves to undo in the note, "Start over" standing out among the tools (decision of 25.11).
  */
 const DEAD_END = JSON.parse(readFileSync(new URL('./solitaire-dead-end.json', import.meta.url), 'utf8'));
+/**
+ * Spider, made up: four suits, six runs home, every card face up; the five of diamonds put into the empty column leaves
+ * no move at all — the game says so, one move to undo in the note, "Start over" standing out (Spider of the day).
+ */
+const SPIDER_DEAD_END = JSON.parse(readFileSync(new URL('./spider-dead-end.json', import.meta.url), 'utf8'));
 
 /** Puts the dead end in place of today's deal of the day for a way of turning the stock (runs in the page). */
 function plantDeadEnd([store, play, draw]) {
@@ -25,6 +31,23 @@ function plantDeadEnd([store, play, draw]) {
   const pad = (n) => String(n).padStart(2, '0');
   const today = `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
   localStorage.setItem(`${store}daily:${draw}`, JSON.stringify({ version: 1, play: { ...play, draw, daily: today } }));
+}
+
+/** Puts the Spider dead end in place of today's Spider of the day for a number of suits (runs in the page). */
+function plantSpiderDeadEnd([store, play, suits]) {
+  const t = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const today = `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+  localStorage.setItem(`${store}spider-daily:${suits}`, JSON.stringify({ version: 1, play: { ...play, suits, daily: today } }));
+}
+
+/** From Spider (with four suits chosen) to the start screen, the dead end planted, and into Spider of the day. */
+async function openSpiderDeadEnd(page) {
+  await page.locator('.top .icon-btn').first().click();
+  await page.waitForSelector('.pick');
+  await page.evaluate(plantSpiderDeadEnd, [STORE, SPIDER_DEAD_END, 4]);
+  await openSpider(page, 3);
+  await page.waitForFunction(() => document.querySelector('.play--spider .note__actions button') && document.querySelector('.play--spider .tools .is-suggested:not([hidden])'), null, { timeout: 60000 });
 }
 
 /** From a deal to the start screen, the dead end planted (leaving a deal saves it), and into the deal of the day. */
@@ -44,8 +67,9 @@ function inspectSolitaire() {
   for (const el of document.querySelectorAll('.note__text, .info__text, .pick__name, .pick__state')) {
     if (shown(el) && !el.textContent.trim()) out.push(`empty ${el.className}`);
   }
-  const table = document.querySelector('.table');
-  if (shown(table)) {
+  // Klondike's table and Spider's: the one on the screen
+  for (const table of document.querySelectorAll('.table')) {
+    if (!shown(table)) continue;
     const t = table.getBoundingClientRect();
     for (const node of table.querySelectorAll('.card, .slot')) {
       if (!shown(node)) continue;
@@ -79,6 +103,44 @@ async function openDeal(page, nth = 0) {
   await page.locator('.pick').nth(nth).click();
   await page.waitForSelector('.table .card:not(.is-down)', { timeout: 60000 });
   await page.waitForTimeout(250); // the cards slide to their places
+}
+
+/** Spider from the start screen: 2 — a deal, 3 — Spider of the day. */
+async function openSpider(page, nth = 2) {
+  await page.locator('.pick').nth(nth).click();
+  await page.waitForSelector('.table--spider .card:not(.is-down)', { timeout: 60000 });
+  await page.waitForTimeout(250);
+}
+
+/** Spider's number of suits in the menu (the fourth group of choices: language, way of turning, deals, suits). */
+async function spiderSuits(page, n) {
+  await page.locator('.top .icon-btn').nth(1).click();
+  await page.locator('dialog[open] .choices').nth(3).locator('.choices__btn').nth([1, 2, 4].indexOf(n)).click();
+  await page.locator('dialog[open] .dialog__actions .btn--primary').click();
+  await page.waitForSelector('.table--spider .card:not(.is-down)', { timeout: 60000 });
+  await page.waitForTimeout(250);
+}
+
+/** Runs in the page: the hinted move as points to drag between (the lowest card by the strip of it that shows), or the stock. */
+function hintedSpot() {
+  const shownIn = (sel) => [...document.querySelectorAll(sel)].filter((e) => e.getClientRects().length > 0);
+  if (shownIn('.slot--stock.is-hint').length) return 'stock';
+  const cards = shownIn('.card.is-hint').map((c) => c.getBoundingClientRect()).sort((a, b) => a.top - b.top);
+  const to = shownIn('.card.is-target')[0] ?? shownIn('.slot.is-target')[0];
+  if (!cards.length || !to) return null;
+  const a = cards[0];
+  const strip = cards.length > 1 ? Math.min(cards[1].top - a.top, a.height) : a.height;
+  const b = to.getBoundingClientRect();
+  return { x0: a.left + a.width / 2, y0: a.top + strip / 2, x1: b.left + b.width / 2, y1: b.top + b.height / 2 };
+}
+
+/** Drags with the mouse from one point to another, in steps. */
+async function dragMouse(page, s) {
+  await page.mouse.move(s.x0, s.y0);
+  await page.mouse.down();
+  for (let k = 1; k <= 6; k++) await page.mouse.move(s.x0 + ((s.x1 - s.x0) * k) / 6, s.y0 + ((s.y1 - s.y0) * k) / 6);
+  await page.mouse.up();
+  await page.waitForTimeout(220);
 }
 
 export async function audit({ browser, origin, axe, fail, shots }) {
@@ -140,6 +202,20 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await openDeadEnd(page, 3);
       await check(page, `${label} deal of the day, no way left`);
       await shot(page, `${width}x${height}-${locale}-${colorScheme}-dead-end`);
+      // Spider (decision of 26.11): a deal, the stock dealt, a hint, four suits, Spider of the day where no way is left
+      await page.locator('.top .icon-btn').first().click();
+      await page.waitForSelector('.pick');
+      await openSpider(page);
+      await check(page, `${label} spider`);
+      await page.locator('.table--spider .slot--stock').click();
+      await check(page, `${label} spider dealt`);
+      await hint(page);
+      await check(page, `${label} spider hint`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-spider`);
+      await spiderSuits(page, 4);
+      await check(page, `${label} spider four suits`);
+      await openSpiderDeadEnd(page);
+      await check(page, `${label} spider of the day, no way left`);
       await ctx.close();
     }
   }
@@ -160,8 +236,9 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     const side = async (what) => {
       await check(page, `${label} ${what}`);
       const m = await page.evaluate(() => {
-        const table = document.querySelector('.table').getBoundingClientRect();
-        const tools = document.querySelector('.tools').getBoundingClientRect();
+        const shownOf = (sel) => [...document.querySelectorAll(sel)].find((e) => e.getClientRects().length > 0);
+        const table = shownOf('.table').getBoundingClientRect();
+        const tools = shownOf('.tools').getBoundingClientRect();
         return { scroll: document.scrollingElement.scrollHeight - innerHeight, beside: table.right <= tools.left + 1 };
       });
       if (m.scroll > 1) fail(`solitaire ${label} ${what}: the page scrolls ${m.scroll} px in play`);
@@ -183,6 +260,16 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await shot(page, `side-${width}x${height}`);
     await openDeadEnd(page, 1);
     await side('deal of the day, no way left');
+    await page.locator('.top .icon-btn').first().click();
+    await page.waitForSelector('.pick');
+    await openSpider(page);
+    await side('spider');
+    await hint(page);
+    await side('spider hint');
+    await shot(page, `side-${width}x${height}-spider`);
+    await spiderSuits(page, 4);
+    await openSpiderDeadEnd(page);
+    await side('spider of the day, no way left');
     await ctx.close();
   }
 
@@ -204,6 +291,15 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, `${width}×${height} text ${size}% hint`);
     await openDeadEnd(page, 1);
     await check(page, `${width}×${height} text ${size}% deal of the day, no way left`);
+    await page.locator('.top .icon-btn').first().click();
+    await page.waitForSelector('.pick');
+    await openSpider(page);
+    await check(page, `${width}×${height} text ${size}% spider`);
+    await hint(page);
+    await check(page, `${width}×${height} text ${size}% spider hint`);
+    await spiderSuits(page, 4);
+    await openSpiderDeadEnd(page);
+    await check(page, `${width}×${height} text ${size}% spider of the day, no way left`);
     await ctx.close();
   }
 
@@ -257,5 +353,38 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await shot(page, 'solved');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, three a turn, phones on their side, large text, keyboard, a deal to the end`;
+
+  // Spider: the keyboard, and one deal to the end by the hints (the stock by D, runs dragged with the mouse)
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 }, locale: 'uk-UA' });
+    const page = await ctx.newPage();
+    watch(page, 'solitaire spider keyboard', origin, fail);
+    await page.goto(base);
+    await page.waitForSelector('.pick');
+    await openSpider(page);
+    await checkFocusVisible(page, 8, fail, 'solitaire spider keyboard');
+    await page.keyboard.press('ArrowRight');
+    if (!(await page.evaluate(() => !!document.activeElement?.closest('.table--spider')))) fail('solitaire spider keyboard: an arrow did not bring the focus onto the table');
+    for (let guard = 0; guard < 400 && !(await page.$('dialog[open]')); guard++) {
+      await hint(page);
+      const spot = await page.evaluate(hintedSpot);
+      if (spot === 'stock') {
+        await page.keyboard.press('d');
+        await page.waitForTimeout(220);
+        continue;
+      }
+      if (!spot) {
+        fail(`solitaire spider keyboard: a hint without a move (${(await page.textContent('.play--spider .note__text')).trim()})`);
+        break;
+      }
+      await dragMouse(page, spot);
+    }
+    await page.waitForSelector('dialog[open]', { timeout: 30000 }).catch(() => fail('solitaire spider keyboard: no "solved" window at the end'));
+    await check(page, 'spider solved');
+    const stats = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), `${STORE}spider-stats`);
+    if (stats?.['1']?.won !== 1) fail(`solitaire spider keyboard: statistics did not count the deal (${JSON.stringify(stats)})`);
+    await shot(page, 'spider-solved');
+    await ctx.close();
+  }
+  return `${SIZES.length} sizes × ${LOOKS.length} looks, three a turn, Spider with one and four suits, phones on their side, large text, keyboard, a deal of each to the end`;
 }

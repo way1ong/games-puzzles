@@ -2,7 +2,7 @@
 // deals of the day, deals prepared in advance, the results of the days, statistics. Nothing leaves the device
 // (docs/solitaire/SPEC.md, "Що зберігається"). Every read survives a missing or broken value; a saved deal carries a
 // format version, and one in another format (or one that does not hold together) is dropped rather than break the game.
-import { DRAWS, SOLITAIRE, type Draw } from '../config.ts';
+import { DRAWS, SOLITAIRE, SPIDER_SUITS, type Draw, type SpiderSuits } from '../config.ts';
 import { DECK } from '../core/cards.ts';
 import type { Klondike, Place, Step } from '../core/klondike.ts';
 import { emptyStats, type Stats } from '../core/stats.ts';
@@ -11,7 +11,7 @@ const PREFIX = 'way1ong-solitaire:v1:';
 /** The format of a saved deal; one saved in another format is not continued. */
 const PLAY_VERSION = 1;
 
-function read<T>(key: string): T | null {
+export function read<T>(key: string): T | null {
   try {
     const raw = window.localStorage.getItem(PREFIX + key);
     return raw === null ? null : (JSON.parse(raw) as T);
@@ -20,7 +20,7 @@ function read<T>(key: string): T | null {
   }
 }
 
-function write(key: string, value: unknown): void {
+export function write(key: string, value: unknown): void {
   try {
     window.localStorage.setItem(PREFIX + key, JSON.stringify(value));
   } catch {
@@ -28,7 +28,7 @@ function write(key: string, value: unknown): void {
   }
 }
 
-function remove(key: string): void {
+export function remove(key: string): void {
   try {
     window.localStorage.removeItem(PREFIX + key);
   } catch {
@@ -51,6 +51,8 @@ export interface Settings {
   big: boolean;
   theme: Theme;
   look: Look;
+  /** Spider: how many suits (docs/solitaire/SPEC.md, "Павук"). */
+  spiderSuits: SpiderSuits;
 }
 
 /** As approved on 25.11 (docs/solitaire/SPEC.md, "Налаштування"). */
@@ -64,12 +66,13 @@ export const DEFAULT_SETTINGS: Settings = {
   big: false,
   theme: 'system',
   look: 'drawn',
+  spiderSuits: SOLITAIRE.spider.defaultSuits,
 };
 
 const oneOf = <T extends string | number>(value: unknown, options: readonly T[], fallback: T): T =>
   options.find((o) => o === value) ?? fallback;
 const flag = (value: unknown, fallback: boolean): boolean => (typeof value === 'boolean' ? value : fallback);
-const count = (value: unknown): number => (typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : 0);
+export const count = (value: unknown): number => (typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : 0);
 
 export function loadSettings(): Settings {
   const s = read<Partial<Settings>>('settings') ?? {};
@@ -84,6 +87,7 @@ export function loadSettings(): Settings {
     big: flag(s.big, d.big),
     theme: oneOf(s.theme, ['system', 'light', 'dark'] as const, d.theme),
     look: oneOf(s.look, ['drawn', 'simple'] as const, d.look),
+    spiderSuits: oneOf(s.spiderSuits, SPIDER_SUITS, d.spiderSuits),
   };
 }
 
@@ -223,15 +227,21 @@ export function saveStats(stats: Stats): void {
   write('stats', stats);
 }
 
-/** The deal open last time, to open again; null — the start screen. */
-export function loadLast(): boolean | null {
-  const v = read<{ daily: boolean }>('last');
-  return v && typeof v.daily === 'boolean' ? v.daily : null;
+/** The screens a game is played on: Klondike and its deal of the day, Spider and its deal of the day. */
+export const ROUTES = ['play', 'daily', 'spider', 'spider-daily'] as const;
+export type Route = (typeof ROUTES)[number];
+
+/** The deal open last time, to open again; null — the start screen. Saved before Spider as { daily }. */
+export function loadLast(): Route | null {
+  const v = read<{ daily?: unknown; route?: unknown }>('last');
+  if (!v || typeof v !== 'object') return null;
+  if (typeof v.route === 'string') return ROUTES.find((r) => r === v.route) ?? null;
+  return typeof v.daily === 'boolean' ? (v.daily ? 'daily' : 'play') : null;
 }
 
-export function saveLast(daily: boolean | null): void {
-  if (daily === null) remove('last');
-  else write('last', { daily });
+export function saveLast(route: Route | null): void {
+  if (route === null) remove('last');
+  else write('last', { route });
 }
 
 /** Whether a deal has ever been won on this device: until then the game says how to play. */

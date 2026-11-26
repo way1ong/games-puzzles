@@ -1,4 +1,5 @@
-// The game screen: which screen is open (the start, Klondike, the deal of the day), the deal in play, the hint shown;
+// The game screen: which screen is open (the start, Klondike, the deal of the day, or Spider — spider-screen.ts), the
+// Klondike deal in play, the hint shown;
 // turns taps, drags and keys into moves and draws the result. The rules themselves are in ../core (pure functions);
 // the work that takes time (finding a deal that can be won, a hint, the quiet check that a way to the end is left)
 // goes in slices (maker.ts).
@@ -29,6 +30,7 @@ import { longestStreak, recordLeft, recordWon } from '../core/stats.ts';
 import { carriedBack, worthChecking } from '../core/stuck.ts';
 import { bestPlace } from '../core/tap.ts';
 import { createEndDialog } from './end-dialog.ts';
+import { canFullLandscape, enterFullLandscape, isFull, leaveFull } from './fullscreen.ts';
 import { homeView, type DailyState } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
 import { backSign } from './icons.ts';
@@ -36,8 +38,10 @@ import { keepReady, randomSeed, runSoon } from './maker.ts';
 import { createMenuDialog } from './menu-dialog.ts';
 import { cardName, targetName } from './names.ts';
 import { closeRoute, currentRoute, openRoute, watchRoute } from './route.ts';
+import { createSpiderScreen } from './spider-screen.ts';
+import * as spiderStore from './spider-storage.ts';
 import * as store from './storage.ts';
-import type { Settings, Slot } from './storage.ts';
+import type { Route, Settings, Slot } from './storage.ts';
 import { createTableView, type Target } from './table-view.ts';
 import { clockText } from './time.ts';
 import { createToolsView } from './tools-view.ts';
@@ -47,9 +51,8 @@ const TICK_MS = 1000;
 /** The pace of finishing by itself: one card home per step, ms (no steps when the system asks for less motion). */
 const FINISH_STEP_MS = 110;
 
-const ROUTES = { play: false, daily: true } as const;
-type Route = keyof typeof ROUTES;
-const isRoute = (r: string): r is Route => r === 'play' || r === 'daily';
+const isRoute = (r: string): r is Route => (store.ROUTES as readonly string[]).includes(r);
+const isSpider = (r: Route): r is 'spider' | 'spider-daily' => r === 'spider' || r === 'spider-daily';
 
 /** A latin letter key whatever the keyboard layout (H, D, F, N; Z with Ctrl). */
 function letterOf(event: KeyboardEvent): string {
@@ -115,6 +118,23 @@ export function startApp(root: HTMLElement): void {
   backBtn.addEventListener('click', closeRoute);
   menuBtn.addEventListener('click', openMenu);
 
+  // Spider's screen: its own deal, table, note and tools; the top bar, the menu and the start screen stay here.
+  const spider = createSpiderScreen({
+    dict: () => d,
+    lang: () => lang,
+    settings: () => settings,
+    today: () => today,
+    announce: (text) => announce(text),
+    dateText: (key, style) => dateText(key, style),
+    openEnd: (content) => endDialog.open(content),
+    close: closeRoute,
+    openSpider(next) {
+      endDialog.el.close();
+      spider.open(next);
+      renderSpider();
+    },
+  });
+
   /** A note longer than its place (large letters on the lowest screens) scrolls by itself: then the keys reach it. */
   function noteByKeys(): void {
     if (note.scrollHeight > note.clientHeight + 1) note.tabIndex = 0;
@@ -159,11 +179,24 @@ export function startApp(root: HTMLElement): void {
     const route = currentRoute();
     if (!isRoute(route)) {
       leaveGame();
+      spider.leave();
       store.saveLast(null);
       renderHome();
       return;
     }
-    const next: Slot = { daily: ROUTES[route], draw: settings.draw };
+    if (isSpider(route)) {
+      leaveGame();
+      const next = { daily: route === 'spider-daily', suits: settings.spiderSuits };
+      const open = spider.slot();
+      if (!open || open.daily !== next.daily || open.suits !== next.suits) {
+        store.saveLast(route);
+        spider.open(next);
+      }
+      renderSpider();
+      return;
+    }
+    spider.leave();
+    const next: Slot = { daily: route === 'daily', draw: settings.draw };
     if (!slot || slot.daily !== next.daily || slot.draw !== next.draw || (!game && !stopMaking)) openSlot(next);
     else renderGame();
   }
@@ -191,7 +224,7 @@ export function startApp(root: HTMLElement): void {
   function openSlot(next: Slot): void {
     leaveGame();
     slot = next;
-    store.saveLast(next.daily);
+    store.saveLast(next.daily ? 'daily' : 'play');
     message = null;
     armedNew = false;
     const saved = store.loadPlay(next, today);
@@ -275,20 +308,43 @@ export function startApp(root: HTMLElement): void {
     const days = store.loadDays();
     const daily: DailyState = days[today]?.[draw] || day?.done ? 'done' : day && day.history.length > 0 ? 'started' : 'new';
     const played = Object.keys(days).filter((date) => Object.keys(days[date] ?? {}).length > 0);
+    const suits = settings.spiderSuits;
+    const spiderSaved = spiderStore.loadSpider({ daily: false, suits }, today);
+    const spiderDay = spiderStore.loadSpider({ daily: true, suits }, today);
+    const spiderDays = spiderStore.loadSpiderDays();
+    const spiderDaily: DailyState =
+      spiderDays[today]?.[suits] || spiderDay?.done ? 'done' : spiderDay && spiderDay.history.length > 0 ? 'started' : 'new';
+    const spiderPlayed = Object.keys(spiderDays).filter((date) => Object.keys(spiderDays[date] ?? {}).length > 0);
     content.replaceChildren(
       homeView(
         {
-          started: !!saved && !saved.done && saved.history.length > 0,
-          drawOne: draw === 1,
-          daily,
+          klondike: {
+            started: !!saved && !saved.done && saved.history.length > 0,
+            kind: draw === 1 ? d.home.drawOne : d.home.drawThree,
+            daily,
+            streak: streak(played, today),
+          },
+          spider: {
+            started: !!spiderSaved && !spiderSaved.done && spiderSaved.history.length > 0,
+            kind: plural(lang, suits, d.spider.suits, { n: suits }),
+            daily: spiderDaily,
+            streak: streak(spiderPlayed, today),
+          },
           date: dateText(today, 'long'),
-          streak: streak(played, today),
         },
         d,
         lang,
-        (isDaily) => openRoute(isDaily ? 'daily' : 'play'),
+        (route) => openRoute(route),
       ),
     );
+  }
+
+  function renderSpider(): void {
+    applyLook();
+    backBtn.hidden = false;
+    title.textContent = spider.title();
+    if (content.firstChild !== spider.view) content.replaceChildren(spider.view);
+    spider.render();
   }
 
   function renderGame(): void {
@@ -680,9 +736,24 @@ export function startApp(root: HTMLElement): void {
   function openMenu(): void {
     const days = store.loadDays();
     const played = Object.keys(days).filter((date) => Object.keys(days[date] ?? {}).length > 0);
+    const spiderDays = spiderStore.loadSpiderDays();
+    const spiderPlayed = Object.keys(spiderDays).filter((date) => Object.keys(spiderDays[date] ?? {}).length > 0);
     menuDialog.open(
-      { d, lang, settings, stats: store.loadStats(), longest: longestStreak(played) },
       {
+        d,
+        lang,
+        settings,
+        stats: store.loadStats(),
+        longest: longestStreak(played),
+        spiderStats: spiderStore.loadSpiderStats(),
+        spiderLongest: longestStreak(spiderPlayed),
+        full: canFullLandscape() ? isFull() : null,
+      },
+      {
+        fullscreen() {
+          if (isFull()) void leaveFull();
+          else void enterFullLandscape();
+        },
         setLang(code) {
           lang = code;
           d = dict(lang);
@@ -694,8 +765,16 @@ export function startApp(root: HTMLElement): void {
         },
         set(patch) {
           const drawChanged = patch.draw !== undefined && patch.draw !== settings.draw;
+          const suitsChanged = patch.spiderSuits !== undefined && patch.spiderSuits !== settings.spiderSuits;
           settings = { ...settings, ...patch };
           store.saveSettings(settings);
+          // Another number of Spider's suits: that number's own deal opens (each keeps its unfinished one).
+          const open = spider.slot();
+          if (suitsChanged && open) {
+            spider.open({ daily: open.daily, suits: settings.spiderSuits });
+            renderSpider();
+            return;
+          }
           // Another way of turning the stock: that way's own deal opens (each keeps its unfinished one).
           if (drawChanged && slot) {
             const daily = slot.daily;
@@ -709,6 +788,12 @@ export function startApp(root: HTMLElement): void {
         clearProgress() {
           store.clearAll();
           tipDone = false;
+          const open = spider.slot();
+          if (open) {
+            spider.open(open);
+            renderSpider();
+            return;
+          }
           if (slot) {
             const s = slot;
             slot = null;
@@ -721,12 +806,18 @@ export function startApp(root: HTMLElement): void {
 
   function redraw(): void {
     if (slot) renderGame();
+    else if (spider.slot()) renderSpider();
     else renderHome();
   }
 
   // ---------- keys ----------
   document.addEventListener('keydown', (event) => {
-    if (!slot || menuDialog.el.open || endDialog.el.open) return;
+    if (menuDialog.el.open || endDialog.el.open) return;
+    if (spider.slot()) {
+      spider.keydown(event, letterOf(event));
+      return;
+    }
+    if (!slot) return;
     const ctrl = event.ctrlKey || event.metaKey;
     const letter = letterOf(event);
     if (ctrl && letter === 'z') {
@@ -758,19 +849,23 @@ export function startApp(root: HTMLElement): void {
   // ---------- the page around ----------
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
+      spider.visibility(false);
       stopClock();
       return;
     }
+    // the day first: Spider of the day reopens as today's when the day has changed (spider.visibility)
     const now = localDateKey(new Date());
-    if (now !== today) {
-      today = now;
+    const newDay = now !== today;
+    today = now;
+    spider.visibility(true);
+    if (newDay) {
       if (slot?.daily) {
         const s = slot;
         slot = null;
         openSlot(s);
         return;
       }
-      if (!slot) renderHome();
+      if (!slot && !spider.slot()) renderHome();
     }
     startClock();
   });
@@ -779,7 +874,7 @@ export function startApp(root: HTMLElement): void {
 
   // Open where the player stopped: the deal open last time, else the start screen.
   const last = store.loadLast();
-  if (!isRoute(currentRoute()) && last !== null) openRoute(last ? 'daily' : 'play');
+  if (!isRoute(currentRoute()) && last !== null) openRoute(last);
   else show();
   refillReady();
 }
