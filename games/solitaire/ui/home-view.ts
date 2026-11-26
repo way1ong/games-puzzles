@@ -1,52 +1,56 @@
-// The start screen: Klondike (a new deal, or the unfinished one to continue) with the way the stock turns; today's
-// deal of the day (new, started or done) and the streak of days (docs/solitaire/SPEC.md, "Екрани й керування").
+// The start screen: the two games, each with a deal to play (a new one, or the unfinished one to continue) and today's
+// deal of the day (new, started or done) with its streak of days — Klondike with the way the stock turns, Spider with
+// its number of suits (docs/solitaire/SPEC.md, "Екрани й керування", "Павук").
 import { h } from '../../../shared/ui/dom.ts';
 import { fmt, plural, type Dict } from './i18n.ts';
 import { checkSign } from './icons.ts';
+import type { Route } from './storage.ts';
 
 export type DailyState = 'new' | 'started' | 'done';
 
-export interface HomeData {
+export interface GameHome {
   /** An unfinished ordinary deal waits. */
   started: boolean;
-  /** One card a turn (else three). */
-  drawOne: boolean;
+  /** How the deals are: "One card a turn", "1 suit". */
+  kind: string;
   daily: DailyState;
-  /** Today, in words of the language. */
-  date: string;
   streak: number;
 }
 
-export function homeView(data: HomeData, d: Dict, lang: string, open: (daily: boolean) => void): HTMLElement {
-  const play = h(
-    'button',
-    { class: 'pick', type: 'button' },
-    h('span', { class: 'pick__name' }, d.home.game),
-    h('span', { class: 'pick__state' }, data.started ? d.home.continue : d.home.start),
-    h('span', { class: 'pick__info' }, data.drawOne ? d.home.drawOne : d.home.drawThree),
-  );
-  play.addEventListener('click', () => open(false));
+export interface HomeData {
+  klondike: GameHome;
+  spider: GameHome;
+  /** Today, in words of the language. */
+  date: string;
+}
 
-  const state = { new: d.home.begin, started: d.home.continue, done: d.home.done }[data.daily];
-  const daily = h(
-    'button',
-    { class: `pick is-${data.daily}`, type: 'button' },
-    h('span', { class: 'pick__name' }, d.game.daily),
-    h('span', { class: 'pick__state' }, data.daily === 'done' ? checkSign() : null, state),
-    h('span', { class: 'pick__info' }, d.home.dailyNote),
-  );
-  daily.addEventListener('click', () => open(true));
-
-  return h(
-    'div',
-    { class: 'home' },
-    h('section', { class: 'home__part' }, h('h2', {}, d.home.play), play),
-    h(
+export function homeView(data: HomeData, d: Dict, lang: string, open: (route: Route) => void): HTMLElement {
+  const part = (title: string, game: GameHome, play: Route, daily: Route) => {
+    const deal = h(
+      'button',
+      { class: 'pick', type: 'button' },
+      h('span', { class: 'pick__name' }, d.home.play),
+      h('span', { class: 'pick__state' }, game.started ? d.home.continue : d.home.start),
+      h('span', { class: 'pick__info' }, game.kind),
+    );
+    deal.addEventListener('click', () => open(play));
+    const state = { new: d.home.begin, started: d.home.continue, done: d.home.done }[game.daily];
+    const day = h(
+      'button',
+      { class: `pick is-${game.daily}`, type: 'button' },
+      h('span', { class: 'pick__name' }, d.game.daily),
+      h('span', { class: 'pick__state' }, game.daily === 'done' ? checkSign() : null, state),
+      h('span', { class: 'pick__info' }, fmt(d.home.dailyOn, { date: data.date })),
+    );
+    day.addEventListener('click', () => open(daily));
+    return h(
       'section',
       { class: 'home__part' },
-      h('h2', {}, fmt(d.home.dailyTitle, { date: data.date })),
-      daily,
-      data.streak > 0 ? h('p', { class: 'home__streak' }, plural(lang, data.streak, d.home.streak, { n: data.streak })) : null,
-    ),
-  );
+      h('h2', {}, title),
+      deal,
+      day,
+      game.streak > 0 ? h('p', { class: 'home__streak' }, plural(lang, game.streak, d.home.streak, { n: game.streak })) : null,
+    );
+  };
+  return h('div', { class: 'home' }, part(d.home.game, data.klondike, 'play', 'daily'), part(d.spider.title, data.spider, 'spider', 'spider-daily'));
 }

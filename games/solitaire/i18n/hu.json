@@ -24,7 +24,8 @@
     "streak": {
       "one": "{n} nap egymás után",
       "other": "{n} nap egymás után"
-    }
+    },
+    "dailyOn": "{date} · mindenkinek ugyanaz"
   },
   "game": {
     "title": "Klondike",
@@ -60,6 +61,44 @@
     "finishNote": "Minden lap fel van fordítva: a többi magától az alapkupacokra kerülhet.",
     "finish": "Befejezés",
     "newSure": "Koppintson újra az új leosztáshoz: ez a leosztás lejátszottnak számít."
+  },
+  "spider": {
+    "title": "Pók",
+    "daily": "A nap Pókja",
+    "suits": {
+      "one": "{n} szín",
+      "other": "{n} szín"
+    },
+    "anyDeals": "bármilyen leosztás",
+    "tip": "Tegye a lapot az eggyel nagyobbra, bármilyen színűre. Együtt csak az egyszínű sorok mozognak. Gyűjtsön nyolc sort a királytól az ászig — maguktól lekerülnek.",
+    "stock": {
+      "one": "Pakli: még {n} osztás",
+      "other": "Pakli: még {n} osztás"
+    },
+    "stockNone": "A pakli elfogyott",
+    "emptyColumn": "Előbb tegyen lapot az üres oszlopba — akkor a pakli oszt.",
+    "dealt": "Minden oszlopra került egy lap.",
+    "homes": "Kész sorok: {n} / {all}",
+    "runHome": "{suit} sor kész.",
+    "notRun": "{card}: együtt csak az egyszínű, sorban lévő lapok mozognak.",
+    "hintDeal": "Osszon a pakliból.",
+    "unsureDeal": "A játék nem látott el a végéig; próbáljon osztani a pakliból.",
+    "rotate": "Fordítsa el a telefont — a lapok nagyobbak lesznek (ha a kép nem fordul el, kapcsolja be az automatikus elforgatást).",
+    "rotateHide": "Ne mutassa többé",
+    "fullscreen": "Teljes képernyő fekve",
+    "fullscreenExit": "Kilépés a teljes képernyőből",
+    "fullscreenFailed": "A képet nem sikerült elforgatni — fordítsa el a telefont.",
+    "setting": "Pók: színek",
+    "settingNote": "Négy színnel bármilyen leosztás jöhet: a játék nem győzi ellenőrizni.",
+    "statsKind": "Színek",
+    "longest": {
+      "one": "A nap Pókja — leghosszabb sorozat: {n} nap",
+      "other": "A nap Pókja — leghosszabb sorozat: {n} nap"
+    },
+    "streak": {
+      "one": "A nap Pókja: {n} nap egymás után",
+      "other": "A nap Pókja: {n} nap egymás után"
+    }
   },
   "tools": {
     "label": "Eszközök",

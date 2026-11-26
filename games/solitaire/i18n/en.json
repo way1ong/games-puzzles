@@ -24,7 +24,8 @@
     "streak": {
       "one": "{n} day in a row",
       "other": "{n} days in a row"
-    }
+    },
+    "dailyOn": "{date} · the same for everyone"
   },
   "game": {
     "title": "Klondike",
@@ -60,6 +61,44 @@
     "finishNote": "Every card is open: the rest can go home by itself.",
     "finish": "Finish",
     "newSure": "Tap again to deal anew: this deal will count as played."
+  },
+  "spider": {
+    "title": "Spider",
+    "daily": "Spider of the day",
+    "suits": {
+      "one": "{n} suit",
+      "other": "{n} suits"
+    },
+    "anyDeals": "any deals",
+    "tip": "Put a card on one a rank higher, of any suit. Only runs of one suit move together. Gather eight runs from the king down to the ace — they go home by themselves.",
+    "stock": {
+      "one": "Stock: {n} more deal",
+      "other": "Stock: {n} more deals"
+    },
+    "stockNone": "The stock is dealt",
+    "emptyColumn": "First put a card into the empty column — then the stock deals.",
+    "dealt": "A card dealt onto each column.",
+    "homes": "Runs home: {n} of {all}",
+    "runHome": "A run of {suit} is home.",
+    "notRun": "{card}: only cards of one suit in order move together.",
+    "hintDeal": "Deal from the stock.",
+    "unsureDeal": "The game could not look all the way to the end; try dealing from the stock.",
+    "rotate": "Turn the phone — the cards get bigger (if the screen does not turn, switch on auto-rotate).",
+    "rotateHide": "Do not show again",
+    "fullscreen": "Full screen on its side",
+    "fullscreenExit": "Leave full screen",
+    "fullscreenFailed": "The screen could not be turned — turn the phone yourself.",
+    "setting": "Spider: suits",
+    "settingNote": "With four suits, any deals as the cards fall: the game has no time to check them.",
+    "statsKind": "Suits",
+    "longest": {
+      "one": "Spider of the day — longest run: {n} day",
+      "other": "Spider of the day — longest run: {n} days"
+    },
+    "streak": {
+      "one": "Spider of the day: {n} day in a row",
+      "other": "Spider of the day: {n} days in a row"
+    }
   },
   "tools": {
     "label": "Tools",

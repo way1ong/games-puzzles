@@ -1,9 +1,11 @@
-// Menu: language; the settings approved on 25.11 (playing and look); installing; clearing progress; statistics for each
-// way of turning the stock; about the game and the "Made by way1ong" line (docs/solitaire/SPEC.md, "Налаштування").
+// Menu: language; the settings approved on 25.11 (playing and look) and Spider's suits (26.11); full screen on its side
+// where the browser can (26.11); installing; clearing progress; statistics for each way of turning the stock and each
+// number of Spider's suits; about the game and the "Made by way1ong" line (docs/solitaire/SPEC.md, "Налаштування").
 import { h } from '../../../shared/ui/dom.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
-import { DRAWS, SOLITAIRE, type Draw } from '../config.ts';
-import type { Stats } from '../core/stats.ts';
+import { DRAWS, SOLITAIRE, SPIDER_SUITS, type Draw, type SpiderSuits } from '../config.ts';
+import type { SpiderStats } from '../core/spider-stats.ts';
+import type { DrawStats, Stats } from '../core/stats.ts';
 import { dict, LANGS, num, plural, type Dict } from './i18n.ts';
 import type { Deals, Look, Settings, Theme } from './storage.ts';
 import { clockText } from './time.ts';
@@ -12,6 +14,8 @@ export interface MenuActions {
   setLang(lang: string): void;
   set(patch: Partial<Settings>): void;
   clearProgress(): void;
+  /** Full screen on its side, or back (only offered where the browser can). */
+  fullscreen(): void;
 }
 
 export interface MenuContent {
@@ -21,6 +25,11 @@ export interface MenuContent {
   stats: Stats;
   /** The longest run of deals of the day, in days. */
   longest: number;
+  spiderStats: SpiderStats;
+  /** The longest run of Spider of the day, in days. */
+  spiderLongest: number;
+  /** Full screen on its side: null — the browser cannot; else whether it is on now. */
+  full: boolean | null;
 }
 
 export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuContent, actions: MenuActions): void } {
@@ -77,8 +86,23 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           settings.deals,
           (deals) => actions.set({ deals }),
         ),
+        ...choices<SpiderSuits>(
+          d.spider.setting,
+          SPIDER_SUITS.map((n) => ({ value: n, text: plural(lang, n, d.spider.suits, { n }) })),
+          settings.spiderSuits,
+          (spiderSuits) => actions.set({ spiderSuits }),
+        ),
+        h('p', { class: 'dialog__note' }, d.spider.settingNote),
         toggle(s.time, settings.time, (on) => actions.set({ time: on })),
       ];
+      let fullPart: HTMLElement | null = null;
+      if (content.full !== null) {
+        fullPart = h('button', { class: 'btn btn--ghost', type: 'button' }, content.full ? d.spider.fullscreenExit : d.spider.fullscreen);
+        fullPart.addEventListener('click', () => {
+          el.close();
+          actions.fullscreen();
+        });
+      }
       const look = [
         ...choices<Look>(
           s.style,
@@ -132,38 +156,47 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
         installPart = h('p', { class: 'dialog__note' }, s.installIos);
       }
 
-      const statsTable = h(
-        'table',
-        { class: 'stats' },
+      /** A table of statistics: a row for each kind of deal. */
+      const statsTable = (kind: string, rows: { name: string; st: DrawStats }[]) =>
         h(
-          'thead',
-          {},
+          'table',
+          { class: 'stats' },
           h(
-            'tr',
+            'thead',
             {},
-            h('th', { scope: 'col' }, d.stats.kind),
-            h('th', { scope: 'col' }, d.stats.played),
-            h('th', { scope: 'col' }, d.stats.won),
-            h('th', { scope: 'col' }, d.stats.clean),
-            settings.time ? h('th', { scope: 'col' }, d.stats.best) : null,
-          ),
-        ),
-        h(
-          'tbody',
-          {},
-          ...DRAWS.map((draw) => {
-            const st = stats[draw];
-            return h(
+            h(
               'tr',
               {},
-              h('th', { scope: 'row' }, draw === 1 ? s.drawOne : s.drawThree),
-              h('td', {}, num(lang, st.played)),
-              h('td', {}, num(lang, st.won)),
-              h('td', {}, num(lang, st.clean)),
-              settings.time ? h('td', {}, st.bestMs === null ? d.stats.none : clockText(st.bestMs)) : null,
-            );
-          }),
-        ),
+              h('th', { scope: 'col' }, kind),
+              h('th', { scope: 'col' }, d.stats.played),
+              h('th', { scope: 'col' }, d.stats.won),
+              h('th', { scope: 'col' }, d.stats.clean),
+              settings.time ? h('th', { scope: 'col' }, d.stats.best) : null,
+            ),
+          ),
+          h(
+            'tbody',
+            {},
+            ...rows.map(({ name, st }) =>
+              h(
+                'tr',
+                {},
+                h('th', { scope: 'row' }, name),
+                h('td', {}, num(lang, st.played)),
+                h('td', {}, num(lang, st.won)),
+                h('td', {}, num(lang, st.clean)),
+                settings.time ? h('td', {}, st.bestMs === null ? d.stats.none : clockText(st.bestMs)) : null,
+              ),
+            ),
+          ),
+        );
+      const klondikeStats = statsTable(
+        d.stats.kind,
+        DRAWS.map((draw) => ({ name: draw === 1 ? s.drawOne : s.drawThree, st: stats[draw] })),
+      );
+      const spiderStats = statsTable(
+        d.spider.statsKind,
+        SPIDER_SUITS.map((n) => ({ name: plural(lang, n, d.spider.suits, { n }), st: content.spiderStats[n] })),
       );
 
       const site = SOLITAIRE.links.site;
@@ -185,12 +218,17 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           ...play,
           h('h3', {}, s.look),
           ...look,
+          fullPart,
           installPart,
           reset,
           resetNote,
           h('h2', {}, d.stats.title),
-          statsTable,
+          h('h3', {}, d.home.game),
+          klondikeStats,
           h('p', {}, plural(lang, content.longest, d.stats.longest, { n: content.longest })),
+          h('h3', {}, d.spider.title),
+          spiderStats,
+          h('p', {}, plural(lang, content.spiderLongest, d.spider.longest, { n: content.spiderLongest })),
           h('h2', {}, d.about.title),
           h('p', {}, d.about.rules),
           h('p', {}, d.about.text),
