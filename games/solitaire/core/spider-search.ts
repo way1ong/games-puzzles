@@ -9,10 +9,13 @@ import type { SpiderTable } from './spider.ts';
 
 export type SearchResult = { status: 'won'; path: SpiderMove[] } | { status: 'lost' } | { status: 'more'; first: SpiderMove | null };
 
-/** Searches `attempts` times, each looking at no more than `perAttempt` positions. */
-export function spiderSearch(table: SpiderTable, suits: SpiderSuits, perAttempt: number, attempts: number): Task<SearchResult> {
+/**
+ * Searches `attempts` times, each looking at no more than `perAttempt` positions. With 'more', `first` is the first move
+ * the first search tries that does not lead back to `notBackTo` (spider-solve.ts).
+ */
+export function spiderSearch(table: SpiderTable, suits: SpiderSuits, perAttempt: number, attempts: number, notBackTo: readonly SpiderTable[] = []): Task<SearchResult> {
   let attempt = 0;
-  let solver: SpiderSolver = createSpiderSolver(table, suits, 0);
+  let solver: SpiderSolver = createSpiderSolver(table, suits, 0, notBackTo);
   const first = solver.firstMove();
   let used = 0;
   return {
@@ -29,7 +32,7 @@ export function spiderSearch(table: SpiderTable, suits: SpiderSuits, perAttempt:
         if (used >= perAttempt) {
           attempt += 1;
           if (attempt >= attempts) return { status: 'more', first };
-          solver = createSpiderSolver(table, suits, attempt);
+          solver = createSpiderSolver(table, suits, attempt, notBackTo);
           used = 0;
         }
       }

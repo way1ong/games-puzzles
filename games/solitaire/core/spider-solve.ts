@@ -19,8 +19,13 @@ export interface SpiderSolver {
   run(steps: number): SolveStatus;
   /** After 'won': the way, the first move first. */
   path(): SpiderMove[];
-  /** The move the search tries first from the starting position; null — none at all. */
+  /** The first move the search tries from the starting position, not one back (see notBackTo); null — none at all. */
   firstMove(): SpiderMove | null;
+  /**
+   * A way from the starting position (of a solver that has not run) made straight: wherever one move reaches a position
+   * the way comes to later, the moves in between are left out. The same end, in fewer moves.
+   */
+  straighten(path: readonly SpiderMove[]): SpiderMove[];
   /** Positions looked at so far. */
   readonly steps: number;
 }
@@ -46,9 +51,11 @@ interface Frame {
 
 /**
  * `attempt` changes the order of moves that are equally good (0 — none): a search that went deep down a wrong way can
- * be started again along another (spiderSearch).
+ * be started again along another (spiderSearch). `notBackTo` — positions the game has just been in: the first move
+ * (firstMove) is one that does not lead back to them, so that a hint given without a way found does not send the player
+ * back and forth; the search itself does not change.
  */
-export function createSpiderSolver(table: SpiderTable, suits: SpiderSuits, attempt = 0): SpiderSolver {
+export function createSpiderSolver(table: SpiderTable, suits: SpiderSuits, attempt = 0, notBackTo: readonly SpiderTable[] = []): SpiderSolver {
   const cols = table.columns.map((c) => [...c]);
   const down = [...table.down];
   const stock = [...table.stock];
@@ -197,6 +204,28 @@ export function createSpiderSolver(table: SpiderTable, suits: SpiderSuits, attem
     return ranked.sort((a, b) => a.p - b.p).map((r) => r.m);
   }
 
+  /** Every move the rules allow: a run of one suit onto a card one higher (of any suit) or into an empty column; a deal. */
+  function anyMoves(): SpiderMove[] {
+    const out: SpiderMove[] = [];
+    let empty = false;
+    for (let i = 0; i < cols.length; i++) {
+      const col = cols[i]!;
+      if (col.length === 0) {
+        empty = true;
+        continue;
+      }
+      for (let k = runStart(i); k < col.length; k++) {
+        for (let j = 0; j < cols.length; j++) {
+          if (j === i) continue;
+          const top = cols[j]![cols[j]!.length - 1];
+          if (top === undefined || spiderRank(top) === spiderRank(col[k]!) + 1) out.push({ kind: 'move', from: i, index: k, to: j });
+        }
+      }
+    }
+    if (dealt < stock.length && !empty) out.push({ kind: 'deal' });
+    return out;
+  }
+
   function hashMove(m: SpiderMove): number {
     const base = m.kind === 'deal' ? 7 : m.from * 1009 + m.index * 31 + m.to * 7 + 3;
     return (Math.imul(base ^ (attempt * 2654435761), 0x9e3779b1) ^ dealt) >>> 0;
@@ -208,12 +237,12 @@ export function createSpiderSolver(table: SpiderTable, suits: SpiderSuits, attem
    * dealt, the runs home. Cards alike (the same face) count as the same. Two positions with one number would make the
    * search skip one of them — it could miss a way, never claim a false one (a way is played out move by move).
    */
-  function key(): number {
-    let hi = (0x811c9dc5 ^ dealt) >>> 0;
-    let lo = (0x01000193 ^ (home * 2654435761)) >>> 0;
-    for (let i = 0; i < cols.length; i++) {
-      const col = cols[i]!;
-      hi = Math.imul(hi ^ (down[i]! + 997 * (i + 1)), 0x01000193) >>> 0;
+  function keyOf(columns: readonly (readonly SpiderCard[])[], faceDown: readonly number[], dealtNow: number, homeNow: number): number {
+    let hi = (0x811c9dc5 ^ dealtNow) >>> 0;
+    let lo = (0x01000193 ^ (homeNow * 2654435761)) >>> 0;
+    for (let i = 0; i < columns.length; i++) {
+      const col = columns[i]!;
+      hi = Math.imul(hi ^ (faceDown[i]! + 997 * (i + 1)), 0x01000193) >>> 0;
       lo = Math.imul(lo ^ (col.length + 131 * (i + 1)), 0x5bd1e995) >>> 0;
       for (let k = 0; k < col.length; k++) {
         const face = suit(col[k]!) * RANKS + spiderRank(col[k]!);
@@ -224,14 +253,30 @@ export function createSpiderSolver(table: SpiderTable, suits: SpiderSuits, attem
     }
     return hi * 0x200000 + (lo & 0x1fffff);
   }
+  const key = () => keyOf(cols, down, dealt, home);
 
   // ---------- the search ----------
   const frames: Frame[] = [{ moves: moves(), next: 0, done: null }];
-  const first = frames[0]!.moves[0] ?? null;
   /** The moves on the way down to the frame on top, in order. */
   const made: SpiderMove[] = [];
   seen.add(key());
   if (home === RUNS) status = 'won';
+
+  // The first move: the first one tried that leads neither to the start nor back to where the game has just been
+  // (only positions with the same stock and the same runs home can come again: dealing and sending a run home cannot
+  // be undone, so their stock dealt so far counts from here as 0); if every move leads back, the first one.
+  const back = new Set<number>([key()]);
+  for (const t of notBackTo) if (t.stock.length === table.stock.length && t.home.length === table.home.length) back.add(keyOf(t.columns, t.down, 0, t.home.length));
+  let first: SpiderMove | null = frames[0]!.moves[0] ?? null;
+  for (const m of frames[0]!.moves) {
+    const done = apply(m);
+    const ahead = home === RUNS || !back.has(key());
+    revert(done);
+    if (ahead) {
+      first = m;
+      break;
+    }
+  }
 
   return {
     get steps() {
@@ -274,6 +319,37 @@ export function createSpiderSolver(table: SpiderTable, suits: SpiderSuits, attem
     },
     firstMove() {
       return first;
+    },
+    straighten(path) {
+      // where the way comes, position by position (positions alike count as the same, as in the search)
+      const at = new Map<number, number>([[key(), 0]]);
+      const dones: Done[] = [];
+      for (const m of path) {
+        dones.push(apply(m));
+        at.set(key(), dones.length);
+      }
+      for (let k = dones.length - 1; k >= 0; k--) revert(dones[k]!);
+      const out: SpiderMove[] = [];
+      const kept: Done[] = [];
+      let i = 0;
+      while (i < path.length) {
+        let bestTo = i + 1;
+        let best = path[i]!;
+        for (const m of anyMoves()) {
+          const done = apply(m);
+          const to = home === RUNS ? path.length : (at.get(key()) ?? -1);
+          revert(done);
+          if (to > bestTo) {
+            bestTo = to;
+            best = m;
+          }
+        }
+        out.push(best);
+        kept.push(apply(best));
+        i = bestTo;
+      }
+      for (let k = kept.length - 1; k >= 0; k--) revert(kept[k]!);
+      return out;
     },
   };
 }
