@@ -33,6 +33,11 @@ export const POUR = {
   links: { site: null as string | null, game: gameAddress('pour') },
   /** Layers of water a bottle holds; there are as many layers of each colour (C). */
   capacity: 4,
+  /**
+   * Paints in the box (art/palette.ts: each with its pattern and name); a deal draws its colours from them, so the
+   * most colours of a level is at most this (C).
+   */
+  paints: 11,
   /** Empty bottles at the start of every level (C: with two, every deal of the prototype could be solved). */
   empty: 2,
   /**
@@ -61,6 +66,16 @@ export const POUR = {
     none: { undo: 0, hints: 0, extra: 0 },
   } satisfies Record<Help, HelpRule>,
   defaultHelp: 'free' as Help,
+  /**
+   * The solver's limit: positions it looks at before it gives up not knowing (C). Measured 27.11: 200 fresh deals of
+   * 11 colours needed at most 1 844, a position with no way left at most 15 (docs/STATUS.md, Pour).
+   */
+  solveLimit: 20_000,
+  /**
+   * Levels in a row: deals compared to pick one that suits the level (the easiest first in a stage, harder later),
+   * and the random players that tell how hard a deal is (core/difficulty.ts) (C).
+   */
+  pick: { deals: 6, players: 20, maxMoves: 400 },
   /** A short buzz when a bottle is closed (a setting, off by default) (C). */
   vibrateMs: 12,
 } as const;
