@@ -1,0 +1,222 @@
+{
+  "meta": {
+    "langName": "English",
+    "title": "Slide — sliding puzzles without ads",
+    "description": "Two sliding puzzles: the fifteen — put the tiles in order or make the picture — and Clear the Way — slide the pieces aside to let the boat, the sofa or the red bar out. No ads, no tracking, no accounts; works without the internet."
+  },
+  "app": {
+    "name": "Slide",
+    "menu": "Menu",
+    "back": "Back",
+    "close": "Close"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "mode": {
+    "fifteen": "Fifteen",
+    "unblock": "Clear the Way"
+  },
+  "home": {
+    "fifteenNote": "Put the tiles in order, or make the picture",
+    "unblockNote": "Slide the pieces aside and let yours out",
+    "size": "{n} × {n}",
+    "play": "Play",
+    "continue": "Continue",
+    "new": "New game",
+    "levels": "Levels",
+    "level": "Level {n}",
+    "levelsNote": "One after another, a little harder as you go",
+    "free": "Free play",
+    "range": {
+      "one": "{from}–{to} move",
+      "other": "{from}–{to} moves"
+    },
+    "rangeFrom": {
+      "one": "{n} move or more",
+      "other": "{n} moves or more"
+    },
+    "dailyFifteen": "Fifteen of the day",
+    "dailyUnblock": "Level of the day",
+    "dailyOn": "{date} · the same for everyone",
+    "begin": "Start",
+    "started": "Continue",
+    "done": "Solved",
+    "streak": {
+      "one": "{n} day in a row",
+      "other": "{n} days in a row"
+    }
+  },
+  "game": {
+    "fifteen": "Fifteen {n} × {n}",
+    "dailyFifteen": "Fifteen of the day",
+    "level": "Level {n}",
+    "dailyUnblock": "Level of the day",
+    "moves": {
+      "one": "{n} move",
+      "other": "{n} moves"
+    },
+    "fewest": {
+      "one": "fewest: {n} move",
+      "other": "fewest: {n} moves"
+    },
+    "tipNumbers": "Tap a tile in the row or column of the gap: it slides into the gap. Put the tiles in order: 1, 2, 3…",
+    "tipPicture": "Tap a tile in the row or column of the gap: it slides into the gap. Make the picture whole.",
+    "tipHarbour": "Slide the boats along their length and take the little boat with the arrow out to sea, on the right.",
+    "tipRoom": "Slide the furniture along its length and carry the sofa with the arrow out of the door, on the right.",
+    "tipBox": "Slide the bars along their length and take the red bar with the arrow out through the slot, on the right.",
+    "notInLine": "This tile is not in the row or column of the gap.",
+    "cannotMove": "This piece cannot move now: something is in its way at both ends.",
+    "taken": "Now tap a free cell along this piece, or move it with the arrow keys.",
+    "put": "Piece put down.",
+    "moved": "Moved.",
+    "undone": "Move undone.",
+    "nothingToUndo": "Nothing to undo.",
+    "againSure": "Tap “Start again” once more: the puzzle goes back to the start.",
+    "again": "Started again.",
+    "hintTile": "Hint: slide tile {n}.",
+    "hintMarked": "Hint: slide the marked tile.",
+    "hintPiece": "Hint: {piece} — {way}.",
+    "ways": {
+      "left": "to the left",
+      "right": "to the right",
+      "up": "up",
+      "down": "down"
+    },
+    "solved": "Solved! The tiles are in order.",
+    "out": "The way is clear!"
+  },
+  "tools": {
+    "label": "Buttons",
+    "undo": "Undo",
+    "hint": "Hint",
+    "doHint": "Do it",
+    "again": "Start again",
+    "picture": "Picture"
+  },
+  "pieces": {
+    "harbour": {
+      "own": "the little boat",
+      "short": "a boat",
+      "long": "a barge"
+    },
+    "room": {
+      "own": "the sofa",
+      "short": "a chest",
+      "long": "a wardrobe"
+    },
+    "box": {
+      "own": "the red bar",
+      "short": "a bar",
+      "long": "a long bar"
+    }
+  },
+  "board": {
+    "fifteen": "Board of tiles",
+    "unblock": "Board of pieces",
+    "tile": "Tile {n}",
+    "gap": "Gap",
+    "at": "row {r}, column {c}",
+    "lying": "{name}, lying in row {r}, columns {from}–{to}",
+    "standing": "{name}, standing in column {c}, rows {from}–{to}",
+    "taken": "taken",
+    "hint": "the hint",
+    "exit": "The way out: on the right of row {r}",
+    "picture": "The whole picture"
+  },
+  "end": {
+    "solved": "Solved!",
+    "out": "The way is clear!",
+    "moves": {
+      "one": "{n} move",
+      "other": "{n} moves"
+    },
+    "fewest": {
+      "one": "Fewest possible: {n} move",
+      "other": "Fewest possible: {n} moves"
+    },
+    "perfect": "In the fewest moves!",
+    "clean": "Without help",
+    "undos": {
+      "one": "Undone: {n} move",
+      "other": "Undone: {n} moves"
+    },
+    "hints": {
+      "one": "{n} hint",
+      "other": "{n} hints"
+    },
+    "time": "Time: {time}",
+    "streak": {
+      "one": "{title}: {n} day in a row",
+      "other": "{title}: {n} days in a row"
+    },
+    "next": "Next",
+    "new": "New game",
+    "home": "To the start",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "shareFifteen": "{name} · {date}: fifteen of the day solved in {moves} moves",
+    "shareFifteenClean": "{name} · {date}: fifteen of the day solved without help in {moves} moves",
+    "shareUnblock": "{name} · {date}: level of the day solved in {moves} moves (fewest {fewest})",
+    "shareUnblockClean": "{name} · {date}: level of the day solved without help in {moves} moves (fewest {fewest})"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "play": "Playing",
+    "faces": "Tiles of the fifteen",
+    "facesNumbers": "Numbers",
+    "facesPicture": "Picture",
+    "facesBoth": "Picture and numbers",
+    "facesNote": "The pictures are rooms from the game Detective. Small numbers on the picture help where parts look alike.",
+    "time": "Show the time",
+    "vibration": "Vibration when a puzzle is solved",
+    "look": "Look",
+    "big": "Large view",
+    "leftHand": "Buttons left of the board when the phone lies on its side",
+    "theme": "Theme",
+    "themeSystem": "As the system",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap “Share”, then “Add to Home Screen”.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear the levels, started games, the days’ results and statistics",
+    "resetDone": "Progress cleared"
+  },
+  "stats": {
+    "title": "Statistics",
+    "size": "Size",
+    "difficulty": "Difficulty",
+    "played": "Played",
+    "won": "Solved",
+    "clean": "Clean",
+    "best": "Best",
+    "perfect": "Perfect",
+    "none": "—",
+    "levels": "Levels: {won} solved, {clean} of them without help, {perfect} perfect.",
+    "longest": {
+      "one": "{title} — longest streak: {n} day",
+      "other": "{title} — longest streak: {n} days"
+    },
+    "noteFifteen": "Clean — without help; best — the fewest moves.",
+    "noteUnblock": "Perfect — without help, in the fewest moves."
+  },
+  "about": {
+    "title": "About the game",
+    "fifteen": "Fifteen: tap a tile in the row or column of the gap and it slides into the gap with the tiles between. Put the tiles in order, or make the picture. Every board can be solved.",
+    "unblock": "Clear the Way: a piece moves only along its length, as far as it is free. Slide pieces aside to clear the way for yours (with the arrow) to the way out on the right. A move is one piece slid any distance. Every puzzle can be solved, and the game knows the fewest moves.",
+    "text": "No ads, no tracking, no accounts. Everything stays on this device; after the first visit the game works without the internet.",
+    "keysFifteen": "Keys in the fifteen: arrows — between tiles, Enter or Space — slide, H — hint, Ctrl+Z — undo.",
+    "keysUnblock": "Keys in Clear the Way: arrows — between pieces, Enter — take a piece, then arrows move it, Enter or Esc — put it down; H — hint, Ctrl+Z — undo.",
+    "credit": "Made by way1ong"
+  },
+  "update": {
+    "title": "A new version of the game is ready",
+    "text": "The game will open again where you left off.",
+    "apply": "Update",
+    "later": "Later"
+  }
+}

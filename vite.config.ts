@@ -12,6 +12,8 @@ import { NONOGRAMS } from './games/nonograms/config.ts';
 import nonogramsEn from './games/nonograms/i18n/en.json' with { type: 'json' };
 import { PAIRS } from './games/pairs/config.ts';
 import pairsEn from './games/pairs/i18n/en.json' with { type: 'json' };
+import { SLIDE } from './games/slide/config.ts';
+import slideEn from './games/slide/i18n/en.json' with { type: 'json' };
 import { SOLITAIRE } from './games/solitaire/config.ts';
 import solitaireEn from './games/solitaire/i18n/en.json' with { type: 'json' };
 import { SUDOKU } from './games/sudoku/config.ts';
@@ -30,6 +32,7 @@ const GAMES: GameApp[] = [
   { game: 'pour', name: POUR.name, shortName: pourEn.app.name, description: pourEn.meta.description, lang: 'en' },
   { game: 'nonograms', name: NONOGRAMS.name, shortName: nonogramsEn.app.name, description: nonogramsEn.meta.description, lang: 'en' },
   { game: 'pairs', name: PAIRS.name, shortName: pairsEn.app.name, description: pairsEn.meta.description, lang: 'en' },
+  { game: 'slide', name: SLIDE.name, shortName: slideEn.app.name, description: slideEn.meta.description, lang: 'en' },
   { game: 'solitaire', name: SOLITAIRE.name, shortName: solitaireEn.app.name, description: solitaireEn.meta.description, lang: 'en' },
   { game: 'sudoku', name: SUDOKU.name, shortName: sudokuEn.app.name, description: sudokuEn.meta.description, lang: 'en' },
   { game: 'words', name: WORDS.name, shortName: wordsEn.app.name, description: wordsEn.meta.description, lang: 'en' },
