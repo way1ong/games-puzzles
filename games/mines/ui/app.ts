@@ -331,7 +331,6 @@ export function startApp(root: HTMLElement): void {
     if (hint) return { text: hintText(hint, (cell) => (game?.field ? fieldNumbers(game.field).nums[cell]! : 0), settings.field, lang, d), actions: [] };
     if (message) return { text: message, actions: [] };
     if (!game.field) return { text: d.game.tipPlayer, actions: [] };
-    if (board.zoomable() && board.isWhole() && board.el.classList.contains('is-tiny')) return { text: d.game.tiny, actions: [] };
     if (!tipDone) return { text: t().tip, actions: [] };
     if (board.zoomable() && !board.isWhole() && !zoomTipDone) return { text: d.game.tipZoom, actions: [] };
     return null;

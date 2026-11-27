@@ -58,10 +58,11 @@ export const MINES = {
   /** The maker of fields: positions looked at in one slice of its work (the screen keeps working in between) (C). */
   makeSlice: 4_000,
   /**
-   * A cell's size, CSS px: comfortable under a finger (rule 6) and the least that may still be touched (WCAG 2.2 AA).
-   * A field that fits the screen only with cells under `comfortable` opens zoomed in to that size (as Nonograms) (C).
+   * A cell's size, CSS px: comfortable under a finger (rule 6). A field that fits the screen only with cells under it
+   * opens zoomed in to that size (as Nonograms) (C); a view the player zooms out opens and flags at any size of cell
+   * (decision of 27.11).
    */
-  cell: { comfortable: 44, least: 24 },
+  cell: { comfortable: 44 },
   /** The largest cell when zoomed in, CSS px (C). */
   zoomMaxCell: 88,
   /** Pixels a finger or the mouse travels before a press moves the field instead of touching a cell (C). */
