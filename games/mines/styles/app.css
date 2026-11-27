@@ -543,7 +543,9 @@ html.big .app {
 /* Wide screens (laptop, tablet on its side): the field on the left as tall as the screen; the line about the field,
    the note and the tools on the right. */
 @media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
-  .app {
+  /* in the large mode too: there it makes everything bigger, never the page narrower */
+  .app,
+  html.big .app {
     max-width: calc(100dvh * 1.1 + 22rem);
   }
 
@@ -585,8 +587,10 @@ html.big .app {
    the player's text sizes wide: with very large text the one column stays. */
 @media (orientation: landscape) and (min-width: 36rem) and (max-height: 29.99rem) {
   @container app (min-width: 26rem) {
-    /* Every pixel of height counts here (a browser's own bar takes part of it): slimmer top and bottom edges. */
-    .app {
+    /* Every pixel of height counts here (a browser's own bar takes part of it): slimmer top and bottom edges. The
+       page as wide as the screen, in the large mode too. */
+    .app,
+    html.big .app {
       max-width: 72rem;
       padding-top: max(0.375rem, env(safe-area-inset-top));
       padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
