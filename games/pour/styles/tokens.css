@@ -1,0 +1,87 @@
+/*
+ * Pour: the only file with colour values of the screen (the paints of the water are in art/palette.ts). Light and dark
+ * themes follow the system unless the player chooses one in the settings; a page that hosts the game (e.g. a claude.ai
+ * test page) may force one too — both with data-theme="light" | "dark" on <html>. The bottles are glass: an outline,
+ * a pale inside, a line between the layers of water (a dark and a light edge, so it reads on every paint).
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #e9f0f3;
+  --surface: #ffffff;
+  --text: #13262f;
+  --muted: #455d68;
+  --line: #5c7682;
+  --accent: #0d5b75;
+  --on-accent: #ffffff;
+  --focus: #a64700;
+
+  /* The glass: its outline and its empty inside; the line between layers of water, its dark and light edge. */
+  --glass: #4d6875;
+  --glass-in: #f5f9fb;
+  --layer-dark: #13262f;
+  --layer-light: #f5f9fb;
+  /* A lifted bottle's mark under it; the hint's marks: where from, where into; a done bottle's cork and its edge. */
+  --lift: #0d5b75;
+  --hint-from: #a64700;
+  --hint-to: #19713f;
+  --cork: #b48a5a;
+  --cork-edge: #5b4026;
+
+  --backdrop: rgb(10 24 30 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0e171c;
+    --surface: #172329;
+    --text: #e3eef2;
+    --muted: #a7bac2;
+    --line: #6f8894;
+    --accent: #84d3ec;
+    --on-accent: #06212b;
+    --focus: #ffb469;
+
+    --glass: #a2b8c2;
+    --glass-in: #1e2d35;
+    --layer-dark: #0b1418;
+    --layer-light: #f5f9fb;
+    --lift: #84d3ec;
+    --hint-from: #ffb469;
+    --hint-to: #7fe0a8;
+    --cork: #c29a6c;
+    --cork-edge: #3a2614;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  }
+}
+
+/* The same dark values when the player or the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0e171c;
+  --surface: #172329;
+  --text: #e3eef2;
+  --muted: #a7bac2;
+  --line: #6f8894;
+  --accent: #84d3ec;
+  --on-accent: #06212b;
+  --focus: #ffb469;
+
+  --glass: #a2b8c2;
+  --glass-in: #1e2d35;
+  --layer-dark: #0b1418;
+  --layer-light: #f5f9fb;
+  --lift: #84d3ec;
+  --hint-from: #ffb469;
+  --hint-to: #7fe0a8;
+  --cork: #c29a6c;
+  --cork-edge: #3a2614;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+}

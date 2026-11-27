@@ -6,6 +6,8 @@ import { DETECTIVE } from './games/detective/config.ts';
 import detectiveEn from './games/detective/i18n/en.json' with { type: 'json' };
 import { MINES } from './games/mines/config.ts';
 import minesEn from './games/mines/i18n/en.json' with { type: 'json' };
+import { POUR } from './games/pour/config.ts';
+import pourEn from './games/pour/i18n/en.json' with { type: 'json' };
 import { NONOGRAMS } from './games/nonograms/config.ts';
 import nonogramsEn from './games/nonograms/i18n/en.json' with { type: 'json' };
 import { PAIRS } from './games/pairs/config.ts';
@@ -25,6 +27,7 @@ const GAMES: GameApp[] = [
   { game: 'blocks', name: BLOCKS.name, shortName: blocksEn.app.name, description: blocksEn.meta.description, lang: 'en' },
   { game: 'detective', name: DETECTIVE.name, shortName: detectiveEn.app.name, description: detectiveEn.meta.description, lang: 'en' },
   { game: 'mines', name: MINES.name, shortName: minesEn.app.name, description: minesEn.meta.description, lang: 'en' },
+  { game: 'pour', name: POUR.name, shortName: pourEn.app.name, description: pourEn.meta.description, lang: 'en' },
   { game: 'nonograms', name: NONOGRAMS.name, shortName: nonogramsEn.app.name, description: nonogramsEn.meta.description, lang: 'en' },
   { game: 'pairs', name: PAIRS.name, shortName: pairsEn.app.name, description: pairsEn.meta.description, lang: 'en' },
   { game: 'solitaire', name: SOLITAIRE.name, shortName: solitaireEn.app.name, description: solitaireEn.meta.description, lang: 'en' },

@@ -1,0 +1,193 @@
+{
+  "meta": {
+    "langName": "English",
+    "title": "Pour — without ads, without hurry",
+    "description": "Pour coloured water between the bottles until each holds one colour. Every level can be solved. No ads, no tracking, no accounts; works without the internet."
+  },
+  "app": {
+    "name": "Pour",
+    "menu": "Menu",
+    "back": "Back",
+    "close": "Close"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "home": {
+    "levels": "Levels",
+    "levelsNote": "One after another, a few more colours as you go",
+    "level": "Level {n}",
+    "play": "Play",
+    "continue": "Continue",
+    "free": "Free play",
+    "new": "New game",
+    "colours": {
+      "one": "{n} colour",
+      "other": "{n} colours"
+    },
+    "dailyTitle": "Level of the day · {date}",
+    "dailyNote": "The same for everyone today",
+    "begin": "Start",
+    "started": "Continue",
+    "done": "Solved",
+    "streak": {
+      "one": "Level of the day: {n} day in a row",
+      "other": "Level of the day: {n} days in a row"
+    }
+  },
+  "game": {
+    "level": "Level {n}",
+    "daily": "Level of the day",
+    "moves": {
+      "one": "{n} pour",
+      "other": "{n} pours"
+    },
+    "making": "Filling the bottles…",
+    "tip": "Tap the bottle to pour from, then the one to pour into. Water goes onto the same colour or into an empty bottle.",
+    "lifted": "Now tap the bottle to pour into.",
+    "put": "Bottle put down.",
+    "poured": "Poured.",
+    "closedOne": "One bottle done!",
+    "won": "Done! Every bottle holds one colour.",
+    "whyColour": "Not here: another colour is on top.",
+    "whyFull": "Not here: the bottle is full.",
+    "whyEmpty": "This bottle is empty — nothing to pour.",
+    "whyClosed": "This bottle is already done.",
+    "stuck": "There is no way to the end any more.",
+    "stuckBack": {
+      "one": "There is no way to the end any more. Undo {n} pour and there is one again.",
+      "other": "There is no way to the end any more. Undo {n} pours and there is one again."
+    },
+    "stuckAgain": "There is no way to the end any more. Start again, or take one more bottle if you may.",
+    "undone": "Pour undone.",
+    "nothingToUndo": "Nothing to undo.",
+    "noUndo": "No undos left for this level.",
+    "noHints": "No hints left for this level.",
+    "noExtra": "No extra bottle on this level.",
+    "extraUsed": "The extra bottle of this level is already taken.",
+    "added": "An empty bottle added.",
+    "againSure": "Tap “Start again” once more: the bottles go back to the start.",
+    "again": "Started again.",
+    "hint": "Hint: from bottle {from} into bottle {to}.",
+    "hintUnknown": "No hint found just now. Try undoing a pour."
+  },
+  "tools": {
+    "label": "Buttons",
+    "undo": "Undo",
+    "hint": "Hint",
+    "doHint": "Do it",
+    "extra": "One more bottle",
+    "again": "Start again",
+    "back": {
+      "one": "Undo {n} pour",
+      "other": "Undo {n} pours"
+    }
+  },
+  "bottle": {
+    "label": "Bottle {n}: {what}",
+    "empty": "empty",
+    "layers": "from the bottom up {list}",
+    "closed": "done, {colour}",
+    "up": "lifted",
+    "hintFrom": "the hint: from here",
+    "hintTo": "the hint: into here",
+    "shelf": "Bottles"
+  },
+  "paints": {
+    "p0": "red",
+    "p1": "orange",
+    "p2": "yellow",
+    "p3": "lime",
+    "p4": "green",
+    "p5": "teal",
+    "p6": "sky blue",
+    "p7": "blue",
+    "p8": "purple",
+    "p9": "pink",
+    "p10": "brown"
+  },
+  "end": {
+    "title": "Done!",
+    "moves": {
+      "one": "{n} pour",
+      "other": "{n} pours"
+    },
+    "clean": "Without help",
+    "undos": {
+      "one": "Undone: {n} pour",
+      "other": "Undone: {n} pours"
+    },
+    "hints": {
+      "one": "{n} hint",
+      "other": "{n} hints"
+    },
+    "extra": "With an extra bottle",
+    "time": "Time: {time}",
+    "streak": {
+      "one": "Level of the day: {n} day in a row",
+      "other": "Level of the day: {n} days in a row"
+    },
+    "next": "Next",
+    "new": "New game",
+    "home": "To the start",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "share": "{name} · {date}: level of the day solved in {moves} pours",
+    "shareClean": "{name} · {date}: level of the day solved without help in {moves} pours"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "play": "Playing",
+    "patterns": "Patterns on the colours",
+    "patternsNote": "Each colour has its own pattern too, so the colours can be told apart even by those who see colours poorly.",
+    "help": "Help in a level",
+    "helpFree": "No limits",
+    "helpSome": "Limited",
+    "helpNone": "No help",
+    "helpNote": "No limits: undos and hints as many as you like, and one extra bottle. Limited: per level, undos: {undo}, hints: {hints}, no extra bottle.",
+    "time": "Show the time",
+    "vibration": "Vibration when a bottle is done",
+    "look": "Look",
+    "big": "Large bottles",
+    "leftHand": "Buttons left of the bottles when the phone lies on its side",
+    "theme": "Theme",
+    "themeSystem": "As the system",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap “Share”, then “Add to Home Screen”.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear the levels, started games, the days’ results and statistics",
+    "resetDone": "Progress cleared"
+  },
+  "stats": {
+    "title": "Statistics",
+    "game": "Free play",
+    "played": "Played",
+    "won": "Solved",
+    "clean": "Without help",
+    "best": "Fewest pours",
+    "none": "—",
+    "levels": "Levels: {won} solved, {clean} of them without help.",
+    "longest": {
+      "one": "Level of the day — longest streak: {n} day",
+      "other": "Level of the day — longest streak: {n} days"
+    }
+  },
+  "about": {
+    "title": "About the game",
+    "rules": "The bottles hold layers of coloured water. Tap the bottle to pour from, then the one to pour into: water goes onto the same colour or into an empty bottle, as much as fits. The aim: one colour in each bottle. Every level can be solved.",
+    "text": "No ads, no tracking, no accounts. Everything stays on this device; after the first visit the game works without the internet.",
+    "keys": "Keys: arrows — between bottles, Enter or Space — lift or pour, Esc — put down, H — hint, Ctrl+Z — undo.",
+    "credit": "Made by way1ong"
+  },
+  "update": {
+    "title": "A new version of the game is ready",
+    "text": "The game will open again where you left off.",
+    "apply": "Update",
+    "later": "Later"
+  }
+}
