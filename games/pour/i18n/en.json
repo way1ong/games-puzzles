@@ -166,16 +166,18 @@
   "stats": {
     "title": "Statistics",
     "game": "Free play",
+    "difficulty": "Difficulty",
     "played": "Played",
     "won": "Solved",
-    "clean": "Without help",
-    "best": "Fewest pours",
+    "clean": "Clean",
+    "best": "Best",
     "none": "—",
     "levels": "Levels: {won} solved, {clean} of them without help.",
     "longest": {
       "one": "Level of the day — longest streak: {n} day",
       "other": "Level of the day — longest streak: {n} days"
-    }
+    },
+    "note": "Clean — without help; best — the fewest pours."
   },
   "about": {
     "title": "About the game",

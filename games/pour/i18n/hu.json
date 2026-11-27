@@ -166,16 +166,18 @@
   "stats": {
     "title": "Statisztika",
     "game": "Szabad játék",
+    "difficulty": "Nehézség",
     "played": "Játszott",
     "won": "Megoldva",
-    "clean": "Segítség nélkül",
-    "best": "Legkevesebb töltés",
+    "clean": "Tiszta",
+    "best": "Legjobb",
     "none": "—",
     "levels": "Szintek: {won} megoldva, ebből segítség nélkül: {clean}.",
     "longest": {
       "one": "A nap szintje – leghosszabb sorozat: {n} nap",
       "other": "A nap szintje – leghosszabb sorozat: {n} nap"
-    }
+    },
+    "note": "Tiszta – segítség nélkül; legjobb – a legkevesebb töltés."
   },
   "about": {
     "title": "A játékról",

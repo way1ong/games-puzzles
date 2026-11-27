@@ -128,11 +128,10 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
       const statsTable = h(
         'table',
         { class: 'stats' },
-        h('caption', { class: 'visually-hidden' }, st.game),
         h(
           'thead',
           {},
-          h('tr', {}, h('th', { scope: 'col' }, st.game), h('th', { scope: 'col' }, st.played), h('th', { scope: 'col' }, st.won), h('th', { scope: 'col' }, st.clean), h('th', { scope: 'col' }, st.best)),
+          h('tr', {}, h('th', { scope: 'col' }, st.difficulty), h('th', { scope: 'col' }, st.played), h('th', { scope: 'col' }, st.won), h('th', { scope: 'col' }, st.clean), h('th', { scope: 'col' }, st.best)),
         ),
         h(
           'tbody',
@@ -151,6 +150,20 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           }),
         ),
       );
+
+      // the table fits a phone; were the text so large that it does not, it scrolls, and then the keys reach it too
+      const statsWrap = h('div', { class: 'stats-wrap' }, statsTable);
+      new ResizeObserver(() => {
+        if (statsWrap.scrollWidth > statsWrap.clientWidth + 1) {
+          statsWrap.tabIndex = 0;
+          statsWrap.setAttribute('role', 'region');
+          statsWrap.setAttribute('aria-label', st.game);
+        } else {
+          statsWrap.removeAttribute('tabindex');
+          statsWrap.removeAttribute('role');
+          statsWrap.removeAttribute('aria-label');
+        }
+      }).observe(statsWrap);
 
       const site = POUR.links.site;
       const credit = site ? h('a', { href: site }, d.about.credit) : h('span', {}, d.about.credit);
@@ -177,7 +190,9 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           resetNote,
           h('h2', {}, st.title),
           h('p', {}, fmt(st.levels, { won: num(lang, stats.levels.won), clean: num(lang, stats.levels.clean) })),
-          h('div', { class: 'stats-wrap' }, statsTable),
+          h('h3', {}, st.game),
+          statsWrap,
+          h('p', { class: 'dialog__note' }, st.note),
           h('p', {}, plural(lang, content.longest, st.longest, { n: content.longest })),
           h('h2', {}, d.about.title),
           h('p', {}, d.about.rules),

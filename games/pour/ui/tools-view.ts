@@ -25,7 +25,8 @@ export function createToolsView(actions: ToolActions) {
   const tool = (sign: SVGSVGElement, act: () => void) => {
     const label = h('span', { class: 'tool__label' });
     const left = h('span', { class: 'tool__left', 'aria-hidden': 'true' });
-    const b = h('button', { class: 'tool', type: 'button' }, sign, label, left);
+    // the name a screen reader says is what is seen: the word, then how much is left
+    const b = h('button', { class: 'tool', type: 'button' }, sign, label, ' ', left);
     b.addEventListener('click', act);
     return { b, label, left };
   };
@@ -35,10 +36,9 @@ export function createToolsView(actions: ToolActions) {
   const again = tool(againSign(), () => actions.again());
   const el = h('div', { class: 'tools', role: 'group' }, undo.b, hint.b, extra.b, again.b);
 
-  const count = (t: { b: HTMLButtonElement; left: HTMLElement }, n: number | null, name: string) => {
+  const count = (t: { b: HTMLButtonElement; left: HTMLElement }, n: number | null) => {
     t.left.textContent = n === null ? '' : String(n);
     t.b.classList.toggle('is-spent', n === 0);
-    t.b.setAttribute('aria-label', n === null ? name : `${name} (${n})`);
   };
 
   return {
@@ -46,15 +46,14 @@ export function createToolsView(actions: ToolActions) {
     render(d: Dict, state: ToolsState): void {
       el.setAttribute('aria-label', d.tools.label);
       undo.label.textContent = d.tools.undo;
-      count(undo, state.undoLeft, d.tools.undo);
+      count(undo, state.undoLeft);
       const hintName = state.hintReady ? d.tools.doHint : d.tools.hint;
       hint.label.textContent = hintName;
       hint.b.classList.toggle('is-ready', state.hintReady);
-      count(hint, state.hintReady ? null : state.hintsLeft, hintName);
+      count(hint, state.hintReady ? null : state.hintsLeft);
       extra.label.textContent = d.tools.extra;
-      count(extra, state.extraLeft, d.tools.extra);
+      count(extra, state.extraLeft);
       again.label.textContent = d.tools.again;
-      again.b.setAttribute('aria-label', d.tools.again);
     },
   };
 }
