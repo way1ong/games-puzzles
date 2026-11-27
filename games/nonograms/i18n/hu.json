@@ -36,7 +36,6 @@
     "grid": "Rács, {size} × {size}",
     "tip": "A számok megmutatják, hány cella van egymás után befestve, sorrendben. Koppintson egy cellára a befestéshez; húzza végig az ujját egy soron, és többet fest be.",
     "tipZoom": "A rács nagyítva van: két ujjal mozgathatja és nagyíthatja, vagy húzzon egy számsávot. Az „Egész kép” a teljes rácsot mutatja.",
-    "tiny": "A rács most kicsi: a koppintás ráközelít erre a helyre.",
     "fullWrong": "Annyi cella van befestve, amennyit a számok kérnek, de valahol hiba van. A „Tipp” megmutatja, hol.",
     "nothingToUndo": "Nincs mit visszavonni.",
     "undone": "Visszavonva.",

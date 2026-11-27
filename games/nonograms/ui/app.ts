@@ -328,7 +328,6 @@ export function startApp(root: HTMLElement): void {
     if (hint) return { text: hintText(hint, open.clues, lang, d), actions: [] };
     if (message) return { text: message, actions: [] };
     if (fullButWrong(g, open.clues)) return { text: d.game.fullWrong, actions: [] };
-    if (board.zoomable() && board.isWhole() && board.el.classList.contains('is-tiny')) return { text: d.game.tiny, actions: [] };
     if (!tipDone) return { text: d.game.tip, actions: [] };
     if (board.zoomable() && !board.isWhole() && !zoomTipDone) return { text: d.game.tipZoom, actions: [] };
     return null;

@@ -1,0 +1,195 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Töltögető – reklám és sietség nélkül",
+    "description": "Töltse át a színes vizet az üvegcsék között, amíg mindegyikben egyetlen szín marad. Minden szint megoldható. Reklám, követés és fiók nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Töltögető",
+    "menu": "Menü",
+    "back": "Vissza",
+    "close": "Bezárás"
+  },
+  "difficulty": {
+    "easy": "Könnyű",
+    "medium": "Közepes",
+    "hard": "Nehéz"
+  },
+  "home": {
+    "levels": "Szintek",
+    "levelsNote": "Egymás után, egyre több színnel",
+    "level": "{n}. szint",
+    "play": "Játék",
+    "continue": "Folytatás",
+    "free": "Szabad játék",
+    "new": "Új játék",
+    "colours": {
+      "one": "{n} szín",
+      "other": "{n} szín"
+    },
+    "dailyTitle": "A nap szintje · {date}",
+    "dailyNote": "Ma mindenkinek ugyanaz",
+    "begin": "Kezdés",
+    "started": "Folytatás",
+    "done": "Megoldva",
+    "streak": {
+      "one": "A nap szintje: {n} nap egymás után",
+      "other": "A nap szintje: {n} nap egymás után"
+    }
+  },
+  "game": {
+    "level": "{n}. szint",
+    "daily": "A nap szintje",
+    "moves": {
+      "one": "{n} töltés",
+      "other": "{n} töltés"
+    },
+    "making": "Töltöm az üvegcséket…",
+    "tip": "Koppintson arra az üvegcsére, amelyből tölt, majd arra, amelyikbe. A víz ugyanarra a színre vagy üres üvegcsébe tölthető.",
+    "lifted": "Most koppintson arra az üvegcsére, amelyikbe tölt.",
+    "put": "Az üvegcse a helyére került.",
+    "poured": "Áttöltve.",
+    "closedOne": "Egy üvegcse kész!",
+    "won": "Kész! Minden üvegcsében egyetlen szín van.",
+    "whyColour": "Ide nem lehet: felül más szín van.",
+    "whyFull": "Ide nem lehet: az üvegcse tele van.",
+    "whyEmpty": "Ez az üvegcse üres – nincs mit tölteni.",
+    "whyClosed": "Ez az üvegcse már kész.",
+    "stuck": "Már nincs út a végéig.",
+    "stuckBack": {
+      "one": "Már nincs út a végéig. Vonjon vissza {n} töltést, és újra lesz.",
+      "other": "Már nincs út a végéig. Vonjon vissza {n} töltést, és újra lesz."
+    },
+    "stuckAgain": "Már nincs út a végéig. Kezdje újra, vagy vegyen még egy üvegcsét, ha lehet.",
+    "undone": "Töltés visszavonva.",
+    "nothingToUndo": "Nincs mit visszavonni.",
+    "noUndo": "Ezen a szinten nem maradt visszavonás.",
+    "noHints": "Ezen a szinten nem maradt tipp.",
+    "noExtra": "Ezen a szinten nincs plusz üvegcse.",
+    "extraUsed": "Ennek a szintnek a plusz üvegcséjét már elvette.",
+    "added": "Egy üres üvegcse hozzáadva.",
+    "againSure": "Koppintson még egyszer az „Újrakezdés” gombra: az üvegcsék visszakerülnek a kezdethez.",
+    "again": "Újrakezdve.",
+    "hint": "Tipp: a(z) {from}. üvegcséből a(z) {to}. üvegcsébe.",
+    "hintUnknown": "Most nem találtam tippet. Próbáljon visszavonni egy töltést."
+  },
+  "tools": {
+    "label": "Gombok",
+    "undo": "Visszavonás",
+    "hint": "Tipp",
+    "doHint": "Megteszi",
+    "extra": "Még egy üvegcse",
+    "again": "Újrakezdés",
+    "back": {
+      "one": "{n} töltés visszavonása",
+      "other": "{n} töltés visszavonása"
+    }
+  },
+  "bottle": {
+    "label": "{n}. üvegcse: {what}",
+    "empty": "üres",
+    "layers": "alulról felfelé {list}",
+    "closed": "kész, {colour}",
+    "up": "felemelve",
+    "hintFrom": "a tipp: innen",
+    "hintTo": "a tipp: ide",
+    "shelf": "Üvegcsék"
+  },
+  "paints": {
+    "p0": "piros",
+    "p1": "narancssárga",
+    "p2": "sárga",
+    "p3": "világoszöld",
+    "p4": "zöld",
+    "p5": "türkiz",
+    "p6": "égszínkék",
+    "p7": "kék",
+    "p8": "lila",
+    "p9": "rózsaszín",
+    "p10": "barna"
+  },
+  "end": {
+    "title": "Kész!",
+    "moves": {
+      "one": "{n} töltés",
+      "other": "{n} töltés"
+    },
+    "clean": "Segítség nélkül",
+    "undos": {
+      "one": "Visszavonva: {n} töltés",
+      "other": "Visszavonva: {n} töltés"
+    },
+    "hints": {
+      "one": "{n} tipp",
+      "other": "{n} tipp"
+    },
+    "extra": "Plusz üvegcsével",
+    "time": "Idő: {time}",
+    "streak": {
+      "one": "A nap szintje: {n} nap egymás után",
+      "other": "A nap szintje: {n} nap egymás után"
+    },
+    "next": "Tovább",
+    "new": "Új játék",
+    "home": "Az elejére",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "share": "{name} · {date}: a nap szintje megoldva {moves} töltéssel",
+    "shareClean": "{name} · {date}: a nap szintje megoldva segítség nélkül, {moves} töltéssel"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "play": "Játék",
+    "patterns": "Minták a színeken",
+    "patternsNote": "Minden színnek saját mintája is van, így a színeket azok is megkülönböztetik, akik rosszul látják a színeket.",
+    "help": "Segítség szintenként",
+    "helpFree": "Korlátlan",
+    "helpSome": "Korlátozott",
+    "helpNone": "Segítség nélkül",
+    "helpNote": "Korlátlan: visszavonás és tipp akárhányszor, plusz egy üvegcse. Korlátozott: szintenként visszavonás: {undo}, tipp: {hints}, plusz üvegcse nélkül.",
+    "time": "Az idő mutatása",
+    "vibration": "Rezgés, amikor egy üvegcse kész",
+    "look": "Megjelenés",
+    "big": "Nagy üvegcsék",
+    "leftHand": "Gombok az üvegcséktől balra, ha a telefon fekszik",
+    "theme": "Téma",
+    "themeSystem": "Mint a rendszer",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden koppintson a „Megosztás”, majd a „Főképernyőhöz adás” gombra.",
+    "reset": "Az előrehaladás törlése",
+    "resetSure": "Koppintson újra a szintek, a megkezdett játékok, a napi eredmények és a statisztika törléséhez",
+    "resetDone": "Előrehaladás törölve"
+  },
+  "stats": {
+    "title": "Statisztika",
+    "game": "Szabad játék",
+    "difficulty": "Nehézség",
+    "played": "Játszott",
+    "won": "Megoldva",
+    "clean": "Tiszta",
+    "best": "Legjobb",
+    "none": "—",
+    "levels": "Szintek: {won} megoldva, ebből segítség nélkül: {clean}.",
+    "longest": {
+      "one": "A nap szintje – leghosszabb sorozat: {n} nap",
+      "other": "A nap szintje – leghosszabb sorozat: {n} nap"
+    },
+    "note": "Tiszta – segítség nélkül; legjobb – a legkevesebb töltés."
+  },
+  "about": {
+    "title": "A játékról",
+    "rules": "Az üvegcsékben színes víz rétegei vannak. Koppintson arra az üvegcsére, amelyből tölt, majd arra, amelyikbe: a víz ugyanarra a színre vagy üres üvegcsébe kerül, amennyi belefér. A cél: minden üvegcsében egyetlen szín. Minden szint megoldható.",
+    "text": "Reklám, követés és fiók nélkül. Minden csak ezen az eszközön marad; az első megnyitás után a játék internet nélkül is működik.",
+    "keys": "Billentyűk: nyilak – az üvegcsék között, Enter vagy szóköz – felemelés vagy töltés, Esc – visszatevés, H – tipp, Ctrl+Z – visszavonás.",
+    "credit": "Készítette: way1ong"
+  },
+  "update": {
+    "title": "Elérhető a játék új verziója",
+    "text": "A játék újra megnyílik ott, ahol abbahagyta.",
+    "apply": "Frissítés",
+    "later": "Később"
+  }
+}

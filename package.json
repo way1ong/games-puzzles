@@ -18,7 +18,8 @@
     "audit": "node scripts/audit.mjs",
     "check:live": "node scripts/check-live.mjs",
     "words:fetch": "node --experimental-strip-types --no-warnings scripts/words/fetch.ts",
-    "words:build": "node --experimental-strip-types --no-warnings --max-old-space-size=4096 scripts/words/build.ts"
+    "words:build": "node --experimental-strip-types --no-warnings --max-old-space-size=4096 scripts/words/build.ts",
+    "slide:pool": "node --experimental-strip-types --no-warnings scripts/slide/pool.ts"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

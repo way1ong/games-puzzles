@@ -36,7 +36,6 @@
     "grid": "Grid, {size} × {size}",
     "tip": "The numbers tell how many cells in a row are filled, in order. Tap a cell to fill it; run your finger along a line to fill several.",
     "tipZoom": "The grid is zoomed in: move and zoom it with two fingers, or drag a strip of numbers. “Whole picture” shows all of it.",
-    "tiny": "The grid is small now: a tap zooms in there.",
     "fullWrong": "As many cells are filled as the numbers ask, but there is a mistake somewhere. “Hint” shows where.",
     "nothingToUndo": "Nothing to undo.",
     "undone": "Undone.",

@@ -65,7 +65,7 @@ export interface BoardView {
 }
 
 type Gesture =
-  | { kind: 'stroke'; id: number; start: number; x0: number; y0: number; way: Way | null; cells: number[]; moved: boolean; zoomTap: boolean }
+  | { kind: 'stroke'; id: number; start: number; x0: number; y0: number; way: Way | null; cells: number[]; moved: boolean }
   | { kind: 'pan'; id: number; x: number; y: number }
   | { kind: 'pinch'; a: number; b: number; d0: number; mx: number; my: number; view0: View }
   /** Fingers still down after a pinch: nothing until they are all lifted. */
@@ -189,7 +189,6 @@ export function createBoardView(actions: BoardActions): BoardView {
     Object.assign(cols.style, { width: px(total), height: px(m.colsH), transform: `translateX(${-view.x}px)` });
     Object.assign(rows.style, { width: px(m.rowsW), height: px(total), transform: `translateY(${-view.y}px)` });
     Object.assign(grid.style, { width: px(total), height: px(total), transform: `translate(${-view.x}px, ${-view.y}px)` });
-    el.classList.toggle('is-tiny', view.cell < NONOGRAMS.cell.least);
     el.classList.toggle('is-zoomed', total > m.gridW + 0.5 || total > m.gridH + 0.5);
   }
 
@@ -335,12 +334,12 @@ export function createBoardView(actions: BoardActions): BoardView {
     if (place === 'grid' && frame && !lastShow?.done) {
       pointerClick = true;
       const start = cellAt(frame, view, p.x, p.y)!;
-      const zoomTap = view.cell < NONOGRAMS.cell.least;
-      gesture = { kind: 'stroke', id: event.pointerId, start, x0: p.x, y0: p.y, way: null, cells: [start], moved: false, zoomTap };
+      // Any size of cell paints, however far the player zoomed out (a stylus reaches small cells; decision of 27.11).
+      gesture = { kind: 'stroke', id: event.pointerId, start, x0: p.x, y0: p.y, way: null, cells: [start], moved: false };
       el.setPointerCapture(event.pointerId);
       lastCell = start;
       setPointerCell(start);
-      if (!zoomTap) actions.preview([start]);
+      actions.preview([start]);
     } else if (place === 'numbers' && zoomed()) {
       gesture = { kind: 'pan', id: event.pointerId, x: p.x, y: p.y };
       el.setPointerCapture(event.pointerId);
@@ -362,7 +361,6 @@ export function createBoardView(actions: BoardActions): BoardView {
     if (g.kind === 'stroke' && g.id === event.pointerId) {
       if (!g.moved && Math.hypot(p.x - g.x0, p.y - g.y0) < NONOGRAMS.dragStart) return;
       g.moved = true;
-      if (g.zoomTap) return;
       const cell = cellAt(frame, view, p.x, p.y, true)!;
       g.way ??= wayOf(size, g.start, cell, p.x - g.x0, p.y - g.y0);
       const path = pathCells(size, g.start, cell, g.way);
@@ -396,14 +394,7 @@ export function createBoardView(actions: BoardActions): BoardView {
       gesture = null;
       setPointerCell(event.pointerType === 'mouse' && !cancelled ? pointerCell : null);
       if (cancelled) actions.preview(null);
-      else if (g.zoomTap) {
-        if (!g.moved && frame) {
-          const p = at(event);
-          view = zoomAround(frame, view, frame.limits.comfortable, p.x, p.y);
-          applyView();
-          actions.viewChanged();
-        }
-      } else actions.commit(g.cells);
+      else actions.commit(g.cells);
     } else if (g?.kind === 'pan' && g.id === event.pointerId) {
       gesture = null;
       actions.viewChanged();

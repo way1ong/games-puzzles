@@ -1,0 +1,728 @@
+/* Slide screen. Colours only from tokens.css (the drawings of "Clear the way": art/palette.ts); the page reset and
+   common controls are in shared/styles/ui.css. One column, centred; a phone in portrait first: the board under the
+   top, a note and the buttons under it. */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: max(0.5rem, env(safe-area-inset-top)) max(0.5rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom)) max(0.5rem, env(safe-area-inset-left));
+}
+
+/* Large mode: the board as wide as the screen allows. */
+html.big .app {
+  max-width: 46rem;
+  padding-left: max(0.25rem, env(safe-area-inset-left));
+  padding-right: max(0.25rem, env(safe-area-inset-right));
+}
+
+/* A game fills the screen's height: the board takes what the rest leaves. */
+.app:has(> .content > .play) {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* ---------- top: back, name, menu ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top__name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+/* The heading takes the focus when the screen changes (for screen readers); it is not a control. */
+.top__name:focus {
+  outline: none;
+}
+
+.sign {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------- the start screen ---------- */
+.home {
+  display: grid;
+  gap: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.home__part {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.home h3 {
+  margin: 0.25rem 0 0;
+  font-size: 1rem;
+}
+
+.home__note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.home__streak {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.pick {
+  display: grid;
+  grid-template-areas:
+    'name state'
+    'info info';
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.125rem 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--surface);
+  text-align: start;
+  cursor: pointer;
+}
+
+.pick__name {
+  grid-area: name;
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.pick__state {
+  display: flex;
+  grid-area: state;
+  align-items: center;
+  align-self: center;
+  gap: 0.25rem;
+  color: var(--accent);
+  font-weight: 700;
+  text-align: end;
+}
+
+.pick__state .sign {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.pick__info {
+  grid-area: info;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* A game to continue and the day's begun: a frame in the accent colour, dashed; solved — whole. */
+.pick--resume,
+.pick.is-started {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+
+.pick.is-done {
+  border-color: var(--accent);
+}
+
+/* ---------- a game ---------- */
+.play {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 0.75rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* The moves (and the fewest), and the time when it is shown: at the end of the line. */
+.info__moves {
+  margin-inline-start: auto;
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.info__time {
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A word about the game (how to play, why not, a hint, the end). It keeps one height while the game is
+   played — three lines (a square board leaves room on a phone); a longer word scrolls by itself — so the board above
+   never moves when it speaks
+   (.claude/rules/design.md); at the end, with the buttons gone, it may grow. */
+.note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem 0.75rem;
+  min-height: calc(4.2em + 1rem);
+  max-height: calc(4.2em + 1rem);
+  overflow-y: auto;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--surface);
+  text-align: center;
+}
+
+.play.is-done .note {
+  max-height: 9.5rem;
+}
+
+.note.is-empty {
+  visibility: hidden;
+}
+
+.note__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.note__actions:empty {
+  display: none;
+}
+
+/* The end's choice in the note: a button at least a finger tall. */
+.note__btn {
+  min-height: 2.75rem;
+  padding-block: 0.25rem;
+}
+
+/* ---------- the board: a square as large as the room left (.board is the container) ---------- */
+.board {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  /* with very large text the rest takes much of the screen: the board keeps a playable size, the page scrolls */
+  min-height: min(50vh, 100vw);
+  min-height: min(50dvh, 100vw);
+  container-type: size;
+}
+
+/* Marks on the boards: a dark ring around a light band (tokens.css), so they read on every tile and drawing. */
+.tile:focus-visible,
+.piece:focus-visible,
+.piece.is-taken {
+  outline: 3px solid var(--mark-dark);
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 6px var(--mark-light);
+}
+
+.tile.is-hint,
+.piece.is-hint {
+  outline: 3px dashed var(--mark-dark);
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 6px var(--mark-light);
+}
+
+/* ---------- the fifteen (ui/fifteen-view.ts sets --n, a tile's --r --c and its home --hr --hc) ---------- */
+.tiles {
+  --n: 4;
+  --side: min(100cqw, 100cqh);
+  position: relative;
+  width: var(--side);
+  height: var(--side);
+  border-radius: 0.75rem;
+  background: var(--board);
+  touch-action: none;
+}
+
+.tile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: calc(100% / var(--n));
+  height: calc(100% / var(--n));
+  margin: 0;
+  padding: 0;
+  border: max(2px, calc(var(--side) / var(--n) * 0.035)) solid transparent;
+  border-radius: 0.75rem;
+  background: var(--tile) padding-box;
+  box-shadow: inset 0 0 0 2px var(--tile-line);
+  color: var(--tile-ink);
+  font-size: calc(var(--side) / var(--n) * 0.42);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transform: translate(calc(var(--c) * 100%), calc(var(--r) * 100%));
+  transition: transform 140ms ease-out;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html.big .tile {
+  font-size: calc(var(--side) / var(--n) * 0.5);
+}
+
+/* A picture: each tile shows its own part (from its home cell); the small number in a corner, when chosen. */
+.tiles[data-face='picture'] .tile,
+.tiles[data-face='both'] .tile {
+  background: var(--picture) padding-box;
+  background-origin: border-box;
+  background-size: calc(var(--n) * 100%) calc(var(--n) * 100%);
+  background-position: calc(var(--hc) / (var(--n) - 1) * 100%) calc(var(--hr) / (var(--n) - 1) * 100%);
+  box-shadow: none;
+}
+
+.tiles[data-face='picture'] .tile__num {
+  display: none;
+}
+
+.tiles[data-face='both'] .tile__num {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  min-width: 1.6em;
+  padding: 0.2em 0.35em;
+  border-radius: 999px;
+  background: var(--badge);
+  color: var(--badge-ink);
+  font-size: max(0.75rem, calc(var(--side) / var(--n) * 0.17));
+  text-align: center;
+}
+
+/* The tile's marks over a picture. */
+.tiles[data-face='picture'] .tile.is-hint,
+.tiles[data-face='both'] .tile.is-hint,
+.tiles[data-face='picture'] .tile:focus-visible,
+.tiles[data-face='both'] .tile:focus-visible {
+  box-shadow: inset 0 0 0 6px var(--mark-light);
+}
+
+/* The last part of the picture: in the gap, once the tiles are in order. */
+.tile--last {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease-out;
+}
+
+.tiles.is-done[data-face='picture'] .tile--last,
+.tiles.is-done[data-face='both'] .tile--last {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* The whole picture over the board ("Picture"). */
+.tiles__whole {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: var(--picture) center / 100% 100% no-repeat;
+}
+
+/* ---------- "Clear the way" (ui/unblock-view.ts sets --size, --frame, a piece's --x --y --w --h and --dx --dy) ---------- */
+.yard {
+  --size: 6;
+  --frame: 0.26;
+  position: relative;
+  /* the player's piece leaves through the way out and is gone at the board's edge */
+  overflow: hidden;
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  touch-action: none;
+}
+
+.yard__ground-wrap,
+.yard__ground-wrap svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.yard__cells {
+  position: absolute;
+  inset: calc(var(--frame) / (var(--size) + 2 * var(--frame)) * 100%);
+}
+
+.piece,
+.ghost {
+  position: absolute;
+  top: calc(var(--y) / var(--size) * 100%);
+  left: calc(var(--x) / var(--size) * 100%);
+  width: calc(var(--w) / var(--size) * 100%);
+  height: calc(var(--h) / var(--size) * 100%);
+}
+
+.piece {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  background: none;
+  transform: translate(calc(var(--dx, 0) * 100% / var(--w)), calc(var(--dy, 0) * 100% / var(--h)));
+  transition:
+    left 160ms ease-out,
+    top 160ms ease-out,
+    transform 120ms ease-out;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.piece__art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Under the finger: no glide, above the rest. */
+.piece.is-dragged {
+  z-index: 2;
+  transition: none;
+  cursor: grabbing;
+}
+
+/* Where the hint's piece goes. */
+.ghost {
+  border: 3px dashed var(--mark-dark);
+  border-radius: 0.5rem;
+  box-shadow:
+    inset 0 0 0 3px var(--mark-light),
+    0 0 0 3px var(--mark-light);
+  pointer-events: none;
+}
+
+/* The way is clear: the player's piece leaves through the way out. */
+.yard.is-done .piece--own {
+  translate: 260% 0;
+  transition: translate 700ms ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile,
+  .tile--last,
+  .piece,
+  .yard.is-done .piece--own {
+    transition: none;
+  }
+
+  .yard.is-done .piece--own {
+    translate: none;
+  }
+}
+
+/* ---------- the buttons ---------- */
+/* A phone: two buttons a row, the sign beside the word ("Start again" across the row when there are three); from a
+   tablet up: all in a row, the sign above the word. The word and the sign follow the row's width (.tools is the
+   container), so with very large text a long word (Hungarian "Visszavonás") gets smaller rather than break or stick
+   out. */
+.tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  container-type: inline-size;
+}
+
+.tools:not(.tools--four) .tool:nth-child(3) {
+  grid-column: span 2;
+}
+
+@media (min-width: 36rem) {
+  .tools {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .tools.tools--four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .tools:not(.tools--four) .tool:nth-child(3) {
+    grid-column: auto;
+  }
+
+  .tools .tool {
+    flex-direction: column;
+    min-height: 3.25rem;
+  }
+}
+
+/* A short phone (640 px tall and so): slimmer gaps and a two-line note, so the board keeps its size. */
+@media (max-height: 44rem) {
+  .app,
+  .play {
+    gap: 0.375rem;
+  }
+
+  .tools {
+    gap: 0.375rem;
+  }
+
+  .note {
+    min-height: calc(2.8em + 1rem);
+    max-height: calc(2.8em + 1rem);
+  }
+}
+
+.tool {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem 0.375rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.375rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-size: min(0.9375rem, 5.2cqi);
+  font-weight: 650;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.tool .sign {
+  flex: none;
+  width: min(1.5rem, 7cqi);
+  height: min(1.5rem, 7cqi);
+}
+
+/* "Picture" while the picture is shown whole. */
+.tool[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* "Do it" while a hint is shown. */
+.tool.is-ready {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---------- the end ---------- */
+.dialog__highlight {
+  font-weight: 700;
+}
+
+/* ---------- menu ---------- */
+.dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.dialog h3 {
+  margin: 0.5rem 0 0;
+  font-size: 1.0625rem;
+}
+
+.stats-wrap {
+  overflow-x: auto;
+}
+
+.stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats th,
+.stats td {
+  padding: 0.375rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+  text-align: end;
+}
+
+.stats thead th {
+  font-size: 0.8125rem;
+}
+
+.stats th:first-child {
+  text-align: start;
+}
+
+/* ---------- a wide screen (a computer, a tablet on its side): the board left, the rest right ---------- */
+@media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
+  .app,
+  html.big .app {
+    max-width: 72rem;
+  }
+
+  .play {
+    display: grid;
+    grid-template-areas:
+      'board info'
+      'board note'
+      'board tools'
+      'board .';
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    column-gap: 1.5rem;
+    row-gap: 0.75rem;
+  }
+
+  .info {
+    grid-area: info;
+  }
+
+  .note {
+    grid-area: note;
+  }
+
+  .board {
+    grid-area: board;
+  }
+
+  .tools,
+  .tools.tools--four {
+    grid-area: tools;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* A phone on its side (a short, wide screen; decision of 25.11 — a new game has it from the start): the board on
+   the left as tall as the screen; back, the name and the menu, the line about the game, the note and the buttons on
+   the right — the buttons low, under the right thumb (on the left with the left-hand setting). Only while the screen
+   is at least 26 of the player's text sizes wide: with very large text the one column stays. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 29.99rem) {
+  @container app (min-width: 26rem) {
+    /* Every pixel of height counts here (a browser's own bar takes part of it): slimmer top and bottom edges. */
+    .app {
+      max-width: 72rem;
+      padding-top: max(0.375rem, env(safe-area-inset-top));
+      padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+    }
+
+    /* The start screen: the two modes side by side. */
+    .home {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      column-gap: 1rem;
+    }
+
+    .app:has(> .content > .play) {
+      --side: clamp(12.5rem, 30vw, 16rem);
+      display: grid;
+      grid-template-areas:
+        'board top'
+        'board info'
+        'board note'
+        'board tools';
+      grid-template-columns: minmax(0, 1fr) var(--side);
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: 0.375rem 0.75rem;
+    }
+
+    html.left-hand .app:has(> .content > .play) {
+      grid-template-areas:
+        'top board'
+        'info board'
+        'note board'
+        'tools board';
+      grid-template-columns: var(--side) minmax(0, 1fr);
+    }
+
+    .app:has(> .content > .play) > .top {
+      grid-area: top;
+    }
+
+    .app:has(> .content > .play) > .content,
+    .play {
+      display: contents;
+    }
+
+    .play .info {
+      grid-area: info;
+    }
+
+    /* The note takes the room between the line about the game and the buttons. */
+    .play .note {
+      grid-area: note;
+      align-self: start;
+      min-height: 0;
+      max-height: 100%;
+    }
+
+    .play .board {
+      grid-area: board;
+      min-height: 0;
+    }
+
+    .play .tools,
+    .play .tools.tools--four {
+      grid-area: tools;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.375rem;
+    }
+
+    .play .tool {
+      flex-direction: column;
+      min-height: 2.75rem;
+      padding: 0.125rem 0.25rem;
+      font-size: min(0.9375rem, 6.5cqi);
+    }
+  }
+}
+
+/* The lowest screens on their side (a browser's own bar takes part of the height): the line about the game gives its
+   room to the note — the moves and the time stay; in the large mode the letters grow, not the buttons. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 19.99rem) {
+  @container app (min-width: 26rem) {
+    .play .info__text {
+      display: none;
+    }
+
+    html.big .app:has(> .content > .play) > .top .icon-btn {
+      width: 44px;
+      height: 44px;
+    }
+
+    html.big .play .tool {
+      min-height: 44px;
+      padding-block: 0.125rem;
+    }
+  }
+}

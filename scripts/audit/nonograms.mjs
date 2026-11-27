@@ -6,9 +6,11 @@ import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
 /**
- * The cells: at least 24 px (the WCAG 2.2 AA minimum) wherever a tap paints; a grid smaller than that (whole, on a
- * phone) is only looked at — a tap zooms in (docs/nonograms/SPEC.md, "Великі поля на телефоні — наближення"). They
- * are measured here, not by the common check: a zoomed grid lies partly beyond the screen by design.
+ * The cells: at least 24 px (the WCAG 2.2 AA minimum) in any view the game opens by itself (zoomed in on a phone);
+ * smaller only in the whole picture the player asks for, where a tap paints too — the same cells come back at a
+ * comfortable size with one tap of "Whole picture" (docs/nonograms/SPEC.md, "Великі поля на телефоні — наближення";
+ * decision of 27.11). They are measured here, not by the common check: a zoomed grid lies partly beyond the screen by
+ * design.
  */
 const LEAST_CELL = 24;
 const STORE = 'way1ong-nonograms:v1:';
@@ -26,9 +28,9 @@ function inspectNonograms(least) {
   if (shown(board)) {
     const b = board.getBoundingClientRect();
     const cell = parseFloat(getComputedStyle(board).getPropertyValue('--cell'));
-    const tiny = board.classList.contains('is-tiny');
-    if (!tiny && cell < least - 0.5) out.push(`cells of ${cell} px in a grid that paints`);
-    if (tiny !== cell < least) out.push(`a grid of ${cell} px cells is ${tiny ? '' : 'not '}marked as one that zooms in on a tap`);
+    // the game opens a grid zoomed in to cells of at least the least size; smaller cells only in a whole grid the
+    // player asked for
+    if (board.classList.contains('is-zoomed') && cell < least - 0.5) out.push(`cells of ${cell} px in a zoomed-in grid`);
     // what is seen of the grid and its numbers stays on the board, the board on the screen
     for (const part of board.querySelectorAll('.board__clip')) {
       const p = part.getBoundingClientRect();

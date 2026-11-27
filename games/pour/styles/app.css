@@ -1,0 +1,673 @@
+/* Pour screen. Colours only from tokens.css (the paints of the water: art/palette.ts); the page reset and common
+   controls are in shared/styles/ui.css. One column, centred; a phone in portrait first: the bottles under the top, a
+   note and the buttons under them. */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: max(0.5rem, env(safe-area-inset-top)) max(0.5rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom)) max(0.5rem, env(safe-area-inset-left));
+}
+
+/* Large mode: the bottles as wide as the screen allows. */
+html.big .app {
+  max-width: 46rem;
+  padding-left: max(0.25rem, env(safe-area-inset-left));
+  padding-right: max(0.25rem, env(safe-area-inset-right));
+}
+
+/* A game fills the screen's height: the shelf takes what the rest leaves. */
+.app:has(> .content > .play) {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* ---------- top: back, name, menu ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top__name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+/* The heading takes the focus when the screen changes (for screen readers); it is not a control. */
+.top__name:focus {
+  outline: none;
+}
+
+.sign {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------- the start screen ---------- */
+.home {
+  display: grid;
+  gap: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.home__part {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.home__streak {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.pick {
+  display: grid;
+  grid-template-areas:
+    'name state'
+    'info info';
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.125rem 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--surface);
+  text-align: start;
+  cursor: pointer;
+}
+
+.pick__name {
+  grid-area: name;
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.pick__state {
+  display: flex;
+  grid-area: state;
+  align-items: center;
+  align-self: center;
+  gap: 0.25rem;
+  color: var(--accent);
+  font-weight: 700;
+  text-align: end;
+}
+
+.pick__state .sign {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.pick__info {
+  grid-area: info;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* A game to continue and the day's begun: a frame in the accent colour, dashed; solved — whole. */
+.pick--resume,
+.pick.is-started {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+
+.pick.is-done {
+  border-color: var(--accent);
+}
+
+/* ---------- a game ---------- */
+.play {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 0.75rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* The pours, and the time when it is shown: at the end of the line. */
+.info__moves {
+  margin-inline-start: auto;
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.info__time {
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A word about the game (how to play, why not, a hint, a dead end, the end). It keeps one height while the game is
+   played — two lines; a longer word scrolls by itself — so the bottles above never move when it speaks
+   (.claude/rules/design.md); at the end, with the buttons gone, it may grow. */
+.note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem 0.75rem;
+  min-height: calc(2.8em + 1rem);
+  max-height: calc(2.8em + 1rem);
+  overflow-y: auto;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--surface);
+  text-align: center;
+}
+
+.play.is-done .note {
+  max-height: 9.5rem;
+}
+
+.note.is-empty {
+  visibility: hidden;
+}
+
+.note__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.note__actions:empty {
+  display: none;
+}
+
+/* A dead end's choices in the note: buttons at least a finger tall. */
+.note__btn {
+  min-height: 2.75rem;
+  padding-block: 0.25rem;
+}
+
+/* ---------- the shelf of bottles (ui/shelf-view.ts measures it: --cols, --glass-w, --glass-h) ---------- */
+.shelf {
+  --cols: 1;
+  --glass-w: 2.5rem;
+  --glass-h: 8.5rem;
+  --capacity: 4;
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  align-content: center;
+  gap: 0.5rem;
+  /* with very large text the rest takes much of the screen: the bottles keep a playable size, the page scrolls */
+  min-height: 45vh;
+  min-height: 45dvh;
+  touch-action: manipulation;
+}
+
+/* A bottle's whole column is what a finger touches; the room above the glass is where a lifted bottle rises. */
+.bottle {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: calc(var(--glass-w) * 0.45) 0 0;
+  border: 0;
+  border-radius: 0.75rem;
+  background: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.bottle:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.bottle__glass {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: var(--glass-w);
+  height: var(--glass-h);
+  overflow: hidden;
+  border: 3px solid var(--glass);
+  border-radius: 0.35rem 0.35rem calc(var(--glass-w) * 0.5) calc(var(--glass-w) * 0.5);
+  background: var(--glass-in);
+  transition: transform 160ms ease-out;
+}
+
+.bottle__water {
+  display: flex;
+  flex-direction: column-reverse;
+  height: calc(100% - var(--glass-w) * 0.2);
+}
+
+/* A layer of water: its paint, its pattern in the paint's ink, a line on top — dark with a light edge, so it reads on
+   every paint (art/palette.test.ts). */
+.layer {
+  flex: none;
+  height: calc(100% / var(--capacity));
+  border-top: 2px solid var(--layer-dark);
+  background-color: var(--water);
+  box-shadow: inset 0 2px 0 var(--layer-light);
+}
+
+.layer.pat-1 {
+  background-image: repeating-linear-gradient(0deg, var(--ink) 0 2px, transparent 2px 8px);
+}
+
+.layer.pat-2 {
+  background-image: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 8px);
+}
+
+.layer.pat-3 {
+  background-image: repeating-linear-gradient(45deg, var(--ink) 0 2px, transparent 2px 9px);
+}
+
+.layer.pat-4 {
+  background-image: repeating-linear-gradient(-45deg, var(--ink) 0 2px, transparent 2px 9px);
+}
+
+.layer.pat-5 {
+  background-image: radial-gradient(circle, var(--ink) 0 1.6px, transparent 2.2px);
+  background-size: 8px 8px;
+}
+
+.layer.pat-6 {
+  background-image: radial-gradient(circle, transparent 0 2.2px, var(--ink) 2.6px 3.8px, transparent 4.2px);
+  background-size: 12px 12px;
+}
+
+.layer.pat-7 {
+  background-image: conic-gradient(var(--ink) 25%, transparent 0 50%, var(--ink) 0 75%, transparent 0);
+  background-size: 10px 10px;
+}
+
+.layer.pat-8 {
+  background-image:
+    linear-gradient(var(--ink) 0 2px, transparent 2px),
+    linear-gradient(90deg, var(--ink) 0 2px, transparent 2px);
+  background-size: 9px 9px;
+}
+
+.layer.pat-9 {
+  background-image:
+    repeating-linear-gradient(45deg, var(--ink) 0 1.5px, transparent 1.5px 8px),
+    repeating-linear-gradient(-45deg, var(--ink) 0 1.5px, transparent 1.5px 8px);
+}
+
+.layer.pat-10 {
+  background-image: radial-gradient(circle, var(--ink) 0 3.2px, transparent 3.8px);
+  background-size: 13px 13px;
+}
+
+/* "Patterns on the colours" off: the paints alone. */
+.shelf.is-plain .layer {
+  background-image: none;
+}
+
+/* Water just poured rises in its bottle. */
+.layer.is-new {
+  animation: rise 260ms ease-out;
+  transform-origin: bottom;
+}
+
+@keyframes rise {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+/* A lifted bottle rises, with a ring around it; the hint: dashed where from, whole where into. */
+.bottle.is-up .bottle__glass {
+  outline: 3px solid var(--lift);
+  outline-offset: 2px;
+  transform: translateY(calc(var(--glass-w) * -0.4));
+}
+
+.bottle.is-from .bottle__glass {
+  outline: 3px dashed var(--hint-from);
+  outline-offset: 3px;
+}
+
+.bottle.is-to .bottle__glass {
+  outline: 3px solid var(--hint-to);
+  outline-offset: 3px;
+}
+
+/* A done bottle (full of one colour): a cork in its neck. */
+.bottle__cork {
+  position: absolute;
+  top: 0;
+  left: 18%;
+  right: 18%;
+  display: none;
+  height: calc(var(--glass-w) * 0.24);
+  border: 2px solid var(--cork-edge);
+  border-top: 0;
+  border-radius: 0 0 0.3rem 0.3rem;
+  background: var(--cork);
+}
+
+.bottle.is-closed .bottle__cork {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottle__glass {
+    transition: none;
+  }
+
+  .layer.is-new {
+    animation: none;
+  }
+}
+
+/* ---------- the buttons ---------- */
+/* A phone: two buttons a row, the sign beside the word; from a tablet up: four a row, the sign above the word. The
+   word and the sign follow the row's width (.tools is the container), so with very large text a long word (Hungarian
+   "Visszavonás") gets smaller rather than break or stick out. */
+.tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  container-type: inline-size;
+}
+
+@media (min-width: 36rem) {
+  .tools {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .tools .tool {
+    flex-direction: column;
+    min-height: 3.25rem;
+  }
+}
+
+/* A short phone (640 px tall and so): slimmer gaps, so the bottles keep their size. */
+@media (max-height: 44rem) {
+  .app,
+  .play {
+    gap: 0.375rem;
+  }
+
+  .tools {
+    gap: 0.375rem;
+  }
+}
+
+.tool {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem 0.375rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.375rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-size: min(0.9375rem, 5.2cqi);
+  font-weight: 650;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.tool .sign {
+  flex: none;
+  width: min(1.5rem, 7cqi);
+  height: min(1.5rem, 7cqi);
+}
+
+/* How much of a limited help is left, under the word. */
+.tool__left {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tool__left:empty {
+  display: none;
+}
+
+/* None left: the button fades (a dashed frame) and, pressed, says why. */
+.tool.is-spent {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+/* A dead end's choices in the buttons' place: as many columns as choices; the first, the way back, stands out. */
+.tools--stuck {
+  grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr));
+}
+
+/* "Do it" while a hint is shown; a dead end's first choice. */
+.tool--main,
+.tool.is-ready {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---------- the end ---------- */
+.dialog__highlight {
+  font-weight: 700;
+}
+
+/* ---------- menu ---------- */
+.dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.dialog h3 {
+  margin: 0.5rem 0 0;
+  font-size: 1.0625rem;
+}
+
+.stats-wrap {
+  overflow-x: auto;
+}
+
+.stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats th,
+.stats td {
+  padding: 0.375rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+  text-align: end;
+}
+
+.stats thead th {
+  font-size: 0.8125rem;
+}
+
+.stats th:first-child {
+  text-align: start;
+}
+
+/* ---------- a wide screen (a computer, a tablet on its side): the bottles left, the rest right ---------- */
+@media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
+  .app {
+    max-width: 72rem;
+  }
+
+  .play {
+    display: grid;
+    grid-template-areas:
+      'shelf info'
+      'shelf note'
+      'shelf tools'
+      'shelf .';
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    column-gap: 1.5rem;
+    row-gap: 0.75rem;
+  }
+
+  .info {
+    grid-area: info;
+  }
+
+  .note {
+    grid-area: note;
+  }
+
+  .shelf {
+    grid-area: shelf;
+  }
+
+  .tools,
+  .tools--stuck {
+    grid-area: tools;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* A phone on its side (a short, wide screen; decision of 25.11 — a new game has it from the start): the bottles on
+   the left as tall as the screen; back, the name and the menu, the line about the game, the note and the buttons on
+   the right — the buttons low, under the right thumb (on the left with the left-hand setting). Only while the screen
+   is at least 26 of the player's text sizes wide: with very large text the one column stays. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 29.99rem) {
+  @container app (min-width: 26rem) {
+    /* Every pixel of height counts here (a browser's own bar takes part of it): slimmer top and bottom edges. */
+    .app {
+      max-width: 72rem;
+      padding-top: max(0.375rem, env(safe-area-inset-top));
+      padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+    }
+
+    /* The start screen: the three ways side by side. */
+    .home {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+      column-gap: 1rem;
+    }
+
+    .app:has(> .content > .play) {
+      --side: clamp(12.5rem, 30vw, 16rem);
+      display: grid;
+      grid-template-areas:
+        'shelf top'
+        'shelf info'
+        'shelf note'
+        'shelf tools';
+      grid-template-columns: minmax(0, 1fr) var(--side);
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: 0.375rem 0.75rem;
+    }
+
+    html.left-hand .app:has(> .content > .play) {
+      grid-template-areas:
+        'top shelf'
+        'info shelf'
+        'note shelf'
+        'tools shelf';
+      grid-template-columns: var(--side) minmax(0, 1fr);
+    }
+
+    .app:has(> .content > .play) > .top {
+      grid-area: top;
+    }
+
+    .app:has(> .content > .play) > .content,
+    .play {
+      display: contents;
+    }
+
+    .play .info {
+      grid-area: info;
+    }
+
+    /* The note takes the room between the line about the game and the buttons. */
+    .play .note {
+      grid-area: note;
+      align-self: start;
+      min-height: 0;
+      max-height: 100%;
+    }
+
+    .play .shelf {
+      grid-area: shelf;
+      min-height: 0;
+    }
+
+    .play .tools,
+    .play .tools--stuck {
+      grid-area: tools;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.375rem;
+    }
+
+    .play .tool {
+      flex-direction: column;
+      min-height: 2.75rem;
+      padding: 0.125rem 0.25rem;
+      font-size: min(0.9375rem, 6.5cqi);
+    }
+  }
+}
+
+/* The lowest screens on their side (a browser's own bar takes part of the height): the line about the game gives its
+   room to the note — the pours and the time stay; in the large mode the letters grow, not the buttons. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 19.99rem) {
+  @container app (min-width: 26rem) {
+    .play .info__text {
+      display: none;
+    }
+
+    html.big .app:has(> .content > .play) > .top .icon-btn {
+      width: 44px;
+      height: 44px;
+    }
+
+    html.big .play .tool {
+      min-height: 44px;
+      padding-block: 0.125rem;
+    }
+  }
+}

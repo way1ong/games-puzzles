@@ -1,0 +1,222 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Tologató – tizenötös és Szabad utat! reklám nélkül",
+    "description": "Két tologatós fejtörő: a tizenötös – tegye sorba a lapokat, vagy rakja ki a képet – és a Szabad utat! – tolja félre az akadályokat, hogy a csónak, a kanapé vagy a piros rúd kijusson. Reklám, követés és fiók nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Tologató",
+    "menu": "Menü",
+    "back": "Vissza",
+    "close": "Bezárás"
+  },
+  "difficulty": {
+    "easy": "Könnyű",
+    "medium": "Közepes",
+    "hard": "Nehéz"
+  },
+  "mode": {
+    "fifteen": "Tizenötös",
+    "unblock": "Szabad utat!"
+  },
+  "home": {
+    "fifteenNote": "Tegye sorba a lapokat, vagy rakja ki a képet",
+    "unblockNote": "Tolja félre az akadályokat, és vezesse ki a sajátját",
+    "size": "{n} × {n}",
+    "play": "Játék",
+    "continue": "Folytatás",
+    "new": "Új játék",
+    "levels": "Szintek",
+    "level": "{n}. szint",
+    "levelsNote": "Egymás után, egyre nehezebben",
+    "free": "Szabad játék",
+    "range": {
+      "one": "{from}–{to} lépés",
+      "other": "{from}–{to} lépés"
+    },
+    "rangeFrom": {
+      "one": "legalább {n} lépés",
+      "other": "legalább {n} lépés"
+    },
+    "dailyFifteen": "A nap tizenötöse",
+    "dailyUnblock": "A nap szintje",
+    "dailyOn": "{date} · ma mindenkinek ugyanaz",
+    "begin": "Kezdés",
+    "started": "Folytatás",
+    "done": "Megoldva",
+    "streak": {
+      "one": "{n} nap egymás után",
+      "other": "{n} nap egymás után"
+    }
+  },
+  "game": {
+    "fifteen": "Tizenötös {n} × {n}",
+    "dailyFifteen": "A nap tizenötöse",
+    "level": "{n}. szint",
+    "dailyUnblock": "A nap szintje",
+    "moves": {
+      "one": "{n} lépés",
+      "other": "{n} lépés"
+    },
+    "fewest": {
+      "one": "legkevesebb: {n} lépés",
+      "other": "legkevesebb: {n} lépés"
+    },
+    "tipNumbers": "Koppintson egy lapra az üres hely sorában vagy oszlopában: a lap az üres helyre csúszik. Tegye sorba a lapokat: 1, 2, 3…",
+    "tipPicture": "Koppintson egy lapra az üres hely sorában vagy oszlopában: a lap az üres helyre csúszik. Rakja ki a képet.",
+    "tipHarbour": "Tologassa a hajókat a hosszuk mentén, és vezesse ki a nyilas csónakot a tengerre, jobbra.",
+    "tipRoom": "Tologassa a bútorokat a hosszuk mentén, és vigye ki a nyilas kanapét az ajtón, jobbra.",
+    "tipBox": "Tologassa a rudakat a hosszuk mentén, és vezesse ki a nyilas piros rudat a résen, jobbra.",
+    "notInLine": "Ez a lap nincs az üres hely sorában vagy oszlopában.",
+    "cannotMove": "Ezt most nem lehet elmozdítani: mindkét végén akadály van.",
+    "taken": "Most koppintson egy szabad mezőre a vonalán, vagy mozgassa a nyilakkal.",
+    "put": "Letéve.",
+    "moved": "Áthelyezve.",
+    "undone": "Lépés visszavonva.",
+    "nothingToUndo": "Nincs mit visszavonni.",
+    "againSure": "Koppintson még egyszer az „Újrakezdés” gombra: a feladvány az elejéről indul.",
+    "again": "Újrakezdve.",
+    "hintTile": "Tipp: tolja el a megjelölt lapot ({n}).",
+    "hintMarked": "Tipp: tolja el a megjelölt lapot.",
+    "hintPiece": "Tipp: {piece} – {way}.",
+    "ways": {
+      "left": "balra",
+      "right": "jobbra",
+      "up": "fel",
+      "down": "le"
+    },
+    "solved": "Kész! A lapok sorban vannak.",
+    "out": "Szabad az út!"
+  },
+  "tools": {
+    "label": "Gombok",
+    "undo": "Visszavonás",
+    "hint": "Tipp",
+    "doHint": "Megteszi",
+    "again": "Újrakezdés",
+    "picture": "Kép"
+  },
+  "pieces": {
+    "harbour": {
+      "own": "a csónak",
+      "short": "egy hajó",
+      "long": "egy uszály"
+    },
+    "room": {
+      "own": "a kanapé",
+      "short": "egy láda",
+      "long": "egy szekrény"
+    },
+    "box": {
+      "own": "a piros rúd",
+      "short": "egy rúd",
+      "long": "egy hosszú rúd"
+    }
+  },
+  "board": {
+    "fifteen": "A lapok táblája",
+    "unblock": "A darabok táblája",
+    "tile": "Lap: {n}",
+    "gap": "Üres hely",
+    "at": "{r}. sor, {c}. oszlop",
+    "lying": "{name}, fekszik: {r}. sor, {from}–{to}. oszlop",
+    "standing": "{name}, áll: {c}. oszlop, {from}–{to}. sor",
+    "taken": "felvéve",
+    "hint": "tipp",
+    "exit": "A kijárat: a {r}. sor jobb végén",
+    "picture": "A teljes kép"
+  },
+  "end": {
+    "solved": "Kész!",
+    "out": "Szabad az út!",
+    "moves": {
+      "one": "{n} lépés",
+      "other": "{n} lépés"
+    },
+    "fewest": {
+      "one": "A legkevesebb: {n} lépés",
+      "other": "A legkevesebb: {n} lépés"
+    },
+    "perfect": "A legkevesebb lépéssel!",
+    "clean": "Segítség nélkül",
+    "undos": {
+      "one": "Visszavonva: {n} lépés",
+      "other": "Visszavonva: {n} lépés"
+    },
+    "hints": {
+      "one": "{n} tipp",
+      "other": "{n} tipp"
+    },
+    "time": "Idő: {time}",
+    "streak": {
+      "one": "{title}: {n} nap egymás után",
+      "other": "{title}: {n} nap egymás után"
+    },
+    "next": "Tovább",
+    "new": "Új játék",
+    "home": "Az elejére",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "shareFifteen": "{name} · {date}: a nap tizenötöse kirakva, {moves} lépéssel",
+    "shareFifteenClean": "{name} · {date}: a nap tizenötöse kirakva segítség nélkül, {moves} lépéssel",
+    "shareUnblock": "{name} · {date}: a nap szintje megoldva, {moves} lépéssel (legkevesebb: {fewest})",
+    "shareUnblockClean": "{name} · {date}: a nap szintje megoldva segítség nélkül, {moves} lépéssel (legkevesebb: {fewest})"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "play": "Játék",
+    "faces": "A tizenötös lapjai",
+    "facesNumbers": "Számok",
+    "facesPicture": "Kép",
+    "facesBoth": "Kép és számok",
+    "facesNote": "A képek a Detektív játék szobái. A kis számok a képen segítenek, ha a részek hasonlók.",
+    "time": "Az idő mutatása",
+    "vibration": "Rezgés, amikor a feladvány megoldódik",
+    "look": "Megjelenés",
+    "big": "Nagy nézet",
+    "leftHand": "Gombok a táblától balra, ha a telefon fekszik",
+    "theme": "Téma",
+    "themeSystem": "Mint a rendszer",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden koppintson a „Megosztás”, majd a „Főképernyőhöz adás” gombra.",
+    "reset": "Az előrehaladás törlése",
+    "resetSure": "Koppintson újra a szintek, a megkezdett játékok, a napi eredmények és a statisztika törléséhez",
+    "resetDone": "Előrehaladás törölve"
+  },
+  "stats": {
+    "title": "Statisztika",
+    "size": "Méret",
+    "difficulty": "Nehézség",
+    "played": "Játszott",
+    "won": "Megoldva",
+    "clean": "Tiszta",
+    "best": "Legjobb",
+    "perfect": "Tökéletes",
+    "none": "—",
+    "levels": "Szintek: {won} megoldva, ebből segítség nélkül: {clean}, tökéletesen: {perfect}.",
+    "longest": {
+      "one": "{title} – leghosszabb sorozat: {n} nap",
+      "other": "{title} – leghosszabb sorozat: {n} nap"
+    },
+    "noteFifteen": "Tiszta – segítség nélkül; legjobb – a legkevesebb lépés.",
+    "noteUnblock": "Tökéletes – segítség nélkül, a legkevesebb lépéssel."
+  },
+  "about": {
+    "title": "A játékról",
+    "fifteen": "Tizenötös: koppintson egy lapra az üres hely sorában vagy oszlopában, és a köztük lévő lapokkal együtt az üres helyre csúszik. Tegye sorba a lapokat, vagy rakja ki a képet. Minden tábla kirakható.",
+    "unblock": "Szabad utat!: egy darab csak a hossza mentén mozog, ameddig szabad. Tologassa félre a darabokat, hogy a sajátja (a nyilas) kijusson a jobb oldali kijáraton. Egy lépés: egy darab elmozdítása bármekkora távolságra. Minden feladvány megoldható, és a játék tudja a legkevesebb lépést.",
+    "text": "Reklám, követés és fiók nélkül. Minden csak ezen az eszközön marad; az első megnyitás után a játék internet nélkül is működik.",
+    "keysFifteen": "Billentyűk a tizenötösben: nyilak – a lapok között, Enter vagy szóköz – eltolás, H – tipp, Ctrl+Z – visszavonás.",
+    "keysUnblock": "Billentyűk a Szabad utat! játékban: nyilak – a darabok között, Enter – a darab felvétele, utána a nyilak mozgatják, Enter vagy Esc – letétel; H – tipp, Ctrl+Z – visszavonás.",
+    "credit": "Készítette: way1ong"
+  },
+  "update": {
+    "title": "Elérhető a játék új verziója",
+    "text": "A játék újra megnyílik ott, ahol abbahagyta.",
+    "apply": "Frissítés",
+    "later": "Később"
+  }
+}

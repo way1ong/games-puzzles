@@ -14,11 +14,10 @@ export const NONOGRAMS = {
   /** Thicker grid lines after every this many cells, for counting (C). */
   thickEvery: 5,
   /**
-   * A cell's size, CSS px: comfortable under a finger (rule 6) and the least that may still be filled (WCAG 2.2 AA).
-   * A grid that fits the screen only with cells under `comfortable` opens zoomed in to that size; in a view with
-   * cells under `least` a tap zooms in instead of filling (C).
+   * A cell's size, CSS px: comfortable under a finger (rule 6). A grid that fits the screen only with cells under it
+   * opens zoomed in to that size (C); a view the player zooms out paints at any size of cell (decision of 27.11).
    */
-  cell: { comfortable: 44, least: 24 },
+  cell: { comfortable: 44 },
   /** The largest cell when zoomed in, CSS px (C). */
   zoomMaxCell: 88,
   /** Pixels a finger or the mouse travels before a press becomes a drag along a line (C). */

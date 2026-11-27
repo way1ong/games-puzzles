@@ -1,0 +1,83 @@
+/*
+ * Slide: the only file with colour values of the screen (the drawings of "Clear the way" are in art/palette.ts, the
+ * pictures of the fifteen are Detective's rooms). Light and dark themes follow the system unless the player chooses
+ * one in the settings; a page that hosts the game (e.g. a claude.ai test page) may force one too — both with
+ * data-theme="light" | "dark" on <html>.
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #eef0ea;
+  --surface: #ffffff;
+  --text: #1b2620;
+  --muted: #4b5a52;
+  --line: #66776d;
+  --accent: #2a6650;
+  --on-accent: #ffffff;
+  --focus: #a64700;
+
+  /* The fifteen: the board under the tiles (and the gap), a tile, its number and edge; a picture's small number. */
+  --board: #4b5a52;
+  --tile: #fbf7ee;
+  --tile-ink: #1b2620;
+  --tile-line: #1b2620;
+  --badge: #1b2620;
+  --badge-ink: #ffffff;
+  /*
+   * Marks on the boards — the hint, a taken piece, the keys' place: a dark ring around a light band, so they read on
+   * every tile, picture and drawing (the same in both themes, as the drawings are).
+   */
+  --mark-dark: #111111;
+  --mark-light: #ffffff;
+
+  --backdrop: rgb(10 24 18 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #111814;
+    --surface: #1b241f;
+    --text: #e6efe9;
+    --muted: #a9bab0;
+    --line: #75887d;
+    --accent: #8fd6b6;
+    --on-accent: #0b241a;
+    --focus: #ffb469;
+
+    --board: #0b100d;
+    --tile: #2a3630;
+    --tile-ink: #eef5f0;
+    --tile-line: #a9bab0;
+    --badge: #0b100d;
+    --badge-ink: #ffffff;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  }
+}
+
+/* The same dark values when the player or the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #111814;
+  --surface: #1b241f;
+  --text: #e6efe9;
+  --muted: #a9bab0;
+  --line: #75887d;
+  --accent: #8fd6b6;
+  --on-accent: #0b241a;
+  --focus: #ffb469;
+
+  --board: #0b100d;
+  --tile: #2a3630;
+  --tile-ink: #eef5f0;
+  --tile-line: #a9bab0;
+  --badge: #0b100d;
+  --badge-ink: #ffffff;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+}

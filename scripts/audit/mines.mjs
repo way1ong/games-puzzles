@@ -7,9 +7,10 @@ import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
 /**
- * The cells: at least 24 px (the WCAG 2.2 AA minimum) wherever a tap opens; a field smaller than that (whole, on a
- * phone) is only looked at — a tap zooms in (docs/mines/SPEC.md, "Керування"). They are measured here, not by the
- * common check: a zoomed field lies partly beyond the screen by design.
+ * The cells: at least 24 px (the WCAG 2.2 AA minimum) in any view the game opens by itself (zoomed in on a phone);
+ * smaller only in the whole field the player asks for, where a tap opens too — the same cells come back at a
+ * comfortable size with one tap of "Whole field" (docs/mines/SPEC.md, "Керування"; decision of 27.11). They are
+ * measured here, not by the common check: a zoomed field lies partly beyond the screen by design.
  */
 const LEAST_CELL = 24;
 const STORE = 'way1ong-mines:v1:';
@@ -27,9 +28,9 @@ function inspectMines(least) {
   if (shown(board)) {
     const b = board.getBoundingClientRect();
     const cell = parseFloat(getComputedStyle(board).getPropertyValue('--cell'));
-    const tiny = board.classList.contains('is-tiny');
-    if (!tiny && cell < least - 0.5) out.push(`cells of ${cell} px in a field that opens`);
-    if (tiny !== cell < least) out.push(`a field of ${cell} px cells is ${tiny ? '' : 'not '}marked as one that zooms in on a tap`);
+    // the game opens a field zoomed in to cells of at least the least size; smaller cells only in a whole field the
+    // player asked for
+    if (board.classList.contains('is-zoomed') && cell < least - 0.5) out.push(`cells of ${cell} px in a zoomed-in field`);
     const clip = board.querySelector('.board__clip').getBoundingClientRect();
     if (clip.left < b.left - 1 || clip.right > b.right + 1 || clip.top < b.top - 1 || clip.bottom > b.bottom + 1) out.push('the field beyond the board');
     if (b.left < -1 || b.right > innerWidth + 1) out.push('the board beyond the screen');

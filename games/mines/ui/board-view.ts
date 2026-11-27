@@ -137,7 +137,6 @@ export function createBoardView(actions: BoardActions): BoardView {
     el.style.setProperty('--cell', px(view.cell));
     Object.assign(clip.style, { left: px(m.left), top: px(m.top), width: px(m.gridW), height: px(m.gridH) });
     Object.assign(grid.style, { width: px(cols * view.cell), height: px(rows * view.cell), transform: `translate(${-view.x}px, ${-view.y}px)` });
-    el.classList.toggle('is-tiny', view.cell < MINES.cell.least);
     el.classList.toggle('is-zoomed', cols * view.cell > m.gridW + 0.5 || rows * view.cell > m.gridH + 0.5);
   }
 
@@ -271,8 +270,8 @@ export function createBoardView(actions: BoardActions): BoardView {
       return;
     }
     const g: Extract<Gesture, { kind: 'press' }> = { kind: 'press', id: event.pointerId, cell, x0: p.x, y0: p.y, x: p.x, y: p.y, moved: false, held: false, timer: 0, mouse };
-    const tiny = view.cell < MINES.cell.least;
-    if (cell !== null && !tiny && !lastShow?.done) {
+    // Any size of cell opens and flags, however far the player zoomed out (a stylus reaches small cells; 27.11).
+    if (cell !== null && !lastShow?.done) {
       pressMark(cell, true);
       g.timer = window.setTimeout(() => {
         if (gesture !== g || g.moved) return;
@@ -320,12 +319,7 @@ export function createBoardView(actions: BoardActions): BoardView {
       gesture = null;
       stopPress(g);
       if (!cancelled && !g.moved && !g.held && g.cell !== null && frame) {
-        if (view.cell < MINES.cell.least) {
-          const p = at(event);
-          view = zoomAround(frame, view, frame.limits.comfortable, p.x, p.y);
-          applyView();
-          actions.viewChanged();
-        } else if (!lastShow?.done) actions.tap(g.cell);
+        if (!lastShow?.done) actions.tap(g.cell);
       } else if (g.moved && zoomed()) actions.viewChanged();
     } else if (g?.kind === 'pinch') {
       gesture = pointers.size ? { kind: 'rest' } : null;

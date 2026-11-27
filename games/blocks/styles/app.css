@@ -73,7 +73,7 @@ html.big .app {
   text-align: center;
 }
 
-/* Score line, right above the board and as wide as it. */
+/* Score line, right above the board and as wide as it (under it on a phone on its side). */
 .stats {
   display: flex;
   flex: none;
@@ -449,6 +449,12 @@ html.dragging * {
       grid-area: stage;
       justify-content: center;
       min-height: 0;
+    }
+
+    /* The score line under the board, the board at the top: a dragged piece floats a cell above the finger, and the
+       finger needs room under the board to set it on the bottom row (decision of 27.11). */
+    .stats {
+      order: 1;
     }
 
     /* The pieces in a row, as tall as the place allows (never under 44 px; with very large text the page scrolls
