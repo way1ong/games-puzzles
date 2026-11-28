@@ -5,7 +5,8 @@ import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
-import { LEVELS, MINES, type Level } from '../config.ts';
+import { KINDS, LEVELS, MINES, type Kind, type Level, type LevelRule } from '../config.ts';
+import { ruleOf, type CustomSize } from '../core/custom.ts';
 import { mineMap, numbers, type Field } from '../core/field.ts';
 import { applyHint, findHint, type MinesHint } from '../core/hint.ts';
 import { dailySeed, makeField } from '../core/make.ts';
@@ -32,12 +33,13 @@ import { longestStreak, recordPlayed, recordWon } from '../core/stats.ts';
 import { artSymbols } from './art.ts';
 import { createBoardView, type BoardShow } from './board-view.ts';
 import { createEndDialog } from './end-dialog.ts';
-import { dailyRoute, homeView, levelRoute, sizeText, type DayState } from './home-view.ts';
+import { customView } from './custom-view.ts';
+import { CUSTOM_SIZE_ROUTE, dailyRoute, homeView, levelRoute, sizeText, type DayState } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
 import { backSign } from './icons.ts';
 import { randomSeed, runSoon } from './maker.ts';
 import { createMenuDialog } from './menu-dialog.ts';
-import { closeRoute, currentRoute, openRoute, restoreRoute, watchRoute } from './route.ts';
+import { closeRoute, currentRoute, openRoute, replaceRoute, restoreRoute, watchRoute } from './route.ts';
 import * as store from './storage.ts';
 import type { Settings } from './storage.ts';
 import { clockText } from './time.ts';
@@ -49,7 +51,7 @@ const TICK_MS = 1000;
 /** "Preparing the field…" shows only when making one takes longer than this, ms (most take a few). */
 const MAKING_SAID_MS = 200;
 
-type Screen = { kind: 'home' } | { kind: 'field'; level: Level; daily: boolean };
+type Screen = { kind: 'home' } | { kind: 'custom' } | { kind: 'field'; level: Kind; daily: boolean };
 
 /** A latin letter key whatever the keyboard layout (H, F, N; Z with Ctrl). */
 function letterOf(event: KeyboardEvent): string {
@@ -66,7 +68,7 @@ interface NoteAction {
 
 /** The field screen open, and its address. */
 interface Open {
-  level: Level;
+  level: Kind;
   daily: boolean;
   route: string;
 }
@@ -163,10 +165,9 @@ export function startApp(root: HTMLElement): void {
 
   // ---------- screens ----------
   function screenOf(route: string): Screen {
-    for (const level of LEVELS) {
-      if (route === levelRoute(level)) return { kind: 'field', level, daily: false };
-      if (route === dailyRoute(level)) return { kind: 'field', level, daily: true };
-    }
+    for (const level of KINDS) if (route === levelRoute(level)) return { kind: 'field', level, daily: false };
+    for (const level of LEVELS) if (route === dailyRoute(level)) return { kind: 'field', level, daily: true };
+    if (route === CUSTOM_SIZE_ROUTE) return { kind: 'custom' };
     return { kind: 'home' };
   }
 
@@ -184,7 +185,8 @@ export function startApp(root: HTMLElement): void {
       return;
     }
     leaveField();
-    renderHome();
+    if (screen.kind === 'custom') renderCustom();
+    else renderHome();
   }
 
   function stopMaking(): void {
@@ -203,12 +205,18 @@ export function startApp(root: HTMLElement): void {
     armedNew = false;
   }
 
-  function openField(level: Level, daily: boolean, route: string): void {
+  /** The rule of the field open: a level's, or the player's own size (of the game, else the one chosen last). */
+  function ruleNow(level: Kind): LevelRule {
+    return ruleOf(level, level === 'custom' ? (game?.size ?? store.loadCustom()) : null);
+  }
+
+  function openField(level: Kind, daily: boolean, route: string): void {
     leaveField();
     open = { level, daily, route };
-    const rule = MINES.levels[level];
     const whole = store.loadWhole()[level] ?? false;
     const saved = store.loadPlay(level, daily ? today : null);
+    const size: CustomSize | null = level === 'custom' ? (saved?.size ?? store.loadCustom()) : null;
+    const rule = ruleOf(level, size);
     if (saved) {
       game = saved;
       board.setField(rule.width, rule.height, whole, saved.field?.start ?? null);
@@ -218,16 +226,16 @@ export function startApp(root: HTMLElement): void {
       return;
     }
     board.setField(rule.width, rule.height, whole, null);
-    const seed = daily ? dailySeed(today, level) : randomSeed();
+    const seed = daily && level !== 'custom' ? dailySeed(today, level) : randomSeed();
     if (!daily && settings.start === 'player') {
-      game = newPlay(level, seed, 'player', null);
+      game = newPlay(level, seed, 'player', null, null, size);
       store.savePlay(game);
       renderGame();
       title.focus();
       return;
     }
-    make(level, seed, null, (field) => {
-      game = newPlay(level, seed, 'game', field, daily ? today : null);
+    make(rule, seed, null, (field) => {
+      game = newPlay(level, seed, 'game', field, daily ? today : null, size);
       store.savePlay(game);
       board.setField(rule.width, rule.height, whole, field.start);
       startClock();
@@ -237,7 +245,7 @@ export function startApp(root: HTMLElement): void {
   }
 
   /** Makes a field in slices; "Preparing the field…" if it takes long. */
-  function make(level: Level, seed: number, start: number | null, done: (field: Field) => void): void {
+  function make(rule: LevelRule, seed: number, start: number | null, done: (field: Field) => void): void {
     stopMaking();
     const forOpen = open;
     const timer = window.setTimeout(() => {
@@ -246,7 +254,7 @@ export function startApp(root: HTMLElement): void {
         render();
       }
     }, MAKING_SAID_MS);
-    const stop = runSoon(makeField(level, seed, start), (field) => {
+    const stop = runSoon(makeField(rule, seed, start), (field) => {
       window.clearTimeout(timer);
       making = null;
       if (open !== forOpen) return;
@@ -295,7 +303,8 @@ export function startApp(root: HTMLElement): void {
     title.textContent = d.app.name;
     const days = store.loadDays();
     const startedOf = (play: MinesPlay | null) => !!play && !play.done && (started(play) || play.boom !== null);
-    const begun = Object.fromEntries(LEVELS.map((level) => [level, startedOf(store.loadPlay(level, null))])) as Record<Level, boolean>;
+    const customPlay = store.loadPlay('custom', null);
+    const begun = Object.fromEntries(KINDS.map((level) => [level, startedOf(level === 'custom' ? customPlay : store.loadPlay(level, null))])) as Record<Kind, boolean>;
     const daily = Object.fromEntries(
       LEVELS.map((level) => {
         const play = store.loadPlay(level, today);
@@ -303,15 +312,35 @@ export function startApp(root: HTMLElement): void {
         return [level, state];
       }),
     ) as Record<Level, DayState>;
-    content.replaceChildren(homeView({ started: begun, daily, date: dateText(today, 'long'), streak: streak(Object.keys(days), today) }, d, lang, openRoute));
+    const custom = begun.custom && customPlay?.size ? customPlay.size : store.loadCustom();
+    content.replaceChildren(homeView({ started: begun, custom, daily, date: dateText(today, 'long'), streak: streak(Object.keys(days), today) }, d, lang, openRoute));
     updates.check();
+  }
+
+  /** The choice of the player's own size; "Play" opens a new field of it in this screen's place. */
+  function renderCustom(): void {
+    applyLook();
+    backBtn.hidden = false;
+    title.textContent = d.levels.custom;
+    content.replaceChildren(
+      customView(store.loadCustom(), { d, lang, minesLabel: t().count }, (size) => store.saveCustom(size), (size) => {
+        store.saveCustom(size);
+        store.dropPlay('custom', false);
+        replaceRoute(levelRoute('custom'));
+      }),
+    );
+    title.focus();
   }
 
   // ---------- the field ----------
   function renderGame(): void {
     applyLook();
     backBtn.hidden = false;
-    if (content.firstChild !== playView) content.replaceChildren(playView);
+    if (content.firstChild !== playView) {
+      content.replaceChildren(playView);
+      // the board was out of the page (another screen): it is measured now, not when the browser notices
+      board.layout();
+    }
     render();
   }
 
@@ -340,10 +369,10 @@ export function startApp(root: HTMLElement): void {
   function render(): void {
     if (!open) return;
     const o = open;
-    const rule = MINES.levels[o.level];
+    const rule = ruleNow(o.level);
     const g = game;
     title.textContent = o.daily ? d.game.daily : d.levels[o.level];
-    infoText.textContent = o.daily ? fmt(d.game.dailyInfo, { level: d.levels[o.level], date: dateText(today, 'long') }) : sizeText(o.level, d, lang);
+    infoText.textContent = o.daily ? fmt(d.game.dailyInfo, { level: d.levels[o.level], date: dateText(today, 'long') }) : sizeText(rule, d, lang);
     leftEl.textContent = fmt(t().left, { n: g ? minesLeft(g, rule.mines) : rule.mines });
     renderTime();
     const cells = g?.cells ?? CLOSED_CELL.repeat(rule.width * rule.height);
@@ -470,7 +499,7 @@ export function startApp(root: HTMLElement): void {
   function startAround(cell: number): void {
     if (!game || !open || game.field || making) return;
     const forGame = game;
-    make(open.level, game.seed, cell, (field) => {
+    make(ruleNow(open.level), game.seed, cell, (field) => {
       if (game !== forGame) return;
       commit(withField(forGame, field));
     });
@@ -542,6 +571,12 @@ export function startApp(root: HTMLElement): void {
     if (begun) store.saveStats(recordPlayed(store.loadStats(), game.level));
     const { level, route } = open;
     store.dropPlay(level, false);
+    // the player's own size: its size is chosen again first (the last one ready)
+    if (level === 'custom') {
+      leaveField();
+      replaceRoute(CUSTOM_SIZE_ROUTE);
+      return;
+    }
     openField(level, false, route);
   }
 
@@ -598,7 +633,7 @@ export function startApp(root: HTMLElement): void {
     const g = game;
     const o = open;
     store.saveStats(recordWon(store.loadStats(), g));
-    if (o.daily) store.saveDayResult(today, o.level, { hints: g.hints, mistakes: g.mistakes, ms: g.ms });
+    if (o.daily && o.level !== 'custom') store.saveDayResult(today, o.level, { hints: g.hints, mistakes: g.mistakes, ms: g.ms });
     if (!tipDone) {
       tipDone = true;
       store.saveTipDone();
@@ -622,7 +657,7 @@ export function startApp(root: HTMLElement): void {
     }
     endDialog.open({
       title: d.end.title,
-      highlight: o.daily ? fmt(d.game.dailyInfo, { level: d.levels[o.level], date: dateText(today, 'long') }) : d.levels[o.level],
+      highlight: o.daily ? fmt(d.game.dailyInfo, { level: d.levels[o.level], date: dateText(today, 'long') }) : o.level === 'custom' ? `${d.levels.custom} · ${sizeText(ruleNow('custom'), d, lang)}` : d.levels[o.level],
       lines,
       share,
       secondary: o.daily ? null : { label: d.end.home, action: () => closeRoute('') },

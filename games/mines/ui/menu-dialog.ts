@@ -4,7 +4,7 @@
 import { h } from '../../../shared/ui/dom.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
 import { updateLine } from '../../../shared/ui/update-view.ts';
-import { LEVELS, MINES, type AfterMine, type Start, type Theme } from '../config.ts';
+import { KINDS, MINES, type AfterMine, type Start, type Theme } from '../config.ts';
 import type { MinesStats } from '../core/stats.ts';
 import { dict, LANGS, num, plural, type Dict } from './i18n.ts';
 import type { Look, Settings } from './storage.ts';
@@ -160,7 +160,8 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
         h(
           'tbody',
           {},
-          ...LEVELS.map((level) => {
+          // the levels and the player's own size (all its sizes together)
+          ...KINDS.map((level) => {
             const st = stats[level];
             return h(
               'tr',

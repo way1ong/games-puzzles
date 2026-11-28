@@ -3,14 +3,17 @@
 // alone — so no field ever asks the player to guess. The same seed and first place always give the same field; the
 // field of the day comes from the date and the level. In slices. Pure.
 import { seedFromText } from '../../../shared/core/rng.ts';
-import { MINES, type Level } from '../config.ts';
+import { MINES, type Level, type LevelRule } from '../config.ts';
 import { layMines, pickStart, type Field } from './field.ts';
 import { solveField } from './solve.ts';
 import type { Task } from './task.ts';
 
-/** A field of the level from the seed; `start` — the first place the player chose, null — the game picks it. */
-export function makeField(level: Level, seed: number, start: number | null = null): Task<Field> {
-  const rule = MINES.levels[level];
+/**
+ * A field of a level (or of a rule of its own: the player's size) from the seed; `start` — the first place the player
+ * chose, null — the game picks it.
+ */
+export function makeField(level: Level | LevelRule, seed: number, start: number | null = null): Task<Field> {
+  const rule = typeof level === 'string' ? MINES.levels[level] : level;
   let state = seed >>> 0;
   return {
     run(steps) {

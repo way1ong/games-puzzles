@@ -13,7 +13,8 @@
   "levels": {
     "easy": "Easy",
     "medium": "Medium",
-    "hard": "Hard"
+    "hard": "Hard",
+    "custom": "Custom size"
   },
   "home": {
     "levels": "Levels",
@@ -23,6 +24,7 @@
     },
     "start": "New field",
     "continue": "Continue",
+    "choose": "Choose",
     "dailyTitle": "Fields of the day · {date}",
     "dailyNote": "The same for everyone today",
     "begin": "Start",
@@ -32,6 +34,15 @@
       "one": "Fields of the day: {n} day in a row",
       "other": "Fields of the day: {n} days in a row"
     }
+  },
+  "custom": {
+    "width": "Width",
+    "height": "Height",
+    "less": "{what}: fewer",
+    "more": "{what}: more",
+    "play": "Play",
+    "note": "The field can always be cleared without guessing.",
+    "share": "That is {share} of the cells."
   },
   "game": {
     "daily": "Field of the day",
@@ -78,7 +89,8 @@
       },
       "allCount": "{n} mines are left, and all the numbers together show: {what}.",
       "tip": "Tap a closed cell to open it. A number tells how many mines lie around it. Hold a cell to put a flag on a mine.",
-      "rules": "A number on an open cell tells how many mines lie in the eight cells around it. Open every cell without a mine. A flag is a note for yourself: “a mine here”; it does not change the result."
+      "rules": "A number on an open cell tells how many mines lie in the eight cells around it. Open every cell without a mine. A flag is a note for yourself: “a mine here”; it does not change the result.",
+      "count": "Mines"
     },
     "flowers": {
       "name": "Flowers",
@@ -105,7 +117,8 @@
       },
       "allCount": "{n} flowers are left, and all the numbers together show: {what}.",
       "tip": "Tap a closed cell to open it. A number tells how many flowers grow around it. Hold a cell to put a flag on a flower.",
-      "rules": "A number on an open cell tells how many flowers grow in the eight cells around it. Open every cell without a flower. A flag is a note for yourself: “a flower here”; it does not change the result."
+      "rules": "A number on an open cell tells how many flowers grow in the eight cells around it. Open every cell without a flower. A flag is a note for yourself: “a flower here”; it does not change the result.",
+      "count": "Flowers"
     }
   },
   "tools": {

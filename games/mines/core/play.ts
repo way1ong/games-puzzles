@@ -1,7 +1,8 @@
 // A game of Mines (docs/mines/SPEC.md, "Як грати", "Керування", "Коли натиснули на міну"): what the player has opened
 // and flagged, and the moves — open, flag, open a number's neighbours, start over, take back the move onto a mine. A
 // state is never changed: every move gives a new one (a move that changes nothing gives the same object). Pure.
-import { MINES, type AfterMine, type Level, type Start } from '../config.ts';
+import { type AfterMine, type Kind, type Start } from '../config.ts';
+import { ruleOf, type CustomSize } from './custom.ts';
 import { mineMap, neighbourTable, numbers, type Field } from './field.ts';
 
 /** A cell as the player sees it: closed, flagged, open. */
@@ -10,7 +11,10 @@ export const FLAG = 'F';
 export const OPEN = 'O';
 
 export interface MinesPlay {
-  level: Level;
+  /** A level, or the player's own size. */
+  level: Kind;
+  /** The player's own size (null on a level). */
+  size: CustomSize | null;
   /** The field; null while the player is still to choose the first place (it is made around it). */
   field: Field | null;
   /** The seed the field was (or will be) made from. */
@@ -32,11 +36,16 @@ export interface MinesPlay {
   done: boolean;
 }
 
-/** A new game; with a field (the first place opened at once) or, for the player's first place, without one yet. */
-export function newPlay(level: Level, seed: number, start: Start, field: Field | null, daily: string | null = null): MinesPlay {
-  const { width, height } = MINES.levels[level];
+/**
+ * A new game; with a field (the first place opened at once) or, for the player's first place, without one yet. `size` —
+ * the player's own size (a custom field only).
+ */
+export function newPlay(level: Kind, seed: number, start: Start, field: Field | null, daily: string | null = null, size: CustomSize | null = null): MinesPlay {
+  const own = level === 'custom' ? ruleOf(level, size) : null;
+  const { width, height } = ruleOf(level, own);
   const play: MinesPlay = {
     level,
+    size: own ? { width: own.width, height: own.height, mines: own.mines } : null,
     field: null,
     seed,
     daily,
