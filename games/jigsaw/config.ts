@@ -6,7 +6,7 @@ import { gameAddress } from '../../shared/core/address.ts';
 export const DIFFICULTIES = ['easy', 'medium', 'hard', 'expert'] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
 
-export type Room = 'study' | 'bakery' | 'station' | 'post';
+export type Room = 'study' | 'bakery' | 'station' | 'cafe' | 'post';
 
 /**
  * A close-up of a room (decision of 28.11: three for each room, by day and by night): the part of the drawing it shows,
@@ -17,6 +17,7 @@ export const CROPS = {
   study: { shelves: { x: 0, y: 30, w: 750 }, desk: { x: 690, y: 300, w: 510 }, rug: { x: 300, y: 400, w: 600 } },
   bakery: { shelves: { x: 0, y: 40, w: 720 }, window: { x: 420, y: 40, w: 540 }, counter: { x: 690, y: 250, w: 510 } },
   station: { window: { x: 40, y: 60, w: 540 }, office: { x: 570, y: 100, w: 630 }, benches: { x: 40, y: 380, w: 630 } },
+  cafe: { counter: { x: 0, y: 20, w: 690 }, window: { x: 420, y: 44, w: 600 }, piano: { x: 720, y: 300, w: 480 } },
   post: { pigeonholes: { x: 0, y: 14, w: 630 }, door: { x: 240, y: 96, w: 450 }, counter: { x: 600, y: 80, w: 600 } },
 } as const;
 
@@ -50,9 +51,18 @@ export const PICTURES = [
   { room: 'station', time: 'night', crop: 'office' },
   { room: 'station', time: 'day', crop: 'benches' },
   { room: 'station', time: 'night', crop: 'benches' },
-  // the rooms of 28.11 (Detective's post office): whole, then close-ups; in the puzzle of the day from JIGSAW.dailyFrom
+  // the rooms of 28.11 (Detective's café and post office): whole, then close-ups; in the puzzle of the day from
+  // JIGSAW.dailyFrom
+  { room: 'cafe', time: 'day', crop: null },
+  { room: 'cafe', time: 'night', crop: null },
   { room: 'post', time: 'day', crop: null },
   { room: 'post', time: 'night', crop: null },
+  { room: 'cafe', time: 'day', crop: 'counter' },
+  { room: 'cafe', time: 'night', crop: 'counter' },
+  { room: 'cafe', time: 'day', crop: 'window' },
+  { room: 'cafe', time: 'night', crop: 'window' },
+  { room: 'cafe', time: 'day', crop: 'piano' },
+  { room: 'cafe', time: 'night', crop: 'piano' },
   { room: 'post', time: 'day', crop: 'pigeonholes' },
   { room: 'post', time: 'night', crop: 'pigeonholes' },
   { room: 'post', time: 'day', crop: 'door' },
@@ -84,7 +94,7 @@ export const JIGSAW = {
    * day's puzzle picks from the pictures it had — theirs stand at the end of PICTURES — so an update in the middle of a
    * day does not change that day's puzzle.
    */
-  dailyFrom: { post: '2026-12-01' } as Readonly<Partial<Record<Room, string>>>,
+  dailyFrom: { cafe: '2026-12-01', post: '2026-12-01' } as Readonly<Partial<Record<Room, string>>>,
   /**
    * The knobs (C), in parts of a piece's side: every edge between two pieces has one, sticking out of one piece into
    * the other. Its round head, the narrower neck under it and the straight shoulders beside it; how far it reaches

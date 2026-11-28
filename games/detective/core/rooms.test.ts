@@ -5,6 +5,7 @@ import { DETECTIVE } from '../config.ts';
 import { canHold } from './placement.ts';
 import { ROOM_IDS, SPOTS, type Spot } from './rooms.ts';
 import { BAKERY, BAKERY_BLOCKED, BAKERY_RACK, BAKERY_SILL, bakeryRack } from './rooms/bakery.ts';
+import { CAFE, CAFE_BLOCKED, CAFE_SHELVES, CAFE_SILL, TABLE_DECO, cafeShelves } from './rooms/cafe.ts';
 import { PARCEL_TOPS, POST, POST_BLOCKED, POST_CASE, POST_SILL, postCase } from './rooms/post.ts';
 import { STATION, STATION_BLOCKED, STATION_SILL, SUITCASE_TOP } from './rooms/station.ts';
 import { BOOK_GAP, STUDY, STUDY_BLOCKED, STUDY_SHELVES, STUDY_SILL, studyShelves } from './rooms/study.ts';
@@ -276,6 +277,137 @@ describe('the station', () => {
       expect(s.y, s.id).toBeLessThanOrEqual(onRunner.y2);
     }
     for (const s of of('floor')) expect(overlap(box(s), onRunner), s.id).toBe(false);
+  });
+});
+
+describe('the café', () => {
+  const spots = SPOTS.cafe;
+  const of = (kind: Spot['kind']) => spots.filter((s) => s.kind === kind);
+  const at = (where: Spot['where']) => spots.filter((s) => s.where === where);
+  const { menu, shelves, counter, window: win, piano, tables, chairs, rug } = CAFE;
+  const named = (ids: readonly string[]) => spots.filter((s) => ids.includes(s.id)).map((s) => s.id).sort();
+  const clearOf = (s: Spot, middle: number, reach: number) => box(s).x2 <= middle - reach || box(s).x1 >= middle + reach;
+
+  it('has every place the cases are written for, of its kind', () => {
+    const range = (name: string, n: number) => Array.from({ length: n }, (_, i) => `${name}${i + 1}`);
+    expect(named(range('shelf', 5))).toEqual(range('shelf', 5).sort());
+    expect(at('shelf').length).toBe(5);
+    expect(at('counter').map((s) => s.id).sort()).toEqual(['counter1', 'counter2']);
+    expect(at('showcase').map((s) => s.id)).toEqual(['showcase1']);
+    expect(at('table').map((s) => s.id).sort()).toEqual(range('table', 3));
+    expect(at('seat').map((s) => s.id).sort()).toEqual(range('seat', 3));
+    expect(at('sill').map((s) => s.id).sort()).toEqual(range('sill', 2));
+    expect(at('piano').map((s) => s.id).sort()).toEqual(range('piano', 2));
+    expect(at('floor').map((s) => s.id).sort()).toEqual(range('floor', 10).sort());
+    expect(at('rug').map((s) => s.id).sort()).toEqual(range('rug', 2));
+    for (const s of at('counter')) expect(s.kind, s.id).toBe('desk');
+    for (const s of [...at('showcase'), ...at('piano')]) expect(s.kind, s.id).toBe('top');
+    for (const s of at('table')) expect(s.kind, s.id).toBe('desk');
+  });
+
+  it('shelves: the wares and bays of every row fit on the boards, with room over every shelf', () => {
+    expect(CAFE_SHELVES.length).toBe(shelves.rows.length);
+    for (const row of CAFE_SHELVES) expect(shelves.start + row.reduce((sum, part) => sum + part.w, 0)).toBeLessThanOrEqual(shelves.x + shelves.w);
+    expect(shelves.start).toBeGreaterThanOrEqual(shelves.x);
+    // over the top shelf hangs the menu board (its frame is 7 wide), over the next one — the shelf above
+    shelves.rows.forEach((y, i) => {
+      const above = i === 0 ? menu.y + menu.h + 7 : (shelves.rows[i - 1] as number) + shelves.board;
+      expect(y - above, `shelf ${i}`).toBeGreaterThanOrEqual(shelves.headroom);
+    });
+  });
+
+  it('shelf places are the free bays of the shelves, wide and high enough', () => {
+    const bays = cafeShelves().filter((p) => p.item.part === 'bay');
+    expect(of('shelf').map((s) => s.id).sort()).toEqual(bays.map((b) => (b.item.part === 'bay' ? b.item.spot : '')).sort());
+    for (const s of of('shelf')) {
+      expect(shelves.rows as readonly number[], s.id).toContain(s.y);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(shelves.x);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(shelves.x + shelves.w);
+      expect(s.w, s.id).toBeGreaterThanOrEqual(48);
+      expect(s.h, s.id).toBeGreaterThanOrEqual(60);
+      expect(s.h, s.id).toBeLessThanOrEqual(shelves.headroom);
+    }
+  });
+
+  it('places on the counter are on its top, clear of the till, the espresso machine and the glass case', () => {
+    const { till, machine, showcase } = counter;
+    for (const s of at('counter')) {
+      expect(s.y, s.id).toBe(counter.top);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(till.x + till.right);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(showcase.x);
+      expect(box(s).x2 <= machine.x - machine.left || box(s).x1 >= machine.x + machine.right, s.id).toBe(true);
+    }
+  });
+
+  it('the place on the glass case is on its top', () => {
+    for (const s of at('showcase')) {
+      expect(s.y, s.id).toBe(counter.showcase.top);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(counter.showcase.x);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(counter.showcase.x + counter.showcase.w);
+    }
+  });
+
+  it('places on the tables are on their tops, one on each, clear of what stands there', () => {
+    const onTables = at('table');
+    expect(onTables.length).toBe(tables.length);
+    tables.forEach((t) => {
+      const mine = onTables.filter((s) => s.y === t.top && box(s).x1 >= t.x - t.half && box(s).x2 <= t.x + t.half);
+      expect(mine.length, `table at ${t.x}`).toBe(1);
+      for (const s of mine) expect(clearOf(s, t.deco, TABLE_DECO), s.id).toBe(true);
+      // what stands on the table is on it too
+      expect(t.deco - TABLE_DECO, `table at ${t.x}`).toBeGreaterThanOrEqual(t.x - t.half);
+      expect(t.deco + TABLE_DECO, `table at ${t.x}`).toBeLessThanOrEqual(t.x + t.half);
+    });
+  });
+
+  it('places on the chairs are on their seats, one on each', () => {
+    const onSeats = of('seat');
+    expect(onSeats.length).toBe(chairs.length);
+    chairs.forEach((c) => {
+      const mine = onSeats.filter((s) => s.y === c.seat && box(s).x1 >= c.x - c.half && box(s).x2 <= c.x + c.half);
+      expect(mine.length, `chair at ${c.x}`).toBe(1);
+    });
+  });
+
+  it('places on the sill and the piano are on their lines, clear of the pots, the metronome and the vase', () => {
+    for (const s of of('sill')) {
+      expect(s.y, s.id).toBe(CAFE_SILL);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(win.x);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(win.x + win.w);
+      for (const pot of win.pots) expect(clearOf(s, pot, win.potReach), `${s.id} / pot at ${pot}`).toBe(true);
+    }
+    for (const s of at('piano')) {
+      expect(s.y, s.id).toBe(piano.top);
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(piano.x);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(piano.x + piano.w);
+      for (const thing of [piano.metronome, piano.vase]) expect(clearOf(s, thing.x, thing.reach), `${s.id} / ${thing.x}`).toBe(true);
+    }
+  });
+
+  it('nothing hangs in front of a place: the lamps, the lamps on the wall, the coat rail', () => {
+    const { lamps, sconces, coatRail } = CAFE;
+    const hanging = [
+      ...lamps.xs.map((x) => ({ name: `lamp at ${x}`, x1: x - lamps.reach, y1: 0, x2: x + lamps.reach, y2: lamps.bottom + 6 })),
+      ...sconces.xs.map((x) => ({ name: `wall lamp at ${x}`, x1: x - sconces.reach, y1: sconces.y - 64, x2: x + sconces.reach, y2: sconces.y + 14 })),
+      { name: 'coat rail', x1: coatRail.hooks[0] - 26, y1: coatRail.y - 12, x2: coatRail.x + coatRail.w, y2: coatRail.bottom },
+    ];
+    for (const s of spots) for (const h of hanging) expect(overlap(box(s), h), `${s.id} / ${h.name}`).toBe(false);
+  });
+
+  it('places on the floor and the rug are on the floor, clear of the furniture', () => {
+    for (const s of [...of('floor'), ...of('rug')]) {
+      expect(box(s).y1, s.id).toBeGreaterThanOrEqual(CAFE.floor);
+      for (const b of CAFE_BLOCKED) expect(overlap(box(s), b), `${s.id} / ${b.name}`).toBe(false);
+    }
+    const onRug = { x1: rug.x, x2: rug.x + rug.w, y1: rug.y, y2: rug.y + rug.h };
+    for (const s of of('rug')) {
+      expect(s.where, s.id).toBe('rug');
+      expect(box(s).x1, s.id).toBeGreaterThanOrEqual(onRug.x1);
+      expect(box(s).x2, s.id).toBeLessThanOrEqual(onRug.x2);
+      expect(box(s).y1, s.id).toBeGreaterThanOrEqual(onRug.y1);
+      expect(s.y, s.id).toBeLessThanOrEqual(onRug.y2);
+    }
+    for (const s of of('floor')) expect(overlap(box(s), onRug), s.id).toBe(false);
   });
 });
 

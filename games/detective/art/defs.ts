@@ -19,7 +19,10 @@ export type DefName =
   | 'tiles'
   | 'arch'
   | 'frieze'
-  | 'street';
+  | 'street'
+  // the café: striped wallpaper, the street seen through the window
+  | 'stripes'
+  | 'pane';
 
 export interface Ctx {
   p: Paint;

@@ -17,6 +17,7 @@ export const DAILY_FRAMES: Record<RoomId, readonly string[]> = {
   study: ['dailySeal', 'dailyVase', 'dailyNote', 'dailyBiscuits'],
   bakery: ['bakeryRecipe', 'bakeryBun', 'bakerySign', 'bakeryJam'],
   station: ['stationUmbrella', 'stationClock', 'stationBouquet', 'stationTimetable'],
+  cafe: ['cafeCup', 'cafeCrossword', 'cafeSpoon', 'cafeGuestbook'],
   post: ['postPostcard', 'postHorn', 'postPen', 'postWeights'],
 };
 export const ALL_DAILY_FRAMES: readonly string[] = ROOM_IDS.flatMap((room) => DAILY_FRAMES[room]);

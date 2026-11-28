@@ -13,6 +13,8 @@ export const PICTURES = [
   { room: 'bakery', time: 'night' },
   { room: 'station', time: 'day' },
   { room: 'station', time: 'night' },
+  { room: 'cafe', time: 'day' },
+  { room: 'cafe', time: 'night' },
   { room: 'post', time: 'day' },
   { room: 'post', time: 'night' },
 ] as const;

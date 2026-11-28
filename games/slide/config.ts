@@ -59,7 +59,7 @@ export const SLIDE = {
      * Detective's rooms that join the pictures of the fifteen of the day from a date (the new rooms of 28.11): before it
      * the day's picture is what it was — their pictures stand at the end of art/pictures.ts.
      */
-    picturesFrom: { post: '2026-12-01' } as Readonly<Partial<Record<string, string>>>,
+    picturesFrom: { cafe: '2026-12-01', post: '2026-12-01' } as Readonly<Partial<Record<string, string>>>,
     /**
      * The fewest moves a shuffle may need, where the game can count them exactly (C): measured 27.11 over all 181 440
      * arrangements of 3x3, 4 % need fewer than 16 and would look nearly done.

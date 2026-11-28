@@ -29,6 +29,7 @@
     "study": "The detective’s study",
     "bakery": "The bakery",
     "station": "The railway station",
+    "cafe": "The café",
     "post": "The post office"
   },
   "intro": {
@@ -98,6 +99,7 @@
     "suitcase": "on a suitcase",
     "ticketDesk": "on the ticket-window ledge",
     "runner": "on the carpet runner",
+    "piano": "on the piano",
     "pigeonholes": "in the pigeonholes",
     "postCounter": "on the post counter",
     "parcels": "on the parcels"
@@ -374,6 +376,36 @@
       "title": "The Missing Weights",
       "text": "A little box of weights always stands beside the post office scales. Today it is empty, and there is no way to weigh the parcels.",
       "ending": "{name} brings the weights back: they were borrowed to weigh flour for a pie for the postman — it is his birthday today."
+    },
+    "anniversaryCake": {
+      "title": "The Anniversary Cake",
+      "text": "The café is twenty years old today! The festive cake with a cream rose waited for the guests in the glass case — and now only crumbs lie in its place. The party starts in two hours.",
+      "ending": "{name} spreads her hands: she took the cake to her own kitchen to pipe a cream “20” on it — and had no time to tell anyone. The cake is on its way back, even lovelier than before."
+    },
+    "midnightWaltz": {
+      "title": "The Midnight Waltz",
+      "text": "At midnight the neighbours heard somebody playing a waltz in the closed café. Now all is quiet, the wall lamps by the piano are lit, and music lies open on the stand. Who was playing here in the middle of the night?",
+      "ending": "{name} smiles sheepishly: he has been learning the piano in secret for a long time, and the café’s key was left with him in case of trouble. On his night round he could not resist — the waltz was meant for the café’s anniversary. Now the owner asks him to play it at the party."
+    },
+    "cafeCup": {
+      "title": "The Swallow Cup",
+      "text": "The café’s oldest cup is gone from the shelf — the one with a painted swallow. The very first owner drank her coffee from it.",
+      "ending": "{name} explains: a little crack had appeared on the cup, so it was taken to be mended. In a week the swallow will be back on its shelf — with a thin line of gold where the crack was."
+    },
+    "cafeCrossword": {
+      "title": "The Unfinished Crossword",
+      "text": "Every morning a fresh newspaper lies on the counter, and the regulars solve the crossword together. Today the newspaper is gone — together with the last, hardest word.",
+      "ending": "{name} brings the newspaper back, laughing: the crossword would not let go, so it was finished at home. The last word is “swallow”."
+    },
+    "cafeSpoon": {
+      "title": "The Silver Spoon",
+      "text": "Every slice of honey cake here comes with a silver spoon. In the evening the spoons are counted — one is missing.",
+      "ending": "{name} finds the spoon in a coat pocket and blushes: in the middle of a good conversation it slipped in there instead of a handkerchief. Now the spoon is back in its place."
+    },
+    "cafeGuestbook": {
+      "title": "The Guest Book",
+      "text": "The thick guest book that always lies on the counter by the till is gone. For twenty years guests have written their wishes in it.",
+      "ending": "{name} brings the book back: the warmest wishes in it were copied out for a grandmother who once met her husband here. The book is back on the counter."
     }
   },
   "people": {

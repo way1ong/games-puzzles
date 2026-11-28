@@ -41,6 +41,14 @@
     "stationOfficeNight": "Каса й годинник уночі",
     "stationBenchesDay": "Лавки вдень",
     "stationBenchesNight": "Лавки вночі",
+    "cafeDay": "Кав’ярня вдень",
+    "cafeNight": "Кав’ярня вночі",
+    "cafeCounterDay": "Стійка й кавоварка вдень",
+    "cafeCounterNight": "Стійка й кавоварка вночі",
+    "cafeWindowDay": "Вікно кав’ярні вдень",
+    "cafeWindowNight": "Вікно кав’ярні вночі",
+    "cafePianoDay": "Піаніно вдень",
+    "cafePianoNight": "Піаніно вночі",
     "postDay": "Пошта вдень",
     "postNight": "Пошта вночі",
     "postPigeonholesDay": "Шафка для листів удень",
@@ -81,6 +89,7 @@
       "study": "Кабінет детектива",
       "bakery": "Пекарня",
       "station": "Вокзал",
+      "cafe": "Кав’ярня",
       "post": "Пошта"
     }
   },

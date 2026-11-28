@@ -41,6 +41,14 @@
     "stationOfficeNight": "A pénztár és az óra éjjel",
     "stationBenchesDay": "A padok nappal",
     "stationBenchesNight": "A padok éjjel",
+    "cafeDay": "A kávézó nappal",
+    "cafeNight": "A kávézó éjjel",
+    "cafeCounterDay": "A pult és a kávéfőző nappal",
+    "cafeCounterNight": "A pult és a kávéfőző éjjel",
+    "cafeWindowDay": "A kávézó ablaka nappal",
+    "cafeWindowNight": "A kávézó ablaka éjjel",
+    "cafePianoDay": "A zongora nappal",
+    "cafePianoNight": "A zongora éjjel",
     "postDay": "A posta nappal",
     "postNight": "A posta éjjel",
     "postPigeonholesDay": "A levélrekeszek nappal",
@@ -77,6 +85,7 @@
       "study": "A detektív dolgozószobája",
       "bakery": "A pékség",
       "station": "A pályaudvar",
+      "cafe": "A kávézó",
       "post": "A posta"
     }
   },
