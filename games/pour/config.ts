@@ -99,4 +99,12 @@ export const POUR = {
   pick: { deals: 6, players: 20, maxMoves: 400 },
   /** A short buzz when a bottle is closed (a setting, off by default) (C). */
   vibrateMs: 12,
+  /**
+   * The fewest pours, counted exactly (decision of 28.11: the player's pours beside the fewest; core/fewest.ts): the
+   * positions met before the count gives up (then no fewest is shown), and the positions looked at in one go, so the
+   * screen keeps working (C). Measured 28.11 on this computer: the levels, free play and own sizes with up to two empty
+   * bottles are counted — at most 0.7 s and 16 MB; eleven colours with three empty bottles mostly not — it gives up
+   * after about 0.5 s and 35 MB (with no limit: up to 6 s and 300 MB, too much for a phone). One go: about 3 ms.
+   */
+  fewest: { limit: 100_000, slice: 200 },
 } as const;

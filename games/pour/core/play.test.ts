@@ -5,7 +5,7 @@ import { POUR } from '../config.ts';
 import { isSolved, legalMoves, pour, type Bottles } from './bottles.ts';
 import { findHint, hasWay, nextOnWay, stepsBack, wayFrom } from './hint.ts';
 import { freeDeal, type Deal } from './level.ts';
-import { addBottle, addTime, clean, countHint, helpLeft, hintAllowed, newPlay, pourIn, startAgain, started, undo, validPlay, type PourPlay } from './play.ts';
+import { addBottle, addTime, clean, countHint, helpLeft, hintAllowed, newPlay, perfect, pourIn, startAgain, started, undo, validPlay, type PourPlay } from './play.ts';
 import { placeKey, solve } from './solve.ts';
 import { emptyStats, longestStreak, recordLeft, recordWon } from './stats.ts';
 
@@ -100,6 +100,18 @@ describe('help', () => {
     expect(clean(undo(p, free)!)).toBe(false);
     expect(clean(addBottle(p, free)!)).toBe(false);
     expect(addTime(p, 500).ms).toBe(500);
+  });
+
+  it('in the fewest pours: done without help in just as many pours as counted; a bottle added — counted anew', () => {
+    const p = newPlay(small, 'free', { difficulty: 'easy' });
+    const won: PourPlay = { ...p, done: true, moves: 6, fewest: 6 };
+    expect(perfect(won)).toBe(true);
+    expect(perfect({ ...won, moves: 7 })).toBe(false);
+    expect(perfect({ ...won, done: false })).toBe(false);
+    expect(perfect(countHint(won))).toBe(false);
+    expect(perfect({ ...won, fewest: null })).toBe(false);
+    expect(perfect({ ...won, fewest: undefined })).toBe(false);
+    expect(addBottle({ ...p, fewest: 6 }, free)!.fewest).toBeUndefined();
   });
 });
 
@@ -196,6 +208,12 @@ describe('a saved game and statistics', () => {
     expect(validPlay({ ...p, history: [{ from: 0, to: 99, amount: 1 }] })).toBe(false);
     expect(validPlay({ ...p, paints: [] })).toBe(false);
     expect(validPlay({ ...p, bottles: p.bottles.map((b, i) => (i === 0 ? [...b, 0] : b)) })).toBe(false);
+    // the fewest pours: counted, not counted within the limit, not yet — whole; anything else — not
+    expect(validPlay({ ...p, fewest: 12 })).toBe(true);
+    expect(validPlay({ ...p, fewest: null })).toBe(true);
+    expect(validPlay({ ...p, fewest: undefined })).toBe(true);
+    expect(validPlay({ ...p, fewest: -1 })).toBe(false);
+    expect(validPlay({ ...p, fewest: 2.5 })).toBe(false);
   });
   it('statistics: free play by difficulty, levels; the longest run of days', () => {
     let s = emptyStats();

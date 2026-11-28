@@ -1,4 +1,4 @@
-// Small signs of the screen: back, undo, hint, one more bottle, start again, done. Drawn with the text colour of the
+// Small signs of the screen: back, undo, hint, one more bottle, start again, new game, done. Drawn with the text colour of the
 // place they stand in.
 import { svg } from '../../../shared/ui/dom.ts';
 
@@ -19,5 +19,9 @@ export const bottleSign = (): SVGSVGElement => sign('<path d="M6 3.5h6M7 3.5v14a
 
 /** A round arrow back to the start. */
 export const againSign = (): SVGSVGElement => sign('<path d="M5 12a7 7 0 1 0 2.05-4.95"/><path d="M4.5 4.5v4h4"/>');
+
+/** Two crossing arrows: a new game, other bottles. */
+export const newSign = (): SVGSVGElement =>
+  sign('<path d="M3 7h3c4 0 6 10 10 10h4"/><path d="M17.5 14.5 20 17l-2.5 2.5"/><path d="M3 17h3c1.3 0 2.4-1 3.4-2.4M13.6 9.4C14.6 8 15.7 7 17 7h3"/><path d="M17.5 4.5 20 7l-2.5 2.5"/>');
 
 export const checkSign = (): SVGSVGElement => sign('<path d="M5 12.5l4.5 4.5L19 7.5"/>');

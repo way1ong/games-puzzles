@@ -7,11 +7,12 @@ import { h } from '../../../shared/ui/dom.ts';
 import { createSounds } from '../../../shared/ui/sound.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { KINDS, POUR, type Kind } from '../config.ts';
-import { isClosed, whyNot, type Move } from '../core/bottles.ts';
+import { isClosed, whyNot, type Bottles, type Move } from '../core/bottles.ts';
 import { sizeOf, type CustomSize } from '../core/custom.ts';
+import { fewestPours, type Task } from '../core/fewest.ts';
 import { findHint, hasWay, stepsBack, type PourWay } from '../core/hint.ts';
 import { customDeal, dailyDeal, freeDeal, levelDeal } from '../core/level.ts';
-import { addBottle, addTime, clean, countHint, helpLeft, hintAllowed, newPlay, pourIn, startAgain, started, undo, type PourPlay } from '../core/play.ts';
+import { addBottle, addTime, clean, countHint, helpLeft, hintAllowed, newPlay, perfect, pourIn, startAgain, started, undo, type PourPlay } from '../core/play.ts';
 import { longestStreak, recordLeft, recordWon } from '../core/stats.ts';
 import { customView } from './custom-view.ts';
 import { createEndDialog } from './end-dialog.ts';
@@ -63,8 +64,10 @@ export function startApp(root: HTMLElement): void {
   let stuck: { back: number | null } | null = null;
   /** A short word about the last action, shown until the next one. */
   let message: string | null = null;
-  /** "Start again" was tapped once: the second tap starts again. */
-  let armedAgain = false;
+  /** "Start again" or "New game" was tapped once: the second tap of the same does it. */
+  let armed: 'again' | 'new' | null = null;
+  /** The fewest pours being counted (in slices): for which shelf. */
+  let counting: { start: Bottles; task: Task<number | null> } | null = null;
   /** The water just poured, to rise once. */
   let poured: { to: number; amount: number } | null = null;
   let tipDone = store.loadTipDone();
@@ -95,7 +98,7 @@ export function startApp(root: HTMLElement): void {
   const noteActions = h('span', { class: 'note__actions' });
   const note = h('div', { class: 'note' }, noteText, noteActions);
   const shelf = createShelfView({ tap: onTap, put: putDown });
-  const tools = createToolsView({ undo: undoPour, hint: askHint, extra: oneMore, again: startOver });
+  const tools = createToolsView({ undo: undoPour, hint: askHint, extra: oneMore, again: startOver, newGame: askNew });
   /** A dead end's choices, in the buttons' place. */
   const stuckTools = h('div', { class: 'tools tools--stuck', role: 'group' });
   const playView = h('div', { class: 'play' }, info, shelf.el, note, tools.el, stuckTools);
@@ -161,6 +164,7 @@ export function startApp(root: HTMLElement): void {
     stopClock();
     open = null;
     game = null;
+    counting = null;
     clearTurn();
   }
 
@@ -172,7 +176,7 @@ export function startApp(root: HTMLElement): void {
     way = null;
     stuck = null;
     message = null;
-    armedAgain = false;
+    armed = null;
     poured = null;
   }
 
@@ -203,6 +207,31 @@ export function startApp(root: HTMLElement): void {
     render();
     startClock();
     title.focus();
+    countFewest();
+  }
+
+  /**
+   * The fewest pours from the start (decision of 28.11), counted once for a shelf, a slice at a time so the screen keeps
+   * working (core/fewest.ts); shown beside the player's pours once known. A bottle added — counted again.
+   */
+  function countFewest(): void {
+    if (!game || game.done || game.fewest !== undefined || counting?.start === game.start) return;
+    const start = game.start;
+    counting = { start, task: fewestPours(start, game.colours, POUR.capacity, POUR.fewest.limit) };
+    const slice = () => {
+      if (counting?.start !== start) return;
+      const fewest = counting.task.run(POUR.fewest.slice);
+      if (fewest === undefined) {
+        window.setTimeout(slice, 0);
+        return;
+      }
+      counting = null;
+      if (!game || game.start !== start) return;
+      game = { ...game, fewest };
+      save();
+      render();
+    };
+    window.setTimeout(slice, 0);
   }
 
   // ---------- time ----------
@@ -340,7 +369,9 @@ export function startApp(root: HTMLElement): void {
     if (!content.contains(playView)) content.replaceChildren(playView);
     const g = game;
     whereEl.textContent = whereText(g);
-    movesEl.textContent = plural(lang, g.moves, d.game.moves, { n: g.moves });
+    // the fewest beside the player's pours, short (a phone on its side has a narrow column)
+    const fewest = typeof g.fewest === 'number' ? ` · ${fmt(d.game.fewest, { n: g.fewest })}` : '';
+    movesEl.textContent = `${plural(lang, g.moves, d.game.moves, { n: g.moves })}${fewest}`;
     renderTime();
     shelf.el.setAttribute('aria-label', d.bottle.shelf);
     const shownHint = hint && hintFor === game ? hint : null;
@@ -361,7 +392,7 @@ export function startApp(root: HTMLElement): void {
     });
     poured = null;
     const left = helpLeft(g, rule());
-    tools.render(d, { undoLeft: left.undo, hintsLeft: left.hints, extraLeft: left.extra, hintReady: !!shownHint });
+    tools.render(d, { undoLeft: left.undo, hintsLeft: left.hints, extraLeft: left.extra, hintReady: !!shownHint, newGame: g.way === 'free', newArmed: armed === 'new' });
     const choices = stuck && !g.done ? stuckActions() : [];
     tools.el.hidden = g.done || choices.length > 0;
     stuckTools.hidden = !choices.length;
@@ -413,7 +444,7 @@ export function startApp(root: HTMLElement): void {
 
   function onTap(i: number): void {
     if (!game || game.done) return;
-    armedAgain = false;
+    armed = null;
     if (up === null) {
       const why = liftable(i);
       if (why) {
@@ -467,7 +498,7 @@ export function startApp(root: HTMLElement): void {
     hint = null;
     hintFor = null;
     if (!followed) way = null;
-    armedAgain = false;
+    armed = null;
     const closedNow = next.bottles.filter((b) => isClosed(b, POUR.capacity)).length;
     message = closedNow > before ? d.game.closedOne : null;
     if (closedNow > before) vibrate();
@@ -487,7 +518,7 @@ export function startApp(root: HTMLElement): void {
 
   function undoPour(count = 1): void {
     if (!game || game.done) return;
-    armedAgain = false;
+    armed = null;
     if (!game.history.length) {
       message = d.game.nothingToUndo;
       sounds.play('refuse');
@@ -513,7 +544,7 @@ export function startApp(root: HTMLElement): void {
 
   function askHint(): void {
     if (!game || game.done) return;
-    armedAgain = false;
+    armed = null;
     // a second press does the hint shown, while nothing has changed
     if (hint && hintFor === game) {
       pourNow(hint);
@@ -546,7 +577,7 @@ export function startApp(root: HTMLElement): void {
 
   function oneMore(): void {
     if (!game || game.done) return;
-    armedAgain = false;
+    armed = null;
     const next = addBottle(game, rule());
     if (!next) {
       message = game.extra > 0 ? d.game.extraUsed : d.game.noExtra;
@@ -561,6 +592,7 @@ export function startApp(root: HTMLElement): void {
       message = d.game.added;
       save();
       lookAhead();
+      countFewest();
     }
     announce(message);
     render();
@@ -568,15 +600,15 @@ export function startApp(root: HTMLElement): void {
 
   function startOver(sure = false): void {
     if (!game || game.done) return;
-    if (!sure && !armedAgain && started(game)) {
-      armedAgain = true;
+    if (!sure && armed !== 'again' && started(game)) {
+      armed = 'again';
       message = d.game.againSure;
       announce(message);
       render();
       return;
     }
     const next = startAgain(game);
-    armedAgain = false;
+    armed = null;
     if (!next) return;
     sounds.play('tap');
     game = next;
@@ -587,19 +619,37 @@ export function startApp(root: HTMLElement): void {
     render();
   }
 
+  /** "New game" in free play (decision of 28.11): a begun game asks once more first, as "Start again". */
+  function askNew(): void {
+    if (!game || game.way !== 'free' || game.done) return;
+    if (armed !== 'new' && started(game)) {
+      armed = 'new';
+      message = d.game.newSure;
+      announce(message);
+      render();
+      return;
+    }
+    armed = null;
+    sounds.play('tap');
+    newFree();
+  }
+
   /** Free play: leave this game for a new deal (a begun one counts as played). */
   function newFree(): void {
     if (!game || game.way !== 'free' || !open) return;
     const diff = game.difficulty!;
-    if (!game.done && started(game)) store.saveStats(recordLeft(store.loadStats(), diff));
+    const route = open;
+    const begun = !game.done && started(game);
+    // left first: the clock stops and saves the game — after it is dropped it would come back
+    leaveGame();
+    if (begun) store.saveStats(recordLeft(store.loadStats(), diff));
     store.dropPlay(diff);
     // the player's own size: its size is chosen again first (the last one ready)
     if (diff === 'custom') {
-      leaveGame();
       replaceRoute(CUSTOM_SIZE_ROUTE);
       return;
     }
-    openGame(open);
+    openGame(route);
   }
 
   // ---------- the end ----------
@@ -633,6 +683,8 @@ export function startApp(root: HTMLElement): void {
     message = null;
     render();
     const lines = [plural(lang, g.moves, d.end.moves, { n: g.moves })];
+    if (perfect(g)) lines.push(d.end.perfect);
+    else if (typeof g.fewest === 'number') lines.push(plural(lang, g.fewest, d.end.fewest, { n: g.fewest }));
     if (clean(g)) lines.push(d.end.clean);
     else {
       if (g.undos) lines.push(plural(lang, g.undos, d.end.undos, { n: g.undos }));
@@ -707,6 +759,7 @@ export function startApp(root: HTMLElement): void {
     }
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (letter === 'h') askHint();
+    else if (letter === 'n') askNew();
     else if (event.key === 'Escape') putDown();
   });
 

@@ -59,6 +59,7 @@
       "one": "{n} pour",
       "other": "{n} pours"
     },
+    "fewest": "fewest: {n}",
     "making": "Filling the bottles…",
     "tip": "Tap the bottle to pour from, then the one to pour into. Water goes onto the same colour or into an empty bottle.",
     "lifted": "Now tap the bottle to pour into.",
@@ -84,6 +85,7 @@
     "extraUsed": "The extra bottle of this level is already taken.",
     "added": "An empty bottle added.",
     "againSure": "Tap “Start again” once more: the bottles go back to the start.",
+    "newSure": "Tap “New game” once more: a new game begins, and this one counts as played.",
     "again": "Started again.",
     "hint": "Hint: from bottle {from} into bottle {to}.",
     "hintUnknown": "No hint found just now. Try undoing a pour."
@@ -95,6 +97,7 @@
     "doHint": "Do it",
     "extra": "One more bottle",
     "again": "Start again",
+    "new": "New game",
     "back": {
       "one": "Undo {n} pour",
       "other": "Undo {n} pours"
@@ -129,6 +132,11 @@
       "one": "{n} pour",
       "other": "{n} pours"
     },
+    "fewest": {
+      "one": "Fewest possible: {n} pour",
+      "other": "Fewest possible: {n} pours"
+    },
+    "perfect": "In the fewest pours!",
     "clean": "Without help",
     "undos": {
       "one": "Undone: {n} pour",
@@ -199,7 +207,7 @@
     "title": "About the game",
     "rules": "The bottles hold layers of coloured water. Tap the bottle to pour from, then the one to pour into: water goes onto the same colour or into an empty bottle, as much as fits. The aim: one colour in each bottle. Every level can be solved.",
     "text": "No ads, no tracking, no accounts. Everything stays on this device; after the first visit the game works without the internet.",
-    "keys": "Keys: arrows — between bottles, Enter or Space — lift or pour, Esc — put down, H — hint, Ctrl+Z — undo.",
+    "keys": "Keys: arrows — between bottles, Enter or Space — lift or pour, Esc — put down, H — hint, N — new game (in free play), Ctrl+Z — undo.",
     "credit": "Made by way1ong"
   },
   "update": {

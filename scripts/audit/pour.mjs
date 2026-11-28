@@ -110,6 +110,20 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await shot(page, `${width}x${height}-${locale}-${colorScheme}`);
       await openGame(page, 'hard');
       await check(page, `${label} free play hard`);
+      // free play (decision of 28.11): the fewest pours beside the player's, once counted; "New game" mid-game — a
+      // begun game asks once more (the button stands out), the second tap deals anew
+      await page
+        .waitForFunction(() => document.querySelector('.info__moves')?.textContent.includes('·'), null, { timeout: 30000 })
+        .catch(() => fail(`pour ${label}: no fewest pours beside the player's`));
+      await page.keyboard.press('h');
+      await page.keyboard.press('h');
+      const fresh = page.locator('.tools:not(.tools--stuck) .tool').last();
+      await fresh.click();
+      if (!(await fresh.evaluate((b) => b.classList.contains('is-ready')))) fail(`pour ${label}: "New game" did not ask once more`);
+      await check(page, `${label} free play, new game asked`);
+      await fresh.click();
+      await page.waitForTimeout(300);
+      if (!/^0\D/.test((await page.textContent('.info__moves')).trim())) fail(`pour ${label}: "New game" did not deal anew`);
       // the player's own size: its choice (− and +; with many colours the empty bottles follow), a game of it, then
       // the biggest shelf of it — the most colours and empty bottles
       await page.goto(`${base}#custom-size`);
