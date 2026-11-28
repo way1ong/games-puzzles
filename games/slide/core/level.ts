@@ -87,3 +87,12 @@ export function freePuzzle(pool: readonly PoolPuzzle[], difficulty: Difficulty, 
   if (!list.length) throw new Error(`No puzzle of difficulty ${difficulty}`);
   return list[pick(seed, list.length)]!;
 }
+
+/**
+ * A mode's ways with its Hard no longer than `cap` moves ("The chest": a setting, decision of 28.11 «зроби опційно»):
+ * the same puzzles, the longest left out.
+ */
+export function withHardCap(ways: PoolWays, cap: number): PoolWays {
+  const [least, most] = ways.difficulties.hard;
+  return { ...ways, difficulties: { ...ways.difficulties, hard: [least, most === null ? cap : Math.min(most, cap)] } };
+}

@@ -6,14 +6,14 @@ import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
-import { PICTURES, pictureUrl } from '../art/pictures.ts';
-import { DIFFICULTIES, SLIDE, type Difficulty } from '../config.ts';
+import { dailyPictureCount, PICTURES, pictureUrl } from '../art/pictures.ts';
+import { DIFFICULTIES, FIFTEEN_KINDS, SLIDE, type Difficulty, type FifteenKind, type PoolWays, type Theme } from '../config.ts';
 import { parseBox, sizeOf, type BoxMove, type BoxPuzzle } from '../core/box.ts';
 import { allPositions as allBoxPositions, nextMove as nextBoxMove, type BoxPositions } from '../core/box-solve.ts';
 import { homeOf } from '../core/fifteen.ts';
 import { findHint, type TileWay } from '../core/fifteen-solve.ts';
-import { dailySeed, fifteenTiles, freePuzzle, levelPuzzle, levelSeed } from '../core/level.ts';
-import { addTime, clean, countHint, moveBlock, movePiece, movesMade, newBox, newFifteen, newUnblock, perfect, slideTile, startAgain, started, undo, type SlidePlay } from '../core/play.ts';
+import { dailySeed, fifteenTiles, freePuzzle, levelPuzzle, levelSeed, withHardCap } from '../core/level.ts';
+import { addTime, clean, countHint, moveBlock, movePiece, movesMade, newBox, newFifteen, newUnblock, perfect, slideTile, startAgain, started, undo, type SlidePlay, type UnblockPlay } from '../core/play.ts';
 import { parsePool, type PoolPuzzle } from '../core/pool.ts';
 import { longestStreak, recordLeft, recordWon } from '../core/stats.ts';
 import { parseBoard, type Move, type Puzzle } from '../core/unblock.ts';
@@ -30,7 +30,7 @@ import { createMenuDialog } from './menu-dialog.ts';
 import { closeRoute, currentRoute, openRoute, restoreRoute, watchRoute } from './route.ts';
 import { randomSeed } from './seed.ts';
 import * as store from './storage.ts';
-import { isSlot, slotKind, slotOf, type PoolMode, type PuzzleSets, type Settings, type Slot } from './storage.ts';
+import { isSlot, poolDifficulty, slotKind, slotOf, type PoolMode, type PuzzleSets, type Settings, type Slot } from './storage.ts';
 import { clockText } from './time.ts';
 import { createToolsView } from './tools-view.ts';
 import { createUnblockView } from './unblock-view.ts';
@@ -205,7 +205,7 @@ export function startApp(root: HTMLElement): void {
     if (k.mode === 'fifteen') {
       if (k.way === 'daily') {
         const seed = dailySeed('fifteen', today);
-        return newFifteen(fifteenTiles(SLIDE.fifteen.dailySize, seed), 'daily', seed, PICTURES.length, { daily: today });
+        return newFifteen(fifteenTiles(SLIDE.fifteen.dailySize, seed), 'daily', seed, dailyPictureCount(today), { daily: today });
       }
       const seed = randomSeed();
       return newFifteen(fifteenTiles(SLIDE.fifteen.sizes[k.difficulty!], seed), 'free', seed, PICTURES.length, { difficulty: k.difficulty! });
@@ -218,8 +218,20 @@ export function startApp(root: HTMLElement): void {
     }
     if (k.way === 'daily') return make(dayPuzzle(mode, today), 'daily', dailySeed(mode, today), { daily: today });
     const seed = randomSeed();
-    return make(freePuzzle(POOLS[mode], k.difficulty!, seed, SLIDE[mode]), 'free', seed, { difficulty: k.difficulty! });
+    const difficulty = poolDifficulty(slot);
+    return make(freePuzzle(POOLS[mode], difficulty, seed, waysOf(mode)), 'free', seed, { difficulty });
   }
+
+  /**
+   * How a mode's set is played: "The chest" with Hard no longer than SLIDE.box.hardCap moves when the player switched
+   * that on (decision of 28.11).
+   */
+  function waysOf(mode: PoolMode): PoolWays {
+    return mode === 'box' && settings.boxShort ? withHardCap(SLIDE.box, SLIDE.box.hardCap) : SLIDE[mode];
+  }
+
+  /** The look of "Clear the way" on the screen: the one the menu chose, or the puzzle's own (drawn from its seed). */
+  const themeOf = (g: UnblockPlay): Theme => (settings.unblockTheme === 'random' ? g.theme : settings.unblockTheme);
 
   /** The word at the end of a game of each mode. */
   const doneText = (g: SlidePlay): string => (g.mode === 'fifteen' ? d.game.solved : g.mode === 'box' ? d.game.chestOut : d.game.out);
@@ -274,7 +286,8 @@ export function startApp(root: HTMLElement): void {
       const p = store.loadPlay(slot, today, SETS);
       return store.loadDays(mode)[today] || p?.done ? 'done' : p && started(p) ? 'started' : 'new';
     };
-    const each = (mode: SlidePlay['mode']) => Object.fromEntries(DIFFICULTIES.map((diff) => [diff, begun(`${mode}-${diff}` as Slot)])) as Record<Difficulty, boolean>;
+    const each = (mode: PoolMode) => Object.fromEntries(DIFFICULTIES.map((diff) => [diff, begun(`${mode}-${diff}` as Slot)])) as Record<Difficulty, boolean>;
+    const fifteenBegun = Object.fromEntries(FIFTEEN_KINDS.map((k) => [k, begun(`fifteen-${k}` as Slot)])) as Record<FifteenKind, boolean>;
     const ways = (mode: PoolMode) => ({
       reached: store.loadReached(mode),
       levelBegun: begun(mode === 'box' ? 'box-levels' : 'levels'),
@@ -285,9 +298,10 @@ export function startApp(root: HTMLElement): void {
     content.replaceChildren(
       homeView(
         {
-          fifteen: { begun: each('fifteen'), day: dayState('fifteen', 'fifteen-day'), streak: streak(Object.keys(store.loadDays('fifteen')), today) },
+          fifteen: { begun: fifteenBegun, day: dayState('fifteen', 'fifteen-day'), streak: streak(Object.keys(store.loadDays('fifteen')), today) },
           unblock: ways('unblock'),
           box: ways('box'),
+          boxWays: waysOf('box'),
           date: dateText(today, 'long'),
         },
         d,
@@ -317,14 +331,14 @@ export function startApp(root: HTMLElement): void {
   function movesText(g: SlidePlay): string {
     const n = movesMade(g);
     const moves = plural(lang, n, d.game.moves, { n });
-    return g.mode === 'fifteen' ? moves : `${moves} · ${plural(lang, g.fewest, d.game.fewest, { n: g.fewest })}`;
+    return g.fewest === null ? moves : `${moves} · ${plural(lang, g.fewest, d.game.fewest, { n: g.fewest })}`;
   }
 
   function noteContent(g: SlidePlay): { text: string; actions: NoteAction[] } {
     if (g.done) return { text: doneText(g), actions: endActions() };
     if (message) return { text: message, actions: [] };
     if (g.mode !== 'fifteen' && taken !== null) return { text: g.mode === 'box' ? d.game.takenBox : d.game.taken, actions: [] };
-    if (!tipDone[g.mode]) return { text: tipText(d, g.mode, settings.faces, g.mode === 'unblock' ? g.theme : 'box'), actions: [] };
+    if (!tipDone[g.mode]) return { text: tipText(d, g.mode, settings.faces, g.mode === 'unblock' ? themeOf(g) : 'box'), actions: [] };
     return { text: '', actions: [] };
   }
 
@@ -391,7 +405,7 @@ export function startApp(root: HTMLElement): void {
       unblockView.render({
         puzzle,
         places: g.places,
-        theme: g.theme,
+        theme: themeOf(g),
         taken,
         hint: move,
         done: g.done,
@@ -399,7 +413,7 @@ export function startApp(root: HTMLElement): void {
           const marks: string[] = [];
           if (taken === i) marks.push(d.board.taken);
           if (move?.piece === i) marks.push(d.board.hint);
-          return pieceLabel(puzzle, g.places, i, g.theme, d, lang, marks);
+          return pieceLabel(puzzle, g.places, i, themeOf(g), d, lang, marks);
         },
         exitLabel: fmt(d.board.exit, { r: SLIDE.unblock.exitRow + 1 }),
       });
@@ -473,7 +487,7 @@ export function startApp(root: HTMLElement): void {
     message = piece === null ? d.game.put : null;
     if (piece === null) announce(d.game.put);
     else if (game.mode === 'box') announce(`${blockLabel(boxPuzzleOf(game.board), game.places, piece, d, lang, [d.board.taken])}. ${d.game.takenBox}`);
-    else announce(`${pieceLabel(puzzleOf(game.board), game.places, piece, game.theme, d, lang, [d.board.taken])}. ${d.game.taken}`);
+    else announce(`${pieceLabel(puzzleOf(game.board), game.places, piece, themeOf(game), d, lang, [d.board.taken])}. ${d.game.taken}`);
     render();
   }
 
@@ -539,7 +553,7 @@ export function startApp(root: HTMLElement): void {
       game = countHint(game);
       hint = { move };
       taken = null;
-      message = pieceHint(puzzleOf(game.board), game.places, move, game.theme, d);
+      message = pieceHint(puzzleOf(game.board), game.places, move, themeOf(game), d);
     }
     hintFor = game;
     save();
@@ -620,7 +634,7 @@ export function startApp(root: HTMLElement): void {
     render();
     const n = movesMade(g);
     const lines = [plural(lang, n, d.end.moves, { n })];
-    if (g.mode !== 'fifteen') lines.push(perfect(g) ? d.end.perfect : plural(lang, g.fewest, d.end.fewest, { n: g.fewest }));
+    if (g.fewest !== null) lines.push(perfect(g) ? d.end.perfect : plural(lang, g.fewest, d.end.fewest, { n: g.fewest }));
     if (clean(g)) lines.push(d.end.clean);
     else {
       if (g.undos) lines.push(plural(lang, g.undos, d.end.undos, { n: g.undos }));

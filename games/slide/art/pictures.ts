@@ -3,7 +3,9 @@
 // tiles' background (the drawing holds its colours itself; no file, no request).
 import { sceneSvg } from '../../detective/art/scene.ts';
 import { DETECTIVE } from '../../detective/config.ts';
+import { SLIDE } from '../config.ts';
 
+/** A saved game keeps its picture's number, so new pictures only ever go at the end. */
 export const PICTURES = [
   { room: 'study', time: 'day' },
   { room: 'study', time: 'night' },
@@ -11,7 +13,16 @@ export const PICTURES = [
   { room: 'bakery', time: 'night' },
   { room: 'station', time: 'day' },
   { room: 'station', time: 'night' },
+  { room: 'cafe', time: 'day' },
+  { room: 'cafe', time: 'night' },
+  { room: 'post', time: 'day' },
+  { room: 'post', time: 'night' },
 ] as const;
+
+/** How many pictures the fifteen of the day picks from on a date: a room that joins later stands at the end. */
+export function dailyPictureCount(date: string): number {
+  return PICTURES.filter((p) => (SLIDE.fifteen.picturesFrom[p.room] ?? '') <= date).length;
+}
 
 const made = new Map<number, string>();
 

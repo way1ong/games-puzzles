@@ -59,6 +59,7 @@
       "one": "{n} töltés",
       "other": "{n} töltés"
     },
+    "fewest": "legkevesebb: {n}",
     "making": "Töltöm az üvegcséket…",
     "tip": "Koppintson arra az üvegcsére, amelyből tölt, majd arra, amelyikbe. A víz ugyanarra a színre vagy üres üvegcsébe tölthető.",
     "lifted": "Most koppintson arra az üvegcsére, amelyikbe tölt.",
@@ -84,6 +85,7 @@
     "extraUsed": "Ennek a szintnek a plusz üvegcséjét már elvette.",
     "added": "Egy üres üvegcse hozzáadva.",
     "againSure": "Koppintson még egyszer az „Újrakezdés” gombra: az üvegcsék visszakerülnek a kezdethez.",
+    "newSure": "Koppintson még egyszer az „Új játék” gombra: új játék kezdődik, ez pedig játszottnak számít.",
     "again": "Újrakezdve.",
     "hint": "Tipp: a(z) {from}. üvegcséből a(z) {to}. üvegcsébe.",
     "hintUnknown": "Most nem találtam tippet. Próbáljon visszavonni egy töltést."
@@ -95,6 +97,7 @@
     "doHint": "Megteszi",
     "extra": "Még egy üvegcse",
     "again": "Újrakezdés",
+    "new": "Új játék",
     "back": {
       "one": "{n} töltés visszavonása",
       "other": "{n} töltés visszavonása"
@@ -129,6 +132,11 @@
       "one": "{n} töltés",
       "other": "{n} töltés"
     },
+    "fewest": {
+      "one": "A legkevesebb: {n} töltés",
+      "other": "A legkevesebb: {n} töltés"
+    },
+    "perfect": "A legkevesebb töltéssel!",
     "clean": "Segítség nélkül",
     "undos": {
       "one": "Visszavonva: {n} töltés",
@@ -164,6 +172,7 @@
     "helpNone": "Segítség nélkül",
     "helpNote": "Korlátlan: visszavonás és tipp akárhányszor, plusz egy üvegcse. Korlátozott: szintenként visszavonás: {undo}, tipp: {hints}, plusz üvegcse nélkül.",
     "time": "Az idő mutatása",
+    "sound": "Hang",
     "vibration": "Rezgés, amikor egy üvegcse kész",
     "look": "Megjelenés",
     "big": "Nagy üvegcsék",
@@ -198,7 +207,7 @@
     "title": "A játékról",
     "rules": "Az üvegcsékben színes víz rétegei vannak. Koppintson arra az üvegcsére, amelyből tölt, majd arra, amelyikbe: a víz ugyanarra a színre vagy üres üvegcsébe kerül, amennyi belefér. A cél: minden üvegcsében egyetlen szín. Minden szint megoldható.",
     "text": "Reklám, követés és fiók nélkül. Minden csak ezen az eszközön marad; az első megnyitás után a játék internet nélkül is működik.",
-    "keys": "Billentyűk: nyilak – az üvegcsék között, Enter vagy szóköz – felemelés vagy töltés, Esc – visszatevés, H – tipp, Ctrl+Z – visszavonás.",
+    "keys": "Billentyűk: nyilak – az üvegcsék között, Enter vagy szóköz – felemelés vagy töltés, Esc – visszatevés, H – tipp, N – új játék (szabad játékban), Ctrl+Z – visszavonás.",
     "credit": "Készítette: way1ong"
   },
   "update": {

@@ -1,8 +1,9 @@
 // The start screen (docs/slide/SPEC.md, "Екрани"): a part for each mode, as in Solitaire. The fifteen — Easy 3x3,
-// Medium 4x4, Hard 5x5 and the fifteen of the day; "Clear the way" and "The chest" — levels in a row (the level
-// reached), free play by difficulty (its range of moves) and the puzzle of the day; each day with its streak.
+// Medium 4x4, Hard 5x5, Very hard 6x6, Hardest 7x7 and the fifteen of the day; "Clear the way" and "The chest" — levels
+// in a row (the level reached), free play by difficulty (its range of moves) and the puzzle of the day; each day with
+// its streak.
 import { h } from '../../../shared/ui/dom.ts';
-import { DIFFICULTIES, SLIDE, type Difficulty } from '../config.ts';
+import { DIFFICULTIES, FIFTEEN_KINDS, SLIDE, type Difficulty, type FifteenKind, type PoolWays } from '../config.ts';
 import { fmt, plural, type Dict } from './i18n.ts';
 import { checkSign } from './icons.ts';
 import type { PoolMode, Slot } from './storage.ts';
@@ -19,9 +20,11 @@ export interface WaysData {
 }
 
 export interface HomeData {
-  fifteen: { begun: Record<Difficulty, boolean>; day: DayState; streak: number };
+  fifteen: { begun: Record<FifteenKind, boolean>; day: DayState; streak: number };
   unblock: WaysData;
   box: WaysData;
+  /** How "The chest" is played now: its Hard may be capped (a setting). */
+  boxWays: PoolWays;
   /** Today, in words of the language. */
   date: string;
 }
@@ -44,7 +47,7 @@ export function homeView(data: HomeData, d: Dict, lang: string, open: (slot: Slo
   const streak = (n: number) => (n > 0 ? h('p', { class: 'home__streak' }, plural(lang, n, d.home.streak, { n })) : null);
   const size = (n: number) => fmt(d.home.size, { n });
   const range = (mode: PoolMode, diff: Difficulty) => {
-    const [least, most] = SLIDE[mode].difficulties[diff];
+    const [least, most] = (mode === 'box' ? data.boxWays : SLIDE[mode]).difficulties[diff];
     return most === null ? plural(lang, least, d.home.rangeFrom, { n: least }) : plural(lang, most, d.home.range, { from: least, to: most });
   };
   const dayInfo = fmt(d.home.dailyOn, { date: data.date });
@@ -55,9 +58,9 @@ export function homeView(data: HomeData, d: Dict, lang: string, open: (slot: Slo
     { class: 'home__part' },
     h('h2', {}, d.mode.fifteen),
     h('p', { class: 'home__note' }, d.home.fifteenNote),
-    ...DIFFICULTIES.map((diff) => {
-      const r = resume(f.begun[diff]);
-      return pick(d.difficulty[diff], r.state, size(SLIDE.fifteen.sizes[diff]), `fifteen-${diff}`, r.kind);
+    ...FIFTEEN_KINDS.map((kind) => {
+      const r = resume(f.begun[kind]);
+      return pick(d.difficulty[kind], r.state, size(SLIDE.fifteen.sizes[kind]), `fifteen-${kind}`, r.kind);
     }),
     day(d.home.dailyFifteen, f.day, `${size(SLIDE.fifteen.dailySize)} · ${dayInfo}`, 'fifteen-day'),
     streak(f.streak),

@@ -40,7 +40,23 @@
     "stationOfficeDay": "Каса й годинник удень",
     "stationOfficeNight": "Каса й годинник уночі",
     "stationBenchesDay": "Лавки вдень",
-    "stationBenchesNight": "Лавки вночі"
+    "stationBenchesNight": "Лавки вночі",
+    "cafeDay": "Кав’ярня вдень",
+    "cafeNight": "Кав’ярня вночі",
+    "cafeCounterDay": "Стійка й кавоварка вдень",
+    "cafeCounterNight": "Стійка й кавоварка вночі",
+    "cafeWindowDay": "Вікно кав’ярні вдень",
+    "cafeWindowNight": "Вікно кав’ярні вночі",
+    "cafePianoDay": "Піаніно вдень",
+    "cafePianoNight": "Піаніно вночі",
+    "postDay": "Пошта вдень",
+    "postNight": "Пошта вночі",
+    "postPigeonholesDay": "Шафка для листів удень",
+    "postPigeonholesNight": "Шафка для листів уночі",
+    "postDoorDay": "Двері й плакат удень",
+    "postDoorNight": "Двері й плакат уночі",
+    "postCounterDay": "Стійка з віконцями вдень",
+    "postCounterNight": "Стійка з віконцями вночі"
   },
   "home": {
     "daily": "Пазл дня",
@@ -72,7 +88,9 @@
     "rooms": {
       "study": "Кабінет детектива",
       "bakery": "Пекарня",
-      "station": "Вокзал"
+      "station": "Вокзал",
+      "cafe": "Кав’ярня",
+      "post": "Пошта"
     }
   },
   "game": {

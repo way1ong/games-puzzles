@@ -115,9 +115,11 @@
     "notInOrder": "{card}: együtt csak a sorban lévő lapok mozognak — csökkenő rendben, piros a feketén.",
     "oneCard": "Egy szabad cellába csak egy lap kerülhet.",
     "tooMany": {
-      "one": "Most legfeljebb {n} lap mozoghat együtt: szabad cella — {cells}, üres oszlop — {empty}.",
-      "other": "Most legfeljebb {n} lap mozoghat együtt: szabad cella — {cells}, üres oszlop — {empty}."
+      "one": "A kupacban {count} lap van, de most egyszerre legfeljebb {n} lap mozoghat (szabad cella — {cells}, üres oszlop — {empty}).",
+      "other": "A kupacban {count} lap van, de most egyszerre legfeljebb {n} lap mozoghat (szabad cella — {cells}, üres oszlop — {empty})."
     },
+    "freeCellOrColumn": "Szabadítson fel egy cellát, vagy ürítsen ki egy oszlopot.",
+    "freeColumn": "Ürítsen ki egy oszlopot.",
     "fromHome": "Az alapkupacról nem lehet lapot visszavenni.",
     "finishNote": "A többi lap magától, egyenként az alapkupacokra kerülhet.",
     "setting": "FreeCell: szabad cellák",
@@ -184,6 +186,7 @@
     "dealsWinnable": "Csak kirakhatók",
     "dealsAny": "Bármilyen, ahogy a pakli adja",
     "time": "Az idő mutatása",
+    "sound": "Hang",
     "look": "Megjelenés",
     "leftHand": "Bal kézhez (pakli a bal oldalon)",
     "fourColours": "Négyszínű lapok",

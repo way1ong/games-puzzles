@@ -3,6 +3,7 @@
 // and is 3 : 2 as the whole room, so the pieces stay square; the sizes of a puzzle are 3 : 2 too.
 import { describe, expect, it } from 'vitest';
 import { CROPS, DIFFICULTIES, JIGSAW, PICTURES } from '../config.ts';
+import { dailyPictureCount } from '../core/seeds.ts';
 import { PICTURE_SIZE, pictureSvg, viewOf } from './picture.ts';
 
 describe('the pictures', () => {
@@ -26,7 +27,17 @@ describe('the pictures', () => {
         for (const time of ['day', 'night']) expect(keys).toContain(`${room} ${time} ${crop}`);
       }
     }
-    expect(PICTURES).toHaveLength(6 + 3 * 3 * 2);
+    const rooms = Object.keys(CROPS).length;
+    expect(PICTURES).toHaveLength(rooms * 2 + rooms * 3 * 2);
+  });
+
+  it('put the pictures of a room that joins later at the end: before its date the puzzle of the day picks as before', () => {
+    const late = PICTURES.map((p) => (JIGSAW.dailyFrom[p.room] ?? '') !== '');
+    const first = late.indexOf(true);
+    expect(first).toBe(6 + 3 * 3 * 2);
+    expect(late.slice(first).every(Boolean)).toBe(true);
+    expect(dailyPictureCount('2000-01-01')).toBe(first);
+    expect(dailyPictureCount('9999-12-31')).toBe(PICTURES.length);
   });
 
   it('cut close-ups within the room, 3 : 2 as the whole room', () => {

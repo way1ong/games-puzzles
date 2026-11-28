@@ -6,6 +6,13 @@ import { gameAddress } from '../../shared/core/address.ts';
 export const DIFFICULTIES = ['easy', 'medium', 'hard'] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
 
+/**
+ * The fifteen's sizes in free play (docs/slide/SPEC.md, "П’ятнашки"): the three difficulties, and two larger ones
+ * (decision of 28.11: «вибір теми й більші поля п’ятнашок»).
+ */
+export const FIFTEEN_KINDS = [...DIFFICULTIES, 'expert', 'master'] as const;
+export type FifteenKind = (typeof FIFTEEN_KINDS)[number];
+
 /** What the tiles of the fifteen show (decision of 27.11: "Обидва опціонально?"). */
 export const FACES = ['numbers', 'picture', 'both'] as const;
 export type Face = (typeof FACES)[number];
@@ -13,6 +20,10 @@ export type Face = (typeof FACES)[number];
 /** The looks of "Clear the way", drawn at random for each puzzle (decision of 27.11: "Може рандомно всі 3?"). */
 export const THEMES = ['harbour', 'room', 'box'] as const;
 export type Theme = (typeof THEMES)[number];
+
+/** The look of "Clear the way" in the menu (decision of 28.11): drawn for each puzzle, as at first, or always one. */
+export const THEME_CHOICES = ['random', ...THEMES] as const;
+export type ThemeChoice = (typeof THEME_CHOICES)[number];
 
 /** Levels in a row: from level `from` on, the fewest moves of a level rise from moves[0] to moves[1]. */
 export interface Stage {
@@ -37,10 +48,18 @@ export const SLIDE = {
   /** The studio's site for the "Made by way1ong" line, and the game itself for the shared result; null — not public yet. */
   links: { site: null as string | null, game: gameAddress('slide') },
   fifteen: {
-    /** Tiles across (and down) by difficulty (C). */
-    sizes: { easy: 3, medium: 4, hard: 5 } satisfies Record<Difficulty, number>,
+    /**
+     * Tiles across (and down) by size (C; the two larger — decision of 28.11). 7 x 7 still gives a phone 360 px wide
+     * tiles of 44 px and more held upright; the hint finds its way in about a tenth of a second (measured 28.11).
+     */
+    sizes: { easy: 3, medium: 4, hard: 5, expert: 6, master: 7 } satisfies Record<FifteenKind, number>,
     /** The fifteen of the day (C). */
     dailySize: 4,
+    /**
+     * Detective's rooms that join the pictures of the fifteen of the day from a date (the new rooms of 28.11): before it
+     * the day's picture is what it was — their pictures stand at the end of art/pictures.ts.
+     */
+    picturesFrom: { cafe: '2026-12-01', post: '2026-12-01' } as Readonly<Partial<Record<string, string>>>,
     /**
      * The fewest moves a shuffle may need, where the game can count them exactly (C): measured 27.11 over all 181 440
      * arrangements of 3x3, 4 % need fewer than 16 and would look nearly done.
@@ -127,6 +146,11 @@ export const SLIDE = {
     ] satisfies Stage[],
     /** Free play: the fewest moves of each difficulty, from and to; null — no upper end (C; the set holds 300, 450 and 612 of them, the most 78 moves, measured 28.11). */
     difficulties: { easy: [5, 14], medium: [15, 29], hard: [30, null] } satisfies Record<Difficulty, readonly [number, number | null]>,
+    /**
+     * Hard no longer than this many moves, when the player switches it on (decision of 28.11: «зроби опційно»; off by
+     * default): about one Hard puzzle in eight is longer (measured 28.11).
+     */
+    hardCap: 50,
     /** The puzzle of the day: middling (C). */
     daily: 'medium' as Difficulty,
     /**

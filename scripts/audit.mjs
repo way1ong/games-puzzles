@@ -26,7 +26,8 @@ const games = args.length ? args : GAMES;
 for (const game of games) if (!GAMES.includes(game)) throw new Error(`No audit for "${game}" (there are: ${GAMES.join(', ')})`);
 if (shots) mkdirSync(shots, { recursive: true });
 
-const PORT = 4317;
+/** The audit's own server; AUDIT_PORT lets two audits (two copies of the repository) run side by side. */
+const PORT = Number(process.env.AUDIT_PORT) || 4317;
 const origin = `http://localhost:${PORT}`;
 const report = createReport();
 const axe = createAxe(axePath ? readFileSync(axePath, 'utf8') : null);

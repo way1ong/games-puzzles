@@ -44,6 +44,12 @@ export interface PourPlay {
   restarts: number;
   ms: number;
   done: boolean;
+  /**
+   * The fewest pours from the start to the end (decision of 28.11: the player's pours beside the fewest), once counted
+   * (core/fewest.ts; the screen counts in slices); null — not counted within the limit; missing — not yet (a new deal,
+   * a bottle added, a game saved before 28.11).
+   */
+  fewest?: number | null;
 }
 
 export function newPlay(deal: Deal, way: Way, where: { level?: number; difficulty?: Kind; daily?: string; size?: CustomSize } = {}): PourPlay {
@@ -111,10 +117,10 @@ export function undo(play: PourPlay, rule: HelpRule, count = 1): PourPlay | null
   return { ...play, bottles: takenBack(play, count), history: play.history.slice(0, play.history.length - count), undos: play.undos + count };
 }
 
-/** One more empty bottle (it stays for "Start again" too). */
+/** One more empty bottle (it stays for "Start again" too); the fewest pours are counted again for the new shelf. */
 export function addBottle(play: PourPlay, rule: HelpRule): PourPlay | null {
   if (play.done || helpLeft(play, rule).extra < 1) return null;
-  return { ...play, start: [...play.start, []], bottles: [...play.bottles, []], extra: play.extra + 1 };
+  return { ...play, start: [...play.start, []], bottles: [...play.bottles, []], extra: play.extra + 1, fewest: undefined };
 }
 
 /** The same deal from the start; not counted as help. */
@@ -137,6 +143,9 @@ export function hintAllowed(play: PourPlay, rule: HelpRule): boolean {
 /** Won without help: no pour taken back, no hint, no bottle added. */
 export const clean = (play: PourPlay): boolean => play.undos === 0 && play.hints === 0 && play.extra === 0;
 
+/** Won without help in the fewest pours (once the game has counted them). */
+export const perfect = (play: PourPlay): boolean => play.done && clean(play) && typeof play.fewest === 'number' && play.moves === play.fewest;
+
 export function addTime(play: PourPlay, ms: number): PourPlay {
   return play.done || ms <= 0 ? play : { ...play, ms: play.ms + ms };
 }
@@ -151,5 +160,6 @@ export function validPlay(play: PourPlay): boolean {
   if (!isWhole(play.start, play.colours, POUR.capacity) || !isWhole(play.bottles, play.colours, POUR.capacity)) return false;
   const fits = (p: Poured) => [p.from, p.to, p.amount].every(Number.isInteger) && p.from >= 0 && p.from < n && p.to >= 0 && p.to < n && p.amount >= 1 && p.amount <= POUR.capacity;
   if (!play.history.every(fits)) return false;
+  if (play.fewest !== undefined && play.fewest !== null && !(Number.isInteger(play.fewest) && play.fewest >= 0)) return false;
   return placeKey(takenBack(play, play.history.length)) === placeKey(play.start);
 }

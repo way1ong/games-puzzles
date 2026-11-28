@@ -79,6 +79,7 @@ export function createUnblockView(actions: UnblockActions) {
 
   function make(s: UnblockShow): void {
     drawn = `${s.theme}|${s.puzzle.pieces.map((p) => `${p.across}${p.line}${p.length}`).join()}`;
+    el.dataset.theme = s.theme;
     ground.innerHTML = groundSvg(s.theme, size, SLIDE.unblock.exitRow);
     buttons = s.puzzle.pieces.map((p, i) => {
       const b = h('button', { class: `piece piece--${kindOf(s.puzzle, i)}`, type: 'button', tabindex: -1, 'data-piece': i });

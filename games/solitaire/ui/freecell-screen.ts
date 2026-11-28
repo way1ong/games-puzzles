@@ -6,6 +6,7 @@
 import { streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import type { Sounds } from '../../../shared/ui/sound.ts';
 import { SOLITAIRE } from '../config.ts';
 import type { Card } from '../core/cards.ts';
 import { freecellDailySeed, freecellWinnableSeed } from '../core/freecell-deals.ts';
@@ -48,6 +49,8 @@ const FINISH_STEP_MS = 110;
 
 /** What the screen needs from the app around it. */
 export interface FreeCellShell {
+  /** The game's sounds (shared with Klondike's screen). */
+  sounds: Sounds;
   dict(): Dict;
   lang(): string;
   settings(): Settings;
@@ -328,6 +331,9 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
   }
 
   // ---------- moves ----------
+  /** Foundations full, from the ace to the king. */
+  const suitsDone = (t: FreeCell): number => t.foundations.filter((rank) => rank === SOLITAIRE.deck.ranks).length;
+
   /** Words for a step: the card moved and where, and the cards that went home by themselves after it. */
   function stepWords(before: FreeCell, after: FreeCell): string {
     const t = d();
@@ -341,6 +347,10 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
 
   function commit(next: FreeCell, words: string | null): void {
     if (!game || !slot || next === game) return;
+    // the cards move; then a suit complete, or the whole deal
+    const moving = shell.sounds.play('card');
+    if (next.done) shell.sounds.play('win', {}, moving);
+    else if (suitsDone(next) > suitsDone(game)) shell.sounds.play('success', {}, moving);
     // The move that finishes the deal stops the clock: its last stretch counts.
     if (next.done && clockFrom !== null) {
       next = { ...next, ms: next.ms + (performance.now() - clockFrom) };
@@ -415,9 +425,15 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
     return card === null || card === undefined ? '' : name(card);
   }
 
-  /** More cards than may move together: how many may, and why — the free cells and the empty columns. */
-  function tooManyText(g: FreeCell, most: number): string {
-    return plural(shell.lang(), most, d().freecell.tooMany, { n: most, cells: freeCellsLeft(g), empty: emptyColumns(g) });
+  /**
+   * More cards than may move together: how many would move, how many may, why — the free cells and the empty columns —
+   * and what helps (a column alone when every cell is free). The cards in the cells shake: they take the room.
+   */
+  function refuseTooMany(g: FreeCell, count: number, most: number): void {
+    table.refuseCells();
+    const t = d().freecell;
+    const why = plural(shell.lang(), most, t.tooMany, { count, n: most, cells: freeCellsLeft(g), empty: emptyColumns(g) });
+    say(`${why} ${g.cells.some((c) => c !== null) ? t.freeCellOrColumn : t.freeColumn}`);
   }
 
   function onTap(target: FreeTarget): void {
@@ -426,6 +442,7 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
     if (target.kind === 'empty') return;
     const { place, index } = target;
     if (place.kind === 'foundation') {
+      shell.sounds.play('refuse');
       say(d().freecell.fromHome);
       return;
     }
@@ -435,10 +452,11 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
       return;
     }
     table.refuse(target);
+    shell.sounds.play('refuse');
     const why = tapRefusal(game, place, index);
     const t = d();
     if (why.kind === 'order') say(fmt(t.freecell.notInOrder, { card: cardAt(game, place, index) }));
-    else if (why.kind === 'too-many') say(tooManyText(game, why.most));
+    else if (why.kind === 'too-many') refuseTooMany(game, why.count, why.most);
     else say(fmt(t.game.noPlace, { card: cardAt(game, place, index) }));
   }
 
@@ -446,9 +464,10 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
     if (!game || game.done || finishing !== null) return false;
     const reason = moveRefusal(game, from, index, to);
     if (reason) {
+      shell.sounds.play('refuse');
       const t = d();
       if (reason === 'order') say(fmt(t.freecell.notInOrder, { card: cardAt(game, from, index) }));
-      else if (reason === 'too-many') say(tooManyText(game, moveLimit(game, to)));
+      else if (reason === 'too-many') refuseTooMany(game, movingCards(game, from, index)!.length, moveLimit(game, to));
       else if (reason === 'one-card') say(t.freecell.oneCard);
       else say(fmt(t.game.cantDrop, { card: cardAt(game, from, index) }));
       return false;
@@ -493,6 +512,7 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
       if (!s) return false;
       const next = moveCards(game, s.from, s.index, s.to, false);
       if (next === game) return false;
+      if (!next.done) shell.sounds.play('card');
       if (next.done) {
         finishing = null;
         commit(next, null);

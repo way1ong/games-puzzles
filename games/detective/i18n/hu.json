@@ -28,7 +28,9 @@
   "rooms": {
     "study": "A detektív dolgozószobája",
     "bakery": "A pékség",
-    "station": "A pályaudvar"
+    "station": "A pályaudvar",
+    "cafe": "A kávézó",
+    "post": "A posta"
   },
   "intro": {
     "things": {
@@ -96,7 +98,11 @@
     "bench": "a padon",
     "suitcase": "a bőröndön",
     "ticketDesk": "a pénztár párkányán",
-    "runner": "a futószőnyegen"
+    "runner": "a futószőnyegen",
+    "piano": "a zongorán",
+    "pigeonholes": "a levélrekeszben",
+    "postCounter": "a postapulton",
+    "parcels": "a csomagokon"
   },
   "things": {
     "key": "Kulcs",
@@ -340,22 +346,121 @@
       "title": "Egy sorral több",
       "text": "A menetrendben megjelent egy sor, amely tegnap még nem volt ott: vonat a tengerhez, huszonöt órakor. Ki írta oda?",
       "ending": "{name} nevet: tréfa az unokaöccsének, aki most tanulta meg olvasni a menetrendet. A sort már letörölték."
+    },
+    "wrongParcel": {
+      "title": "Más csomagja",
+      "text": "Vera néni csomagot várt, benne új ingával az órájához. Reggel még a pulton feküdt, barna papírban, spárgával átkötve. Most egy másik csomag van a helyén – ugyanolyan, csak könnyebb.",
+      "ending": "{name} belenéz a táskájába, és elpirul: ugyanaz a papír, ugyanaz a spárga – a saját csomagja helyett a másikat vitte el. Az inga visszakerül Vera nénihez, mellé egy doboz bonbon a kellemetlenségért."
+    },
+    "nightLetter": {
+      "title": "A levél, amely nem várhatott reggelig",
+      "text": "Éjjel valaki felkapcsolta a lámpát a pult fölött a bezárt postán – az ajtótól nedves lábnyomok vezetnek odáig. Reggelre eltűnt egy levél a „Feladásra” dobozból, az ajtó melletti lábtörlőn pedig egy elhagyott kulcs fekszik.",
+      "ending": "{name} bevallja: este dühében mérges levelet írt a húgának – és egész éjjel nem tudott aludni. Van kulcsa a postához: ő gondozza itt a virágokat. Azt a levelet visszavette, az újat, a kedveset pedig elsőként adják fel."
+    },
+    "postPostcard": {
+      "title": "A világítótornyos képeslap",
+      "text": "Évek óta egy világítótornyos képeslap lógott a posta falán – egykor egy világutazó küldte. Ma csak egy rajzszög maradt a helyén.",
+      "ending": "{name} megmutat egy vázlatfüzetet: a képeslapot egy estére kölcsönvették, hogy lerajzolják a világítótornyot egy unokának, aki a tengerről álmodik. A képeslap most újra a falon van."
+    },
+    "postHorn": {
+      "title": "A rézkürt",
+      "text": "A postapult fölött mindig ott lógott a réz postakürt. Ma reggel üres a kampó.",
+      "ending": "{name} fényesre tisztítva hozza vissza a kürtöt: a városi ünnepségen megfújják, és illik, hogy ragyogjon."
+    },
+    "postPen": {
+      "title": "A láncos toll",
+      "text": "Az ügyfelek asztalán a toll mindig lánccal van odaerősítve – mégis eltűnt. A lánc elszakadt.",
+      "ending": "{name} zavarba jön: hosszú lett a levél, kényelmes volt a toll, a lánc pedig régi. Az új láncot már megvették."
+    },
+    "postWeights": {
+      "title": "Az eltűnt súlyok",
+      "text": "A posta mérlege mellett mindig ott áll egy dobozka a súlyokkal. Ma üres, és nincs mivel megmérni a csomagokat.",
+      "ending": "{name} visszahozza a súlyokat: kölcsönvették őket, hogy lemérjék a lisztet a postás születésnapi pitéjéhez – ma van a születésnapja."
+    },
+    "anniversaryCake": {
+      "title": "Az évfordulós torta",
+      "text": "Ma húszéves a kávézó! Az ünnepi torta krémrózsával az üvegvitrinben várta a vendégeket – most csak morzsa maradt a helyén. Két óra múlva kezdődik az ünnepség.",
+      "ending": "{name} széttárja a karját: hazavitte a tortát a saját konyhájába, hogy krémmel ráírja a „20”-at – és nem maradt ideje szólni senkinek. A tortát már hozzák vissza, még szebben, mint volt."
+    },
+    "midnightWaltz": {
+      "title": "Éjféli keringő",
+      "text": "Éjfélkor a szomszédok hallották, hogy a bezárt kávézóban valaki keringőt játszik. Most csend van, a zongora mellett égnek a falilámpák, a kottatartón nyitott kotta. Ki zongorázott itt az éjszaka közepén?",
+      "ending": "{name} zavartan mosolyog: régóta titokban tanul zongorázni, a kávézó kulcsát pedig rá bízták, ha baj volna. Éjszakai őrjárata közben nem tudott ellenállni – a keringőnek a kávézó évfordulóján kellett felcsendülnie. Most a tulajdonosnő arra kéri, játssza el az ünnepségen."
+    },
+    "cafeCup": {
+      "title": "A fecskés csésze",
+      "text": "Eltűnt a polcról a kávézó legrégebbi csészéje – az, amelyikre fecskét festettek. Még az első tulajdonosnő itta belőle a kávéját.",
+      "ending": "{name} elmagyarázza: hajszálrepedés jelent meg a csészén, ezért elvitték megjavíttatni. Egy hét múlva a fecske visszakerül a polcra – a repedés helyén vékony aranycsíkkal."
+    },
+    "cafeCrossword": {
+      "title": "A félbehagyott keresztrejtvény",
+      "text": "Minden reggel friss újság fekszik a pulton, és a törzsvendégek együtt fejtik meg a keresztrejtvényt. Ma eltűnt az újság – az utolsó, legnehezebb szóval együtt.",
+      "ending": "{name} nevetve hozza vissza az újságot: a rejtvény nem hagyta nyugodni, így otthon fejezte be. Az utolsó szó: „fecske”."
+    },
+    "cafeSpoon": {
+      "title": "Az ezüstkanál",
+      "text": "Itt minden szelet mézes süteményhez ezüstkanalat adnak. Este megszámolják a kanalakat – egy hiányzik.",
+      "ending": "{name} a kabátzsebében találja meg a kanalat, és elpirul: egy jó beszélgetés közben észrevétlenül oda csúszott a zsebkendő helyett. A kanál most újra a helyén van."
+    },
+    "cafeGuestbook": {
+      "title": "A vendégkönyv",
+      "text": "Eltűnt a vastag vendégkönyv, amely mindig a pulton fekszik a pénztárgép mellett. Húsz éve írják bele a vendégek a jókívánságaikat.",
+      "ending": "{name} visszahozza a könyvet: kimásolta belőle a legszebb jókívánságokat egy nagymamának, aki valaha itt ismerkedett meg a férjével. A könyv újra a pulton van."
     }
   },
   "people": {
-    "anna": { "name": "Anna", "role": "titkárnő" },
-    "viktor": { "name": "Viktor", "role": "futár" },
-    "marta": { "name": "Márta", "role": "szomszéd" },
-    "bence": { "name": "Bence", "role": "egyetemista" },
-    "oleg": { "name": "Oleg", "role": "éjjeliőr" },
-    "lina": { "name": "Lina", "role": "virágkötő" },
-    "ilona": { "name": "Ilona", "role": "könyvtáros" },
-    "tamas": { "name": "Tamás", "role": "órás" },
-    "sofia": { "name": "Zsófia", "role": "zongorista" },
-    "pavlo": { "name": "Pál", "role": "postás" },
-    "emma": { "name": "Emma", "role": "cukrász" },
-    "gabor": { "name": "Gábor", "role": "kertész" },
-    "nora": { "name": "Nóra", "role": "fényképész" }
+    "anna": {
+      "name": "Anna",
+      "role": "titkárnő"
+    },
+    "viktor": {
+      "name": "Viktor",
+      "role": "futár"
+    },
+    "marta": {
+      "name": "Márta",
+      "role": "szomszéd"
+    },
+    "bence": {
+      "name": "Bence",
+      "role": "egyetemista"
+    },
+    "oleg": {
+      "name": "Oleg",
+      "role": "éjjeliőr"
+    },
+    "lina": {
+      "name": "Lina",
+      "role": "virágkötő"
+    },
+    "ilona": {
+      "name": "Ilona",
+      "role": "könyvtáros"
+    },
+    "tamas": {
+      "name": "Tamás",
+      "role": "órás"
+    },
+    "sofia": {
+      "name": "Zsófia",
+      "role": "zongorista"
+    },
+    "pavlo": {
+      "name": "Pál",
+      "role": "postás"
+    },
+    "emma": {
+      "name": "Emma",
+      "role": "cukrász"
+    },
+    "gabor": {
+      "name": "Gábor",
+      "role": "kertész"
+    },
+    "nora": {
+      "name": "Nóra",
+      "role": "fényképész"
+    }
   },
   "settings": {
     "title": "Beállítások",

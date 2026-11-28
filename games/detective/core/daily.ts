@@ -17,6 +17,8 @@ export const DAILY_FRAMES: Record<RoomId, readonly string[]> = {
   study: ['dailySeal', 'dailyVase', 'dailyNote', 'dailyBiscuits'],
   bakery: ['bakeryRecipe', 'bakeryBun', 'bakerySign', 'bakeryJam'],
   station: ['stationUmbrella', 'stationClock', 'stationBouquet', 'stationTimetable'],
+  cafe: ['cafeCup', 'cafeCrossword', 'cafeSpoon', 'cafeGuestbook'],
+  post: ['postPostcard', 'postHorn', 'postPen', 'postWeights'],
 };
 export const ALL_DAILY_FRAMES: readonly string[] = ROOM_IDS.flatMap((room) => DAILY_FRAMES[room]);
 
@@ -50,9 +52,14 @@ export function dailyTime(dateKey: string): Time {
   return dayNumber(dateKey) % 2 === 0 ? 'day' : 'night';
 }
 
+/** The rooms of the case of the day on a date: a new room joins from its date (config.ts, dailyFrom). */
+export function dailyRooms(dateKey: string): RoomId[] {
+  return ROOM_IDS.filter((room) => (DETECTIVE.dailyFrom[room] ?? '') <= dateKey);
+}
+
 export function dailyCase(dateKey: string): CaseDef {
   const seed = (part: string) => seedFromText(`way1ong-detective:daily:${dateKey}:${part}`);
-  const room = pick(ROOM_IDS, seed('room'));
+  const room = pick(dailyRooms(dateKey), seed('room'));
   const cast = makeCast(seed('cast'));
   const ordinary = shuffled(ORDINARY, seed('things')).slice(0, DETECTIVE.thingsPerScene - cast.clues.length);
   const things = shuffled<ThingId>([...ordinary, ...cast.clues], seed('list'));

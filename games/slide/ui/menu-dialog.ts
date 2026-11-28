@@ -4,7 +4,7 @@
 import { h } from '../../../shared/ui/dom.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
 import { updateLine } from '../../../shared/ui/update-view.ts';
-import { DIFFICULTIES, SLIDE, type Face } from '../config.ts';
+import { DIFFICULTIES, FIFTEEN_KINDS, SLIDE, THEME_CHOICES, type Face, type ThemeChoice } from '../config.ts';
 import type { SlideStats, WaysStats } from '../core/stats.ts';
 import { dict, fmt, LANGS, num, plural, type Dict } from './i18n.ts';
 import type { Look, Settings } from './storage.ts';
@@ -75,6 +75,13 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           (faces) => actions.set({ faces }),
         ),
         h('p', { class: 'dialog__note' }, s.facesNote),
+        ...choices<ThemeChoice>(
+          s.unblockTheme,
+          THEME_CHOICES.map((value) => ({ value, text: value === 'random' ? s.unblockRandom : d.themes[value] })),
+          settings.unblockTheme,
+          (unblockTheme) => actions.set({ unblockTheme }),
+        ),
+        toggle(fmt(s.boxShort, { n: SLIDE.box.hardCap }), settings.boxShort, (on) => actions.set({ boxShort: on })),
         toggle(s.time, settings.time, (on) => actions.set({ time: on })),
         canVibrate() ? toggle(s.vibration, settings.vibration, (on) => actions.set({ vibration: on })) : null,
       ];
@@ -149,9 +156,9 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
       const fifteenTable = table(
         d.mode.fifteen,
         [st.size, st.played, st.won, st.clean, st.best],
-        DIFFICULTIES.map((diff) => {
-          const x = stats.fifteen[diff];
-          return [fmt(d.home.size, { n: SLIDE.fifteen.sizes[diff] }), x.played, x.won, x.clean, x.bestMoves];
+        FIFTEEN_KINDS.map((kind) => {
+          const x = stats.fifteen[kind];
+          return [fmt(d.home.size, { n: SLIDE.fifteen.sizes[kind] }), x.played, x.won, x.clean, x.bestMoves];
         }),
       );
       /** A mode with a set of puzzles: its levels in a line, free play by difficulty in a table. */

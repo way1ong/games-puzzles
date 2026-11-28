@@ -6,6 +6,7 @@
 import { streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import type { Sounds } from '../../../shared/ui/sound.ts';
 import { SOLITAIRE } from '../config.ts';
 import { SUITS } from '../core/cards.ts';
 import { spiderChecked, spiderDailySeed, spiderWinnableSeed } from '../core/spider-deals.ts';
@@ -44,6 +45,8 @@ const ARROWS: Record<string, 'left' | 'right' | 'up' | 'down'> = { ArrowLeft: 'l
 
 /** What the screen needs from the app around it. */
 export interface SpiderShell {
+  /** The game's sounds (shared with Klondike's screen). */
+  sounds: Sounds;
   dict(): Dict;
   lang(): string;
   settings(): Settings;
@@ -358,6 +361,10 @@ export function createSpiderScreen(shell: SpiderShell): SpiderScreen {
 
   function commit(next: Spider, words: string | null): void {
     if (!game || !slot || next === game) return;
+    // the cards move; then a run home, or the whole deal
+    const moving = shell.sounds.play('card');
+    if (next.done) shell.sounds.play('win', {}, moving);
+    else if (next.home.length > game.home.length) shell.sounds.play('success', {}, moving);
     // The move that finishes the deal stops the clock: its last stretch counts.
     if (next.done && clockFrom !== null) {
       next = { ...next, ms: next.ms + (performance.now() - clockFrom) };
@@ -431,17 +438,20 @@ export function createSpiderScreen(shell: SpiderShell): SpiderScreen {
     const { column, index } = target;
     if (index < game.down[column]!) {
       table.refuse(target);
+      shell.sounds.play('refuse');
       say(t.game.faceDown);
       return;
     }
     if (index < runStart(game, game.suits, column)) {
       table.refuse(target);
+      shell.sounds.play('refuse');
       say(fmt(t.spider.notRun, { card: name(game.columns[column]![index]!) }));
       return;
     }
     const to = spiderBestPlace(game, game.suits, column, index);
     if (to === null) {
       table.refuse(target);
+      shell.sounds.play('refuse');
       say(fmt(t.game.noPlace, { card: name(game.columns[column]![index]!) }));
       return;
     }
@@ -451,6 +461,7 @@ export function createSpiderScreen(shell: SpiderShell): SpiderScreen {
   function onDrop(from: number, index: number, to: number): boolean {
     if (!game || game.done) return false;
     if (!canMoveRun(game, game.suits, from, index, to)) {
+      shell.sounds.play('refuse');
       say(fmt(d().game.cantDrop, { card: name(game.columns[from]![index]!) }));
       return false;
     }
@@ -462,6 +473,7 @@ export function createSpiderScreen(shell: SpiderShell): SpiderScreen {
     const block = dealBlock(game);
     if (block) {
       table.refuse({ kind: 'stock' });
+      shell.sounds.play('refuse');
       say(block === 'empty-column' ? d().spider.emptyColumn : d().spider.stockNone);
       return;
     }

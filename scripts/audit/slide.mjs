@@ -1,10 +1,12 @@
 // Browser audit of Slide: every size and look — the start screen; the fifteen (how to play, a tile slid, a hint and
-// what it does, the goal shown, 3x3 to the end by the hints; a tile in its place has its check mark); the menu with
-// the widest settings (picture and numbers, the time, the large mode, the left hand) and the whole picture; "Clear the
-// way" (level 1: how to play, a piece taken, a hint with its place, to the end by the hints), free play hard, the
-// days; "The chest" (level 1: how to play, a piece taken, a hint with its place and its move, to the end by the hints;
-// the tray keeps its shape), free play hard, its day; phones on their side; large system text; the keyboard: the
-// tiles and the pieces by the arrows, a slide and a move by Enter, puzzles to the end by H.
+// what it does, the goal shown, 3x3 to the end by the hints, its fewest moves beside the player's; a tile in its place
+// has its check mark); the larger fifteens 6x6 and 7x7 (tiles big enough, a hint); the menu with the widest settings
+// (picture and numbers, a look of "Clear the way" chosen, the chest's Hard capped, the time, the large mode, the left
+// hand) and the whole picture; "Clear the way" (level 1 in the look chosen: how to play, a piece taken, a hint with its
+// place, to the end by the hints), free play hard, the days; "The chest" (level 1: how to play, a piece taken, a hint
+// with its place and its move, to the end by the hints; the tray keeps its shape), free play hard within the cap, its
+// day; phones on their side; large system text; the keyboard: the tiles and the pieces by the arrows, a slide and a
+// move by Enter, puzzles to the end by H.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -116,6 +118,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       });
       await page.locator(`.tile[data-tile="${near}"]`).click();
       if ((await page.locator('.info__moves').textContent()).match(/^0\D/)) fail(`slide ${label}: a tap did not slide a tile`);
+      // 3x3: the fewest moves beside the player's (decision of 28.11)
+      if (!(await page.locator('.info__moves').textContent()).includes('·')) fail(`slide ${label}: the 3x3 fifteen does not show its fewest moves`);
       await check(page, `${label} fifteen, a tile slid`);
       await page.keyboard.press('h');
       await check(page, `${label} fifteen hint`);
@@ -135,6 +139,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await page.locator('.top .icon-btn').nth(1).click();
       await check(page, `${label} menu`);
       await page.locator('dialog[open] .choices').nth(1).locator('.choices__btn').nth(2).click();
+      // the look of "Clear the way": the room, always (random, harbour, room, box)
+      await page.locator('dialog[open] .choices').nth(2).locator('.choices__btn').nth(2).click();
       const toggles = page.locator('dialog[open] input[type=checkbox]');
       for (let n = 0; n < (await toggles.count()); n++) await toggles.nth(n).check();
       await page.locator('dialog[open] .dialog__actions .btn--primary').click();
@@ -144,8 +150,9 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       if (!(await page.locator('.tiles__whole').isVisible())) fail(`slide ${label}: "Picture" did not show the picture`);
       await check(page, `${label} the whole picture`);
       await page.locator('.tools .tool').nth(3).click();
-      // "Clear the way": level 1
+      // "Clear the way": level 1, in the look chosen
       await openGame(page, 'levels');
+      if ((await page.locator('.yard').first().getAttribute('data-theme')) !== 'room') fail(`slide ${label}: the look chosen in the menu is not shown`);
       await check(page, `${label} level 1, how to play`);
       await page.locator('.piece').nth(1).click();
       await check(page, `${label} a piece taken or stuck`);
@@ -181,7 +188,24 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await check(page, `${label} chest level 2`);
       await openGame(page, 'box-hard');
       await check(page, `${label} chest free play hard`);
+      // the cap is on (every switch is): the puzzle needs no more moves than it (the fewest: the last number above the tray)
+      const fewest = Number((await page.locator('.info__moves').textContent()).match(/(\d+)\D*$/)?.[1] ?? NaN);
+      if (!(fewest <= 50)) fail(`slide ${label}: the chest's Hard is not within the cap (${fewest})`);
       await shot(page, `${width}x${height}-${locale}-${colorScheme}-chest-hard`);
+      // the larger fifteens (decision of 28.11): tiles big enough to touch, a hint
+      for (const [route, n] of [
+        ['fifteen-expert', 6],
+        ['fifteen-master', 7],
+      ]) {
+        await openGame(page, route);
+        await check(page, `${label} fifteen ${n}x${n}`);
+        const tile = await page.evaluate(() => document.querySelector('.tile').getBoundingClientRect().width);
+        const least = width >= 360 && width < height ? 44 : 24;
+        if (tile < least - 0.5) fail(`slide ${label}: a ${n}x${n} tile is ${tile.toFixed(1)} px`);
+        await page.keyboard.press('h');
+        await check(page, `${label} fifteen ${n}x${n} hint`);
+      }
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-fifteen-7`);
       await page.evaluate((s) => localStorage.removeItem(`${s}last`), STORE);
       await settled(page);
       await page.goto(base);

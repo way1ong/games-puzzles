@@ -38,10 +38,13 @@ export function freeBestPlace(t: FreeTable, from: FreePlace, index: number): Fre
   return null;
 }
 
-/** Why a touch moves nothing, with the numbers for "too many": the most that may move there, free cells, empty columns. */
+/**
+ * Why a touch moves nothing, with the numbers for "too many": the cards that would move, the most that may move there,
+ * free cells, empty columns.
+ */
 export type TapRefusal =
   | { kind: 'order' }
-  | { kind: 'too-many'; most: number; cells: number; empty: number }
+  | { kind: 'too-many'; count: number; most: number; cells: number; empty: number }
   | { kind: 'no-place' };
 
 export function tapRefusal(t: FreeTable, from: FreePlace, index: number): TapRefusal {
@@ -50,7 +53,8 @@ export function tapRefusal(t: FreeTable, from: FreePlace, index: number): TapRef
     const to: FreePlace = { kind: 'column', index: j };
     if (from.kind === 'column' && from.index === j) continue;
     if (moveRefusal(t, from, index, to) === 'too-many' && !(t.columns[j]!.length === 0 && from.kind === 'column' && index === 0)) {
-      return { kind: 'too-many', most: moveLimit(t, to), cells: freeCellsLeft(t), empty: emptyColumns(t) };
+      const count = movingCards(t, from, index)!.length;
+      return { kind: 'too-many', count, most: moveLimit(t, to), cells: freeCellsLeft(t), empty: emptyColumns(t) };
     }
   }
   return { kind: 'no-place' };

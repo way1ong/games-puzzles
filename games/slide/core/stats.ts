@@ -2,7 +2,7 @@
 // solved without help, the fewest moves; "Clear the way" and "The chest" — levels in a row and each difficulty of free
 // play: solved, without help, in the fewest moves without help. The days of each mode's puzzle of the day are kept by
 // the screen's storage (a list of dates), their runs counted here. Pure, no DOM.
-import { DIFFICULTIES, type Difficulty } from '../config.ts';
+import { DIFFICULTIES, FIFTEEN_KINDS, type Difficulty, type FifteenKind } from '../config.ts';
 import { clean, perfect, type SlidePlay } from './play.ts';
 
 export interface FifteenStats {
@@ -31,7 +31,7 @@ export interface WaysStats {
 }
 
 export interface SlideStats {
-  fifteen: Record<Difficulty, FifteenStats>;
+  fifteen: Record<FifteenKind, FifteenStats>;
   unblock: WaysStats;
   box: WaysStats;
 }
@@ -41,7 +41,7 @@ const each = <T>(make: () => T) => Object.fromEntries(DIFFICULTIES.map((d) => [d
 const emptyWays = (): WaysStats => ({ levels: { played: 0, won: 0, clean: 0, perfect: 0 }, free: each(() => ({ played: 0, won: 0, clean: 0, perfect: 0 })) });
 
 export const emptyStats = (): SlideStats => ({
-  fifteen: each(() => ({ played: 0, won: 0, clean: 0, bestMoves: null })),
+  fifteen: Object.fromEntries(FIFTEEN_KINDS.map((k) => [k, { played: 0, won: 0, clean: 0, bestMoves: null }])) as Record<FifteenKind, FifteenStats>,
   unblock: emptyWays(),
   box: emptyWays(),
 });
@@ -49,8 +49,11 @@ export const emptyStats = (): SlideStats => ({
 /** A free game begun and left for a new one. */
 export function recordLeft(stats: SlideStats, play: SlidePlay): SlideStats {
   if (play.way !== 'free' || !play.difficulty) return stats;
+  if (play.mode === 'fifteen') {
+    const k = play.difficulty;
+    return { ...stats, fifteen: { ...stats.fifteen, [k]: { ...stats.fifteen[k], played: stats.fifteen[k].played + 1 } } };
+  }
   const d = play.difficulty;
-  if (play.mode === 'fifteen') return { ...stats, fifteen: { ...stats.fifteen, [d]: { ...stats.fifteen[d], played: stats.fifteen[d].played + 1 } } };
   const part = stats[play.mode];
   return { ...stats, [play.mode]: { ...part, free: { ...part.free, [d]: { ...part.free[d], played: part.free[d].played + 1 } } } };
 }

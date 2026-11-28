@@ -40,7 +40,23 @@
     "stationOfficeDay": "The ticket office and the clock by day",
     "stationOfficeNight": "The ticket office and the clock at night",
     "stationBenchesDay": "The benches by day",
-    "stationBenchesNight": "The benches at night"
+    "stationBenchesNight": "The benches at night",
+    "cafeDay": "The café by day",
+    "cafeNight": "The café at night",
+    "cafeCounterDay": "The counter and the coffee machine by day",
+    "cafeCounterNight": "The counter and the coffee machine at night",
+    "cafeWindowDay": "The café window by day",
+    "cafeWindowNight": "The café window at night",
+    "cafePianoDay": "The piano by day",
+    "cafePianoNight": "The piano at night",
+    "postDay": "The post office by day",
+    "postNight": "The post office at night",
+    "postPigeonholesDay": "The pigeonholes by day",
+    "postPigeonholesNight": "The pigeonholes at night",
+    "postDoorDay": "The door and the poster by day",
+    "postDoorNight": "The door and the poster at night",
+    "postCounterDay": "The counter windows by day",
+    "postCounterNight": "The counter windows at night"
   },
   "home": {
     "daily": "Puzzle of the day",
@@ -68,7 +84,9 @@
     "rooms": {
       "study": "The detective’s study",
       "bakery": "The bakery",
-      "station": "The railway station"
+      "station": "The railway station",
+      "cafe": "The café",
+      "post": "The post office"
     }
   },
   "game": {

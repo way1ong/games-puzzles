@@ -2,8 +2,9 @@
 // and the end. Help has no limit — every move can be taken back by hand anyway — but it is counted. Pure: every
 // function returns a new game, or null when the action cannot be made.
 import { seedFromText } from '../../../shared/core/rng.ts';
-import { SLIDE, type Difficulty, type Theme } from '../config.ts';
+import { SLIDE, type Difficulty, type FifteenKind, type Theme } from '../config.ts';
 import { cellsOf as boxCellsOf, isOut as chestOut, parseBox, sizeOf as shapeSize, slideBlock, type BoxMove } from './box.ts';
+import { fewestMoves } from './fifteen-solve.ts';
 import { canBeSolved, isSolved, lineToGap, slide, sizeOf, type Tiles } from './fifteen.ts';
 import { pick, themeOf } from './level.ts';
 import type { PoolPuzzle } from './pool.ts';
@@ -14,8 +15,6 @@ export type Way = 'free' | 'daily' | 'level';
 
 interface PlayBase {
   way: Way;
-  /** Free play: the difficulty. */
-  difficulty: Difficulty | null;
   /** The puzzle of the day: its date ("YYYY-MM-DD"). */
   daily: string | null;
   seed: number;
@@ -28,7 +27,14 @@ interface PlayBase {
 
 export interface FifteenPlay extends PlayBase {
   mode: 'fifteen';
+  /** Free play: the size chosen. */
+  difficulty: FifteenKind | null;
   size: number;
+  /**
+   * The fewest moves from the start, where the game can count them exactly (3 x 3: decision of 28.11 — the player's moves
+   * beside the fewest); null — a larger board.
+   */
+  fewest: number | null;
   /** The picture the tiles show when the player chooses a picture (one of the game's pictures). */
   picture: number;
   start: number[];
@@ -41,6 +47,8 @@ export interface FifteenPlay extends PlayBase {
 
 export interface UnblockPlay extends PlayBase {
   mode: 'unblock';
+  /** Free play: the difficulty. */
+  difficulty: Difficulty | null;
   /** Levels in a row: the level. */
   level: number | null;
   theme: Theme;
@@ -55,6 +63,8 @@ export interface UnblockPlay extends PlayBase {
 
 export interface BoxPlay extends PlayBase {
   mode: 'box';
+  /** Free play: the difficulty. */
+  difficulty: Difficulty | null;
   /** Levels in a row: the level. */
   level: number | null;
   /** The puzzle as in the set: the start. */
@@ -69,9 +79,8 @@ export interface BoxPlay extends PlayBase {
 
 export type SlidePlay = FifteenPlay | UnblockPlay | BoxPlay;
 
-const base = (way: Way, seed: number, where: { difficulty?: Difficulty; daily?: string }) => ({
+const base = (way: Way, seed: number, where: { daily?: string }) => ({
   way,
-  difficulty: where.difficulty ?? null,
   daily: where.daily ?? null,
   seed,
   undos: 0,
@@ -81,12 +90,17 @@ const base = (way: Way, seed: number, where: { difficulty?: Difficulty; daily?: 
   done: false,
 });
 
+/** The fewest moves of a fifteen from its start, where they can be counted exactly (3 x 3); else null. */
+export const fifteenFewest = (start: Tiles): number | null => (sizeOf(start) === 3 ? fewestMoves(start) : null);
+
 /** A fifteen from its shuffle; the picture is drawn from the seed among `pictures`. */
-export function newFifteen(tiles: Tiles, way: Exclude<Way, 'level'>, seed: number, pictures: number, where: { difficulty?: Difficulty; daily?: string } = {}): FifteenPlay {
+export function newFifteen(tiles: Tiles, way: Exclude<Way, 'level'>, seed: number, pictures: number, where: { difficulty?: FifteenKind; daily?: string } = {}): FifteenPlay {
   return {
     ...base(way, seed, where),
     mode: 'fifteen',
+    difficulty: where.difficulty ?? null,
     size: sizeOf(tiles),
+    fewest: fifteenFewest(tiles),
     picture: pick(seedFromText(`way1ong-slide:picture:${seed}`), pictures),
     start: tiles.slice(),
     tiles: tiles.slice(),
@@ -99,6 +113,7 @@ export function newUnblock(puzzle: PoolPuzzle, way: Way, seed: number, where: { 
   return {
     ...base(way, seed, where),
     mode: 'unblock',
+    difficulty: where.difficulty ?? null,
     level: where.level ?? null,
     theme: themeOf(seed),
     board: puzzle.text,
@@ -112,6 +127,7 @@ export function newBox(puzzle: PoolPuzzle, way: Way, seed: number, where: { leve
   return {
     ...base(way, seed, where),
     mode: 'box',
+    difficulty: where.difficulty ?? null,
     level: where.level ?? null,
     board: puzzle.text,
     fewest: puzzle.moves,
@@ -187,8 +203,11 @@ export function addTime<P extends SlidePlay>(play: P, ms: number): P {
 /** Solved without help: nothing taken back, no hint. */
 export const clean = (play: SlidePlay): boolean => play.undos === 0 && play.hints === 0;
 
-/** "Clear the way" or "The chest" solved without help in the fewest moves. */
-export const perfect = (play: UnblockPlay | BoxPlay): boolean => play.done && clean(play) && play.history.length === play.fewest;
+/** The fewest moves from the start, if the game knows them ("Clear the way", "The chest", a 3 x 3 fifteen). */
+export const fewestOf = (play: SlidePlay): number | null => play.fewest;
+
+/** Solved without help in the fewest moves (where the game knows them). */
+export const perfect = (play: SlidePlay): boolean => play.done && clean(play) && play.fewest !== null && movesMade(play) === play.fewest;
 
 /** Begun: a move made, or the puzzle started again. */
 export const started = (play: SlidePlay): boolean => play.history.length > 0 || play.restarts > 0 || play.hints > 0;
@@ -198,6 +217,7 @@ export function validPlay(play: SlidePlay): boolean {
   try {
     if (play.mode === 'fifteen') {
       const n = play.size * play.size;
+      if (play.fewest !== fifteenFewest(play.start)) return false;
       const isBoard = (t: readonly number[]) => t.length === n && [...t].sort((a, b) => a - b).every((v, i) => v === i);
       if (!isBoard(play.start) || !isBoard(play.tiles) || !canBeSolved(play.start)) return false;
       let tiles: number[] = play.tiles.slice();
