@@ -1,0 +1,171 @@
+{
+  "meta": {
+    "langName": "English",
+    "title": "Jigsaw — jigsaw puzzles without ads",
+    "description": "Jigsaw puzzles of 24, 54 and 96 pieces made from the rooms of the game Detective, and a puzzle of the day. No ads, no tracking, no accounts; works without the internet."
+  },
+  "app": {
+    "name": "Jigsaw",
+    "menu": "Menu",
+    "back": "Back",
+    "close": "Close"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "pictures": {
+    "studyDay": "The detective’s study by day",
+    "studyNight": "The detective’s study at night",
+    "bakeryDay": "The bakery by day",
+    "bakeryNight": "The bakery at night",
+    "stationDay": "The railway station by day",
+    "stationNight": "The railway station at night"
+  },
+  "home": {
+    "daily": "Puzzle of the day",
+    "dailyOn": "{date} · the same for everyone",
+    "free": "Free play",
+    "freeNote": "Choose a size, then a picture",
+    "pieces": {
+      "one": "{n} piece",
+      "other": "{n} pieces"
+    },
+    "play": "Play",
+    "continue": "Continue",
+    "begin": "Start",
+    "started": "Continue",
+    "done": "Done",
+    "streak": {
+      "one": "{n} day in a row",
+      "other": "{n} days in a row"
+    }
+  },
+  "choose": {
+    "title": "Choose a picture",
+    "any": "Any picture",
+    "anyNote": "chosen at random"
+  },
+  "game": {
+    "daily": "Puzzle of the day",
+    "count": "{n} of {total}",
+    "tip": "Drag a piece to its place on the board — or tap a piece, then its place.",
+    "taken": "Now tap its place on the board.",
+    "notHere": "Not here.",
+    "placed": "In its place.",
+    "pickFirst": "First choose a piece in the tray.",
+    "hint": "Hint: the marked piece goes to the marked place (row {r}, column {c}).",
+    "newSure": "Tap “New” once more: this puzzle will be left.",
+    "done": "Done! The picture is whole."
+  },
+  "tools": {
+    "label": "Buttons",
+    "hint": "Hint",
+    "put": "Put it",
+    "picture": "Picture",
+    "zoom": "Zoom in",
+    "whole": "Whole board",
+    "new": "New"
+  },
+  "tray": {
+    "label": "Tray of pieces",
+    "prev": "Previous pieces",
+    "next": "Next pieces",
+    "page": "{n} / {total}"
+  },
+  "board": {
+    "label": "Board",
+    "place": "Row {r}, column {c}",
+    "full": "a piece in place",
+    "hint": "the hint’s place",
+    "picture": "The whole picture"
+  },
+  "piece": {
+    "name": "Piece {n}",
+    "corner": {
+      "tl": "corner, top left",
+      "tr": "corner, top right",
+      "bl": "corner, bottom left",
+      "br": "corner, bottom right"
+    },
+    "edge": {
+      "top": "edge, top",
+      "right": "edge, right",
+      "bottom": "edge, bottom",
+      "left": "edge, left"
+    },
+    "inner": "from the middle",
+    "taken": "taken",
+    "hint": "the hint"
+  },
+  "end": {
+    "done": "Done!",
+    "hints": {
+      "one": "{n} hint",
+      "other": "{n} hints"
+    },
+    "clean": "Without hints",
+    "time": "Time: {time}",
+    "streak": {
+      "one": "{title}: {n} day in a row",
+      "other": "{title}: {n} days in a row"
+    },
+    "new": "New puzzle",
+    "home": "To the start",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "share": "{name} · {date}: puzzle of the day put together, {pieces}",
+    "shareClean": "{name} · {date}: puzzle of the day put together without hints, {pieces}",
+    "shareTime": "{text}, {time}"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "play": "Playing",
+    "ghost": "Pale picture on the board",
+    "ghostNote": "It shows what goes where — that is easier. Without it the board is empty, as with real jigsaws.",
+    "time": "Show the time",
+    "vibration": "Vibration when a puzzle is done",
+    "look": "Look",
+    "big": "Large view",
+    "leftHand": "Tray and buttons left of the board when the phone lies on its side",
+    "theme": "Theme",
+    "themeSystem": "As the system",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "install": "Install the game",
+    "installIos": "On iPhone or iPad: tap “Share”, then “Add to Home Screen”.",
+    "reset": "Clear progress",
+    "resetSure": "Tap again to clear the puzzles begun, the days’ results and statistics",
+    "resetDone": "Progress cleared"
+  },
+  "stats": {
+    "title": "Statistics",
+    "size": "Size",
+    "played": "Played",
+    "won": "Done",
+    "clean": "No hints",
+    "best": "Fastest",
+    "none": "—",
+    "longest": {
+      "one": "{title} — longest streak: {n} day",
+      "other": "{title} — longest streak: {n} days"
+    },
+    "note": "No hints — put together without a single hint; fastest — the shortest time."
+  },
+  "about": {
+    "title": "About the game",
+    "how": "Drag a piece from the tray to its place on the board, or tap a piece and then its place. Near its own place a piece snaps in and stays; anywhere else it goes back to the tray. The tray starts with the corner and edge pieces. The pictures are rooms from the game Detective; the things in them lie somewhere else every time.",
+    "zoom": "A big board can be zoomed in: the “Zoom in” button, two fingers, Ctrl with the mouse wheel, or the keys + and −; one finger or the wheel moves it.",
+    "text": "No ads, no tracking, no accounts. Everything stays on this device; after the first visit the game works without the internet.",
+    "keys": "Keys: in the tray, arrows go between pieces and Enter or Space takes one; then arrows go over the board’s places, Enter puts the piece and Esc gives it back; H — hint; + and − — zoom.",
+    "credit": "Made by way1ong"
+  },
+  "update": {
+    "title": "A new version of the game is ready",
+    "text": "The game will open again where you left off.",
+    "apply": "Update",
+    "later": "Later"
+  }
+}

@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 /** Page name in the claude.ai gallery: the game's working name (docs/DECISIONS.md). */
-const TITLES = { blocks: 'way1ong Blocks', detective: 'way1ong Detective', mines: 'way1ong Mines', nonograms: 'way1ong Nonograms', pairs: 'way1ong Pairs', pour: 'way1ong Pour', slide: 'way1ong Slide', solitaire: 'way1ong Solitaire', sudoku: 'way1ong Sudoku', words: 'way1ong Words' };
+const TITLES = { blocks: 'way1ong Blocks', detective: 'way1ong Detective', jigsaw: 'way1ong Jigsaw', mines: 'way1ong Mines', nonograms: 'way1ong Nonograms', pairs: 'way1ong Pairs', pour: 'way1ong Pour', slide: 'way1ong Slide', solitaire: 'way1ong Solitaire', sudoku: 'way1ong Sudoku', words: 'way1ong Words' };
 const games = process.argv.length > 2 ? process.argv.slice(2) : Object.keys(TITLES);
 
 for (const game of games) {
