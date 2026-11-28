@@ -11,8 +11,8 @@ export type PieceKind = 'own' | 'short' | 'long';
 /** The frame around the cells, in cells (C). */
 export const FRAME = 0.26;
 
-const r2 = (n: number) => Math.round(n * 1000) / 1000;
-const svgOpen = (w: number, h: number, cls: string) =>
+export const r2 = (n: number) => Math.round(n * 1000) / 1000;
+export const svgOpen = (w: number, h: number, cls: string) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${r2(w)} ${r2(h)}" class="${cls}" aria-hidden="true" focusable="false" preserveAspectRatio="none">`;
 
 /** An arrow toward the right, in a box of the given size: the mark of the player's piece. */

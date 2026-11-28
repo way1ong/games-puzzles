@@ -19,7 +19,8 @@
     "check:live": "node scripts/check-live.mjs",
     "words:fetch": "node --experimental-strip-types --no-warnings scripts/words/fetch.ts",
     "words:build": "node --experimental-strip-types --no-warnings --max-old-space-size=4096 scripts/words/build.ts",
-    "slide:pool": "node --experimental-strip-types --no-warnings scripts/slide/pool.ts"
+    "slide:pool": "node --experimental-strip-types --no-warnings scripts/slide/pool.ts",
+    "slide:box-pool": "node --experimental-strip-types --no-warnings scripts/slide/box-pool.ts"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

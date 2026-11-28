@@ -16,6 +16,9 @@ const NUMBER_H = 1.2;
 const PAD = 0.5;
 /** The page's rem when the player's text size is the browser's own: cell sizes grow with larger text. */
 const BASE_REM = 16;
+/** Numbers that may be long (a colour picture's: a run for every change of colour): the most of the room's width or
+ * height their strip takes before their font shrinks, down to the least font (C). */
+const SHRINK_SHARE = 0.4;
 
 export interface Room {
   w: number;
@@ -23,10 +26,11 @@ export interface Room {
 }
 
 /** The numbers' room: across, the widest row's numbers in fonts (rowWidth); down, the most numbers a column has
- * (at least one: "0"). */
+ * (at least one: "0"). `shrink`: their font may shrink to leave the grid room (a colour picture's numbers). */
 export interface Counts {
   rows: number;
   cols: number;
+  shrink?: boolean;
 }
 
 /** How wide a row's numbers are, in fonts ("0" for a row with none). */
@@ -53,7 +57,13 @@ export interface Measures {
 }
 
 export function measures(size: number, counts: Counts, room: Room, cell: number, rem: number): Measures {
-  const font = Math.min(FONT_MAX_REM * rem, Math.max(FONT_MIN_REM * rem, cell * FONT_PER_CELL));
+  let font = Math.min(FONT_MAX_REM * rem, Math.max(FONT_MIN_REM * rem, cell * FONT_PER_CELL));
+  if (counts.shrink) {
+    // each strip within its share of the room, as far as the least font allows
+    const across = (room.w * SHRINK_SHARE) / (counts.rows + PAD);
+    const down = (room.h * SHRINK_SHARE) / (counts.cols * NUMBER_H + PAD);
+    font = Math.max(FONT_MIN_REM * rem, Math.min(font, across, down));
+  }
   const numberW = font * NUMBER_W.one;
   const numberW2 = font * NUMBER_W.two;
   const numberH = font * NUMBER_H;

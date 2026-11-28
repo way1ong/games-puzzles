@@ -1,8 +1,9 @@
 // The course of a game (docs/pour/SPEC.md): pours, "Undo", "One more bottle", "Start again", the help a level
 // allows (decision of 27.11: without limits by default, limited in the menu), the time and the end. Pure: every
 // function returns a new game, or null when the action cannot be made.
-import { POUR, type Difficulty, type HelpRule } from '../config.ts';
+import { POUR, type HelpRule, type Kind } from '../config.ts';
 import { isSolved, isWhole, pour, pourAmount, type Bottle, type Bottles, type Move } from './bottles.ts';
+import type { CustomSize } from './custom.ts';
 import type { Deal } from './level.ts';
 import { placeKey } from './solve.ts';
 
@@ -19,8 +20,10 @@ export interface PourPlay {
   way: Way;
   /** Levels in a row: the level. */
   level: number | null;
-  /** Free play: the difficulty. */
-  difficulty: Difficulty | null;
+  /** Free play: the difficulty, or "custom" — the player's own size. */
+  difficulty: Kind | null;
+  /** The player's own size: its colours and empty bottles; null on every other kind of game. */
+  size: CustomSize | null;
   /** The level of the day: its date. */
   daily: string | null;
   seed: number;
@@ -43,11 +46,12 @@ export interface PourPlay {
   done: boolean;
 }
 
-export function newPlay(deal: Deal, way: Way, where: { level?: number; difficulty?: Difficulty; daily?: string } = {}): PourPlay {
+export function newPlay(deal: Deal, way: Way, where: { level?: number; difficulty?: Kind; daily?: string; size?: CustomSize } = {}): PourPlay {
   return {
     way,
     level: where.level ?? null,
     difficulty: where.difficulty ?? null,
+    size: where.size ?? null,
     daily: where.daily ?? null,
     seed: deal.seed,
     colours: deal.colours,

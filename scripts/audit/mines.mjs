@@ -1,8 +1,8 @@
 // Browser audit of Mines: every size and look — the start screen, an easy field (how to play), a cell opened and one
 // flagged, a hint and what it does, a mine ("start over"), the menu with the widest settings (flowers, the player's
 // first place, undoing the move onto a mine, wrong flags at once, the time, the large mode, the left hand), the hard
-// field before and after its first place, a field of the day; phones on their side; large system text; the keyboard;
-// a field to the end by the hints.
+// field before and after its first place, the player's own size (its choice and a field of it), a field of the day;
+// phones on their side; large system text; the keyboard; a field to the end by the hints.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -163,12 +163,32 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await page.mouse.click(first.x, first.y);
       await page.waitForSelector('.cell.is-open', { timeout: 30000 });
       await check(page, `${label} hard, the first place chosen`);
+      // the player's own size: its choice (− and +), a field of it (its first place chosen, as set above)
+      await page.goto(`${base}#custom-size`);
+      await page.waitForSelector('.stepper');
+      await check(page, `${label} own size, the choice`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-own-size`);
+      await page.locator('.stepper__btn').nth(1).click();
+      await page.locator('.stepper__btn').nth(5).click();
+      const chosen = await page.locator('.stepper__value').allTextContents();
+      await page.locator('.custom__play').click();
+      await page.waitForSelector('.cell');
+      const own = await saved(page, 'play:custom');
+      if (!own || own.size?.width !== Number(chosen[0]) || own.size?.mines !== Number(chosen[2])) fail(`mines ${label}: the field is not of the size chosen (${chosen.join(', ')}; ${JSON.stringify(own?.size)})`);
+      const centre = await page.evaluate(() => {
+        const r = document.querySelector('.board__clip').getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      });
+      await page.mouse.click(centre.x, centre.y);
+      await page.waitForSelector('.cell.is-open', { timeout: 30000 });
+      await check(page, `${label} own size, a field`);
       // back to the start (else the game opens where the player stopped)
       await page.evaluate((s) => localStorage.removeItem(`${s}last`), STORE);
       await settled(page);
       await page.goto(base);
       await page.waitForSelector('.pick');
-      await page.locator('.pick').nth(4).click();
+      // the rows: three levels, the player's own size, then the fields of the day
+      await page.locator('.pick').nth(5).click();
       await page.waitForSelector('.cell.is-open', { timeout: 30000 });
       await check(page, `${label} medium field of the day`);
       await ctx.close();

@@ -1,8 +1,8 @@
 {
   "meta": {
     "langName": "Magyar",
-    "title": "Tologató – tizenötös és Szabad utat! reklám nélkül",
-    "description": "Két tologatós fejtörő: a tizenötös – tegye sorba a lapokat, vagy rakja ki a képet – és a Szabad utat! – tolja félre az akadályokat, hogy a csónak, a kanapé vagy a piros rúd kijusson. Reklám, követés és fiók nélkül; internet nélkül is működik."
+    "title": "Tologató – tizenötös, Szabad utat! és Ládika reklám nélkül",
+    "description": "Három tologatós fejtörő: a tizenötös – tegye sorba a lapokat, vagy rakja ki a képet; a Szabad utat! – tolja félre az akadályokat, hogy a csónak, a kanapé vagy a piros rúd kijusson; és a Ládika – tologassa a fahasábokat, hogy a ládika kijusson a résen. Reklám, követés és fiók nélkül; internet nélkül is működik."
   },
   "app": {
     "name": "Tologató",
@@ -17,11 +17,13 @@
   },
   "mode": {
     "fifteen": "Tizenötös",
-    "unblock": "Szabad utat!"
+    "unblock": "Szabad utat!",
+    "box": "Ládika"
   },
   "home": {
     "fifteenNote": "Tegye sorba a lapokat, vagy rakja ki a képet",
     "unblockNote": "Tolja félre az akadályokat, és vezesse ki a sajátját",
+    "boxNote": "Tologassa a fahasábokat, és juttassa ki a ládikát a résen",
     "size": "{n} × {n}",
     "play": "Játék",
     "continue": "Folytatás",
@@ -40,6 +42,7 @@
     },
     "dailyFifteen": "A nap tizenötöse",
     "dailyUnblock": "A nap szintje",
+    "dailyBox": "A nap ládikája",
     "dailyOn": "{date} · ma mindenkinek ugyanaz",
     "begin": "Kezdés",
     "started": "Folytatás",
@@ -54,6 +57,7 @@
     "dailyFifteen": "A nap tizenötöse",
     "level": "{n}. szint",
     "dailyUnblock": "A nap szintje",
+    "dailyBox": "A nap ládikája",
     "moves": {
       "one": "{n} lépés",
       "other": "{n} lépés"
@@ -67,9 +71,12 @@
     "tipHarbour": "Tologassa a hajókat a hosszuk mentén, és vezesse ki a nyilas csónakot a tengerre, jobbra.",
     "tipRoom": "Tologassa a bútorokat a hosszuk mentén, és vigye ki a nyilas kanapét az ajtón, jobbra.",
     "tipBox": "Tologassa a rudakat a hosszuk mentén, és vezesse ki a nyilas piros rudat a résen, jobbra.",
+    "tipChest": "Tologassa a hasábokat fel, le vagy oldalra; vigye a ládikát a lenti réshez – fölötte kijut.",
     "notInLine": "Ez a lap nincs az üres hely sorában vagy oszlopában.",
     "cannotMove": "Ezt most nem lehet elmozdítani: mindkét végén akadály van.",
+    "cannotMoveBox": "Ezt most nem lehet elmozdítani: egyik oldalán sincs hely.",
     "taken": "Most koppintson egy szabad mezőre a vonalán, vagy mozgassa a nyilakkal.",
+    "takenBox": "Most koppintson egy szabad mezőre ugyanabban a sorban vagy oszlopban, vagy mozgassa a nyilakkal.",
     "put": "Letéve.",
     "moved": "Áthelyezve.",
     "undone": "Lépés visszavonva.",
@@ -86,7 +93,8 @@
       "down": "le"
     },
     "solved": "Kész! A lapok sorban vannak.",
-    "out": "Szabad az út!"
+    "out": "Szabad az út!",
+    "chestOut": "Kijutott a ládika!"
   },
   "tools": {
     "label": "Gombok",
@@ -114,17 +122,27 @@
       "long": "egy hosszú rúd"
     }
   },
+  "blocks": {
+    "chest": "a ládika",
+    "single": "egy kocka",
+    "lying": "egy hasáb",
+    "standing": "egy hasáb"
+  },
   "board": {
     "fifteen": "A lapok táblája",
     "unblock": "A darabok táblája",
+    "box": "A ládika és a fahasábok táblája",
     "tile": "Lap: {n}",
     "gap": "Üres hely",
     "at": "{r}. sor, {c}. oszlop",
     "lying": "{name}, fekszik: {r}. sor, {from}–{to}. oszlop",
     "standing": "{name}, áll: {c}. oszlop, {from}–{to}. sor",
+    "single": "{name}: {r}. sor, {c}. oszlop",
+    "chestAt": "{name}: {r}–{r2}. sor, {c}–{c2}. oszlop",
     "taken": "felvéve",
     "hint": "tipp",
     "exit": "A kijárat: a {r}. sor jobb végén",
+    "slot": "A rés: az alsó oldalon, a(z) {from}–{to}. oszlopban",
     "picture": "A teljes kép",
     "goal": "A cél: a lapok sorban, az 1-es a bal felső sarokban, az üres hely jobbra lent",
     "home": "a helyén"
@@ -132,6 +150,7 @@
   "end": {
     "solved": "Kész!",
     "out": "Szabad az út!",
+    "chestOut": "Kijutott a ládika!",
     "moves": {
       "one": "{n} lépés",
       "other": "{n} lépés"
@@ -163,7 +182,9 @@
     "shareFifteen": "{name} · {date}: a nap tizenötöse kirakva, {moves} lépéssel",
     "shareFifteenClean": "{name} · {date}: a nap tizenötöse kirakva segítség nélkül, {moves} lépéssel",
     "shareUnblock": "{name} · {date}: a nap szintje megoldva, {moves} lépéssel (legkevesebb: {fewest})",
-    "shareUnblockClean": "{name} · {date}: a nap szintje megoldva segítség nélkül, {moves} lépéssel (legkevesebb: {fewest})"
+    "shareUnblockClean": "{name} · {date}: a nap szintje megoldva segítség nélkül, {moves} lépéssel (legkevesebb: {fewest})",
+    "shareBox": "{name} · {date}: a nap ládikája kijutott, {moves} lépéssel (legkevesebb: {fewest})",
+    "shareBoxClean": "{name} · {date}: a nap ládikája kijutott segítség nélkül, {moves} lépéssel (legkevesebb: {fewest})"
   },
   "settings": {
     "title": "Beállítások",
@@ -211,9 +232,11 @@
     "title": "A játékról",
     "fifteen": "Tizenötös: koppintson egy lapra az üres hely sorában vagy oszlopában, és a köztük lévő lapokkal együtt az üres helyre csúszik. A cél: a lapok sorban – az 1-es a bal felső sarokban, utána jobbra és lefelé, az üres hely jobbra lent (A cél gomb megmutatja) –, vagy az egész kép. A helyén lévő lapon ✓ van. Minden tábla kirakható.",
     "unblock": "Szabad utat!: egy darab csak a hossza mentén mozog, ameddig szabad. Tologassa félre a darabokat, hogy a sajátja (a nyilas) kijusson a jobb oldali kijáraton. Egy lépés: egy darab elmozdítása bármekkora távolságra. Minden feladvány megoldható, és a játék tudja a legkevesebb lépést.",
+    "box": "Ládika: a ládika és a fahasábok fel, le, balra vagy jobbra mozognak, ameddig szabad. Tologassa a fahasábokat, hogy a ládika eljusson az alsó oldal közepén lévő réshez: amint a rés fölé ér, kijut. Egy lépés: egy darab elmozdítása egy vagy több mezővel, egy irányban. Minden feladvány megoldható, és a játék tudja a legkevesebb lépést.",
     "text": "Reklám, követés és fiók nélkül. Minden csak ezen az eszközön marad; az első megnyitás után a játék internet nélkül is működik.",
     "keysFifteen": "Billentyűk a tizenötösben: nyilak – a lapok között, Enter vagy szóköz – eltolás, H – tipp, Ctrl+Z – visszavonás.",
     "keysUnblock": "Billentyűk a Szabad utat! játékban: nyilak – a darabok között, Enter – a darab felvétele, utána a nyilak mozgatják, Enter vagy Esc – letétel; H – tipp, Ctrl+Z – visszavonás.",
+    "keysBox": "Billentyűk a Ládikában: nyilak – a darabok között, Enter – a darab felvétele, utána a nyilak egy mezővel mozgatják, Enter vagy Esc – letétel; H – tipp, Ctrl+Z – visszavonás.",
     "credit": "Készítette: way1ong"
   },
   "update": {

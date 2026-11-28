@@ -15,8 +15,8 @@ export type Stats = Record<Size, SizeStats>;
 
 export const emptyStats = (): Stats => Object.fromEntries(SIZES.map((s) => [s, { solved: 0, hints: 0, bestMs: null }])) as Stats;
 
-/** A solved picture counted in. */
-export function recordSolved(stats: Stats, play: Play): Stats {
+/** A solved picture counted in (black and white or in colour: their statistics are kept apart). */
+export function recordSolved(stats: Stats, play: Pick<Play, 'size' | 'hints' | 'ms'>): Stats {
   const now = stats[play.size];
   const best = now.bestMs === null ? play.ms : Math.min(now.bestMs, play.ms);
   return { ...stats, [play.size]: { solved: now.solved + 1, hints: now.hints + play.hints, bestMs: play.ms > 0 ? best : now.bestMs } };

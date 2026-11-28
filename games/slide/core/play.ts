@@ -1,8 +1,9 @@
-// The course of a game in both modes (docs/slide/SPEC.md): slides and moves, "Undo", hints, "Start again", the time
+// The course of a game in every mode (docs/slide/SPEC.md): slides and moves, "Undo", hints, "Start again", the time
 // and the end. Help has no limit — every move can be taken back by hand anyway — but it is counted. Pure: every
 // function returns a new game, or null when the action cannot be made.
 import { seedFromText } from '../../../shared/core/rng.ts';
-import { type Difficulty, type Theme } from '../config.ts';
+import { SLIDE, type Difficulty, type Theme } from '../config.ts';
+import { cellsOf as boxCellsOf, isOut as chestOut, parseBox, sizeOf as shapeSize, slideBlock, type BoxMove } from './box.ts';
 import { canBeSolved, isSolved, lineToGap, slide, sizeOf, type Tiles } from './fifteen.ts';
 import { pick, themeOf } from './level.ts';
 import type { PoolPuzzle } from './pool.ts';
@@ -52,7 +53,21 @@ export interface UnblockPlay extends PlayBase {
   history: { piece: number; from: number }[];
 }
 
-export type SlidePlay = FifteenPlay | UnblockPlay;
+export interface BoxPlay extends PlayBase {
+  mode: 'box';
+  /** Levels in a row: the level. */
+  level: number | null;
+  /** The puzzle as in the set: the start. */
+  board: string;
+  /** The fewest moves from the start until the chest is out. */
+  fewest: number;
+  /** Each piece's top left cell (box.ts), in the order of the board's letters. */
+  places: number[];
+  /** Before each move: the piece moved and where it was. */
+  history: { piece: number; from: number }[];
+}
+
+export type SlidePlay = FifteenPlay | UnblockPlay | BoxPlay;
 
 const base = (way: Way, seed: number, where: { difficulty?: Difficulty; daily?: string }) => ({
   way,
@@ -93,6 +108,18 @@ export function newUnblock(puzzle: PoolPuzzle, way: Way, seed: number, where: { 
   };
 }
 
+export function newBox(puzzle: PoolPuzzle, way: Way, seed: number, where: { level?: number; difficulty?: Difficulty; daily?: string } = {}): BoxPlay {
+  return {
+    ...base(way, seed, where),
+    mode: 'box',
+    level: where.level ?? null,
+    board: puzzle.text,
+    fewest: puzzle.moves,
+    places: parseBox(puzzle.text).spots,
+    history: [],
+  };
+}
+
 /** The moves of the game so far: tiles slid, or pieces moved. */
 export function movesMade(play: SlidePlay): number {
   return play.mode === 'fifteen' ? play.moves : play.history.length;
@@ -116,6 +143,15 @@ export function movePiece(play: UnblockPlay, move: Move): UnblockPlay | null {
   return { ...play, places, history: [...play.history, { piece: move.piece, from: play.places[move.piece]! }], done: isOut(puzzle, places) };
 }
 
+/** Moves a piece of "The chest": one way, any number of cells; the chest over the slot — the end. */
+export function moveBlock(play: BoxPlay, move: BoxMove): BoxPlay | null {
+  if (play.done) return null;
+  const { puzzle } = parseBox(play.board);
+  const places = slideBlock(puzzle, play.places, move);
+  if (!places) return null;
+  return { ...play, places, history: [...play.history, { piece: move.piece, from: play.places[move.piece]! }], done: chestOut(puzzle, places) };
+}
+
 /** Takes the last slide or move back (counted as help). */
 export function undo<P extends SlidePlay>(play: P): P | null {
   if (play.done || !play.history.length) return null;
@@ -135,7 +171,8 @@ export function undo<P extends SlidePlay>(play: P): P | null {
 export function startAgain<P extends SlidePlay>(play: P): P | null {
   if (play.done || !play.history.length) return null;
   if (play.mode === 'fifteen') return { ...play, tiles: play.start.slice(), history: [], moves: 0, restarts: play.restarts + 1 };
-  return { ...play, places: parseBoard(play.board).places, history: [], restarts: play.restarts + 1 };
+  const places = play.mode === 'box' ? parseBox(play.board).spots : parseBoard(play.board).places;
+  return { ...play, places, history: [], restarts: play.restarts + 1 };
 }
 
 /** A hint was shown (counted when given). */
@@ -150,8 +187,8 @@ export function addTime<P extends SlidePlay>(play: P, ms: number): P {
 /** Solved without help: nothing taken back, no hint. */
 export const clean = (play: SlidePlay): boolean => play.undos === 0 && play.hints === 0;
 
-/** "Clear the way" solved without help in the fewest moves. */
-export const perfect = (play: UnblockPlay): boolean => play.done && clean(play) && play.history.length === play.fewest;
+/** "Clear the way" or "The chest" solved without help in the fewest moves. */
+export const perfect = (play: UnblockPlay | BoxPlay): boolean => play.done && clean(play) && play.history.length === play.fewest;
 
 /** Begun: a move made, or the puzzle started again. */
 export const started = (play: SlidePlay): boolean => play.history.length > 0 || play.restarts > 0 || play.hints > 0;
@@ -171,6 +208,25 @@ export function validPlay(play: SlidePlay): boolean {
         moves += step.count;
       }
       return moves === play.moves && tiles.join() === play.start.join() && play.done === isSolved(play.tiles);
+    }
+    if (play.mode === 'box') {
+      const { puzzle, spots: start } = parseBox(play.board);
+      if (play.places.length !== start.length || !Number.isInteger(play.fewest) || play.fewest < 1) return false;
+      // every piece within the frame, none over another
+      const { cols, rows } = SLIDE.box;
+      const fits = puzzle.shapes.every((shape, i) => {
+        const at = play.places[i]!;
+        const [w, h] = shapeSize(shape);
+        return Number.isInteger(at) && at >= 0 && (at % cols) + w <= cols && Math.floor(at / cols) + h <= rows;
+      });
+      if (!fits || new Set(puzzle.shapes.flatMap((shape, i) => boxCellsOf(puzzle, shape, play.places[i]!))).size !== puzzle.shapes.reduce((sum, shape) => sum + shapeSize(shape)[0] * shapeSize(shape)[1], 0)) return false;
+      let places = play.places.slice();
+      for (const step of [...play.history].reverse()) {
+        const back = slideBlock(puzzle, places, { piece: step.piece, to: step.from });
+        if (!back) return false;
+        places = back;
+      }
+      return places.join() === start.join() && play.done === chestOut(puzzle, play.places);
     }
     const { puzzle, places: start } = parseBoard(play.board);
     if (play.places.length !== start.length || !Number.isInteger(play.fewest) || play.fewest < 1) return false;

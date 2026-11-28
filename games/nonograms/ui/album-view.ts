@@ -1,11 +1,12 @@
-// A chapter of the album (docs/nonograms/SPEC.md, "Екрани"): every picture of a size, all open at once — solved ones
-// in colour with their names, begun ones with the player's cells, new ones as an empty sheet with their number.
+// A chapter of the album (docs/nonograms/SPEC.md, "Екрани"), or of its colour section ("Кольорові малюнки"): every
+// picture of a size, all open at once — solved ones in colour with their names, begun ones with the player's cells,
+// new ones as an empty sheet with their number.
 import { h } from '../../../shared/ui/dom.ts';
 import type { Picture } from '../core/picture.ts';
 import type { Mark } from '../core/play.ts';
 import type { Dict } from './i18n.ts';
 import { fmt } from './i18n.ts';
-import { pictureSvg } from './thumb.ts';
+import { pictureSvg, type Look } from './thumb.ts';
 
 export interface AlbumItem {
   picture: Picture;
@@ -14,19 +15,22 @@ export interface AlbumItem {
   marks: readonly Mark[] | null;
   /** Its number, or its name (solved, or the setting). */
   title: string;
+  /** How its drawing looks, when not as its state and the colour setting say (a picture in colour). */
+  look?: Look;
 }
 
 export function albumView(items: readonly AlbumItem[], d: Dict, colour: boolean, open: (picture: Picture) => void): HTMLElement {
   const list = h('ul', { class: 'album' });
   for (const item of items) {
     const look =
-      item.state === 'done'
+      item.look ??
+      (item.state === 'done'
         ? colour
           ? ({ kind: 'colour' } as const)
           : ({ kind: 'ink' } as const)
         : item.marks
           ? ({ kind: 'marks', marks: item.marks } as const)
-          : ({ kind: 'blank' } as const);
+          : ({ kind: 'blank' } as const));
     const state = item.state === 'done' ? d.album.solved : item.state === 'started' ? d.album.started : '';
     const b = h(
       'button',

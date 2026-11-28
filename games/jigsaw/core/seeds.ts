@@ -1,9 +1,9 @@
 // Where a puzzle's randomness comes from (docs/jigsaw/SPEC.md): one seed per puzzle — a new one for each free game,
 // the date's for the puzzle of the day — and from it a seed of its own for each part (the cut, the tray, the things in
-// the room, the picture drawn for "Any"), so the parts do not go together. Pure.
+// the room, the picture drawn for "Any", how the pieces lie turned), so the parts do not go together. Pure.
 import { nextInt, seedFromText } from '../../../shared/core/rng.ts';
 
-export type Part = 'cut' | 'tray' | 'things' | 'picture';
+export type Part = 'cut' | 'tray' | 'things' | 'picture' | 'turns';
 
 /** The seed of one part of the puzzle played from `seed`. */
 export function partSeed(seed: number, part: Part): number {

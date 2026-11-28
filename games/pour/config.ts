@@ -6,6 +6,10 @@ import { gameAddress } from '../../shared/core/address.ts';
 export const DIFFICULTIES = ['easy', 'medium', 'hard'] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
 
+/** Free play's choices: the difficulties and the player's own size (decision of 28.11). */
+export const KINDS = [...DIFFICULTIES, 'custom'] as const;
+export type Kind = (typeof KINDS)[number];
+
 /** How much help a level allows (decision of 27.11: without limits by default, limited in the menu). */
 export const HELPS = ['free', 'some', 'none'] as const;
 export type Help = (typeof HELPS)[number];
@@ -57,6 +61,23 @@ export const POUR = {
   ] satisfies Stage[],
   /** Free play: the colours of each difficulty (C). */
   difficulties: { easy: 5, medium: 8, hard: 11 } satisfies Record<Difficulty, number>,
+  /**
+   * Free play, the player's own size (decision of 28.11: "Роби"; docs/pour/SPEC.md, "Свій розмір"): colours and empty
+   * bottles with − and +, within these bounds (C); the most colours are the paints in the box. Every deal is solved
+   * before it is given, as everywhere. With one empty bottle a solvable deal is rare when there are many colours —
+   * measured 28.11 over 300 seeds: with 8 colours the first solvable one came within 179 deals and 48 ms on a
+   * computer, with 9 — within 592 and 212 ms, with 11 one seed of 50 found none in 4 000; with two or three empty
+   * bottles every deal of the sample (20 for each count of colours, 2–11) was solvable. So one empty bottle goes up to
+   * 8 colours; more colours have two at least.
+   */
+  custom: {
+    colours: { least: 3, most: 11 },
+    empty: { least: 1, most: 3 },
+    /** More colours than `above` need `empty` empty bottles at least. */
+    manyColours: { above: 8, empty: 2 },
+    /** Until the player chooses: as the medium difficulty. */
+    first: { colours: 8, empty: 2 },
+  },
   /** The level of the day: middling (C). */
   dailyColours: 8,
   /** Help in one level by the menu's choice (decision of 27.11: without limits by default) (C). */

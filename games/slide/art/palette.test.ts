@@ -1,10 +1,13 @@
-// The drawings' colours (docs/slide/SPEC.md, "Три теми навмання"; rule 6): in every look the pieces' outline reads on
-// the ground and on each piece at 3:1, the arrow reads on the player's piece, and the player's piece differs from the
-// others by colour (and always by its arrow); the drawing modules hold no colour of their own.
+// The drawings' colours (docs/slide/SPEC.md, "Три теми навмання", "Скринька"; rule 6): in every look the pieces'
+// outline reads on the ground and on each piece at 3:1, the arrow reads on the player's piece, and the player's piece
+// differs from the others by colour (and always by its arrow); in "The chest" the chest differs from the blocks by
+// colour (and by its brass fittings, which read on it), the blocks' grain reads on them, the slot's arrow on its
+// edge; the drawing modules hold no colour of their own.
 import { describe, expect, it } from 'vitest';
 import { THEMES } from '../config.ts';
+import chest from './chest.ts?raw';
 import pieces from './pieces.ts?raw';
-import { LOOKS } from './palette.ts';
+import { BOX_LOOK, LOOKS } from './palette.ts';
 
 type RGB = [number, number, number];
 const rgb = (hex: string): RGB => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)) as RGB;
@@ -49,7 +52,29 @@ describe.each(THEMES)('the look %s', (theme) => {
   });
 });
 
-it('the drawing module takes every colour from the palette', () => {
-  expect(pieces.match(/#[0-9a-f]{3,8}\b/gi)).toBeNull();
-  expect(pieces).not.toMatch(/rgb\(|hsl\(/);
+describe('the chest', () => {
+  const p = BOX_LOOK;
+
+  it('outlines every piece at 3:1 on the tray and on the piece itself; the sides of the tray stand out from it', () => {
+    expect(ratio(p.outline, p.ground)).toBeGreaterThanOrEqual(3);
+    for (const fill of [p.chest, p.block, p.blockTop]) expect(ratio(p.outline, fill), fill).toBeGreaterThanOrEqual(3);
+    expect(ratio(p.frame, p.ground)).toBeGreaterThanOrEqual(3);
+    expect(ratio(p.arrow, p.outline)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('shows the chest’s brass fittings and the blocks’ grain at 3:1', () => {
+    expect(ratio(p.brass, p.chest)).toBeGreaterThanOrEqual(3);
+    expect(ratio(p.blockLine, p.blockTop)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('tells the chest from the blocks and the tray by colour (CIE Lab distance 20 at least)', () => {
+    for (const other of [p.block, p.blockTop, p.ground]) expect(distance(p.chest, other), other).toBeGreaterThanOrEqual(20);
+  });
+});
+
+it('the drawing modules take every colour from the palette', () => {
+  for (const module of [pieces, chest]) {
+    expect(module.match(/#[0-9a-f]{3,8}\b/gi)).toBeNull();
+    expect(module).not.toMatch(/rgb\(|hsl\(/);
+  }
 });

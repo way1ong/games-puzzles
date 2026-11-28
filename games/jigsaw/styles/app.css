@@ -170,6 +170,17 @@ html.big .app {
   gap: 0.625rem;
 }
 
+/* A room's pictures under its name (the whole room, then its close-ups). */
+.choose__room {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.choose__heading {
+  margin: 0.5rem 0 0;
+  font-size: 1.125rem;
+}
+
 .choice {
   display: grid;
   align-content: start;
@@ -506,6 +517,17 @@ html.big .app {
   visibility: hidden;
 }
 
+/* Turned pieces (a setting): a piece in the tray or carried lies turned by --turn quarters, clockwise; in the tray it
+   turns smoothly (--turn only ever grows there, so it never spins back the long way). */
+.slot .piece-art,
+.lift .piece-art {
+  transform: rotate(calc(var(--turn, 0) * 90deg));
+}
+
+.slot .piece-art {
+  transition: transform 150ms ease-out;
+}
+
 .slot:focus-visible,
 .slot.is-taken {
   outline: 3px solid var(--mark-dark);
@@ -706,6 +728,7 @@ html.big .app {
 /* ---------- "reduce motion" in the system: nothing glides or shines ---------- */
 @media (prefers-reduced-motion: reduce) {
   .lift.is-gliding,
+  .slot .piece-art,
   .board.is-done .sheet__seams {
     transition: none;
   }

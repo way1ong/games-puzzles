@@ -6,6 +6,10 @@ import { gameAddress } from '../../shared/core/address.ts';
 export const LEVELS = ['easy', 'medium', 'hard'] as const;
 export type Level = (typeof LEVELS)[number];
 
+/** Every kind of field: the levels, and the player's own size (decision of 28.11; docs/mines/SPEC.md, "Свій розмір"). */
+export const KINDS = [...LEVELS, 'custom'] as const;
+export type Kind = (typeof KINDS)[number];
+
 /**
  * The reasoning a field may ask for, simplest first (core/solve.ts): one number and its closed neighbours; two numbers
  * that share neighbours; all the numbers along the edge together with the number of mines left. The solver, the maker
@@ -49,6 +53,20 @@ export const MINES = {
     hard: { width: 30, height: 16, mines: 99, logic: 'all' },
   } satisfies Record<Level, LevelRule>,
   defaultLevel: 'easy' as Level,
+  /**
+   * The player's own size (decision of 28.11): cells across and down, and mines — at least one, at most a share of the
+   * cells (C). Measured 28.11 here (30 seeds each): with mines on a fifth of the cells and a little more, a field without
+   * guessing takes at most about 0.2 s even at 30 × 30 (in slices, the screen keeps working); with a quarter, 10 of 12
+   * fields of 30 × 30 were not found within the maker's budget. Any reasoning a person can do, as on the hard level. The
+   * size it opens with until the player chooses (C).
+   */
+  custom: {
+    width: { least: 5, most: 30 },
+    height: { least: 5, most: 30 },
+    mines: { least: 1, share: 0.21 },
+    logic: 'all' as Logic,
+    first: { width: 10, height: 10, mines: 15 },
+  },
   /**
    * The solver's limits for the reasoning over all the numbers together (C): the most closed cells along the edge it
    * weighs in one group, and the most steps of its search in one group; beyond them the field counts as not solvable

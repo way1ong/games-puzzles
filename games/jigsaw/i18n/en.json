@@ -13,7 +13,8 @@
   "difficulty": {
     "easy": "Easy",
     "medium": "Medium",
-    "hard": "Hard"
+    "hard": "Hard",
+    "expert": "Very hard"
   },
   "pictures": {
     "studyDay": "The detective’s study by day",
@@ -21,7 +22,25 @@
     "bakeryDay": "The bakery by day",
     "bakeryNight": "The bakery at night",
     "stationDay": "The railway station by day",
-    "stationNight": "The railway station at night"
+    "stationNight": "The railway station at night",
+    "studyShelvesDay": "The bookcase by day",
+    "studyShelvesNight": "The bookcase at night",
+    "studyDeskDay": "The writing desk by day",
+    "studyDeskNight": "The writing desk at night",
+    "studyRugDay": "The rug and the cat by day",
+    "studyRugNight": "The rug and the cat at night",
+    "bakeryShelvesDay": "The bread shelves by day",
+    "bakeryShelvesNight": "The bread shelves at night",
+    "bakeryWindowDay": "The bakery window by day",
+    "bakeryWindowNight": "The bakery window at night",
+    "bakeryCounterDay": "The counter by day",
+    "bakeryCounterNight": "The counter at night",
+    "stationWindowDay": "The window with the train by day",
+    "stationWindowNight": "The window with the train at night",
+    "stationOfficeDay": "The ticket office and the clock by day",
+    "stationOfficeNight": "The ticket office and the clock at night",
+    "stationBenchesDay": "The benches by day",
+    "stationBenchesNight": "The benches at night"
   },
   "home": {
     "daily": "Puzzle of the day",
@@ -45,14 +64,21 @@
   "choose": {
     "title": "Choose a picture",
     "any": "Any picture",
-    "anyNote": "chosen at random"
+    "anyNote": "chosen at random",
+    "rooms": {
+      "study": "The detective’s study",
+      "bakery": "The bakery",
+      "station": "The railway station"
+    }
   },
   "game": {
     "daily": "Puzzle of the day",
     "count": "{n} of {total}",
     "tip": "Drag a piece to its place on the board — or tap a piece, then its place.",
     "taken": "Now tap its place on the board.",
+    "takenTurn": "Tap the piece again to turn it, or tap its place on the board.",
     "notHere": "Not here.",
+    "turnFirst": "Turn the piece first: tap it again.",
     "placed": "In its place.",
     "pickFirst": "First choose a piece in the tray.",
     "hint": "Hint: the marked piece goes to the marked place (row {r}, column {c}).",
@@ -96,6 +122,11 @@
       "left": "edge, left"
     },
     "inner": "from the middle",
+    "turn": {
+      "q1": "turned 90°",
+      "q2": "turned 180°",
+      "q3": "turned 270°"
+    },
     "taken": "taken",
     "hint": "the hint"
   },
@@ -125,6 +156,8 @@
     "play": "Playing",
     "ghost": "Pale picture on the board",
     "ghostNote": "It shows what goes where — that is easier. Without it the board is empty, as with real jigsaws.",
+    "turning": "Turn the pieces",
+    "turningNote": "The pieces lie turned in the tray. Tap a piece to take it; tap it again to turn it a quarter (the R key). A piece goes into its place only standing right.",
     "time": "Show the time",
     "vibration": "Vibration when a puzzle is done",
     "look": "Look",
@@ -160,6 +193,7 @@
     "zoom": "A big board can be zoomed in: the “Zoom in” button, two fingers, Ctrl with the mouse wheel, or the keys + and −; one finger or the wheel moves it.",
     "text": "No ads, no tracking, no accounts. Everything stays on this device; after the first visit the game works without the internet.",
     "keys": "Keys: in the tray, arrows go between pieces and Enter or Space takes one; then arrows go over the board’s places, Enter puts the piece and Esc gives it back; H — hint; + and − — zoom.",
+    "keysTurn": "R — turn the piece (with “Turn the pieces” on).",
     "credit": "Made by way1ong"
   },
   "update": {

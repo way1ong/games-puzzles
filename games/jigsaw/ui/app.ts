@@ -11,7 +11,7 @@ import { pieceSvg } from '../art/pieces.ts';
 import { DIFFICULTIES, JIGSAW, PICTURES, type Difficulty } from '../config.ts';
 import { makeCut } from '../core/cut.ts';
 import { outlineOf } from '../core/outline.ts';
-import { clean, countHint, drop, hintOf, newPlay, piecesOf, place, started, trayOf, addTime, gridOf, type JigsawPlay } from '../core/play.ts';
+import { clean, countHint, drop, hintOf, nearHome, newPlay, piecesOf, place, started, trayOf, addTime, gridOf, turn, turnOf, type JigsawPlay } from '../core/play.ts';
 import { dailySeed, partSeed, pictureOf } from '../core/seeds.ts';
 import { longestStreak, recordLeft, recordWon } from '../core/stats.ts';
 import { trayOrder } from '../core/tray.ts';
@@ -38,8 +38,8 @@ const TICK_MS = 1000;
 /** The whole picture is seen a moment before the end's window opens, ms (at once with "reduce motion"). */
 const END_PAUSE_MS = 900;
 
-/** The screen of the choice of a picture for a size of free play. */
-const CHOOSE = /^choose-(easy|medium|hard)$/;
+/** The screen of the choice of a picture for a size of free play: "choose-<size>". */
+const CHOOSE = new RegExp(`^choose-(${DIFFICULTIES.join('|')})$`);
 
 /** A latin letter key whatever the keyboard layout (H). */
 function letterOf(event: KeyboardEvent): string {
@@ -343,12 +343,21 @@ export function startApp(root: HTMLElement): void {
   function noteContent(g: JigsawPlay): { text: string; actions: NoteAction[] } {
     if (g.done) return { text: d.game.done, actions: endActions() };
     if (message) return { text: message, actions: [] };
-    if (taken !== null) return { text: d.game.taken, actions: [] };
+    if (taken !== null) return { text: settings.turning ? d.game.takenTurn : d.game.taken, actions: [] };
     if (!tipDone) return { text: d.game.tip, actions: [] };
     return { text: '', actions: [] };
   }
 
   const shownHint = () => (hint !== null && hintFor === game ? hint : null);
+
+  /** A piece's name for screen readers: its number and kind, how it lies (with turning on), taken, the hint. */
+  function trayLabel(piece: number): string {
+    if (!game || !puzzle) return '';
+    const p = puzzle;
+    const q = turnOf(game, piece, settings.turning);
+    const marks = [q ? d.piece.turn[`q${q}` as 'q1' | 'q2' | 'q3'] : '', taken === piece ? d.piece.taken : '', shownHint() === piece ? d.piece.hint : ''];
+    return pieceLabel(p.numbers[piece]!, p.cols, p.rows, piece, d, marks.filter(Boolean));
+  }
 
   function render(): void {
     if (!game || !open || !puzzle) return;
@@ -382,7 +391,8 @@ export function startApp(root: HTMLElement): void {
       taken,
       hint: shown,
       art: (piece) => artOf(piece, `jigsaw-tray-${piece}`),
-      label: (piece) => pieceLabel(p.numbers[piece]!, p.cols, p.rows, piece, d, [taken === piece ? d.piece.taken : '', shown === piece ? d.piece.hint : ''].filter(Boolean)),
+      turn: (piece) => turnOf(g, piece, settings.turning),
+      label: (piece) => trayLabel(piece),
       texts: { label: d.tray.label, prev: d.tray.prev, next: d.tray.next, page: (n, total) => fmt(d.tray.page, { n, total }) },
     });
     renderTools();
@@ -435,18 +445,43 @@ export function startApp(root: HTMLElement): void {
     render();
   }
 
-  /** Not near its place: the piece stays where it was (taken, or back in the tray), and the game says so. */
-  function notHere(): void {
+  /**
+   * Not near its place — or near it but lying turned: the piece stays where it was (taken, or back in the tray), and
+   * the game says which.
+   */
+  function notHere(turned = false): void {
     armedNew = false;
-    message = d.game.notHere;
+    message = turned ? d.game.turnFirst : d.game.notHere;
     announce(message);
     render();
+  }
+
+  /** Let go at (x, y) near its own place, but lying turned (turning on). */
+  function turnedNearHome(piece: number, x: number, y: number): boolean {
+    return !!game && !!puzzle && nearHome(puzzle.cols, piece, x, y) && turnOf(game, piece, settings.turning) !== 0;
+  }
+
+  /** A piece in the tray turns a quarter clockwise (a tap on the piece taken, or R). */
+  function turnPiece(piece: number): void {
+    if (!game || !puzzle || !settings.turning) return;
+    const next = turn(game, piece);
+    if (!next) return;
+    game = next;
+    message = null;
+    save();
+    render();
+    announce(trayLabel(piece));
   }
 
   function onTrayTap(piece: number, keys: boolean): void {
     if (!game || game.done) return;
     armedNew = false;
     whole = false;
+    // with turning on, a tap on the piece taken turns it a quarter (Esc or another piece gives it back)
+    if (settings.turning && taken === piece && !keys) {
+      turnPiece(piece);
+      return;
+    }
     taken = taken === piece ? null : piece;
     message = null;
     if (taken !== null && puzzle) announce(`${pieceLabel(puzzle.numbers[piece]!, puzzle.cols, puzzle.rows, piece, d, [d.piece.taken])}. ${d.game.taken}`);
@@ -463,15 +498,15 @@ export function startApp(root: HTMLElement): void {
     message = null;
     render();
     tray.setCarried(piece);
-    drag.start(piece, event, puzzle.cols);
+    drag.start(piece, event, puzzle.cols, turnOf(game, piece, settings.turning));
   }
 
   /** A carried piece let go on the board: into its place — its drawing box there for the glide; else back. */
   function dropCarried(piece: number, x: number, y: number): DOMRect | null {
     if (!game || game.done) return null;
-    const next = drop(game, piece, x, y);
+    const next = drop(game, piece, x, y, settings.turning);
     if (!next) {
-      notHere();
+      notHere(turnedNearHome(piece, x, y));
       return null;
     }
     const square = board.placeRect(piece);
@@ -482,9 +517,9 @@ export function startApp(root: HTMLElement): void {
 
   function tryPut(piece: number, x: number, y: number, keys: boolean): void {
     if (!game || game.done) return;
-    const next = drop(game, piece, x, y);
+    const next = drop(game, piece, x, y, settings.turning);
     if (!next) {
-      notHere();
+      notHere(turnedNearHome(piece, x, y));
       if (keys) board.focus();
       return;
     }
@@ -682,7 +717,14 @@ export function startApp(root: HTMLElement): void {
   document.addEventListener('keydown', (event) => {
     if (!open || !game || document.querySelector('dialog[open]')) return;
     if (event.ctrlKey || event.metaKey || event.altKey) return;
-    if (letterOf(event) === 'h') askHint();
+    const letter = letterOf(event);
+    if (letter === 'h') askHint();
+    // R turns the piece taken, else the tray's piece with the focus (turning on)
+    if (letter === 'r' && settings.turning) {
+      const slot = document.activeElement instanceof HTMLElement ? document.activeElement.closest<HTMLElement>('.slot') : null;
+      const piece = taken ?? (slot ? Number(slot.dataset.piece) : null);
+      if (piece !== null && Number.isInteger(piece)) turnPiece(piece);
+    }
   });
 
   // ---------- the page around ----------

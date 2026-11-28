@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { JIGSAW } from '../config.ts';
+import { JIGSAW, PICTURES } from '../config.ts';
 import { kindOf } from './cut.ts';
 import { addTime, clean, countHint, drop, hintOf, nearHome, newPlay, piecesOf, place, started, trayOf, validPlay, type JigsawPlay } from './play.ts';
 
@@ -97,7 +97,7 @@ describe('a saved puzzle', () => {
     expect(validPlay({ ...play, placed: [3, 3] })).toBe(false);
     expect(validPlay({ ...play, placed: [24] })).toBe(false);
     expect(validPlay({ ...play, done: true })).toBe(false);
-    expect(validPlay({ ...play, picture: 6 })).toBe(false);
+    expect(validPlay({ ...play, picture: PICTURES.length })).toBe(false);
     expect(validPlay({ ...play, difficulty: 'huge' as never })).toBe(false);
     expect(validPlay({ ...play, way: 'daily' })).toBe(false);
     expect(validPlay({ ...play, hints: -1 })).toBe(false);

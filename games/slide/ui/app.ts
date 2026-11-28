@@ -1,22 +1,26 @@
 // The game screen (docs/slide/SPEC.md): which screen is open (the start; a fifteen of a size or of the day; levels,
-// free play of a difficulty or the level of the day of "Clear the way"), the game in play, the hint and its way, the
-// taken piece, the picture shown whole, the time, the end, the menu, the keys. The rules are the core's; this module
-// only shows them and passes the player's actions on.
+// free play of a difficulty or the puzzle of the day of "Clear the way" and of "The chest"), the game in play, the hint
+// and its way, the taken piece, the picture shown whole, the time, the end, the menu, the keys. The rules are the
+// core's; this module only shows them and passes the player's actions on.
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { PICTURES, pictureUrl } from '../art/pictures.ts';
 import { DIFFICULTIES, SLIDE, type Difficulty } from '../config.ts';
+import { parseBox, sizeOf, type BoxMove, type BoxPuzzle } from '../core/box.ts';
+import { allPositions as allBoxPositions, nextMove as nextBoxMove, type BoxPositions } from '../core/box-solve.ts';
 import { homeOf } from '../core/fifteen.ts';
 import { findHint, type TileWay } from '../core/fifteen-solve.ts';
 import { dailySeed, fifteenTiles, freePuzzle, levelPuzzle, levelSeed } from '../core/level.ts';
-import { addTime, clean, countHint, movePiece, movesMade, newFifteen, newUnblock, perfect, slideTile, startAgain, started, undo, type SlidePlay } from '../core/play.ts';
+import { addTime, clean, countHint, moveBlock, movePiece, movesMade, newBox, newFifteen, newUnblock, perfect, slideTile, startAgain, started, undo, type SlidePlay } from '../core/play.ts';
 import { parsePool, type PoolPuzzle } from '../core/pool.ts';
 import { longestStreak, recordLeft, recordWon } from '../core/stats.ts';
 import { parseBoard, type Move, type Puzzle } from '../core/unblock.ts';
 import { allPositions, nextMove, type Positions } from '../core/unblock-solve.ts';
+import boxPoolText from '../levels/box.txt?raw';
 import poolText from '../levels/unblock.txt?raw';
+import { createBoxView } from './box-view.ts';
 import { createEndDialog } from './end-dialog.ts';
 import { createFifteenView } from './fifteen-view.ts';
 import { homeView, type DayState } from './home-view.ts';
@@ -26,13 +30,14 @@ import { createMenuDialog } from './menu-dialog.ts';
 import { closeRoute, currentRoute, openRoute, restoreRoute, watchRoute } from './route.ts';
 import { randomSeed } from './seed.ts';
 import * as store from './storage.ts';
-import { isSlot, slotKind, slotOf, type Settings, type Slot } from './storage.ts';
+import { isSlot, slotKind, slotOf, type PoolMode, type PuzzleSets, type Settings, type Slot } from './storage.ts';
 import { clockText } from './time.ts';
 import { createToolsView } from './tools-view.ts';
 import { createUnblockView } from './unblock-view.ts';
-import { pieceHint, pieceLabel, tileHint, tileLabel, tipText } from './words.ts';
+import { blockHint, blockLabel, pieceHint, pieceLabel, tileHint, tileLabel, tipText } from './words.ts';
 
-const POOL: readonly PoolPuzzle[] = parsePool(poolText);
+/** The sets of puzzles made in advance: "Clear the way" and "The chest". */
+const POOLS: Record<PoolMode, readonly PoolPuzzle[]> = { unblock: parsePool(poolText), box: parsePool(boxPoolText) };
 
 /** How often the shown time is updated, ms. */
 const TICK_MS = 1000;
@@ -47,13 +52,21 @@ interface NoteAction {
   run: () => void;
 }
 
-/** The level of the day of "Clear the way": the same for everybody on that date. */
-const dayPuzzle = (date: string): PoolPuzzle => freePuzzle(POOL, SLIDE.unblock.daily, dailySeed('unblock', date));
+/** The puzzle of the day of "Clear the way" or "The chest": the same for everybody on that date. */
+const dayPuzzle = (mode: PoolMode, date: string): PoolPuzzle => freePuzzle(POOLS[mode], SLIDE[mode].daily, dailySeed(mode, date), SLIDE[mode]);
+const SETS: PuzzleSets = { pool: (mode) => POOLS[mode], day: dayPuzzle };
 
 const puzzles = new Map<string, Puzzle>();
 const puzzleOf = (board: string): Puzzle => {
   let p = puzzles.get(board);
   if (!p) puzzles.set(board, (p = parseBoard(board).puzzle));
+  return p;
+};
+
+const boxPuzzles = new Map<string, BoxPuzzle>();
+const boxPuzzleOf = (board: string): BoxPuzzle => {
+  let p = boxPuzzles.get(board);
+  if (!p) boxPuzzles.set(board, (p = parseBox(board).puzzle));
   return p;
 };
 
@@ -66,15 +79,17 @@ export function startApp(root: HTMLElement): void {
   /** The screen of a game open (null — the start screen). */
   let open: Slot | null = null;
   let game: SlidePlay | null = null;
-  /** The hint shown: a tile of the fifteen, or a move of "Clear the way". */
-  let hint: { tile: number } | { move: Move } | null = null;
+  /** The hint shown: a tile of the fifteen, a move of "Clear the way", or a move of "The chest". */
+  let hint: { tile: number } | { move: Move } | { block: BoxMove } | null = null;
   /** The game the hint was found for: a second press does it only while nothing has changed. */
   let hintFor: SlidePlay | null = null;
   /** The fifteen: the way the hints follow while the player is on it. */
   let tileWay: TileWay | null = null;
   /** "Clear the way": every position of the puzzle in play (walked once, at the first hint). */
   let positions: { board: string; map: Positions } | null = null;
-  /** "Clear the way": the piece taken by a tap or Enter. */
+  /** "The chest": the same. */
+  let boxPositions: { board: string; map: BoxPositions } | null = null;
+  /** "Clear the way", "The chest": the piece taken by a tap or Enter. */
   let taken: number | null = null;
   /** The fifteen: the picture shown whole. */
   let whole = false;
@@ -82,7 +97,7 @@ export function startApp(root: HTMLElement): void {
   let message: string | null = null;
   /** "Start again" was tapped once: the second tap starts again. */
   let armedAgain = false;
-  const tipDone = { fifteen: store.loadTipDone('fifteen'), unblock: store.loadTipDone('unblock') };
+  const tipDone = { fifteen: store.loadTipDone('fifteen'), unblock: store.loadTipDone('unblock'), box: store.loadTipDone('box') };
   /** When the current stretch of play started (performance.now()); null — the clock stands. */
   let clockFrom: number | null = null;
 
@@ -109,6 +124,7 @@ export function startApp(root: HTMLElement): void {
   const note = h('div', { class: 'note' }, noteText, noteActions);
   const fifteenView = createFifteenView({ tap: onTile });
   const unblockView = createUnblockView({ move: onMove, take: onTake, stuck: onStuck });
+  const boxView = createBoxView({ move: onBlockMove, take: onTake, stuck: onStuck });
   const board = h('div', { class: 'board' });
   const tools = createToolsView({ undo: undoMove, hint: askHint, again: startOver, picture: togglePicture });
   const playView = h('div', { class: 'play' }, info, board, note, tools.el);
@@ -194,21 +210,26 @@ export function startApp(root: HTMLElement): void {
       const seed = randomSeed();
       return newFifteen(fifteenTiles(SLIDE.fifteen.sizes[k.difficulty!], seed), 'free', seed, PICTURES.length, { difficulty: k.difficulty! });
     }
+    const mode = k.mode;
+    const make = mode === 'box' ? newBox : newUnblock;
     if (k.way === 'level') {
-      const level = store.loadReached();
-      return newUnblock(levelPuzzle(POOL, level), 'level', levelSeed(level), { level });
+      const level = store.loadReached(mode);
+      return make(levelPuzzle(POOLS[mode], level, SLIDE[mode]), 'level', levelSeed(level, mode), { level });
     }
-    if (k.way === 'daily') return newUnblock(dayPuzzle(today), 'daily', dailySeed('unblock', today), { daily: today });
+    if (k.way === 'daily') return make(dayPuzzle(mode, today), 'daily', dailySeed(mode, today), { daily: today });
     const seed = randomSeed();
-    return newUnblock(freePuzzle(POOL, k.difficulty!, seed), 'free', seed, { difficulty: k.difficulty! });
+    return make(freePuzzle(POOLS[mode], k.difficulty!, seed, SLIDE[mode]), 'free', seed, { difficulty: k.difficulty! });
   }
+
+  /** The word at the end of a game of each mode. */
+  const doneText = (g: SlidePlay): string => (g.mode === 'fifteen' ? d.game.solved : g.mode === 'box' ? d.game.chestOut : d.game.out);
 
   function openGame(slot: Slot): void {
     stopClock();
     open = slot;
     clearTurn();
-    game = store.loadPlay(slot, today, POOL, dayPuzzle) ?? newGame(slot);
-    if (game.done) message = game.mode === 'fifteen' ? d.game.solved : d.game.out;
+    game = store.loadPlay(slot, today, SETS) ?? newGame(slot);
+    if (game.done) message = doneText(game);
     render();
     startClock();
     title.focus();
@@ -246,25 +267,27 @@ export function startApp(root: HTMLElement): void {
     backBtn.hidden = true;
     title.textContent = d.app.name;
     const begun = (slot: Slot) => {
-      const p = store.loadPlay(slot, today, POOL, dayPuzzle);
+      const p = store.loadPlay(slot, today, SETS);
       return !!p && !p.done && started(p);
     };
-    const dayState = (mode: 'fifteen' | 'unblock', slot: Slot): DayState => {
-      const p = store.loadPlay(slot, today, POOL, dayPuzzle);
+    const dayState = (mode: SlidePlay['mode'], slot: Slot): DayState => {
+      const p = store.loadPlay(slot, today, SETS);
       return store.loadDays(mode)[today] || p?.done ? 'done' : p && started(p) ? 'started' : 'new';
     };
-    const each = (mode: 'fifteen' | 'unblock') => Object.fromEntries(DIFFICULTIES.map((diff) => [diff, begun(`${mode}-${diff}` as Slot)])) as Record<Difficulty, boolean>;
+    const each = (mode: SlidePlay['mode']) => Object.fromEntries(DIFFICULTIES.map((diff) => [diff, begun(`${mode}-${diff}` as Slot)])) as Record<Difficulty, boolean>;
+    const ways = (mode: PoolMode) => ({
+      reached: store.loadReached(mode),
+      levelBegun: begun(mode === 'box' ? 'box-levels' : 'levels'),
+      begun: each(mode),
+      day: dayState(mode, `${mode}-day`),
+      streak: streak(Object.keys(store.loadDays(mode)), today),
+    });
     content.replaceChildren(
       homeView(
         {
           fifteen: { begun: each('fifteen'), day: dayState('fifteen', 'fifteen-day'), streak: streak(Object.keys(store.loadDays('fifteen')), today) },
-          unblock: {
-            reached: store.loadReached(),
-            levelBegun: begun('levels'),
-            begun: each('unblock'),
-            day: dayState('unblock', 'unblock-day'),
-            streak: streak(Object.keys(store.loadDays('unblock')), today),
-          },
+          unblock: ways('unblock'),
+          box: ways('box'),
           date: dateText(today, 'long'),
         },
         d,
@@ -279,13 +302,15 @@ export function startApp(root: HTMLElement): void {
   function titleText(g: SlidePlay): string {
     if (g.mode === 'fifteen') return g.way === 'daily' ? d.game.dailyFifteen : fmt(d.game.fifteen, { n: g.size });
     if (g.way === 'level') return fmt(d.game.level, { n: g.level! });
-    if (g.way === 'daily') return d.game.dailyUnblock;
+    if (g.way === 'daily') return g.mode === 'box' ? d.game.dailyBox : d.game.dailyUnblock;
     return d.difficulty[g.difficulty!];
   }
 
   function whereText(g: SlidePlay): string {
     if (g.mode === 'fifteen') return g.way === 'daily' ? `${dateText(today, 'long')} · ${fmt(d.home.size, { n: g.size })}` : d.difficulty[g.difficulty!];
     if (g.way === 'daily') return dateText(today, 'long');
+    // "The chest" says its name: its levels and difficulties are named as those of "Clear the way"
+    if (g.mode === 'box') return d.mode.box;
     return g.way === 'level' ? d.home.levels : d.home.free;
   }
 
@@ -296,9 +321,9 @@ export function startApp(root: HTMLElement): void {
   }
 
   function noteContent(g: SlidePlay): { text: string; actions: NoteAction[] } {
-    if (g.done) return { text: g.mode === 'fifteen' ? d.game.solved : d.game.out, actions: endActions() };
+    if (g.done) return { text: doneText(g), actions: endActions() };
     if (message) return { text: message, actions: [] };
-    if (g.mode === 'unblock' && taken !== null) return { text: d.game.taken, actions: [] };
+    if (g.mode !== 'fifteen' && taken !== null) return { text: g.mode === 'box' ? d.game.takenBox : d.game.taken, actions: [] };
     if (!tipDone[g.mode]) return { text: tipText(d, g.mode, settings.faces, g.mode === 'unblock' ? g.theme : 'box'), actions: [] };
     return { text: '', actions: [] };
   }
@@ -337,6 +362,26 @@ export function startApp(root: HTMLElement): void {
         },
         pictureLabel: d.board.picture,
         goalLabel: d.board.goal,
+      });
+    } else if (g.mode === 'box') {
+      if (board.firstChild !== boxView.el) board.replaceChildren(boxView.el);
+      boxView.el.setAttribute('aria-label', d.board.box);
+      const puzzle = boxPuzzleOf(g.board);
+      const move = shown && 'block' in shown ? shown.block : null;
+      boxView.render({
+        board: g.board,
+        puzzle,
+        places: g.places,
+        taken,
+        hint: move,
+        done: g.done,
+        label: (i) => {
+          const marks: string[] = [];
+          if (taken === i) marks.push(d.board.taken);
+          if (move?.piece === i) marks.push(d.board.hint);
+          return blockLabel(puzzle, g.places, i, d, lang, marks);
+        },
+        exitLabel: fmt(d.board.slot, { from: SLIDE.box.slot + 1, to: SLIDE.box.slot + sizeOf('chest')[0] }),
       });
     } else {
       if (board.firstChild !== unblockView.el) board.replaceChildren(unblockView.el);
@@ -415,20 +460,27 @@ export function startApp(root: HTMLElement): void {
     if (next) moved(next);
   }
 
+  function onBlockMove(move: BoxMove): void {
+    if (!game || game.mode !== 'box' || game.done) return;
+    const next = moveBlock(game, move);
+    if (next) moved(next);
+  }
+
   function onTake(piece: number | null): void {
-    if (!game || game.mode !== 'unblock' || game.done) return;
+    if (!game || game.mode === 'fifteen' || game.done) return;
     taken = piece;
     armedAgain = false;
     message = piece === null ? d.game.put : null;
-    const puzzle = puzzleOf(game.board);
-    announce(piece === null ? d.game.put : `${pieceLabel(puzzle, game.places, piece, game.theme, d, lang, [d.board.taken])}. ${d.game.taken}`);
+    if (piece === null) announce(d.game.put);
+    else if (game.mode === 'box') announce(`${blockLabel(boxPuzzleOf(game.board), game.places, piece, d, lang, [d.board.taken])}. ${d.game.takenBox}`);
+    else announce(`${pieceLabel(puzzleOf(game.board), game.places, piece, game.theme, d, lang, [d.board.taken])}. ${d.game.taken}`);
     render();
   }
 
   function onStuck(): void {
     if (!game || game.done) return;
     taken = null;
-    message = d.game.cannotMove;
+    message = game.mode === 'box' ? d.game.cannotMoveBox : d.game.cannotMove;
     announce(message);
     render();
   }
@@ -458,6 +510,7 @@ export function startApp(root: HTMLElement): void {
     if (shown) {
       if ('tile' in shown && game.mode === 'fifteen') onTile(game.tiles.indexOf(shown.tile));
       else if ('move' in shown) onMove(shown.move);
+      else if ('block' in shown) onBlockMove(shown.block);
       return;
     }
     if (game.mode === 'fifteen') {
@@ -467,6 +520,15 @@ export function startApp(root: HTMLElement): void {
       game = countHint(game);
       hint = { tile: found.tile };
       message = tileHint(found.tile, settings.faces, d);
+    } else if (game.mode === 'box') {
+      // every position of the puzzle, once (the set keeps only puzzles with few enough: config, box.maxPositions)
+      if (boxPositions?.board !== game.board) boxPositions = { board: game.board, map: allBoxPositions(boxPuzzleOf(game.board), parseBox(game.board).spots)! };
+      const move = nextBoxMove(boxPositions.map, game.places);
+      if (!move) return;
+      game = countHint(game);
+      hint = { block: move };
+      taken = null;
+      message = blockHint(boxPuzzleOf(game.board), game.places, move, d);
     } else {
       if (positions?.board !== game.board) {
         const puzzle = puzzleOf(game.board);
@@ -530,8 +592,10 @@ export function startApp(root: HTMLElement): void {
   }
 
   function nextLevel(): void {
-    store.dropPlay('levels');
-    if (open === 'levels') openGame('levels');
+    const slot = game ? slotOf(game) : null;
+    if (slot !== 'levels' && slot !== 'box-levels') return;
+    store.dropPlay(slot);
+    if (open === slot) openGame(slot);
   }
 
   function finish(): void {
@@ -540,7 +604,7 @@ export function startApp(root: HTMLElement): void {
     const g = game;
     const slot = slotOf(g);
     store.saveStats(recordWon(store.loadStats(), g));
-    if (g.mode === 'unblock' && g.way === 'level') store.saveReached(Math.max(store.loadReached(), g.level! + 1));
+    if (g.mode !== 'fifteen' && g.way === 'level') store.saveReached(g.mode, Math.max(store.loadReached(g.mode), g.level! + 1));
     if (g.way === 'daily') store.saveDayResult(g.mode, today, { moves: movesMade(g), clean: clean(g) });
     if (g.way === 'free') store.dropPlay(slot);
     else store.savePlay(g);
@@ -556,7 +620,7 @@ export function startApp(root: HTMLElement): void {
     render();
     const n = movesMade(g);
     const lines = [plural(lang, n, d.end.moves, { n })];
-    if (g.mode === 'unblock') lines.push(perfect(g) ? d.end.perfect : plural(lang, g.fewest, d.end.fewest, { n: g.fewest }));
+    if (g.mode !== 'fifteen') lines.push(perfect(g) ? d.end.perfect : plural(lang, g.fewest, d.end.fewest, { n: g.fewest }));
     if (clean(g)) lines.push(d.end.clean);
     else {
       if (g.undos) lines.push(plural(lang, g.undos, d.end.undos, { n: g.undos }));
@@ -564,21 +628,23 @@ export function startApp(root: HTMLElement): void {
     }
     if (settings.time) lines.push(fmt(d.end.time, { time: clockText(g.ms) }));
     let share: ShareText | null = null;
-    const dayTitle = g.mode === 'fifteen' ? d.home.dailyFifteen : d.home.dailyUnblock;
+    const dayTitle = g.mode === 'fifteen' ? d.home.dailyFifteen : g.mode === 'box' ? d.home.dailyBox : d.home.dailyUnblock;
     if (g.way === 'daily') {
       const days = streak(Object.keys(store.loadDays(g.mode)), today);
       lines.push(plural(lang, days, d.end.streak, { n: days, title: dayTitle }));
-      const params = { name: SLIDE.name, date: dateText(today, 'medium'), moves: n, fewest: g.mode === 'unblock' ? g.fewest : 0 };
+      const params = { name: SLIDE.name, date: dateText(today, 'medium'), moves: n, fewest: g.mode === 'fifteen' ? 0 : g.fewest };
       const text =
         g.mode === 'fifteen'
           ? fmt(clean(g) ? d.end.shareFifteenClean : d.end.shareFifteen, params)
-          : fmt(clean(g) ? d.end.shareUnblockClean : d.end.shareUnblock, params);
+          : g.mode === 'box'
+            ? fmt(clean(g) ? d.end.shareBoxClean : d.end.shareBox, params)
+            : fmt(clean(g) ? d.end.shareUnblockClean : d.end.shareUnblock, params);
       share = { label: d.end.copy, done: d.end.copied, text: SLIDE.links.game ? `${text}\n${SLIDE.links.game}` : text };
     }
     const home = { label: d.end.home, action: () => closeRoute('') };
     endDialog.open({
-      title: g.mode === 'fifteen' ? d.end.solved : d.end.out,
-      highlight: g.way === 'daily' ? `${dayTitle} · ${dateText(today, 'long')}` : titleText(g),
+      title: g.mode === 'fifteen' ? d.end.solved : g.mode === 'box' ? d.end.chestOut : d.end.out,
+      highlight: g.way === 'daily' ? `${dayTitle} · ${dateText(today, 'long')}` : g.mode === 'box' ? `${d.mode.box} · ${titleText(g)}` : titleText(g),
       lines,
       share,
       secondary: g.way === 'daily' ? null : home,
@@ -594,7 +660,11 @@ export function startApp(root: HTMLElement): void {
         lang,
         settings,
         stats: store.loadStats(),
-        longest: { fifteen: longestStreak(Object.keys(store.loadDays('fifteen'))), unblock: longestStreak(Object.keys(store.loadDays('unblock'))) },
+        longest: {
+          fifteen: longestStreak(Object.keys(store.loadDays('fifteen'))),
+          unblock: longestStreak(Object.keys(store.loadDays('unblock'))),
+          box: longestStreak(Object.keys(store.loadDays('box'))),
+        },
       },
       {
         setLang(code) {
@@ -616,6 +686,7 @@ export function startApp(root: HTMLElement): void {
           store.clearAll();
           tipDone.fifteen = false;
           tipDone.unblock = false;
+          tipDone.box = false;
           if (open) openGame(open);
           else show();
         },

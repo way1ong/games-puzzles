@@ -1,6 +1,7 @@
-// Statistics on the device (docs/mines/SPEC.md, "Що зберігається"): for each level, games played and won, won without
-// mistakes and hints, the best time; the longest run of days with a field of the day. Pure, no DOM.
-import { LEVELS, type Level } from '../config.ts';
+// Statistics on the device (docs/mines/SPEC.md, "Що зберігається"): for each level and the player's own size (all its
+// sizes together), games played and won, won without mistakes and hints, the best time; the longest run of days with a
+// field of the day. Pure, no DOM.
+import { KINDS, type Kind } from '../config.ts';
 import type { MinesPlay } from './play.ts';
 
 export interface LevelStats {
@@ -13,12 +14,12 @@ export interface LevelStats {
   bestMs: number | null;
 }
 
-export type MinesStats = Record<Level, LevelStats>;
+export type MinesStats = Record<Kind, LevelStats>;
 
-export const emptyStats = (): MinesStats => Object.fromEntries(LEVELS.map((l) => [l, { played: 0, won: 0, clean: 0, bestMs: null }])) as MinesStats;
+export const emptyStats = (): MinesStats => Object.fromEntries(KINDS.map((l) => [l, { played: 0, won: 0, clean: 0, bestMs: null }])) as MinesStats;
 
 /** A game lost on a mine, or left for a new field. */
-export function recordPlayed(stats: MinesStats, level: Level): MinesStats {
+export function recordPlayed(stats: MinesStats, level: Kind): MinesStats {
   const now = stats[level];
   return { ...stats, [level]: { ...now, played: now.played + 1 } };
 }

@@ -4,6 +4,7 @@
 // another format (or one that does not hold together) is dropped rather than break the game.
 import { DIFFICULTIES, JIGSAW, type Difficulty } from '../config.ts';
 import { validPlay, type JigsawPlay } from '../core/play.ts';
+import { startTurns } from '../core/turns.ts';
 import { emptyStats, type JigsawStats, type SizeStats } from '../core/stats.ts';
 
 const PREFIX = 'way1ong-jigsaw:v1:';
@@ -42,6 +43,8 @@ export interface Settings {
   lang: string | null;
   /** The pale picture on the board (decision of 28.11: on, a switch in the menu). */
   ghost: boolean;
+  /** Turned pieces (decision of 28.11: off, a switch in the menu). */
+  turning: boolean;
   time: boolean;
   vibration: boolean;
   big: boolean;
@@ -52,6 +55,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   lang: null,
   ghost: JIGSAW.defaultGhost,
+  turning: JIGSAW.defaultTurning,
   time: false,
   vibration: false,
   big: false,
@@ -69,6 +73,7 @@ export function loadSettings(): Settings {
   return {
     lang: typeof s.lang === 'string' ? s.lang : null,
     ghost: flag(s.ghost, d.ghost),
+    turning: flag(s.turning, d.turning),
     time: flag(s.time, d.time),
     vibration: flag(s.vibration, d.vibration),
     big: flag(s.big, d.big),
@@ -103,12 +108,21 @@ interface Saved {
 
 const playKey = (slot: Slot) => `play:${slot}`;
 
+/** A puzzle saved before pieces could be turned: how they lie comes from its seed, as for a new one. */
+function withTurns(play: JigsawPlay | null): JigsawPlay | null {
+  if (!play || typeof play !== 'object' || play.turns !== undefined) return play;
+  const size = (JIGSAW.sizes as Record<string, { cols: number; rows: number } | undefined>)[play.difficulty];
+  return size && Number.isInteger(play.seed) ? { ...play, turns: startTurns(size.cols * size.rows, play.seed) } : play;
+}
+
 /** The puzzle begun in a slot; of the day — only if it is today's. */
 export function loadPlay(slot: Slot, today: string): JigsawPlay | null {
   const saved = read<Saved>(playKey(slot));
-  if (!saved || saved.version !== PLAY_VERSION || !wholePlay(saved.play, slot)) return null;
-  if (saved.play.way === 'daily' && saved.play.daily !== today) return null;
-  return saved.play;
+  if (!saved || saved.version !== PLAY_VERSION) return null;
+  const play = withTurns(saved.play);
+  if (!wholePlay(play, slot)) return null;
+  if (play.way === 'daily' && play.daily !== today) return null;
+  return play;
 }
 
 export function savePlay(play: JigsawPlay): void {

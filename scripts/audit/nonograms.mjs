@@ -1,7 +1,8 @@
 // Browser audit of Nonograms: every size and look — the start screen, a chapter of the album, a picture (zoomed in or
 // whole, as it opens), a cell filled and one crossed, a hint, the whole picture, the menu with the widest settings
-// (mistakes at once, the time, the name from the start, the large mode, the left hand), a big grid, the picture of the
-// day; phones on their side; large system text; the keyboard; a picture to the end by the hints.
+// (mistakes at once, the time, the name from the start, the large mode, the left hand), a big grid, the colour section
+// (a chapter, a picture with a paint chosen and a cell painted, a hint, a busy one), the picture of the day; phones on
+// their side; large system text; the keyboard; a picture to the end by the hints.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -143,6 +144,23 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await shot(page, `${width}x${height}-${locale}-${colorScheme}`);
       await openPicture(page, 'p-owl-15');
       await check(page, `${label} 15 × 15`);
+      // the colour section: a chapter, a picture — the second paint chosen, a cell painted with it, a hint — and the
+      // busiest one it holds (the most numbers in a line and paints)
+      await page.goto(`${base}#colour-10`);
+      await page.waitForSelector('.album__item');
+      await check(page, `${label} colour chapter 10 × 10`);
+      await openPicture(page, 'c-pineapple-10');
+      await check(page, `${label} colour picture`);
+      await page.locator('.tool--paint').nth(1).click();
+      if ((await page.locator('.tool--paint').nth(1).getAttribute('aria-pressed')) !== 'true') fail(`nonograms ${label}: a paint button did not choose its paint`);
+      const c = await cellInSight(page, 2);
+      await page.mouse.click(c.x, c.y);
+      if (!(await page.locator(`.cell[data-cell="${c.cell}"].is-paint`).count())) fail(`nonograms ${label}: a click did not paint a cell`);
+      await page.keyboard.press('h');
+      await check(page, `${label} colour hint`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-colour`);
+      await openPicture(page, 'c-turtle-15');
+      await check(page, `${label} colour 15 × 15, many numbers`);
       // back to the start (else the game opens where the player stopped)
       await page.evaluate((s) => localStorage.removeItem(`${s}last`), STORE);
       await settled(page);
@@ -192,6 +210,9 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await openPicture(page, 'p-owl-15');
     await side('15 × 15');
     await shot(page, `side-${width}x${height}`);
+    await openPicture(page, 'c-car-15');
+    await side('colour 15 × 15');
+    await shot(page, `side-colour-${width}x${height}`);
     await ctx.close();
   }
 
@@ -239,5 +260,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, 'solved, the window closed');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, phones on their side, large text, keyboard, a picture to the end`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks, colour pictures, phones on their side, large text, keyboard, a picture to the end`;
 }

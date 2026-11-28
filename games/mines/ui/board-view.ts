@@ -45,6 +45,8 @@ export interface BoardView {
   el: HTMLElement;
   /** A new field: its size; opens whole or zoomed in, as the player saw this level last. */
   setField(cols: number, rows: number, whole: boolean, around: number | null): void;
+  /** Measures the field now (the board is back in the page after another screen). */
+  layout(): void;
   render(cells: string, show: BoardShow, label: (cell: number) => string): void;
   zoomable(): boolean;
   isWhole(): boolean;
@@ -105,6 +107,9 @@ export function createBoardView(actions: BoardActions): BoardView {
     gesture = null;
     pointers.clear();
     opening = { whole, around };
+    // The measures of the field before belong to it: until this one is measured (a board out of the page — another
+    // screen open — is measured once it is back), a touch finds no cell rather than one of the old field.
+    frame = null;
     layout();
   }
 
@@ -361,6 +366,8 @@ export function createBoardView(actions: BoardActions): BoardView {
   return {
     el,
     setField,
+    /** Measures the field now (the board is back in the page). */
+    layout,
     render,
     zoomable: () => !!frame?.limits.zoomable,
     isWhole: () => !frame || view.cell <= frame.limits.fit,

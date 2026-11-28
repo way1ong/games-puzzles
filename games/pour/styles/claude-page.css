@@ -1,5 +1,5 @@
 /*
- * Mines as a claude.ai test page (scripts/claude-page.mjs adds this file; the game itself never loads it).
+ * Pour as a claude.ai test page (scripts/claude-page.mjs adds this file; the game itself never loads it).
  * The page there sits in a frame that already pads the top and bottom screen edges (safe areas) and sets
  * the page height; the side gutter is at least 16px.
  */

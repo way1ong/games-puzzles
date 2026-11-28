@@ -21,6 +21,16 @@ export interface Stage {
   moves: readonly [number, number];
 }
 
+/** How a mode's set of puzzles is played: levels in a row and free play by difficulty (fewest moves from, to; null — no upper end). */
+export interface PoolWays {
+  stages: readonly Stage[];
+  difficulties: Readonly<Record<Difficulty, readonly [number, number | null]>>;
+}
+
+/** The pieces of "The chest" (decision of 28.11): the chest, the player's own, and wooden blocks of three shapes. */
+export const BOX_SHAPES = ['chest', 'single', 'lying', 'standing'] as const;
+export type BoxShape = (typeof BOX_SHAPES)[number];
+
 export const SLIDE = {
   /** The game's name where it is installed and in the shared daily result; the short name is app.name in the dictionaries. */
   name: 'way1ong Slide',
@@ -88,6 +98,77 @@ export const SLIDE = {
     sparseUpTo: 4,
     longShare: 0.3,
     perMoves: 40,
+  },
+  /** "The chest" (docs/slide/SPEC.md, "Скринька"; decision of 28.11: «Роби»). */
+  box: {
+    /** Cells across and down (decision of 28.11). */
+    cols: 4,
+    rows: 5,
+    /** Cells across and down of each piece (decision of 28.11): the chest, a small block, a lying and a standing one. */
+    shapes: { chest: [2, 2], single: [1, 1], lying: [2, 1], standing: [1, 2] } satisfies Record<BoxShape, readonly [number, number]>,
+    /** The slot in the middle of the bottom side, as wide as the chest: its first column, counted from the left from 0 (decision of 28.11). */
+    slot: 1,
+    /**
+     * Levels in a row (C): the fewest moves grow from 2; after the last stage, levels go round its range — the hardest
+     * numbers of moves the set has its full share of (measured 28.11 over games/slide/levels/box.txt: 30 puzzles of
+     * each number from 2 to 45, from 46 on 8 or fewer).
+     */
+    stages: [
+      { from: 1, moves: [2, 4] },
+      { from: 6, moves: [4, 7] },
+      { from: 16, moves: [7, 10] },
+      { from: 31, moves: [10, 14] },
+      { from: 51, moves: [14, 18] },
+      { from: 76, moves: [18, 23] },
+      { from: 101, moves: [23, 28] },
+      { from: 131, moves: [28, 34] },
+      { from: 171, moves: [34, 40] },
+      { from: 211, moves: [36, 45] },
+    ] satisfies Stage[],
+    /** Free play: the fewest moves of each difficulty, from and to; null — no upper end (C; the set holds 300, 450 and 612 of them, the most 78 moves, measured 28.11). */
+    difficulties: { easy: [5, 14], medium: [15, 29], hard: [30, null] } satisfies Record<Difficulty, readonly [number, number | null]>,
+    /** The puzzle of the day: middling (C). */
+    daily: 'medium' as Difficulty,
+    /**
+     * A puzzle's positions the game walks once for its hints, a position and its mirror image as one (C): the set keeps
+     * only puzzles with no more, so a hint comes at once (docs/slide/SPEC.md, "Скринька", "Підказка"). Measured 28.11:
+     * the largest puzzle of the set has 57 228, walked in about 0.1 s on a computer. With 30 000 the set had 39 sets of
+     * blocks and 61 puzzles with both lying and standing blocks; with 60 000 — 53 and 476.
+     */
+    maxPositions: 60_000,
+    /**
+     * The set of puzzles, made in advance by scripts/slide/box-pool.ts (C): random boards from these seeds, one puzzle
+     * from each (docs/slide/SPEC.md, "Скринька", "Головоломки складено заздалегідь"). Measured 28.11: 10 000 boards give
+     * 1452 puzzles of 53 sets of blocks in about 2 minutes on 4 threads.
+     */
+    pool: {
+      boards: 10_000,
+      /** Every this-th board is sparse, for the first levels: few blocks, many free cells (from, to). */
+      sparseEvery: 5,
+      sparseFree: [10, 14] as const,
+      /** The free cells of the other boards, drawn from this list (two most often: they make the longest puzzles). */
+      denseFree: [2, 2, 2, 3, 4] as const,
+      /** The share of two-cell blocks, drawn for each board between these. */
+      pairShare: [0, 1] as const,
+      /** Puzzles of at most this many moves come only from sparse boards. */
+      sparseUpTo: 4,
+      /**
+       * A position is drawn only among at least this many of its number of moves on its board: the few farthest
+       * positions of a set, where record puzzles of other makers live, are never taken.
+       */
+      layerAtLeast: 50,
+      /**
+       * The sets of the traditional puzzles, left out altogether, so none of their known starts can turn up: so many
+       * small blocks and so many of two cells — 4 and 5 (Huarong Dao, Klotski), 2 and 6 (Dad's Puzzler, Pennant,
+       * Daughter in the Box).
+       */
+      traditional: [
+        [4, 5],
+        [2, 6],
+      ] as const,
+      /** Puzzles of each number of moves the set keeps. */
+      perMoves: 30,
+    },
   },
   /** A short buzz when a puzzle is solved (a setting, off by default) (C). */
   vibrateMs: 12,

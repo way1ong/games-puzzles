@@ -1,9 +1,10 @@
 // The three ways (docs/pour/SPEC.md, "Три шляхи"): levels in a row — more colours, stage by stage, and within a stage
-// later levels take harder deals; free play by difficulty; the level of the day, the same for everybody. Every deal
-// is one the solver has solved. Pure; randomness only from seeds.
+// later levels take harder deals; free play by difficulty or of the player's own size; the level of the day, the same
+// for everybody. Every deal is one the solver has solved. Pure; randomness only from seeds.
 import { seedFromText } from '../../../shared/core/rng.ts';
 import { POUR, type Difficulty } from '../config.ts';
 import type { Bottles } from './bottles.ts';
+import { fitSize, type CustomSize } from './custom.ts';
 import { deal } from './deal.ts';
 import { winRate } from './difficulty.ts';
 import { solve } from './solve.ts';
@@ -33,10 +34,10 @@ export function stageOf(level: number): { colours: number; place: number } {
 }
 
 /** Solvable deals from a seed, one after another. */
-function* solvable(colours: number, seed: number): Generator<Deal> {
+function* solvable(colours: number, seed: number, empty: number = POUR.empty): Generator<Deal> {
   let state = seed;
   for (;;) {
-    const d = deal(colours, POUR.empty, POUR.capacity, POUR.paints, state);
+    const d = deal(colours, empty, POUR.capacity, POUR.paints, state);
     const at = state;
     state = d.state;
     if (solve(d.bottles, POUR.capacity, POUR.solveLimit).moves) yield { bottles: d.bottles, paints: d.paints, colours, seed: at };
@@ -64,6 +65,12 @@ export function levelDeal(level: number): Deal {
 /** Free play: a new deal of the difficulty's colours (any seed — a new game each time). */
 export function freeDeal(difficulty: Difficulty, seed: number): Deal {
   return solvable(POUR.difficulties[difficulty], seed).next().value as Deal;
+}
+
+/** Free play of the player's own size: the first solvable deal of its colours and empty bottles (brought within the bounds of the config). */
+export function customDeal(size: CustomSize, seed: number): Deal {
+  const { colours, empty } = fitSize(size);
+  return solvable(colours, seed, empty).next().value as Deal;
 }
 
 /** The level of the day: middling of a few deals from the day's seed (C). */

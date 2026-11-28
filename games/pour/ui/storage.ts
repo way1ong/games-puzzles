@@ -1,8 +1,10 @@
 // What stays on the device (localStorage): settings, the level reached, the game begun of each way, the days of the
-// level of the day, statistics, the screen open last. Nothing leaves the device (docs/pour/SPEC.md, "Що зберігається").
+// level of the day, statistics, the screen open last, the player's own size chosen last. Nothing leaves the device
+// (docs/pour/SPEC.md, "Що зберігається").
 // Every read survives a missing or broken value; a saved game carries a format version, and one in another format (or
 // one that does not hold together) is dropped rather than break the game.
-import { DIFFICULTIES, HELPS, POUR, type Difficulty, type Help } from '../config.ts';
+import { HELPS, KINDS, POUR, type Help, type Kind } from '../config.ts';
+import { fitSize, sizeOf, validSize, type CustomSize } from '../core/custom.ts';
 import { stageOf } from '../core/level.ts';
 import { validPlay, WAYS, type PourPlay, type Way } from '../core/play.ts';
 import { emptyStats, type PourStats } from '../core/stats.ts';
@@ -87,34 +89,39 @@ export function saveSettings(settings: Settings): void {
   write('settings', settings);
 }
 
-/** Where a game is kept: one for levels in a row, one for each difficulty, one for the day. */
-export type Slot = 'level' | Difficulty | 'daily';
+/** Where a game is kept: one for levels in a row, one for each difficulty and the player's own size, one for the day. */
+export type Slot = 'level' | Kind | 'daily';
 
 export const slotOf = (play: Pick<PourPlay, 'way' | 'difficulty'>): Slot => (play.way === 'free' ? play.difficulty! : play.way);
 
 const bottlesShape = (v: unknown): boolean => Array.isArray(v) && v.every((b) => Array.isArray(b) && b.every((c) => Number.isInteger(c)));
 
-/** The colours a slot's deals have. */
-function coloursOf(play: PourPlay): number | null {
-  if (play.way === 'level') return play.level !== null && play.level >= 1 ? stageOf(play.level).colours : null;
-  if (play.way === 'free') return play.difficulty ? POUR.difficulties[play.difficulty] : null;
-  return POUR.dailyColours;
+/** The colours and empty bottles a slot's deals have. */
+function sizeOfPlay(play: PourPlay): CustomSize | null {
+  if (play.way === 'level') return play.level !== null && play.level >= 1 ? { colours: stageOf(play.level).colours, empty: POUR.empty } : null;
+  if (play.way === 'free') return play.difficulty ? sizeOf(play.difficulty, play.size) : null;
+  return { colours: POUR.dailyColours, empty: POUR.empty };
 }
 
-/** A saved game holds together: its way and place, the deal's colours, its counts, and its pours from the start. */
+/**
+ * A saved game holds together: its way and place (and on the player's own size, a size within the bounds; elsewhere
+ * none), the deal's colours and bottles, its counts, and its pours from the start.
+ */
 function wholePlay(play: unknown, slot: Slot): play is PourPlay {
   const p = play as Partial<PourPlay> | null;
   if (!p || !WAYS.includes(p.way as Way)) return false;
   if (p.way === 'level' ? slot !== 'level' || !(Number.isInteger(p.level) && p.level! >= 1) : p.level !== null) return false;
-  if (p.way === 'free' ? !DIFFICULTIES.includes(p.difficulty as Difficulty) || slot !== p.difficulty : p.difficulty !== null) return false;
+  if (p.way === 'free' ? !KINDS.includes(p.difficulty as Kind) || slot !== p.difficulty : p.difficulty !== null) return false;
+  if (p.difficulty === 'custom' ? !validSize(p.size) : p.size !== null) return false;
   if (p.way === 'daily' ? slot !== 'daily' || typeof p.daily !== 'string' : p.daily !== null) return false;
   if (!Number.isInteger(p.seed) || !Number.isInteger(p.colours) || !Array.isArray(p.paints)) return false;
   if (!p.paints.every((x) => Number.isInteger(x) && x >= 0 && x < POUR.paints) || new Set(p.paints).size !== p.paints.length) return false;
   if (!bottlesShape(p.start) || !bottlesShape(p.bottles) || !Array.isArray(p.history)) return false;
   if (!p.history.every((h) => h && typeof h === 'object')) return false;
   if (![p.moves, p.undos, p.hints, p.extra, p.restarts].every(isCount) || ms(p.ms) !== p.ms || typeof p.done !== 'boolean') return false;
-  if (p.colours !== coloursOf(p as PourPlay) || p.extra! > POUR.helps.free.extra) return false;
-  if (p.bottles!.length !== p.colours! + POUR.empty + p.extra!) return false;
+  const size = sizeOfPlay(p as PourPlay);
+  if (!size || p.colours !== size.colours || p.extra! > POUR.helps.free.extra) return false;
+  if (p.bottles!.length !== p.colours! + size.empty + p.extra!) return false;
   return validPlay(p as PourPlay);
 }
 
@@ -128,9 +135,12 @@ const playKey = (slot: Slot) => `play:${slot}`;
 /** The game begun in a slot; of the day — only if it is today's. */
 export function loadPlay(slot: Slot, today: string): PourPlay | null {
   const saved = read<Saved>(playKey(slot));
-  if (!saved || saved.version !== PLAY_VERSION || !wholePlay(saved.play, slot)) return null;
-  if (slot === 'daily' && saved.play.daily !== today) return null;
-  return saved.play;
+  if (!saved || saved.version !== PLAY_VERSION || !saved.play || typeof saved.play !== 'object') return null;
+  // saved before the player's own size: no game had a size
+  const play = { ...saved.play, size: saved.play.size ?? null };
+  if (!wholePlay(play, slot)) return null;
+  if (slot === 'daily' && play.daily !== today) return null;
+  return play;
 }
 
 export function savePlay(play: PourPlay): void {
@@ -177,7 +187,7 @@ export function saveDayResult(date: string, result: DayResult): void {
 export function loadStats(): PourStats {
   const v = read<Partial<PourStats>>('stats') ?? {};
   const stats = emptyStats();
-  for (const d of DIFFICULTIES) {
+  for (const d of KINDS) {
     const s = v.free?.[d];
     if (!s || typeof s !== 'object') continue;
     stats.free[d] = { played: count(s.played), won: count(s.won), clean: count(s.clean), bestMoves: isCount(s.bestMoves) && s.bestMoves! > 0 ? s.bestMoves! : null };
@@ -188,6 +198,16 @@ export function loadStats(): PourStats {
 
 export function saveStats(stats: PourStats): void {
   write('stats', stats);
+}
+
+/** The player's own size chosen last (the config's first one until then), within the bounds. */
+export function loadCustom(): CustomSize {
+  const v = read<Partial<CustomSize>>('custom');
+  return fitSize({ ...POUR.custom.first, ...(v && typeof v === 'object' ? v : {}) });
+}
+
+export function saveCustom(size: CustomSize): void {
+  write('custom', fitSize(size));
 }
 
 /** The screen open last time, to open again; '' — the start screen. */

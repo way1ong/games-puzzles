@@ -1,10 +1,10 @@
 // Dictionaries: the same keys and parameters in every language, every plural form the language needs; the names of
-// every look's pieces (docs/slide/SPEC.md, "Три теми навмання").
+// every look's pieces (docs/slide/SPEC.md, "Три теми навмання") and of the chest and its blocks ("Скринька").
 import { describe, expect, it } from 'vitest';
 import en from './en.json';
 import hu from './hu.json';
 import uk from './uk.json';
-import { THEMES } from '../config.ts';
+import { BOX_SHAPES, THEMES } from '../config.ts';
 
 type Tree = { [key: string]: string | Tree };
 
@@ -61,4 +61,8 @@ it('Ukrainian texts use the typographic apostrophe', () => {
 
 it('names the pieces of every look', () => {
   for (const d of [en, hu, uk]) expect(Object.keys(d.pieces).sort()).toEqual([...THEMES].sort());
+});
+
+it('names the chest and every shape of block', () => {
+  for (const d of [en, hu, uk]) expect(Object.keys(d.blocks).sort()).toEqual([...BOX_SHAPES].sort());
 });

@@ -1,7 +1,8 @@
-// Colours of the drawings of "Clear the way" (docs/slide/SPEC.md, "Три теми навмання"): the ground, the frame and the
-// pieces of each look, seen from above. They are the same in both themes of the screen — a board is a thing on the
-// table, as the rooms of Detective are. Every piece has a dark outline that reads on its ground at 3:1, and the
-// player's piece differs from the others by colour and by its arrow to the way out (palette.test.ts).
+// Colours of the drawings of "Clear the way" (docs/slide/SPEC.md, "Три теми навмання") and of "The chest" ("Скринька"):
+// the ground, the frame and the pieces, seen from above. They are the same in both themes of the screen — a board is a
+// thing on the table, as the rooms of Detective are. Every piece has a dark outline that reads on its ground at 3:1,
+// and the player's piece differs from the others by colour and by its marks: the arrow to the way out, the chest's
+// fittings (palette.test.ts).
 import type { Theme } from '../config.ts';
 
 export interface LookPaint {
@@ -69,4 +70,41 @@ export const LOOKS: Record<Theme, LookPaint> = {
     long: '#a87a43',
     longLine: '#d8b27c',
   },
+};
+
+/** "The chest" (docs/slide/SPEC.md, "Скринька"): the tray, the chest and the wooden blocks. */
+export interface BoxPaint {
+  /** The tray's lining and its weave. */
+  ground: string;
+  groundLine: string;
+  /** The tray's sides around it, with the slot, and their edge. */
+  frame: string;
+  frameLine: string;
+  /** The arrow in the slot (edged with the outline). */
+  arrow: string;
+  /** The edge of every piece. */
+  outline: string;
+  /** The chest: its wood, the boards of its lid, its brass bands and clasp. */
+  chest: string;
+  chestLine: string;
+  brass: string;
+  /** A block: its sides, its top and its grain (rings on a small one, lines along a long one). */
+  block: string;
+  blockTop: string;
+  blockLine: string;
+}
+
+export const BOX_LOOK: BoxPaint = {
+  ground: '#efe4cc',
+  groundLine: '#dccba6',
+  frame: '#7a4f2c',
+  frameLine: '#4a2f17',
+  arrow: '#ffffff',
+  outline: '#21140a',
+  chest: '#b4553a',
+  chestLine: '#6b2816',
+  brass: '#f6d36e',
+  block: '#d6a464',
+  blockTop: '#e6bf86',
+  blockLine: '#8a5a26',
 };

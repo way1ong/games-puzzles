@@ -2,7 +2,8 @@
 // days, statistics, the screen open last, what a tap does, how big fields were seen. Nothing leaves the device
 // (docs/mines/SPEC.md, "Що зберігається"). Every read survives a missing or broken value; a saved field carries a
 // format version, and one in another format (or one that does not hold together) is dropped rather than break the game.
-import { AFTER_MINE, LEVELS, MINES, STARTS, THEMES, type AfterMine, type Level, type Start, type Theme } from '../config.ts';
+import { AFTER_MINE, KINDS, LEVELS, MINES, STARTS, THEMES, type AfterMine, type Kind, type Level, type LevelRule, type Start, type Theme } from '../config.ts';
+import { fitSize, ruleOf, validSize, type CustomSize } from '../core/custom.ts';
 import { startArea, type Field } from '../core/field.ts';
 import { CLOSED_CELL, OPEN, type MinesPlay } from '../core/play.ts';
 import { emptyStats, type MinesStats } from '../core/stats.ts';
@@ -98,10 +99,9 @@ export function saveSettings(settings: Settings): void {
   write('settings', settings);
 }
 
-/** A field holds together: its level's size and mines, in order and on the field, none in or next to the first place. */
-function validField(field: unknown, level: Level): field is Field {
+/** A field holds together: its rule's size and mines, in order and on the field, none in or next to the first place. */
+function validField(field: unknown, rule: LevelRule): field is Field {
   const f = field as Partial<Field> | null;
-  const rule = MINES.levels[level];
   const cells = rule.width * rule.height;
   if (!f || f.width !== rule.width || f.height !== rule.height || !Array.isArray(f.mines) || f.mines.length !== rule.mines) return false;
   if (!Number.isInteger(f.start) || f.start! < 0 || f.start! >= cells) return false;
@@ -111,14 +111,18 @@ function validField(field: unknown, level: Level): field is Field {
   return mines.every((m) => !near.has(m));
 }
 
-/** A saved field holds together: its level and field, cells of the right kind, the mine shown among them, its counts. */
-function validPlay(play: unknown, level: Level, daily: boolean): play is MinesPlay {
+/**
+ * A saved field holds together: its kind (and on the player's own size, a size within the bounds; on a level, none)
+ * and field, cells of the right kind, the mine shown among them, its counts.
+ */
+function validPlay(play: unknown, level: Kind, daily: boolean): play is MinesPlay {
   const p = play as Partial<MinesPlay> | null;
-  const rule = MINES.levels[level];
-  const cells = rule.width * rule.height;
   if (!p || p.level !== level || (p.daily !== null) !== daily || (p.daily !== null && typeof p.daily !== 'string')) return false;
+  if (level === 'custom' ? !validSize(p.size) : p.size !== null && p.size !== undefined) return false;
+  const rule = ruleOf(level, p.size ?? null);
+  const cells = rule.width * rule.height;
   if (!Number.isInteger(p.seed) || !STARTS.includes(p.start as Start)) return false;
-  if (p.field !== null && !validField(p.field, level)) return false;
+  if (p.field !== null && !validField(p.field, rule)) return false;
   if (p.field === null && p.start !== 'player') return false;
   if (typeof p.cells !== 'string' || p.cells.length !== cells || !/^[.FO]*$/.test(p.cells)) return false;
   if (p.field === null && p.cells !== CLOSED_CELL.repeat(cells)) return false;
@@ -134,22 +138,25 @@ interface Saved {
   play: MinesPlay;
 }
 
-const playKey = (level: Level, daily: boolean) => (daily ? `daily:${level}` : `play:${level}`);
+const playKey = (level: Kind, daily: boolean) => (daily ? `daily:${level}` : `play:${level}`);
 
-/** The saved field of a level; of the day — only if it is today's. */
-export function loadPlay(level: Level, today: string | null): MinesPlay | null {
+/** The saved field of a level (or of the player's own size); of the day — only if it is today's. */
+export function loadPlay(level: Kind, today: string | null): MinesPlay | null {
   const daily = today !== null;
   const saved = read<Saved>(playKey(level, daily));
-  if (!saved || saved.version !== PLAY_VERSION || !validPlay(saved.play, level, daily)) return null;
-  if (daily && saved.play.daily !== today) return null;
-  return saved.play;
+  if (!saved || saved.version !== PLAY_VERSION) return null;
+  // saved before the player's own size: a level's game had no size
+  const play = { ...saved.play, size: saved.play?.size ?? null } as MinesPlay;
+  if (!validPlay(play, level, daily)) return null;
+  if (daily && play.daily !== today) return null;
+  return play;
 }
 
 export function savePlay(play: MinesPlay): void {
   write(playKey(play.level, play.daily !== null), { version: PLAY_VERSION, play } satisfies Saved);
 }
 
-export function dropPlay(level: Level, daily: boolean): void {
+export function dropPlay(level: Kind, daily: boolean): void {
   remove(playKey(level, daily));
 }
 
@@ -183,9 +190,9 @@ export function saveDayResult(date: string, level: Level, result: DayResult): vo
 }
 
 export function loadStats(): MinesStats {
-  const v = read<Partial<Record<Level, Partial<MinesStats[Level]>>>>('stats') ?? {};
+  const v = read<Partial<Record<Kind, Partial<MinesStats[Kind]>>>>('stats') ?? {};
   const stats = emptyStats();
-  for (const level of LEVELS) {
+  for (const level of KINDS) {
     const s = v[level];
     if (!s || typeof s !== 'object') continue;
     stats[level] = { played: count(s.played), won: count(s.won), clean: count(s.clean), bestMs: typeof s.bestMs === 'number' && s.bestMs > 0 ? s.bestMs : null };
@@ -217,16 +224,26 @@ export function saveMode(mode: Mode): void {
   write('mode', mode);
 }
 
-/** For each level, whether its fields were last seen whole (else zoomed in). */
-export function loadWhole(): Partial<Record<Level, boolean>> {
-  const v = read<Partial<Record<Level, unknown>>>('whole') ?? {};
-  const out: Partial<Record<Level, boolean>> = {};
-  for (const level of LEVELS) if (typeof v[level] === 'boolean') out[level] = v[level] as boolean;
+/** For each level (and the player's own size), whether its fields were last seen whole (else zoomed in). */
+export function loadWhole(): Partial<Record<Kind, boolean>> {
+  const v = read<Partial<Record<Kind, unknown>>>('whole') ?? {};
+  const out: Partial<Record<Kind, boolean>> = {};
+  for (const level of KINDS) if (typeof v[level] === 'boolean') out[level] = v[level] as boolean;
   return out;
 }
 
-export function saveWhole(level: Level, whole: boolean): void {
+export function saveWhole(level: Kind, whole: boolean): void {
   write('whole', { ...loadWhole(), [level]: whole });
+}
+
+/** The player's own size chosen last (the config's first one until then), within the bounds. */
+export function loadCustom(): CustomSize {
+  const v = read<Partial<CustomSize>>('custom');
+  return fitSize({ ...MINES.custom.first, ...(v && typeof v === 'object' ? v : {}) });
+}
+
+export function saveCustom(size: CustomSize): void {
+  write('custom', fitSize(size));
 }
 
 /** Whether a field has ever been cleared on this device: until then the game says how to play. */

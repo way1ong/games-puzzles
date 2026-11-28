@@ -1,9 +1,10 @@
-// Dictionaries: the same keys and parameters in every language, every plural form the language needs, and a name
-// for every picture of the album (docs/nonograms/SPEC.md, "Малюнки").
+// Dictionaries: the same keys and parameters in every language, every plural form the language needs, a name for
+// every picture of the album (docs/nonograms/SPEC.md, "Малюнки") and for every colour of the palette ("Кольорові малюнки").
 import { describe, expect, it } from 'vitest';
 import en from './en.json';
 import hu from './hu.json';
 import uk from './uk.json';
+import { PALETTE } from '../art/palette.ts';
 import { PICTURES } from '../art/pictures.ts';
 
 type Tree = { [key: string]: string | Tree };
@@ -62,4 +63,8 @@ it('Ukrainian texts use the typographic apostrophe', () => {
 it('names every picture of the album, and nothing else', () => {
   const names = [...new Set(PICTURES.map((p) => p.name))].sort();
   expect(Object.keys(en.pictures).sort()).toEqual(names);
+});
+
+it('names every colour of the palette, and nothing else (the paints of colour pictures)', () => {
+  expect(Object.keys(en.paints).sort()).toEqual(Object.keys(PALETTE).sort());
 });

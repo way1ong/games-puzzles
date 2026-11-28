@@ -89,13 +89,14 @@ export function createDrag(deps: DragDeps) {
 
   return {
     layer,
-    /** Lifts a piece under a pointer that is moving from it; `cols` — pieces across the board. */
-    start(piece: number, e: PointerEvent, cols: number): void {
+    /** Lifts a piece under a pointer that is moving from it; `cols` — pieces across the board; `turn` — how it lies. */
+    start(piece: number, e: PointerEvent, cols: number, turn = 0): void {
       if (carry) return;
       const size = Math.round(deps.cellPx() * (1 + 2 * JIGSAW.margin));
       const el = h('div', { class: 'lift' });
       el.style.width = `${size}px`;
       el.style.height = `${size}px`;
+      el.style.setProperty('--turn', String(turn));
       el.append(svg(deps.art(piece)));
       layer.append(el);
       carry = { piece, id: e.pointerId, el, size, touch: e.pointerType === 'touch', cols, place: null };

@@ -13,7 +13,8 @@
   "levels": {
     "easy": "Könnyű",
     "medium": "Közepes",
-    "hard": "Nehéz"
+    "hard": "Nehéz",
+    "custom": "Saját méret"
   },
   "home": {
     "levels": "Szintek",
@@ -23,6 +24,7 @@
     },
     "start": "Új tábla",
     "continue": "Folytatás",
+    "choose": "Kiválasztás",
     "dailyTitle": "A nap táblái · {date}",
     "dailyNote": "Ma mindenkinek ugyanaz",
     "begin": "Kezdés",
@@ -32,6 +34,15 @@
       "one": "A nap táblái: {n} nap egymás után",
       "other": "A nap táblái: {n} nap egymás után"
     }
+  },
+  "custom": {
+    "width": "Szélesség",
+    "height": "Magasság",
+    "less": "{what}: kevesebb",
+    "more": "{what}: több",
+    "play": "Játék",
+    "note": "A mező mindig végigjátszható találgatás nélkül.",
+    "share": "Ez a cellák {share}-a."
   },
   "game": {
     "daily": "A nap táblája",
@@ -78,7 +89,8 @@
       },
       "allCount": "{n} akna maradt, és az összes szám együtt megmutatja: {what}.",
       "tip": "Koppintson egy zárt cellára, és felfedi. A szám megmutatja, hány akna van körülötte. Tartsa rajta az ujját egy cellán, és zászlót tűz egy aknára.",
-      "rules": "Egy felfedett cella száma megmutatja, hány akna van a körülötte lévő nyolc cellában. Fedjen fel minden akna nélküli cellát. A zászló csak emlékeztető („itt akna van”); az eredményre nincs hatása."
+      "rules": "Egy felfedett cella száma megmutatja, hány akna van a körülötte lévő nyolc cellában. Fedjen fel minden akna nélküli cellát. A zászló csak emlékeztető („itt akna van”); az eredményre nincs hatása.",
+      "count": "Aknák"
     },
     "flowers": {
       "name": "Virágok",
@@ -105,7 +117,8 @@
       },
       "allCount": "{n} virág maradt, és az összes szám együtt megmutatja: {what}.",
       "tip": "Koppintson egy zárt cellára, és felfedi. A szám megmutatja, hány virág nő körülötte. Tartsa rajta az ujját egy cellán, és zászlót tűz egy virágra.",
-      "rules": "Egy felfedett cella száma megmutatja, hány virág nő a körülötte lévő nyolc cellában. Fedjen fel minden virág nélküli cellát. A zászló csak emlékeztető („itt virág van”); az eredményre nincs hatása."
+      "rules": "Egy felfedett cella száma megmutatja, hány virág nő a körülötte lévő nyolc cellában. Fedjen fel minden virág nélküli cellát. A zászló csak emlékeztető („itt virág van”); az eredményre nincs hatása.",
+      "count": "Virágok"
     }
   },
   "tools": {

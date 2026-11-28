@@ -13,7 +13,8 @@
   "difficulty": {
     "easy": "Easy",
     "medium": "Medium",
-    "hard": "Hard"
+    "hard": "Hard",
+    "custom": "Custom size"
   },
   "home": {
     "levels": "Levels",
@@ -23,9 +24,14 @@
     "continue": "Continue",
     "free": "Free play",
     "new": "New game",
+    "choose": "Choose",
     "colours": {
       "one": "{n} colour",
       "other": "{n} colours"
+    },
+    "empty": {
+      "one": "{n} empty bottle",
+      "other": "{n} empty bottles"
     },
     "dailyTitle": "Level of the day · {date}",
     "dailyNote": "The same for everyone today",
@@ -36,6 +42,15 @@
       "one": "Level of the day: {n} day in a row",
       "other": "Level of the day: {n} days in a row"
     }
+  },
+  "custom": {
+    "colours": "Colours",
+    "empty": "Empty bottles",
+    "less": "{what}: fewer",
+    "more": "{what}: more",
+    "play": "Play",
+    "note": "Every level can be solved.",
+    "oneEmpty": "With one empty bottle: up to {n} colours."
   },
   "game": {
     "level": "Level {n}",
