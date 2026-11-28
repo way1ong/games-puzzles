@@ -51,6 +51,14 @@ describe('the daily case', () => {
     for (const room of ROOM_IDS) for (const time of ['day', 'night']) expect(count.get(`${room} ${time}`) ?? 0, `${room} ${time}`).toBeGreaterThan(fair * 0.6);
   });
 
+  it('a new room joins from its date (config.ts, dailyFrom): before it, the case of the day keeps to the rooms it had', () => {
+    for (const date of DATES) {
+      const room = dailyCase(date).room;
+      const from = DETECTIVE.dailyFrom[room];
+      if (from) expect(date >= from, `${date}: ${room}`).toBe(true);
+    }
+  });
+
   it('every room has frames of its own', () => {
     expect(new Set(ALL_DAILY_FRAMES).size).toBe(ALL_DAILY_FRAMES.length);
     for (const room of ROOM_IDS) expect(DAILY_FRAMES[room].length, room).toBeGreaterThanOrEqual(3);

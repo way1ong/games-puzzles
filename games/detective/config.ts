@@ -40,4 +40,9 @@ export const DETECTIVE = {
   /** The keyboard pointer moves by this many scene units; with Shift — by the bigger step (C). */
   cursorStep: 16,
   cursorBigStep: 80,
+  /**
+   * Rooms that join the case of the day from a date (decision of 28.11: the café and the post office). Before it the
+   * day's case stays what it was, so an update in the middle of a day does not change a case begun that day.
+   */
+  dailyFrom: { cafe: '2026-12-01', post: '2026-12-01' } as Readonly<Partial<Record<string, string>>>,
 } as const;
