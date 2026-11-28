@@ -62,8 +62,8 @@
       "one": "legkevesebb: {n} lépés",
       "other": "legkevesebb: {n} lépés"
     },
-    "tipNumbers": "Koppintson egy lapra az üres hely sorában vagy oszlopában: a lap az üres helyre csúszik. Tegye sorba a lapokat: 1, 2, 3…",
-    "tipPicture": "Koppintson egy lapra az üres hely sorában vagy oszlopában: a lap az üres helyre csúszik. Rakja ki a képet.",
+    "tipNumbers": "Cél: az 1-es a bal felső sarokban, utána sorban jobbra és lefelé; az üres hely jobbra lent.",
+    "tipPicture": "Cél: az egész kép – a Kép gomb megmutatja; az üres hely jobbra lent.",
     "tipHarbour": "Tologassa a hajókat a hosszuk mentén, és vezesse ki a nyilas csónakot a tengerre, jobbra.",
     "tipRoom": "Tologassa a bútorokat a hosszuk mentén, és vigye ki a nyilas kanapét az ajtón, jobbra.",
     "tipBox": "Tologassa a rudakat a hosszuk mentén, és vezesse ki a nyilas piros rudat a résen, jobbra.",
@@ -94,7 +94,8 @@
     "hint": "Tipp",
     "doHint": "Megteszi",
     "again": "Újrakezdés",
-    "picture": "Kép"
+    "picture": "Kép",
+    "goal": "A cél"
   },
   "pieces": {
     "harbour": {
@@ -124,7 +125,9 @@
     "taken": "felvéve",
     "hint": "tipp",
     "exit": "A kijárat: a {r}. sor jobb végén",
-    "picture": "A teljes kép"
+    "picture": "A teljes kép",
+    "goal": "A cél: a lapok sorban, az 1-es a bal felső sarokban, az üres hely jobbra lent",
+    "home": "a helyén"
   },
   "end": {
     "solved": "Kész!",
@@ -206,7 +209,7 @@
   },
   "about": {
     "title": "A játékról",
-    "fifteen": "Tizenötös: koppintson egy lapra az üres hely sorában vagy oszlopában, és a köztük lévő lapokkal együtt az üres helyre csúszik. Tegye sorba a lapokat, vagy rakja ki a képet. Minden tábla kirakható.",
+    "fifteen": "Tizenötös: koppintson egy lapra az üres hely sorában vagy oszlopában, és a köztük lévő lapokkal együtt az üres helyre csúszik. A cél: a lapok sorban – az 1-es a bal felső sarokban, utána jobbra és lefelé, az üres hely jobbra lent (A cél gomb megmutatja) –, vagy az egész kép. A helyén lévő lapon ✓ van. Minden tábla kirakható.",
     "unblock": "Szabad utat!: egy darab csak a hossza mentén mozog, ameddig szabad. Tologassa félre a darabokat, hogy a sajátja (a nyilas) kijusson a jobb oldali kijáraton. Egy lépés: egy darab elmozdítása bármekkora távolságra. Minden feladvány megoldható, és a játék tudja a legkevesebb lépést.",
     "text": "Reklám, követés és fiók nélkül. Minden csak ezen az eszközön marad; az első megnyitás után a játék internet nélkül is működik.",
     "keysFifteen": "Billentyűk a tizenötösben: nyilak – a lapok között, Enter vagy szóköz – eltolás, H – tipp, Ctrl+Z – visszavonás.",

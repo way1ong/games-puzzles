@@ -1,11 +1,13 @@
 // The board of the fifteen (docs/slide/SPEC.md, "П’ятнашки", "Керування"): every tile a button that keeps its element
 // while it moves, so it glides to its new cell (not with "reduce motion"). A tap — or a stroke of the finger toward
 // the gap — slides the tile with the tiles between; the keys walk the tiles (one Tab stop, arrows; Enter or Space
-// slides). A tile shows its number, its part of the picture, or both; the hint marks a tile; the picture can be shown
-// whole; at the end the gap fills with the last part.
+// slides). A tile shows its number, its part of the picture, or both; a tile on its own cell has a frame and a check
+// mark; the hint marks a tile. The goal can be shown over the board — the tiles in order, or the whole picture; at the
+// end the gap fills with the last part.
 import { h } from '../../../shared/ui/dom.ts';
 import type { Face } from '../config.ts';
 import { homeOf, type Tiles } from '../core/fifteen.ts';
+import { checkSign } from './icons.ts';
 
 export interface FifteenShow {
   tiles: Tiles;
@@ -14,12 +16,13 @@ export interface FifteenShow {
   picture: string | null;
   /** The tile the hint marks. */
   hint: number | null;
-  /** The whole picture over the board. */
+  /** The goal over the board: the whole picture, or with numbers alone the tiles in order. */
   whole: boolean;
   done: boolean;
   /** Each tile's name for screen readers, by its number and cell. */
   label(tile: number, cell: number): string;
   pictureLabel: string;
+  goalLabel: string;
 }
 
 export interface FifteenActions {
@@ -33,6 +36,8 @@ const STROKE_PX = 12;
 export function createFifteenView(actions: FifteenActions) {
   const el = h('div', { class: 'tiles', role: 'group' });
   const whole = h('div', { class: 'tiles__whole', role: 'img', hidden: true });
+  /** The tiles in order (with numbers alone): what the board must come to. */
+  const goal = h('div', { class: 'tiles__goal', role: 'img', hidden: true });
   const last = h('div', { class: 'tile tile--last', 'aria-hidden': 'true' });
   let size = 0;
   let buttons = new Map<number, HTMLButtonElement>();
@@ -59,7 +64,12 @@ export function createFifteenView(actions: FifteenActions) {
     el.style.setProperty('--n', String(n));
     buttons = new Map();
     for (let t = 1; t < n * n; t++) {
-      const b = h('button', { class: 'tile', type: 'button', tabindex: -1, 'data-tile': t }, h('span', { class: 'tile__num' }, String(t)));
+      const b = h(
+        'button',
+        { class: 'tile', type: 'button', tabindex: -1, 'data-tile': t },
+        h('span', { class: 'tile__num' }, String(t)),
+        h('span', { class: 'tile__ok', 'aria-hidden': 'true' }, checkSign()),
+      );
       const home = homeOf(t, n);
       b.style.setProperty('--hr', String(Math.floor(home / n)));
       b.style.setProperty('--hc', String(home % n));
@@ -95,7 +105,8 @@ export function createFifteenView(actions: FifteenActions) {
     last.style.setProperty('--hc', String(n - 1));
     last.style.setProperty('--r', String(n - 1));
     last.style.setProperty('--c', String(n - 1));
-    el.replaceChildren(...buttons.values(), last, whole);
+    goal.replaceChildren(...Array.from({ length: n * n }, (_, cell) => h('span', { class: cell < n * n - 1 ? 'goal-tile' : 'goal-gap', 'aria-hidden': 'true' }, cell < n * n - 1 ? String(cell + 1) : '')));
+    el.replaceChildren(...buttons.values(), last, whole, goal);
     fresh = true;
   }
 
@@ -142,6 +153,8 @@ export function createFifteenView(actions: FifteenActions) {
       });
       whole.hidden = !show.whole || !show.picture;
       whole.setAttribute('aria-label', show.pictureLabel);
+      goal.hidden = !show.whole || !!show.picture;
+      goal.setAttribute('aria-label', show.goalLabel);
       if (fresh || !buttons.has(active)) setActive(show.tiles.find((t) => t !== 0)!, false);
       fresh = false;
     },

@@ -24,6 +24,9 @@
   --tile-line: #1b2620;
   --badge: #1b2620;
   --badge-ink: #ffffff;
+  /* A tile on its own cell: its frame and the small round mark with a check (the mark's ground and the check). */
+  --home: #2a6650;
+  --home-ink: #ffffff;
   /*
    * Marks on the boards — the hint, a taken piece, the keys' place: a dark ring around a light band, so they read on
    * every tile, picture and drawing (the same in both themes, as the drawings are).
@@ -53,6 +56,8 @@
     --tile-line: #a9bab0;
     --badge: #0b100d;
     --badge-ink: #ffffff;
+    --home: #8fd6b6;
+    --home-ink: #0b241a;
 
     --backdrop: rgb(0 0 0 / 0.6);
     --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
@@ -77,6 +82,8 @@
   --tile-line: #a9bab0;
   --badge: #0b100d;
   --badge-ink: #ffffff;
+  --home: #8fd6b6;
+  --home-ink: #0b241a;
 
   --backdrop: rgb(0 0 0 / 0.6);
   --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
