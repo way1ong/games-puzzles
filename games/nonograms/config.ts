@@ -24,4 +24,13 @@ export const NONOGRAMS = {
   dragStart: 6,
   /** A short buzz when a stroke fills cells, ms (a setting, off by default; as Blocks' placing of a piece) (C). */
   vibrateMs: 12,
+  /**
+   * The colour section (decision of 28.11) (C): the most paints a picture there may have (each has a key, 1 to 9, and a
+   * pattern of its own: styles/app.css, .pat-1 …) and the most numbers in one of its lines. Colour numbers start a new
+   * run at every change of colour, so a line may get many, and the numbers and the paint buttons then leave the grid
+   * no room on a small phone — measured 28.11 on 360 × 640 at the comfortable cell: 12 numbers in a column left no row
+   * of the grid, 11 — one, 7 paints with 7 numbers — under two; 9 numbers and 5 paints — close to three, as many as
+   * the album's black-and-white 15 × 15 pictures leave there.
+   */
+  colour: { maxPaints: 6, mostNumbers: 9 },
 } as const;

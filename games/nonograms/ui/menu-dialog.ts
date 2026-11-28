@@ -1,6 +1,6 @@
 // Menu: language; the settings approved on 25.11 — a menu where everybody fits the game to themselves (playing and look);
-// installing; clearing progress; statistics for each size; about the game and the "Made by way1ong" line
-// (docs/nonograms/SPEC.md, "Налаштування").
+// installing; clearing progress; statistics for each size, of the pictures in colour apart ("Кольорові малюнки");
+// about the game and the "Made by way1ong" line (docs/nonograms/SPEC.md, "Налаштування").
 import { h } from '../../../shared/ui/dom.ts';
 import { updateLine } from '../../../shared/ui/update-view.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
@@ -23,6 +23,8 @@ export interface MenuContent {
   lang: string;
   settings: Settings;
   stats: Stats;
+  /** Statistics of the pictures in colour. */
+  colourStats: Stats;
   /** The longest run of pictures of the day, in days. */
   longest: number;
 }
@@ -136,37 +138,38 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
         installPart = h('p', { class: 'dialog__note' }, s.installIos);
       }
 
-      const statsTable = h(
-        'table',
-        { class: 'stats' },
+      const statsTable = (of: Stats) =>
         h(
-          'thead',
-          {},
+          'table',
+          { class: 'stats' },
           h(
-            'tr',
+            'thead',
             {},
-            h('th', { scope: 'col' }, d.stats.size),
-            h('th', { scope: 'col' }, d.stats.solved),
-            h('th', { scope: 'col' }, d.stats.hints),
-            settings.time ? h('th', { scope: 'col' }, d.stats.best) : null,
-          ),
-        ),
-        h(
-          'tbody',
-          {},
-          ...SIZES.map((size) => {
-            const st = stats[size];
-            return h(
+            h(
               'tr',
               {},
-              h('th', { scope: 'row' }, sizeText(size, d)),
-              h('td', {}, num(lang, st.solved)),
-              h('td', {}, num(lang, st.hints)),
-              settings.time ? h('td', {}, st.bestMs === null ? d.stats.none : clockText(st.bestMs)) : null,
-            );
-          }),
-        ),
-      );
+              h('th', { scope: 'col' }, d.stats.size),
+              h('th', { scope: 'col' }, d.stats.solved),
+              h('th', { scope: 'col' }, d.stats.hints),
+              settings.time ? h('th', { scope: 'col' }, d.stats.best) : null,
+            ),
+          ),
+          h(
+            'tbody',
+            {},
+            ...SIZES.map((size) => {
+              const st = of[size];
+              return h(
+                'tr',
+                {},
+                h('th', { scope: 'row' }, sizeText(size, d)),
+                h('td', {}, num(lang, st.solved)),
+                h('td', {}, num(lang, st.hints)),
+                settings.time ? h('td', {}, st.bestMs === null ? d.stats.none : clockText(st.bestMs)) : null,
+              );
+            }),
+          ),
+        );
 
       const site = NONOGRAMS.links.site;
       const credit = site ? h('a', { href: site }, d.about.credit) : h('span', {}, d.about.credit);
@@ -192,10 +195,13 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           reset,
           resetNote,
           h('h2', {}, d.stats.title),
-          statsTable,
+          statsTable(stats),
           h('p', {}, plural(lang, content.longest, d.stats.longest, { n: content.longest })),
+          h('h3', {}, d.stats.colour),
+          statsTable(content.colourStats),
           h('h2', {}, d.about.title),
           h('p', {}, d.about.rules),
+          h('p', {}, d.about.colour),
           h('p', {}, d.about.text),
           h('p', {}, d.about.zoom),
           h('p', { class: 'dialog__note' }, d.about.keys),

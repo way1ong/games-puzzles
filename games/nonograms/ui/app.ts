@@ -1,60 +1,58 @@
-// The game screen: which screen is open (the start, a chapter of the album, a picture of the album or of the day), the
-// picture in play, the stroke under the finger, the hint shown; turns strokes, taps and keys into moves and draws the
-// result. The rules themselves are in ../core (pure functions).
+// The game screen: which screen is open (the start, a chapter of the album or of its colour section, a picture of the
+// album — black and white or in colour — or of the day), the picture in play, the stroke under the finger, the hint
+// shown; turns strokes, taps and keys into moves and draws the result. The rules themselves are in ../core (pure
+// functions), reached through the picture's rules (ui/rules.ts: black and white or in colour, one face).
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
-import { PALETTE, PAPER, type Colour } from '../art/palette.ts';
+import { COLOUR_PICTURES } from '../art/colour.ts';
 import { PICTURES } from '../art/pictures.ts';
 import { NONOGRAMS, SIZES, type Size } from '../config.ts';
 import { chapterOf, dailyPicture, nextUnsolved } from '../core/album.ts';
-import { allLines, cluesOf, type Clues } from '../core/clues.ts';
-import { hintFor, type Hint } from '../core/hint.ts';
-import { EMPTY_PIXEL, pixelsOf, solutionOf, type Picture } from '../core/picture.ts';
-import {
-  BLANK,
-  CROSS,
-  FILL,
-  addTime,
-  clear,
-  countHint,
-  fittingLines,
-  fullButWrong,
-  mistakes,
-  newPlay,
-  put,
-  stroke,
-  undo,
-  type Mark,
-  type Mode,
-  type Play,
-} from '../core/play.ts';
+import { allLines } from '../core/clues.ts';
+import type { Picture } from '../core/picture.ts';
+import { BLANK, CROSS, FILL, type Mark, type Mode } from '../core/play.ts';
 import { longestStreak, recordSolved } from '../core/stats.ts';
 import { albumView, type AlbumItem } from './album-view.ts';
 import { createBoardView, type BoardShow } from './board-view.ts';
+import { colourRules } from './colour-rules.ts';
 import { createEndDialog } from './end-dialog.ts';
-import { homeView, type DayState } from './home-view.ts';
+import { homeView, type Chapter, type DayState } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
 import { backSign } from './icons.ts';
 import { createMenuDialog } from './menu-dialog.ts';
+import { plainRules } from './plain-rules.ts';
 import { closeRoute, currentRoute, openRoute, replaceRoute, restoreRoute, watchRoute } from './route.ts';
+import type { AnyHint, AnyPlay, PictureRules, StrokeChoice } from './rules.ts';
 import * as store from './storage.ts';
 import type { Settings } from './storage.ts';
 import { pictureSvg } from './thumb.ts';
 import { clockText } from './time.ts';
 import { createToolsView } from './tools-view.ts';
-import { cellLabel, hintText, lineName, pictureName, pictureNumber, pictureTitle, sizeText } from './words.ts';
+import { colourSizeText, lineName, paintName, pictureName, pictureTitle, sizeText } from './words.ts';
 
 /** How often the shown time is updated, ms. */
 const TICK_MS = 1000;
 /** Lines a move finishes that are named aloud for a screen reader, at most. */
 const LINES_SAID = 3;
 
-type Screen = { kind: 'home' } | { kind: 'album'; size: Size } | { kind: 'picture'; picture: Picture; daily: boolean };
+/** A screen; `colour` — of the colour section (its chapters and pictures). */
+type Screen = { kind: 'home' } | { kind: 'album'; size: Size; colour: boolean } | { kind: 'picture'; picture: Picture; daily: boolean; colour: boolean };
 
 const albumRoute = (size: Size) => `album-${size}`;
 const pictureRoute = (picture: Picture) => `p-${picture.id}`;
+/** The colour section's own screens: its chapters and its pictures (C). */
+const colourAlbumRoute = (size: Size) => `colour-${size}`;
+const colourPictureRoute = (picture: Picture) => `c-${picture.id}`;
+const chapterRoute = (size: Size, colour: boolean) => (colour ? colourAlbumRoute(size) : albumRoute(size));
+const routeOf = (picture: Picture, colour: boolean) => (colour ? colourPictureRoute(picture) : pictureRoute(picture));
+
+/** A latin digit key 1–9 whatever the keyboard layout (the paints of a colour picture); null — another key. */
+function digitOf(event: KeyboardEvent): number | null {
+  const m = /^(?:Digit|Numpad)([1-9])$/.exec(event.code);
+  return m ? Number(m[1]) : null;
+}
 
 /** A latin letter key whatever the keyboard layout (H, X, F; Z with Ctrl). */
 function letterOf(event: KeyboardEvent): string {
@@ -68,12 +66,13 @@ interface NoteAction {
   run: () => void;
 }
 
-/** The picture in play and what follows from it. */
+/** The picture in play and its rules. */
 interface Open {
   picture: Picture;
-  clues: Clues;
-  solution: boolean[];
+  rules: PictureRules;
   daily: boolean;
+  /** The day it was opened for (a picture of the day), else null. */
+  day: string | null;
   route: string;
 }
 
@@ -84,14 +83,17 @@ export function startApp(root: HTMLElement): void {
   let today = localDateKey(new Date());
 
   let open: Open | null = null;
-  let game: Play | null = null;
+  let game: AnyPlay | null = null;
   /** The play as it would be with the stroke under the finger (shown, not saved). */
-  let preview: Play | null = null;
+  let preview: AnyPlay | null = null;
   let mode: Mode = 'fill';
-  let hint: Hint | null = null;
+  /** The paint chosen in a colour picture (from 1): what a tap puts while the mode is paint. */
+  let paint = 1;
+  let hint: AnyHint | null = null;
   /** A short word about the last action (nothing to undo), shown until the next move. */
   let message: string | null = null;
   let tipDone = store.loadTipDone();
+  let colourTipDone = store.loadColourTipDone();
   let zoomTipDone = store.loadZoomTipDone();
   /** When the current stretch of play started (performance.now()); null — the clock stands. */
   let clockFrom: number | null = null;
@@ -115,7 +117,7 @@ export function startApp(root: HTMLElement): void {
   const note = h('div', { class: 'note' }, noteText, noteActions);
   const board = createBoardView({ preview: onPreview, commit: onCommit, tap: onTap, viewChanged, measured: render });
   const stage = h('div', { class: 'stage' }, board.el);
-  const tools = createToolsView({ mode: setMode, undo: takeBack, hint: askHint, whole: toggleWhole });
+  const tools = createToolsView({ mode: setMode, paint: setPaint, undo: takeBack, hint: askHint, whole: toggleWhole });
   const playView = h('div', { class: 'play' }, info, stage, note, tools.el);
 
   backBtn.addEventListener('click', goBack);
@@ -157,16 +159,24 @@ export function startApp(root: HTMLElement): void {
 
   // ---------- screens ----------
   function screenOf(route: string): Screen {
-    if (route === 'daily') return { kind: 'picture', picture: dailyPicture(PICTURES, today), daily: true };
+    if (route === 'daily') return { kind: 'picture', picture: dailyPicture(PICTURES, today), daily: true, colour: false };
     const size = SIZES.find((s) => route === albumRoute(s));
-    if (size) return { kind: 'album', size };
+    if (size) return { kind: 'album', size, colour: false };
+    const colourSize = SIZES.find((s) => route === colourAlbumRoute(s));
+    if (colourSize) return { kind: 'album', size: colourSize, colour: true };
     const picture = PICTURES.find((p) => route === pictureRoute(p));
-    if (picture) return { kind: 'picture', picture, daily: false };
+    if (picture) return { kind: 'picture', picture, daily: false, colour: false };
+    const inColour = COLOUR_PICTURES.find((p) => route === colourPictureRoute(p));
+    if (inColour) return { kind: 'picture', picture: inColour, daily: false, colour: true };
     return { kind: 'home' };
   }
 
   /** Where Back leads when the page was opened straight on a screen. */
-  const parentOf = (screen: Screen): string => (screen.kind === 'picture' && !screen.daily ? albumRoute(screen.picture.size) : '');
+  const parentOf = (screen: Screen): string => (screen.kind === 'picture' && !screen.daily ? chapterRoute(screen.picture.size, screen.colour) : '');
+
+  /** A picture's rules: in colour, or black and white (of today, for the picture of the day). */
+  const rulesOf = (picture: Picture, daily: boolean, colour: boolean): PictureRules =>
+    colour ? colourRules(picture) : plainRules(picture, daily ? today : null);
 
   function goBack(): void {
     closeRoute(parentOf(screenOf(currentRoute())));
@@ -177,12 +187,12 @@ export function startApp(root: HTMLElement): void {
     const screen = screenOf(route);
     store.saveLast(screen.kind === 'home' ? '' : route);
     if (screen.kind === 'picture') {
-      if (!open || open.route !== route || (open.daily && game?.daily !== today)) openPicture(screen.picture, screen.daily, route);
+      if (!open || open.route !== route || (open.daily && open.day !== today)) openPicture(screen.picture, screen.daily, screen.colour, route);
       else renderGame();
       return;
     }
     leavePicture();
-    if (screen.kind === 'album') renderAlbum(screen.size);
+    if (screen.kind === 'album') renderAlbum(screen.size, screen.colour);
     else renderHome();
   }
 
@@ -195,19 +205,18 @@ export function startApp(root: HTMLElement): void {
     message = null;
   }
 
-  function openPicture(picture: Picture, daily: boolean, route: string): void {
+  function openPicture(picture: Picture, daily: boolean, colour: boolean, route: string): void {
     leavePicture();
-    const solution = solutionOf(picture);
-    const clues = cluesOf(solution, picture.size);
-    const day = daily ? today : null;
-    open = { picture, clues, solution, daily, route };
-    const saved = store.loadPlay(picture, clues, day);
-    game = saved ?? newPlay(picture, day);
+    const rules = rulesOf(picture, daily, colour);
+    open = { picture, rules, daily, day: daily ? today : null, route };
+    const saved = rules.load();
+    game = saved ?? rules.fresh();
     // A new one is kept at once: a new day's picture takes the place of yesterday's.
-    if (!saved) store.savePlay(game, picture);
+    if (!saved) rules.save(game);
     store.saveResume(route);
     mode = 'fill';
-    board.setPuzzle(picture.size, clues, store.loadWhole()[picture.size] ?? false);
+    paint = 1;
+    board.setPuzzle(picture.size, rules.clues, store.loadWhole()[picture.size] ?? false, rules.colour);
     startClock();
     renderGame();
     title.focus();
@@ -220,9 +229,9 @@ export function startApp(root: HTMLElement): void {
 
   function stopClock(): void {
     if (clockFrom === null || !game || !open) return;
-    game = addTime(game, performance.now() - clockFrom);
+    game = open.rules.addTime(game, performance.now() - clockFrom);
     clockFrom = null;
-    store.savePlay(game, open.picture);
+    open.rules.save(game);
   }
 
   function playedMs(): number {
@@ -240,28 +249,37 @@ export function startApp(root: HTMLElement): void {
   }, TICK_MS);
 
   // ---------- the start screen and the album ----------
-  function playOf(picture: Picture, daily: boolean): Play | null {
-    return store.loadPlay(picture, cluesOf(solutionOf(picture), picture.size), daily ? today : null);
+  function playOf(picture: Picture, daily: boolean, colour: boolean): AnyPlay | null {
+    return rulesOf(picture, daily, colour).load();
+  }
+
+  /** The chapters of the album, or of its colour section, with how many of their pictures are solved. */
+  function chaptersOf(colour: boolean): Chapter[] {
+    const solved = colour ? store.loadColourSolved() : store.loadSolved();
+    return SIZES.flatMap((size) => {
+      const chapter = chapterOf(colour ? COLOUR_PICTURES : PICTURES, size);
+      return chapter.length ? [{ size, solved: chapter.filter((p) => solved.has(p.id)).length, total: chapter.length, route: chapterRoute(size, colour) }] : [];
+    });
   }
 
   function renderHome(): void {
     applyLook();
     backBtn.hidden = true;
     title.textContent = d.app.name;
-    const solved = store.loadSolved();
     const days = store.loadDays();
-    const dayPlay = playOf(dailyPicture(PICTURES, today), true);
+    const dayPlay = playOf(dailyPicture(PICTURES, today), true, false);
     const daily: DayState = days[today] || dayPlay?.done ? 'done' : dayPlay && dayPlay.history.length > 0 ? 'started' : 'new';
     // The picture played last, when it is begun and not solved.
     let resume = null;
     const route = store.loadResume();
     const screen = screenOf(route);
     if (screen.kind === 'picture') {
-      const p = playOf(screen.picture, screen.daily);
+      const rules = rulesOf(screen.picture, screen.daily, screen.colour);
+      const p = rules.load();
       if (p && !p.done && p.history.length > 0) {
         resume = {
-          title: screen.daily ? d.game.daily : pictureTitle(screen.picture, d, settings.nameFirst),
-          info: screen.daily ? dateText(today, 'long') : sizeText(screen.picture.size, d),
+          title: screen.daily ? d.game.daily : pictureTitle(screen.picture, d, settings.nameFirst, rules.number),
+          info: screen.daily ? dateText(today, 'long') : screen.colour ? colourSizeText(screen.picture.size, d) : sizeText(screen.picture.size, d),
           route,
         };
       }
@@ -270,10 +288,8 @@ export function startApp(root: HTMLElement): void {
       homeView(
         {
           resume,
-          chapters: SIZES.map((size) => {
-            const chapter = chapterOf(PICTURES, size);
-            return { size, solved: chapter.filter((p) => solved.has(p.id)).length, total: chapter.length, route: albumRoute(size) };
-          }),
+          chapters: chaptersOf(false),
+          colourChapters: chaptersOf(true),
           daily,
           date: dateText(today, 'long'),
           streak: streak(Object.keys(days), today),
@@ -286,23 +302,27 @@ export function startApp(root: HTMLElement): void {
     updates.check();
   }
 
-  function renderAlbum(size: Size): void {
+  function renderAlbum(size: Size, colour: boolean): void {
     applyLook();
     backBtn.hidden = false;
-    title.textContent = sizeText(size, d);
-    const solved = store.loadSolved();
-    const items: AlbumItem[] = chapterOf(PICTURES, size).map((picture) => {
-      const play = playOf(picture, false);
+    title.textContent = colour ? colourSizeText(size, d) : sizeText(size, d);
+    const solved = colour ? store.loadColourSolved() : store.loadSolved();
+    const items: AlbumItem[] = chapterOf(colour ? COLOUR_PICTURES : PICTURES, size).map((picture) => {
+      const rules = rulesOf(picture, false, colour);
+      const play = rules.load();
       const done = solved.has(picture.id) || !!play?.done;
       const started = !done && !!play && play.history.length > 0;
-      return {
+      const item: AlbumItem = {
         picture,
         state: done ? 'done' : started ? 'started' : 'new',
-        marks: started ? play!.marks : null,
-        title: pictureTitle(picture, d, settings.nameFirst || done),
+        marks: started ? rules.board(play!).marks : null,
+        title: pictureTitle(picture, d, settings.nameFirst || done, rules.number),
       };
+      // A picture in colour: solved — in its colours (whatever the setting), begun — the player's cells in their paints.
+      if (rules.colour) item.look = done ? { kind: 'colour' } : started ? { kind: 'paints', marks: play!.marks, paints: rules.colour.paints } : { kind: 'blank' };
+      return item;
     });
-    content.replaceChildren(albumView(items, d, settings.colour, (picture) => openRoute(pictureRoute(picture))));
+    content.replaceChildren(albumView(items, d, settings.colour, (picture) => openRoute(routeOf(picture, colour))));
   }
 
   // ---------- the picture ----------
@@ -310,25 +330,30 @@ export function startApp(root: HTMLElement): void {
     applyLook();
     backBtn.hidden = false;
     if (content.firstChild !== playView) content.replaceChildren(playView);
+    playView.classList.toggle('is-colour', !!open?.rules.colour);
     render();
   }
 
   /** The mark a hint or a mistake adds to a cell's name. */
   function cellExtra(cell: number, show: BoardShow): string | null {
     if (show.bad.has(cell) || show.hintCell === cell) return d.cell.bad;
+    const hintPaint = show.hintPaints?.get(cell);
+    const paints = open?.rules.colour?.paints;
+    if (hintPaint && paints) return fmt(d.cell.hintPaint, { colour: paintName(paints[hintPaint - 1]!, d) });
     if (show.hintFill.has(cell)) return d.cell.hintFill;
     if (show.hintCross.has(cell)) return d.cell.hintCross;
     return null;
   }
 
   /** What the line under the grid says now, and what it offers to do there. */
-  function noteNow(g: Play): { text: string; actions: NoteAction[] } | null {
+  function noteNow(g: AnyPlay): { text: string; actions: NoteAction[] } | null {
     if (!open) return null;
     if (g.done) return { text: fmt(d.game.solved, { name: pictureName(open.picture, d) }), actions: endActions() };
-    if (hint) return { text: hintText(hint, open.clues, lang, d), actions: [] };
+    if (hint) return { text: open.rules.hintText(hint, lang, d), actions: [] };
     if (message) return { text: message, actions: [] };
-    if (fullButWrong(g, open.clues)) return { text: d.game.fullWrong, actions: [] };
-    if (!tipDone) return { text: d.game.tip, actions: [] };
+    if (open.rules.fullButWrong(g)) return { text: d.game.fullWrong, actions: [] };
+    // How to play: until a picture is solved; for the pictures in colour, until one of them is
+    if (open.rules.colour ? !colourTipDone : !tipDone) return { text: open.rules.colour ? d.game.tipColour : d.game.tip, actions: [] };
     if (board.zoomable() && !board.isWhole() && !zoomTipDone) return { text: d.game.tipZoom, actions: [] };
     return null;
   }
@@ -337,32 +362,37 @@ export function startApp(root: HTMLElement): void {
   function render(): void {
     if (!open || !game) return;
     const o = open;
+    const r = o.rules;
     const g = preview ?? game;
     const named = settings.nameFirst || game.done;
-    const number = fmt(d.album.picture, { n: pictureNumber(o.picture) });
-    title.textContent = o.daily ? d.game.daily : pictureTitle(o.picture, d, named);
+    const number = fmt(d.album.picture, { n: r.number });
+    const chapter = r.colour ? colourSizeText(o.picture.size, d) : sizeText(o.picture.size, d);
+    title.textContent = o.daily ? d.game.daily : pictureTitle(o.picture, d, named, r.number);
     infoText.textContent = o.daily
       ? named
         ? `${dateText(today, 'long')} · ${pictureName(o.picture, d)}`
         : dateText(today, 'long')
       : named
-        ? `${sizeText(o.picture.size, d)} · ${number}`
-        : sizeText(o.picture.size, d);
+        ? `${chapter} · ${number}`
+        : chapter;
     renderTime();
-    const pixels = pixelsOf(o.picture);
+    const shown = hint ? r.hintMarks(hint) : null;
+    const cells = r.board(g);
     const show: BoardShow = {
-      bad: new Set(settings.mistakes && !g.done ? mistakes(g.marks, o.solution) : []),
-      hintLine: hint?.kind === 'line' ? { axis: hint.axis, index: hint.index } : null,
-      hintFill: new Set(hint?.kind === 'line' ? hint.fill : []),
-      hintCross: new Set(hint?.kind === 'line' ? hint.cross : []),
-      hintCell: hint?.kind === 'mistake' ? hint.cell : null,
-      faded: settings.fade ? fittingLines(g.marks, o.clues) : new Set(),
+      bad: new Set(settings.mistakes && !g.done ? r.mistakes(g) : []),
+      hintLine: shown?.line ?? null,
+      hintFill: new Set(shown?.fill ?? []),
+      hintCross: new Set(shown?.cross ?? []),
+      hintCell: shown?.cell ?? null,
+      faded: settings.fade ? r.fitting(g) : new Set(),
       highlight: settings.highlight,
       done: g.done,
-      colours: g.done && settings.colour ? pixels.map((p) => (p === EMPTY_PIXEL ? PAPER : PALETTE[p as Colour])) : null,
+      colours: g.done ? r.doneColours(settings.colour) : null,
+      paints: cells.paints,
+      hintPaints: shown?.paints ?? null,
     };
     board.el.setAttribute('aria-label', fmt(d.game.grid, { size: o.picture.size }));
-    board.render(g.marks, show, (cell) => cellLabel(cell, o.clues, g.marks[cell] as Mark, cellExtra(cell, show), d));
+    board.render(cells.marks, show, (cell) => r.cellLabel(g, cell, cellExtra(cell, show), d));
     const now = noteNow(g);
     noteText.textContent = now?.text ?? '';
     noteActions.replaceChildren(
@@ -374,18 +404,32 @@ export function startApp(root: HTMLElement): void {
     );
     note.classList.toggle('is-empty', !now);
     tools.el.hidden = g.done;
-    tools.render({ mode, canUndo: game.history.length > 0, zoomable: board.zoomable(), whole: board.isWhole() }, d);
+    tools.render(
+      {
+        mode,
+        paints: r.colour ? { looks: r.colour.looks, names: r.colour.paints.map((c) => paintName(c, d)) } : null,
+        paint,
+        canUndo: game.history.length > 0,
+        zoomable: board.zoomable(),
+        whole: board.isWhole(),
+      },
+      d,
+    );
     noteByKeys();
   }
 
   // ---------- moves ----------
-  const options = (over: Partial<{ mode: Mode }> = {}) => ({ mode: over.mode ?? mode, secondTap: settings.secondTap, autoCross: settings.autoCross });
+  const options = (over: Partial<{ mode: Mode }> = {}): StrokeChoice => ({ mode: over.mode ?? mode, paint, secondTap: settings.secondTap, autoCross: settings.autoCross });
 
-  /** Words for a move: how many cells changed and how, and the lines it made fit their numbers. */
-  function moveWords(before: Play, after: Play): string {
+  /** Words for a move: how many cells changed and how (a cell painted anew counts as painted), and the lines it made fit their numbers. */
+  function moveWords(before: AnyPlay, after: AnyPlay): string {
     if (!open) return '';
-    const changed = after.history.at(-1)?.cells ?? [];
-    const by = (m: Mark) => changed.filter((c) => after.marks[c] === m && before.marks[c] !== m).length;
+    const r = open.rules;
+    const changed = after.history[after.history.length - 1]?.cells ?? [];
+    const was = r.board(before);
+    const is = r.board(after);
+    const by = (m: Mark) =>
+      changed.filter((c) => is.marks[c] === m && (was.marks[c] !== m || (m === FILL && is.paints?.[c] !== was.paints?.[c]))).length;
     const parts: string[] = [];
     const filled = by(FILL);
     const crossed = by(CROSS);
@@ -393,14 +437,14 @@ export function startApp(root: HTMLElement): void {
     if (filled) parts.push(plural(lang, filled, d.game.filled, { n: filled }));
     if (crossed) parts.push(plural(lang, crossed, d.game.crossed, { n: crossed }));
     if (cleared) parts.push(plural(lang, cleared, d.game.cleared, { n: cleared }));
-    const was = fittingLines(before.marks, open.clues);
-    const now = fittingLines(after.marks, open.clues);
-    const done = allLines(open.clues.size).filter((l) => now.has(`${l.axis}${l.index}`) && !was.has(`${l.axis}${l.index}`));
+    const fitted = r.fitting(before);
+    const now = r.fitting(after);
+    const done = allLines(open.picture.size).filter((l) => now.has(`${l.axis}${l.index}`) && !fitted.has(`${l.axis}${l.index}`));
     for (const l of done.slice(0, LINES_SAID)) parts.push(fmt(d.game.lineDone, { line: lineName(l.axis, l.index, d) }));
     return parts.join('. ');
   }
 
-  function commit(next: Play, words: string | null = null): void {
+  function commit(next: AnyPlay, words: string | null = null): void {
     preview = null;
     if (!game || !open || next === game) {
       render();
@@ -415,10 +459,11 @@ export function startApp(root: HTMLElement): void {
     game = next;
     hint = null;
     message = null;
-    store.savePlay(game, open.picture);
+    open.rules.save(game);
     announce(words ?? moveWords(before, game));
-    if (settings.vibration && 'vibrate' in navigator && game.marks.some((m, c) => m === FILL && before.marks[c] !== FILL)) {
-      navigator.vibrate(NONOGRAMS.vibrateMs);
+    if (settings.vibration && 'vibrate' in navigator) {
+      const was = open.rules.board(before).marks;
+      if (open.rules.board(game).marks.some((m, c) => m === FILL && was[c] !== FILL)) navigator.vibrate(NONOGRAMS.vibrateMs);
     }
     if (game.done) {
       finish();
@@ -429,34 +474,49 @@ export function startApp(root: HTMLElement): void {
 
   function onPreview(cells: number[] | null): void {
     if (!game || !open || game.done) return;
-    const next = cells ? stroke(game, open.clues, cells, options()) : null;
+    const next = cells ? open.rules.stroke(game, cells, options()) : null;
     preview = next === game ? null : next;
     render();
   }
 
   function onCommit(cells: number[]): void {
     if (!game || !open || game.done) return;
-    commit(stroke(game, open.clues, cells, options()));
+    commit(open.rules.stroke(game, cells, options()));
   }
 
   function onTap(cell: number): void {
     if (!game || !open || game.done) return;
-    commit(stroke(game, open.clues, [cell], options()));
+    commit(open.rules.stroke(game, [cell], options()));
   }
 
   function crossAt(cell: number): void {
     if (!game || !open || game.done) return;
-    commit(stroke(game, open.clues, [cell], options({ mode: 'cross' })));
+    commit(open.rules.stroke(game, [cell], options({ mode: 'cross' })));
   }
 
   function clearAt(cell: number): void {
     if (!game || !open || game.done) return;
-    commit(clear(game, open.clues, [cell], settings.autoCross));
+    commit(open.rules.clear(game, [cell], settings.autoCross));
   }
 
   function setMode(next: Mode): void {
     mode = next;
     render();
+  }
+
+  /** A paint of a colour picture chosen (from 1): taps put it. */
+  function setPaint(next: number): void {
+    mode = 'fill';
+    paint = next;
+    render();
+  }
+
+  /** A paint chosen by its key (1–9): said aloud, as the button's state is not seen. */
+  function paintByKey(next: number): void {
+    const paints = open?.rules.colour?.paints;
+    if (!paints || next > paints.length) return;
+    setPaint(next);
+    announce(fmt(d.tools.paint, { colour: paintName(paints[next - 1]!, d) }));
   }
 
   function say(text: string): void {
@@ -467,8 +527,8 @@ export function startApp(root: HTMLElement): void {
   }
 
   function takeBack(): void {
-    if (!game || game.done) return;
-    const next = undo(game);
+    if (!game || !open || game.done) return;
+    const next = open.rules.undo(game);
     if (next === game) {
       say(d.game.nothingToUndo);
       return;
@@ -496,23 +556,19 @@ export function startApp(root: HTMLElement): void {
   // ---------- hints ----------
   function askHint(): void {
     if (!game || !open || game.done) return;
-    // A second press puts what the hint shows.
-    if (hint?.kind === 'line') {
-      commit(put(game, open.clues, hint.fill, hint.cross, settings.autoCross));
+    // A second press puts what the hint shows (or fixes the mistake).
+    if (hint) {
+      commit(open.rules.putHint(game, hint, settings.autoCross));
       return;
     }
-    if (hint?.kind === 'mistake') {
-      const cell = hint.cell;
-      commit(hint.should === 'fill' ? put(game, open.clues, [cell], [], settings.autoCross) : put(game, open.clues, [], [cell], settings.autoCross));
-      return;
-    }
-    const found = hintFor(game, open.picture, open.clues);
-    if (found.kind === 'none') return;
-    game = countHint(game);
-    store.savePlay(game, open.picture);
+    const found = open.rules.hint(game);
+    if (!found) return;
+    game = open.rules.countHint(game);
+    open.rules.save(game);
     hint = found;
     message = null;
-    board.reveal(found.kind === 'mistake' ? found.cell : (found.fill[0] ?? found.cross[0] ?? 0));
+    const where = open.rules.hintMarks(found);
+    board.reveal(where.cell ?? where.fill[0] ?? where.cross[0] ?? 0);
     render();
     announce(noteText.textContent ?? '');
   }
@@ -520,6 +576,7 @@ export function startApp(root: HTMLElement): void {
   // ---------- the end ----------
   function nextPicture(): Picture | null {
     if (!open || open.daily) return null;
+    if (open.rules.colour) return nextUnsolved(chapterOf(COLOUR_PICTURES, open.picture.size), store.loadColourSolved(), open.picture.id);
     return nextUnsolved(chapterOf(PICTURES, open.picture.size), store.loadSolved(), open.picture.id);
   }
 
@@ -527,7 +584,8 @@ export function startApp(root: HTMLElement): void {
     if (!open) return [];
     if (open.daily) return [{ label: d.end.home, run: () => closeRoute('') }];
     const next = nextPicture();
-    return next ? [{ label: d.end.next, run: () => replaceRoute(pictureRoute(next)) }] : [{ label: d.end.album, run: goBack }];
+    const colour = open.rules.colour !== null;
+    return next ? [{ label: d.end.next, run: () => replaceRoute(routeOf(next, colour)) }] : [{ label: d.end.album, run: goBack }];
   }
 
   function finish(): void {
@@ -535,10 +593,21 @@ export function startApp(root: HTMLElement): void {
     stopClock();
     const g = game;
     const o = open;
-    store.addSolved(o.picture.id);
-    store.saveStats(recordSolved(store.loadStats(), g));
+    const colour = o.rules.colour !== null;
+    // The pictures in colour: solved and counted apart from the black-and-white ones.
+    if (colour) {
+      store.addColourSolved(o.picture.id);
+      store.saveColourStats(recordSolved(store.loadColourStats(), g));
+      if (!colourTipDone) {
+        colourTipDone = true;
+        store.saveColourTipDone();
+      }
+    } else {
+      store.addSolved(o.picture.id);
+      store.saveStats(recordSolved(store.loadStats(), g));
+    }
     if (o.daily) store.saveDayResult(today, { hints: g.hints, ms: g.ms });
-    if (!tipDone) {
+    if (!colour && !tipDone) {
       tipDone = true;
       store.saveTipDone();
     }
@@ -556,23 +625,24 @@ export function startApp(root: HTMLElement): void {
       share = { label: d.end.copy, done: d.end.copied, text: NONOGRAMS.links.game ? `${text}\n${NONOGRAMS.links.game}` : text };
     }
     const next = nextPicture();
-    if (!o.daily && !next) lines.push(d.end.allDone);
+    if (!o.daily && !next) lines.push(colour ? d.end.allDoneColour : d.end.allDone);
     const toAlbum = { label: d.end.album, action: goBack };
     endDialog.open({
       title: d.end.title,
       highlight: name,
-      picture: pictureSvg(o.picture, settings.colour ? { kind: 'colour' } : { kind: 'ink' }),
+      // a picture in colour ends in its colours whatever the setting (that one is for the black-and-white pictures)
+      picture: pictureSvg(o.picture, colour || settings.colour ? { kind: 'colour' } : { kind: 'ink' }),
       lines,
       share,
       secondary: o.daily || !next ? null : toAlbum,
-      primary: o.daily ? { label: d.end.home, action: () => closeRoute('') } : next ? { label: d.end.next, action: () => replaceRoute(pictureRoute(next)) } : toAlbum,
+      primary: o.daily ? { label: d.end.home, action: () => closeRoute('') } : next ? { label: d.end.next, action: () => replaceRoute(routeOf(next, colour)) } : toAlbum,
     });
   }
 
   // ---------- menu ----------
   function openMenu(): void {
     menuDialog.open(
-      { d, lang, settings, stats: store.loadStats(), longest: longestStreak(Object.keys(store.loadDays())) },
+      { d, lang, settings, stats: store.loadStats(), colourStats: store.loadColourStats(), longest: longestStreak(Object.keys(store.loadDays())) },
       {
         setLang(code) {
           lang = code;
@@ -591,11 +661,13 @@ export function startApp(root: HTMLElement): void {
         clearProgress() {
           store.clearAll();
           tipDone = false;
+          colourTipDone = false;
           zoomTipDone = false;
           if (open) {
             const { picture, daily, route } = open;
+            const colour = open.rules.colour !== null;
             open = null;
-            openPicture(picture, daily, route);
+            openPicture(picture, daily, colour, route);
           } else show();
         },
       },
@@ -605,7 +677,7 @@ export function startApp(root: HTMLElement): void {
   function redraw(): void {
     const screen = screenOf(currentRoute());
     if (screen.kind === 'picture' && open) renderGame();
-    else if (screen.kind === 'album') renderAlbum(screen.size);
+    else if (screen.kind === 'album') renderAlbum(screen.size, screen.colour);
     else renderHome();
   }
 
@@ -635,6 +707,7 @@ export function startApp(root: HTMLElement): void {
       return;
     }
     const inGrid = (event.target as HTMLElement | null)?.closest?.('.grid') !== null;
+    const digit = digitOf(event);
     if (event.key === 'Backspace' || event.key === 'Delete') {
       if (!inGrid) return;
       event.preventDefault();
@@ -643,6 +716,7 @@ export function startApp(root: HTMLElement): void {
       crossAt(board.active());
     } else if (letter === 'h') askHint();
     else if (letter === 'f') toggleWhole();
+    else if (digit !== null) paintByKey(digit);
   });
 
   // ---------- the page around ----------

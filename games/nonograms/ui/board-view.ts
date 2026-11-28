@@ -2,12 +2,14 @@
 // beside the rows and above the columns, and the grid — a button for each cell, row by row, with the lines drawn over
 // them (thicker every few cells). One finger or the mouse paints: a tap, or a stroke along a row or a column. Two
 // fingers move and zoom a big grid, as do the mouse wheel and one finger on a strip of numbers; in a grid too small to
-// paint, a tap zooms in. The board only shows and passes the strokes on: the game decides.
+// paint, a tap zooms in. A picture in colour ("Кольорові малюнки"): each number in a box of its paint, each painted
+// cell in its paint and pattern (ui/paint.ts). The board only shows and passes the strokes on: the game decides.
 import { h, svg } from '../../../shared/ui/dom.ts';
 import { NONOGRAMS, type Size } from '../config.ts';
 import type { Axis, Clues } from '../core/clues.ts';
 import { pathCells, wayOf, type Way } from '../core/path.ts';
 import { CROSS, FILL, type Mark } from '../core/play.ts';
+import { dress, type PaintLook } from './paint.ts';
 import { cellAt, clampView, limits, measuresOf, openView, panBy, rowWidthOf, showCell, zoomAround, type Frame, type View } from './zoom.ts';
 
 /** How fast the wheel zooms with Ctrl: the cell grows e-fold over this many pixels of the wheel. */
@@ -30,6 +32,15 @@ export interface BoardShow {
   /** The solved picture: its colour for each cell (null — the picture's ink), crosses gone, no more moves. */
   done: boolean;
   colours: readonly (string | null)[] | null;
+  /** A colour picture: each cell's paint (1…; 0 — none), and the paint of each cell a hint would paint; null — black and white. */
+  paints: readonly number[] | null;
+  hintPaints: ReadonlyMap<number, number> | null;
+}
+
+/** A colour picture's paints and the paint of each of its numbers (rows from the top, columns from the left). */
+export interface BoardColour {
+  looks: readonly PaintLook[];
+  numbers: { rows: readonly (readonly number[])[]; cols: readonly (readonly number[])[] };
 }
 
 export interface BoardActions {
@@ -47,8 +58,8 @@ export interface BoardActions {
 
 export interface BoardView {
   el: HTMLElement;
-  /** A new picture: the numbers and the cells; opens whole or zoomed in, as the player saw this size last. */
-  setPuzzle(size: Size, clues: Clues, whole: boolean): void;
+  /** A new picture: the numbers (in colour: with their paints) and the cells; opens whole or zoomed in, as the player saw this size last. */
+  setPuzzle(size: Size, clues: Clues, whole: boolean, colour?: BoardColour | null): void;
   render(marks: readonly Mark[], show: BoardShow, label: (cell: number) => string): void;
   /** Whether the grid can be zoomed (it fits whole only with small cells), and whether all of it is seen now. */
   zoomable(): boolean;
@@ -87,7 +98,11 @@ export function createBoardView(actions: BoardActions): BoardView {
 
   let size: Size = 5;
   let clues: Clues = { size: 5, rows: [], cols: [] };
+  let looks: readonly PaintLook[] = [];
   let cells: HTMLButtonElement[] = [];
+  /** The paint each cell is drawn in now (0 — none), and the paint of its hint's dot. */
+  let cellPaint: number[] = [];
+  let cellDot: number[] = [];
   let colClues: HTMLElement[] = [];
   let rowClues: HTMLElement[] = [];
   let frame: Frame | null = null;
@@ -107,9 +122,10 @@ export function createBoardView(actions: BoardActions): BoardView {
   let pointerClick = false;
 
   // ---------- building ----------
-  function setPuzzle(s: Size, c: Clues, whole: boolean): void {
+  function setPuzzle(s: Size, c: Clues, whole: boolean, colour: BoardColour | null = null): void {
     size = s;
     clues = c;
+    looks = colour?.looks ?? [];
     activeCell = 0;
     lastCell = null;
     pointerCell = null;
@@ -122,9 +138,17 @@ export function createBoardView(actions: BoardActions): BoardView {
       b.dataset.cell = String(i);
       return b;
     });
-    const number = (n: number) => h('span', { class: n >= 10 ? 'clue__n is-wide' : 'clue__n' }, String(n));
-    colClues = c.cols.map((clue) => h('div', { class: 'clue clue--col' }, ...(clue.length ? clue : [0]).map(number)));
-    rowClues = c.rows.map((clue) => h('div', { class: 'clue clue--row' }, ...(clue.length ? clue : [0]).map(number)));
+    cellPaint = new Array<number>(s * s).fill(0);
+    cellDot = new Array<number>(s * s).fill(0);
+    /** A number; in a colour picture, in a box of its paint (`paint`, from 1). */
+    const number = (n: number, paint = 0) => {
+      const el = h('span', { class: n >= 10 ? 'clue__n is-wide' : 'clue__n' }, String(n));
+      if (paint) dress(el, looks[paint - 1]!);
+      return el;
+    };
+    const numbers = (clue: readonly number[], paints: readonly number[] | undefined) => (clue.length ? clue.map((n, j) => number(n, paints?.[j])) : [number(0)]);
+    colClues = c.cols.map((clue, i) => h('div', { class: 'clue clue--col' }, ...numbers(clue, colour?.numbers.cols[i])));
+    rowClues = c.rows.map((clue, i) => h('div', { class: 'clue clue--row' }, ...numbers(clue, colour?.numbers.rows[i])));
     cols.replaceChildren(...colClues);
     rows.replaceChildren(...rowClues);
     // Lines over the cells: thin between cells, thick every few cells and around; they scale with the grid.
@@ -145,7 +169,9 @@ export function createBoardView(actions: BoardActions): BoardView {
 
   // ---------- measures ----------
   function counts() {
-    return { rows: Math.max(...clues.rows.map(rowWidthOf)), cols: Math.max(1, ...clues.cols.map((clue) => clue.length)) };
+    // a colour picture's numbers may be many: their font may shrink to leave the grid room (ui/zoom.ts)
+    const shrink = looks.length > 0 ? { shrink: true } : {};
+    return { rows: Math.max(...clues.rows.map(rowWidthOf)), cols: Math.max(1, ...clues.cols.map((clue) => clue.length)), ...shrink };
   }
 
   function layout(): void {
@@ -224,7 +250,20 @@ export function createBoardView(actions: BoardActions): BoardView {
       const m = marks[i];
       const c = b.classList;
       const colour = show.done ? (show.colours?.[i] ?? null) : null;
-      c.toggle('is-fill', m === FILL);
+      // a painted cell of a colour picture: its paint and pattern instead of the ink (the solved picture: its colours)
+      const paint = show.paints && !show.done && m === FILL ? (show.paints[i] ?? 0) : 0;
+      if (paint !== cellPaint[i]) {
+        dress(b, paint ? looks[paint - 1]! : null);
+        cellPaint[i] = paint;
+      }
+      const dot = show.hintPaints?.get(i) ?? 0;
+      if (dot !== cellDot[i]) {
+        if (dot) b.style.setProperty('--dot', looks[dot - 1]!.colour);
+        else b.style.removeProperty('--dot');
+        cellDot[i] = dot;
+      }
+      c.toggle('is-hint-paint', dot > 0);
+      c.toggle('is-fill', m === FILL && !paint);
       c.toggle('is-cross', m === CROSS && !show.done);
       c.toggle('is-colour', colour !== null);
       b.style.backgroundColor = colour ?? '';

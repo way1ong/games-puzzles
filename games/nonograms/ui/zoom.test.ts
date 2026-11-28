@@ -23,6 +23,20 @@ describe('the numbers', () => {
   });
 });
 
+describe('long numbers (a colour picture’s)', () => {
+  it('shrink their font to leave the grid room, never under the least font; short ones and black-and-white keep theirs', () => {
+    const long = { rows: 6.3, cols: 12 };
+    const plain = measures(15, long, PHONE, NONOGRAMS.cell.comfortable, REM);
+    const shrunk = measures(15, { ...long, shrink: true }, PHONE, NONOGRAMS.cell.comfortable, REM);
+    expect(shrunk.font).toBeLessThan(plain.font);
+    expect(shrunk.colsH).toBeLessThan(plain.colsH);
+    expect(shrunk.gridH).toBeGreaterThan(plain.gridH);
+    expect(shrunk.font).toBeGreaterThanOrEqual(0.8125 * REM); // the least font: a number stays readable
+    const short = { rows: 2.1, cols: 2 };
+    expect(measures(15, { ...short, shrink: true }, PHONE, NONOGRAMS.cell.comfortable, REM)).toEqual(measures(15, short, PHONE, NONOGRAMS.cell.comfortable, REM));
+  });
+});
+
 describe('the whole grid', () => {
   it('takes the largest whole cell with which it and its numbers fit the room', () => {
     for (const [size, counts] of [

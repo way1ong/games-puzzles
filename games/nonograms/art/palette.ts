@@ -37,3 +37,29 @@ export const PALETTE = {
 } as const;
 
 export type Colour = keyof typeof PALETTE;
+
+/** The two inks of numbers and patterns on a colour: dark and light (palette.test.ts). */
+export const INK = { dark: '#161616', light: '#ffffff' } as const;
+
+/**
+ * How each colour shows while a colour picture is played (docs/nonograms/SPEC.md, "Кольорові малюнки"): the ink of its
+ * numbers and of its pattern — the one of the two that reads on it at 4.5:1 at least — and whether it stands out on
+ * the sheet by itself (3:1 on every face of a cell, both themes), so it may go without a pattern; a colour that does
+ * not always has one, drawn in its dark ink (palette.test.ts checks all of it against styles/tokens.css).
+ */
+export const PAINT_LOOK: Record<Colour, { ink: string; plain: boolean }> = {
+  k: { ink: INK.light, plain: true },
+  s: { ink: INK.dark, plain: false },
+  e: { ink: INK.dark, plain: false },
+  n: { ink: INK.light, plain: true },
+  t: { ink: INK.dark, plain: false },
+  r: { ink: INK.light, plain: true },
+  p: { ink: INK.dark, plain: false },
+  o: { ink: INK.dark, plain: false },
+  y: { ink: INK.dark, plain: false },
+  g: { ink: INK.dark, plain: false },
+  d: { ink: INK.light, plain: true },
+  l: { ink: INK.dark, plain: false },
+  b: { ink: INK.light, plain: true },
+  v: { ink: INK.light, plain: true },
+};

@@ -1,10 +1,13 @@
 // What stays on the device (localStorage): settings, each started picture of the album, today's picture of the day,
-// the solved pictures, the results of the days, statistics, the screen open last and how big grids were seen. Nothing
-// leaves the device (docs/nonograms/SPEC.md, "Що зберігається"). Every read survives a missing or broken value; a
-// saved picture carries a format version, and one in another format (or one that does not hold together) is dropped
-// rather than break the game.
+// the solved pictures, the results of the days, statistics, the screen open last and how big grids were seen; the
+// pictures in colour apart — each started one, the solved ones, their statistics (docs/nonograms/SPEC.md,
+// "Кольорові малюнки"). Nothing leaves the device (docs/nonograms/SPEC.md, "Що зберігається"). Every read survives a
+// missing or broken value; a saved picture carries a format version, and one in another format (or one that does not
+// hold together) is dropped rather than break the game.
 import { SIZES, type Size } from '../config.ts';
 import type { Clues } from '../core/clues.ts';
+import type { ColourClues } from '../core/colour-clues.ts';
+import { CROSS, colourSolved, type ColourPlay, type ColourStep } from '../core/colour-play.ts';
 import { isSolved, type Mark, type Play, type SecondTap, type Step } from '../core/play.ts';
 import type { Picture } from '../core/picture.ts';
 import { emptyStats, type Stats } from '../core/stats.ts';
@@ -197,8 +200,8 @@ export function saveDayResult(date: string, result: DayResult): void {
   write('days', { ...loadDays(), [date]: result });
 }
 
-export function loadStats(): Stats {
-  const v = read<Partial<Record<Size, Partial<Stats[Size]>>>>('stats') ?? {};
+function readStats(key: string): Stats {
+  const v = read<Partial<Record<Size, Partial<Stats[Size]>>>>(key) ?? {};
   const stats = emptyStats();
   for (const size of SIZES) {
     const s = v[size];
@@ -208,8 +211,103 @@ export function loadStats(): Stats {
   return stats;
 }
 
+export function loadStats(): Stats {
+  return readStats('stats');
+}
+
 export function saveStats(stats: Stats): void {
   write('stats', stats);
+}
+
+// ---------- pictures in colour: their own keys, apart from the black-and-white ones ----------
+
+/** The format of a saved picture in colour; one saved in another format is not continued. */
+const COLOUR_PLAY_VERSION = 1;
+
+const isColourMark = (m: unknown, paints: number): m is number => Number.isInteger(m) && (m as number) >= CROSS && (m as number) <= paints;
+
+function validColourStep(step: unknown, cells: number, paints: number): step is ColourStep {
+  const s = step as Partial<ColourStep> | null;
+  return (
+    !!s &&
+    Array.isArray(s.cells) &&
+    Array.isArray(s.before) &&
+    s.cells.length > 0 &&
+    s.cells.length === s.before.length &&
+    s.cells.every((c) => Number.isInteger(c) && c >= 0 && c < cells) &&
+    s.before.every((m) => isColourMark(m, paints))
+  );
+}
+
+/** A saved colour play holds together: its picture's size, marks of its paints, steps within the grid, solved or not as the marks say. */
+function validColourPlay(play: unknown, picture: Picture, clues: ColourClues): play is ColourPlay {
+  const p = play as Partial<ColourPlay> | null;
+  const cells = picture.size * picture.size;
+  const paints = clues.paints.length;
+  return (
+    !!p &&
+    p.id === picture.id &&
+    p.size === picture.size &&
+    Array.isArray(p.marks) &&
+    p.marks.length === cells &&
+    p.marks.every((m) => isColourMark(m, paints)) &&
+    Array.isArray(p.history) &&
+    p.history.every((s) => validColourStep(s, cells, paints)) &&
+    count(p.hints) === p.hints &&
+    ms(p.ms) === p.ms &&
+    typeof p.done === 'boolean' &&
+    p.done === colourSolved(p.marks, clues)
+  );
+}
+
+interface SavedColour {
+  version: number;
+  /** The picture's paints when it was saved (their letters in order): its marks mean these. */
+  paints: string;
+  play: ColourPlay;
+}
+
+const colourKey = (picture: Picture) => `colour:${picture.id}`;
+
+/** The saved play of a picture in colour; dropped when its paints are no longer the picture's. */
+export function loadColourPlay(picture: Picture, clues: ColourClues): ColourPlay | null {
+  const saved = read<SavedColour>(colourKey(picture));
+  if (!saved || saved.version !== COLOUR_PLAY_VERSION || saved.paints !== clues.paints.join('')) return null;
+  return validColourPlay(saved.play, picture, clues) ? saved.play : null;
+}
+
+export function saveColourPlay(play: ColourPlay, picture: Picture, clues: ColourClues): void {
+  write(colourKey(picture), { version: COLOUR_PLAY_VERSION, paints: clues.paints.join(''), play } satisfies SavedColour);
+}
+
+/** The ids of the pictures solved in colour. */
+export function loadColourSolved(): Set<string> {
+  const v = read<unknown>('colourSolved');
+  return new Set(Array.isArray(v) ? v.filter((id): id is string => typeof id === 'string') : []);
+}
+
+export function addColourSolved(id: string): void {
+  const solved = loadColourSolved();
+  solved.add(id);
+  write('colourSolved', [...solved]);
+}
+
+/** Statistics of the pictures in colour, for each size (as those of the black-and-white ones). */
+export function loadColourStats(): Stats {
+  return readStats('colourStats');
+}
+
+export function saveColourStats(stats: Stats): void {
+  write('colourStats', stats);
+}
+
+/** Whether a picture in colour has ever been solved on this device: until then the game says how they are played. */
+export function loadColourTipDone(): boolean {
+  return read<boolean>('colourTipDone') === true;
+}
+
+export function saveColourTipDone(): void {
+  write('colourTipDone', true);
 }
 
 /** The screen open last time (a chapter or a picture), to open again; '' — the start screen. */

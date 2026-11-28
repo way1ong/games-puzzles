@@ -1,6 +1,6 @@
 // The start screen (docs/nonograms/SPEC.md, "Екрани"): the picture begun last, to continue; the album's three
-// chapters with how many of their pictures are solved; today's picture of the day (new, begun or solved) and the
-// streak of days.
+// chapters with how many of their pictures are solved, and under them the colour section's chapters ("Кольорові
+// малюнки"); today's picture of the day (new, begun or solved) and the streak of days.
 import { h } from '../../../shared/ui/dom.ts';
 import type { Size } from '../config.ts';
 import { fmt, plural, type Dict } from './i18n.ts';
@@ -9,10 +9,20 @@ import { sizeText } from './words.ts';
 
 export type DayState = 'new' | 'started' | 'done';
 
+/** A chapter: its size, how many of its pictures are solved, its screen. */
+export interface Chapter {
+  size: Size;
+  solved: number;
+  total: number;
+  route: string;
+}
+
 export interface HomeData {
   /** The picture begun last and not solved: what it is called, a word about it, its screen. */
   resume: { title: string; info: string; route: string } | null;
-  chapters: { size: Size; solved: number; total: number; route: string }[];
+  chapters: Chapter[];
+  /** The chapters of the colour section (a size without pictures in colour has none). */
+  colourChapters: Chapter[];
   daily: DayState;
   /** Today, in words of the language. */
   date: string;
@@ -32,20 +42,15 @@ export function homeView(data: HomeData, d: Dict, lang: string, open: (route: st
     return b;
   };
 
+  const chapter = (c: Chapter) =>
+    pick(sizeText(c.size, d), c.solved === c.total ? [checkSign()] : [], fmt(d.home.progress, { n: c.solved, total: c.total }), c.route, c.solved === c.total ? 'is-done' : '');
+
   const parts: HTMLElement[] = [];
   if (data.resume) {
     parts.push(h('section', { class: 'home__part' }, pick(data.resume.title, [d.home.continue], data.resume.info, data.resume.route, 'pick--resume')));
   }
-  parts.push(
-    h(
-      'section',
-      { class: 'home__part' },
-      h('h2', {}, d.home.album),
-      ...data.chapters.map((c) =>
-        pick(sizeText(c.size, d), c.solved === c.total ? [checkSign()] : [], fmt(d.home.progress, { n: c.solved, total: c.total }), c.route, c.solved === c.total ? 'is-done' : ''),
-      ),
-    ),
-  );
+  parts.push(h('section', { class: 'home__part' }, h('h2', {}, d.home.album), ...data.chapters.map(chapter)));
+  if (data.colourChapters.length) parts.push(h('section', { class: 'home__part' }, h('h2', {}, d.home.colour), ...data.colourChapters.map(chapter)));
   const state = { new: d.home.begin, started: d.home.started, done: d.home.done }[data.daily];
   parts.push(
     h(
