@@ -13,7 +13,8 @@
   "difficulty": {
     "easy": "Könnyű",
     "medium": "Közepes",
-    "hard": "Nehéz"
+    "hard": "Nehéz",
+    "expert": "Nagyon nehéz"
   },
   "pictures": {
     "studyDay": "A detektív dolgozószobája nappal",
@@ -21,7 +22,25 @@
     "bakeryDay": "A pékség nappal",
     "bakeryNight": "A pékség éjjel",
     "stationDay": "A pályaudvar nappal",
-    "stationNight": "A pályaudvar éjjel"
+    "stationNight": "A pályaudvar éjjel",
+    "studyShelvesDay": "A könyvespolc nappal",
+    "studyShelvesNight": "A könyvespolc éjjel",
+    "studyDeskDay": "Az íróasztal nappal",
+    "studyDeskNight": "Az íróasztal éjjel",
+    "studyRugDay": "A szőnyeg és a macska nappal",
+    "studyRugNight": "A szőnyeg és a macska éjjel",
+    "bakeryShelvesDay": "A kenyeres polcok nappal",
+    "bakeryShelvesNight": "A kenyeres polcok éjjel",
+    "bakeryWindowDay": "A pékség ablaka nappal",
+    "bakeryWindowNight": "A pékség ablaka éjjel",
+    "bakeryCounterDay": "A pult nappal",
+    "bakeryCounterNight": "A pult éjjel",
+    "stationWindowDay": "Ablak a vonattal nappal",
+    "stationWindowNight": "Ablak a vonattal éjjel",
+    "stationOfficeDay": "A pénztár és az óra nappal",
+    "stationOfficeNight": "A pénztár és az óra éjjel",
+    "stationBenchesDay": "A padok nappal",
+    "stationBenchesNight": "A padok éjjel"
   },
   "home": {
     "daily": "A nap kirakója",
@@ -45,14 +64,21 @@
   "choose": {
     "title": "Válasszon képet",
     "any": "Bármelyik kép",
-    "anyNote": "véletlenszerűen"
+    "anyNote": "véletlenszerűen",
+    "rooms": {
+      "study": "A detektív dolgozószobája",
+      "bakery": "A pékség",
+      "station": "A pályaudvar"
+    }
   },
   "game": {
     "daily": "A nap kirakója",
     "count": "{n} / {total}",
     "tip": "Húzza a darabot a helyére – vagy koppintson a darabra, aztán a helyére.",
     "taken": "Most koppintson a helyére a táblán.",
+    "takenTurn": "Koppintson még egyszer a darabra a forgatáshoz, vagy a helyére a táblán.",
     "notHere": "Nem ide.",
+    "turnFirst": "Előbb forgassa el a darabot: koppintson rá még egyszer.",
     "placed": "A helyén.",
     "pickFirst": "Előbb válasszon egy darabot a tálcán.",
     "hint": "Tipp: a megjelölt darab a megjelölt helyre kerül ({r}. sor, {c}. oszlop).",
@@ -96,6 +122,11 @@
       "left": "szél, bal oldali"
     },
     "inner": "belső",
+    "turn": {
+      "q1": "90°-kal elforgatva",
+      "q2": "180°-kal elforgatva",
+      "q3": "270°-kal elforgatva"
+    },
     "taken": "felvéve",
     "hint": "tipp"
   },
@@ -125,6 +156,8 @@
     "play": "Játék",
     "ghost": "Halvány kép a táblán",
     "ghostNote": "Megmutatja, mi hová kerül – így könnyebb. Nélküle a tábla üres, mint az igazi kirakónál.",
+    "turning": "Darabok forgatása",
+    "turningNote": "A darabok elforgatva vannak a tálcán. Koppintson egy darabra, és felveszi; még egyszer – negyed fordulatot fordul (R billentyű). A helyére csak egyenesen állva kerül.",
     "time": "Az idő mutatása",
     "vibration": "Rezgés, amikor a kirakó kész",
     "look": "Megjelenés",
@@ -160,6 +193,7 @@
     "zoom": "A nagy táblát nagyíthatja: a „Nagyítás” gombbal, két ujjal, a Ctrl billentyűvel és az egérgörgővel vagy a + és − billentyűkkel; egy ujjal vagy a görgővel mozgathatja.",
     "text": "Reklám, követés és fiók nélkül. Minden csak ezen az eszközön marad; az első megnyitás után a játék internet nélkül is működik.",
     "keys": "Billentyűk: a tálcán a nyilak a darabok között lépnek, az Enter vagy a szóköz felvesz egy darabot; utána a nyilak a tábla helyein lépnek, az Enter leteszi a darabot, az Esc visszaadja; H – tipp; + és − – nagyítás.",
+    "keysTurn": "R – a darab forgatása (ha be van kapcsolva a „Darabok forgatása”).",
     "credit": "Készítette: way1ong"
   },
   "update": {

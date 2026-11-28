@@ -1,8 +1,10 @@
 // Browser audit of Jigsaw: every size and look — the start screen; the puzzle of the day (how to play, a piece taken by
 // a tap, a hint and what it does, the whole picture, zoom when the board can be zoomed, to the end by the hints); the
 // choice of a picture; a piece carried by the mouse into its place and to a wrong one; the menu with every switch
-// (no pale picture, the time, the large mode, the left hand); the largest puzzle; phones on their side; large system
-// text; the keyboard: the tray by the arrows, a piece taken by Enter and put by Enter on its place, H to the end.
+// (no pale picture, turned pieces, the time, the large mode, the left hand); 96 pieces, and 150 of a close-up; phones
+// on their side; large system text; turned pieces: a tap takes a piece, the next turns it, R too, turned it does not
+// go into its place, standing right it does; the keyboard: the tray by the arrows, a piece taken by Enter and put by
+// Enter on its place, H to the end.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -74,7 +76,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
   const newFree = async (page, size, picture = null) => {
     await page.goto(`${base}#choose-${size}`);
     await page.waitForSelector('.choice');
-    await page.locator('.choice').nth(picture ?? 6).click();
+    await page.locator(`.choice[data-picture="${picture ?? 'any'}"]`).click();
     await page.waitForSelector('.slot');
     await page.waitForTimeout(300);
   };
@@ -154,7 +156,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await page.goto(`${base}#choose-easy`);
       await page.waitForSelector('.choice');
       await check(page, `${label} choice of a picture`);
-      await page.locator('.choice').nth(6).click();
+      await page.locator('.choice--any').click();
       await page.waitForSelector('.slot');
       await page.waitForTimeout(300);
       await carry(page, false);
@@ -173,6 +175,10 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await newFree(page, 'hard', 3);
       await check(page, `${label} hard`);
       await shot(page, `${width}x${height}-${locale}-${colorScheme}-hard`);
+      // 150 pieces of a close-up (turned pieces on, as set above)
+      await newFree(page, 'expert', 20);
+      await check(page, `${label} expert, a close-up`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-expert`);
       await page.evaluate((s) => localStorage.removeItem(`${s}last`), STORE);
       await settled(page);
       await page.goto(base);
@@ -223,6 +229,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await newFree(page, 'hard');
     await side('hard');
     await shot(page, `side-${width}x${height}`);
+    await newFree(page, 'expert', 9);
+    await side('expert, a close-up');
     await ctx.close();
   }
 
@@ -246,6 +254,44 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, `${width}×${height} text ${size}% medium`);
     await page.keyboard.press('h');
     await check(page, `${width}×${height} text ${size}% medium hint`);
+    await ctx.close();
+  }
+
+  // turned pieces (a setting): a tap takes a piece, the next tap turns it a quarter, so does R; lying turned it does not
+  // go into its place ("turn it first"), standing right it does
+  {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'en-GB', isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    watch(page, 'jigsaw turning', origin, fail);
+    await page.goto(base);
+    await page.evaluate((s) => localStorage.setItem(`${s}settings`, JSON.stringify({ turning: true })), STORE);
+    await settled(page);
+    await page.reload();
+    await page.waitForSelector('.pick');
+    await newFree(page, 'easy', 0);
+    const turnOfFirst = () => page.evaluate(() => Number(getComputedStyle(document.querySelector('.slot')).getPropertyValue('--turn')) % 4);
+    const first = page.locator('.slot').first();
+    await first.click();
+    if (!(await page.locator('.slot.is-taken').count())) fail('jigsaw turning: the first tap did not take the piece');
+    // turn it till it lies turned (it may start standing right)
+    if ((await turnOfFirst()) === 0) await first.click();
+    const was = await turnOfFirst();
+    await first.click();
+    if ((await turnOfFirst()) !== (was + 1) % 4) fail(`jigsaw turning: a tap on the piece taken did not turn it (${was} → ${await turnOfFirst()})`);
+    if ((await turnOfFirst()) === 0) await first.click();
+    if (!/90°|180°|270°/.test((await first.getAttribute('aria-label')) ?? '')) fail('jigsaw turning: a turned piece does not say how it lies');
+    await check(page, 'turning, a piece turned');
+    await shot(page, 'turning');
+    await carry(page, false);
+    if ((await placedOf(page)) !== 0) fail('jigsaw turning: a turned piece went into its place');
+    if (!/Turn the piece first/.test(await page.locator('.note__text').textContent())) fail('jigsaw turning: no word that the piece must be turned first');
+    // standing right by R (the piece taken), then into its place
+    await first.click();
+    for (let k = 0; k < 4 && (await turnOfFirst()) !== 0; k++) await page.keyboard.press('r');
+    if ((await turnOfFirst()) !== 0) fail('jigsaw turning: R did not turn the piece');
+    await carry(page, false);
+    if ((await placedOf(page)) !== 1) fail('jigsaw turning: a piece standing right did not go into its place');
+    await check(page, 'turning, a piece in its place');
     await ctx.close();
   }
 
@@ -281,5 +327,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, 'done, the window closed');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, phones on their side, large text, keyboard, puzzles to the end`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks, 150 pieces, close-ups, phones on their side, large text, turned pieces, keyboard, puzzles to the end`;
 }

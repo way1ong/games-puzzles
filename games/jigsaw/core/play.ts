@@ -1,10 +1,12 @@
 // The course of a puzzle (docs/jigsaw/SPEC.md): pieces put into their places — a piece let go near its own place snaps
-// in and stays; anywhere else it goes back to the tray — the hints, the time and the end. Help has no limit, but it is
-// counted. Pure: every function returns a new game, or null when the action cannot be made.
+// in and stays; anywhere else it goes back to the tray — the pieces' turns (with turning on, a piece goes into its place
+// only standing right), the hints, the time and the end. Help has no limit, but it is counted. Pure: every function
+// returns a new game, or null when the action cannot be made.
 import { DIFFICULTIES, JIGSAW, PICTURES, type Difficulty } from '../config.ts';
 import { hintPiece } from './hint.ts';
 import { partSeed } from './seeds.ts';
 import { trayOrder } from './tray.ts';
+import { startTurns, turnedOnce, validTurns } from './turns.ts';
 
 /** How a puzzle is played: free play (the player chose the size and the picture), or the puzzle of the day. */
 export type Way = 'free' | 'daily';
@@ -20,13 +22,19 @@ export interface JigsawPlay {
   picture: number;
   /** The pieces in their places, in the order they were put. */
   placed: number[];
+  /**
+   * How each piece lies, in quarters clockwise (0 — standing right): from the seed at the start, a quarter more at each
+   * turn. Seen and needed only with turning on (a setting); a piece in its place stands right whatever this says.
+   */
+  turns: number[];
   hints: number;
   ms: number;
   done: boolean;
 }
 
 export function newPlay(way: Way, difficulty: Difficulty, seed: number, picture: number, daily: string | null = null): JigsawPlay {
-  return { way, difficulty, daily: way === 'daily' ? daily : null, seed: seed >>> 0, picture, placed: [], hints: 0, ms: 0, done: false };
+  const { cols, rows } = JIGSAW.sizes[difficulty];
+  return { way, difficulty, daily: way === 'daily' ? daily : null, seed: seed >>> 0, picture, placed: [], turns: startTurns(cols * rows, seed >>> 0), hints: 0, ms: 0, done: false };
 }
 
 /** Pieces across and down. */
@@ -51,9 +59,23 @@ export function place(play: JigsawPlay, piece: number): JigsawPlay | null {
   return { ...play, placed, done: placed.length === piecesOf(play) };
 }
 
-/** A piece let go with its middle at (x, y) of the board: in its place if near it; null — not here (back to the tray). */
-export function drop(play: JigsawPlay, piece: number, x: number, y: number): JigsawPlay | null {
-  return nearHome(gridOf(play).cols, piece, x, y) ? place(play, piece) : null;
+/** How a piece lies, in quarters clockwise: with turning off, every piece stands right. */
+export function turnOf(play: JigsawPlay, piece: number, turning: boolean): number {
+  return turning ? (play.turns[piece] ?? 0) : 0;
+}
+
+/** A piece in the tray turned a quarter clockwise; null — no such piece, or it is in its place. */
+export function turn(play: JigsawPlay, piece: number): JigsawPlay | null {
+  if (play.done || !Number.isInteger(piece) || piece < 0 || piece >= piecesOf(play) || play.placed.includes(piece)) return null;
+  return { ...play, turns: play.turns.map((t, i) => (i === piece ? turnedOnce(t) : t)) };
+}
+
+/**
+ * A piece let go with its middle at (x, y) of the board: in its place if near it — and, with turning on, standing
+ * right; null — not here (back to the tray).
+ */
+export function drop(play: JigsawPlay, piece: number, x: number, y: number, turning = false): JigsawPlay | null {
+  return nearHome(gridOf(play).cols, piece, x, y) && turnOf(play, piece, turning) === 0 ? place(play, piece) : null;
 }
 
 /** The pieces still in the tray, in its order. */
@@ -95,5 +117,6 @@ export function validPlay(play: JigsawPlay): boolean {
   const n = piecesOf(play);
   if (!Array.isArray(play.placed) || !play.placed.every((p) => Number.isInteger(p) && p >= 0 && p < n)) return false;
   if (new Set(play.placed).size !== play.placed.length) return false;
+  if (!validTurns(play.turns, n)) return false;
   return play.done === (play.placed.length === n);
 }

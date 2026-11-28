@@ -7,6 +7,7 @@
 // page), Enter or Space takes one.
 import { h, svg } from '../../../shared/ui/dom.ts';
 import { JIGSAW } from '../config.ts';
+import { QUARTERS } from '../core/turns.ts';
 
 /** The page's rem when the player's text size is the browser's own: the tray's pieces grow with larger text, up to
  * this much (the large mode's size and a little more). */
@@ -28,6 +29,8 @@ export interface TrayShow {
   hint: number | null;
   /** One piece's drawing (SVG text), sized by its place in the tray. */
   art(piece: number): string;
+  /** How a piece lies, in quarters clockwise (0 — standing right; always 0 with turning off). */
+  turn(piece: number): number;
   label(piece: number): string;
   texts: { label: string; prev: string; next: string; page(n: number, total: number): string };
 }
@@ -59,6 +62,11 @@ export function createTrayView(actions: TrayActions) {
   let drawn = '';
   let active = 0;
   let press: { piece: number; id: number; x: number; y: number } | null = null;
+  /**
+   * The quarters each piece has been shown turned by, counted on and on (a turn from 3 back to 0 shows as 4): a piece
+   * turns a quarter on, never three quarters back.
+   */
+  const shownTurns = new Map<number, number>();
 
   // a finger in the tray belongs to the game (.claude/rules/design.md)
   grid.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
@@ -136,6 +144,10 @@ export function createTrayView(actions: TrayActions) {
     }
     slots.forEach((b, i) => {
       const piece = Number(b.dataset.piece);
+      const was = shownTurns.get(piece) ?? s.turn(piece);
+      const now = was + ((((s.turn(piece) - was) % QUARTERS) + QUARTERS) % QUARTERS);
+      shownTurns.set(piece, now);
+      b.style.setProperty('--turn', String(now));
       b.tabIndex = i === active ? 0 : -1;
       b.classList.toggle('is-taken', s.taken === piece);
       b.classList.toggle('is-hint', s.hint === piece);
@@ -270,6 +282,7 @@ export function createTrayView(actions: TrayActions) {
       page = 0;
       active = 0;
       drawn = '';
+      shownTurns.clear();
     },
   };
 }

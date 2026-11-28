@@ -5,8 +5,10 @@ import type { Picture } from '../config.ts';
 import { kindOf } from '../core/cut.ts';
 import { fmt, type Dict } from './i18n.ts';
 
-/** The key of a picture's name in the dictionaries: "studyDay", "bakeryNight"… */
-export const pictureKey = (p: Picture): string => `${p.room}${p.time.charAt(0).toUpperCase()}${p.time.slice(1)}`;
+const capital = (word: string): string => `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
+
+/** The key of a picture's name in the dictionaries: "studyDay", "bakeryNight"; a close-up's — "studyDeskDay"… */
+export const pictureKey = (p: Picture): string => `${p.room}${p.crop === null ? '' : capital(p.crop)}${capital(p.time)}`;
 
 export function pictureName(p: Picture, d: Dict): string {
   return d.pictures[pictureKey(p) as keyof Dict['pictures']];

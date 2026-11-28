@@ -67,6 +67,8 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
       const play = [
         toggle(s.ghost, settings.ghost, (on) => actions.set({ ghost: on })),
         h('p', { class: 'dialog__note' }, s.ghostNote),
+        toggle(s.turning, settings.turning, (on) => actions.set({ turning: on })),
+        h('p', { class: 'dialog__note' }, s.turningNote),
         toggle(s.time, settings.time, (on) => actions.set({ time: on })),
         canVibrate() ? toggle(s.vibration, settings.vibration, (on) => actions.set({ vibration: on })) : null,
       ];
@@ -180,6 +182,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           h('p', {}, d.about.zoom),
           h('p', {}, d.about.text),
           h('p', { class: 'dialog__note' }, d.about.keys),
+          h('p', { class: 'dialog__note' }, d.about.keysTurn),
           h('p', { class: 'dialog__credit' }, credit),
           h('div', { class: 'dialog__actions' }, closeEnd),
         ),
