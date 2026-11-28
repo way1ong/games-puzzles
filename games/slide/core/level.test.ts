@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { SLIDE, THEMES } from '../config.ts';
 import { fewestMoves } from './fifteen-solve.ts';
-import { dailySeed, fifteenTiles, freePuzzle, levelMoves, levelPuzzle, levelSeed, puzzlesOf, themeOf } from './level.ts';
+import { dailySeed, fifteenTiles, freePuzzle, levelMoves, levelPuzzle, levelSeed, puzzlesOf, themeOf, withHardCap } from './level.ts';
 import type { PoolPuzzle } from './pool.ts';
 
 /** A made-up set: 20 puzzles of every number of moves from 2 to 40 (the boards do not matter here). */
@@ -88,6 +88,17 @@ describe('levels, free play and days of the chest', () => {
         expect(freePuzzle(POOL, difficulty, seed, SLIDE.box)).toBe(p);
       }
     }
+  });
+
+  it('Hard no longer than the cap when the player chooses it; the other difficulties as they were', () => {
+    const long: PoolPuzzle[] = Array.from({ length: 77 * 5 }, (_, i) => ({ moves: 2 + Math.floor(i / 5), text: `long-${i}` }));
+    const capped = withHardCap(SLIDE.box, SLIDE.box.hardCap);
+    expect(puzzlesOf(long, 'hard', SLIDE.box).some((p) => p.moves > SLIDE.box.hardCap)).toBe(true);
+    expect(puzzlesOf(long, 'hard', capped).every((p) => p.moves >= SLIDE.box.difficulties.hard[0] && p.moves <= SLIDE.box.hardCap)).toBe(true);
+    expect(puzzlesOf(long, 'hard', capped).length).toBeGreaterThan(0);
+    for (let seed = 1; seed <= 30; seed++) expect(freePuzzle(long, 'hard', seed, capped).moves).toBeLessThanOrEqual(SLIDE.box.hardCap);
+    expect(capped.difficulties.easy).toEqual(SLIDE.box.difficulties.easy);
+    expect(capped.difficulties.medium).toEqual(SLIDE.box.difficulties.medium);
   });
 
   it('the day: the same puzzle for everybody on that date, its own seed apart from the other modes', () => {

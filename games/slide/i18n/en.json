@@ -13,7 +13,9 @@
   "difficulty": {
     "easy": "Easy",
     "medium": "Medium",
-    "hard": "Hard"
+    "hard": "Hard",
+    "expert": "Very hard",
+    "master": "Hardest"
   },
   "mode": {
     "fifteen": "Fifteen",
@@ -122,6 +124,11 @@
       "long": "a long bar"
     }
   },
+  "themes": {
+    "harbour": "Harbour",
+    "room": "Room",
+    "box": "Box"
+  },
   "blocks": {
     "chest": "the chest",
     "single": "a small block",
@@ -195,6 +202,9 @@
     "facesPicture": "Picture",
     "facesBoth": "Picture and numbers",
     "facesNote": "The pictures are rooms from the game Detective. Small numbers on the picture help where parts look alike.",
+    "unblockTheme": "Look of “Clear the way”",
+    "unblockRandom": "At random",
+    "boxShort": "“The chest”: Hard — no longer than {n} moves",
     "time": "Show the time",
     "vibration": "Vibration when a puzzle is solved",
     "look": "Look",

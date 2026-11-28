@@ -5,6 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import { THEMES } from '../config.ts';
 import { solvedTiles } from './fifteen.ts';
+import { fifteenTiles } from './level.ts';
 import { addTime, clean, countHint, moveBlock, movePiece, movesMade, newBox, newFifteen, newUnblock, perfect, slideTile, startAgain, started, undo, validPlay } from './play.ts';
 import { emptyStats, longestStreak, recordLeft, recordWon } from './stats.ts';
 
@@ -17,6 +18,25 @@ const CHEST = { moves: 3, text: rows('.AA.', '.AA.', '.BC.', '.BC.', '....') };
 const nearEnd = (): number[] => [1, 2, 3, 4, 5, 6, 0, 7, 8];
 
 describe('the fifteen', () => {
+  it('knows its fewest moves on 3x3 (the player’s moves beside them), not on larger boards', () => {
+    let play = newFifteen(nearEnd(), 'free', 5, 6, { difficulty: 'easy' });
+    expect(play.fewest).toBe(2);
+    play = slideTile(play, 8)!;
+    expect(perfect(play)).toBe(true);
+    let longer = newFifteen(nearEnd(), 'free', 5, 6, { difficulty: 'easy' });
+    longer = slideTile(longer, 7)!;
+    longer = slideTile(longer, 6)!;
+    longer = slideTile(longer, 8)!;
+    expect(longer.done).toBe(true);
+    expect(movesMade(longer)).toBe(4);
+    expect(perfect(longer)).toBe(false);
+    const big = newFifteen(fifteenTiles(7, 3), 'free', 3, 6, { difficulty: 'master' });
+    expect(big.size).toBe(7);
+    expect(big.fewest).toBeNull();
+    expect(validPlay(big)).toBe(true);
+    expect(validPlay({ ...play, fewest: 3 })).toBe(false);
+  });
+
   it('counts each tile slid; "Undo" takes a slide back with its tiles; the end is noticed', () => {
     let play = newFifteen(nearEnd(), 'free', 5, 6, { difficulty: 'easy' });
     expect(play.size).toBe(3);

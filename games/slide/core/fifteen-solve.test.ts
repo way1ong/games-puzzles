@@ -38,8 +38,8 @@ const play = (tiles: readonly number[], steps: readonly number[]) => {
 describe('a way to the end', () => {
   it('ends in order on every size, each step a tile next to the gap', () => {
     let state = 9;
-    for (const size of [3, 4, 5]) {
-      for (let k = 0; k < 12; k++) {
+    for (const size of [3, 4, 5, 6, 7]) {
+      for (let k = 0; k < (size > 5 ? 3 : 12); k++) {
         const s = shuffle(size, state);
         state = s.state;
         const end = play(s.tiles, solveTiles(s.tiles));

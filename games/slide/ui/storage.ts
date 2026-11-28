@@ -2,9 +2,9 @@
 // begun on each screen, the days of each mode's puzzle of the day, statistics, the screen open last. Nothing leaves the
 // device (docs/slide/SPEC.md, "Що зберігається"). Every read survives a missing or broken value; a saved game carries a
 // format version, and one in another format (or one that does not hold together) is dropped rather than break the game.
-import { DIFFICULTIES, FACES, SLIDE, type Difficulty, type Face } from '../config.ts';
+import { DIFFICULTIES, FACES, FIFTEEN_KINDS, SLIDE, THEME_CHOICES, type Difficulty, type Face, type FifteenKind, type ThemeChoice } from '../config.ts';
 import { levelPuzzle } from '../core/level.ts';
-import { validPlay, type BoxPlay, type FifteenPlay, type SlidePlay, type UnblockPlay } from '../core/play.ts';
+import { fifteenFewest, validPlay, type BoxPlay, type FifteenPlay, type SlidePlay, type UnblockPlay } from '../core/play.ts';
 import type { PoolPuzzle } from '../core/pool.ts';
 import { emptyStats, type FifteenStats, type SlideStats, type UnblockStats, type WaysStats } from '../core/stats.ts';
 
@@ -44,6 +44,10 @@ export interface Settings {
   lang: string | null;
   /** What the tiles of the fifteen show (decision of 27.11: both in the menu). */
   faces: Face;
+  /** The look of "Clear the way" (decision of 28.11): drawn for each puzzle, or always one. */
+  unblockTheme: ThemeChoice;
+  /** "The chest": Hard no longer than SLIDE.box.hardCap moves (decision of 28.11: «зроби опційно»; off). */
+  boxShort: boolean;
   time: boolean;
   vibration: boolean;
   big: boolean;
@@ -54,6 +58,8 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   lang: null,
   faces: SLIDE.fifteen.defaultFace,
+  unblockTheme: 'random',
+  boxShort: false,
   time: false,
   vibration: false,
   big: false,
@@ -73,6 +79,8 @@ export function loadSettings(): Settings {
   return {
     lang: typeof s.lang === 'string' ? s.lang : null,
     faces: oneOf(s.faces, FACES, d.faces),
+    unblockTheme: oneOf(s.unblockTheme, THEME_CHOICES, d.unblockTheme),
+    boxShort: flag(s.boxShort, d.boxShort),
     time: flag(s.time, d.time),
     vibration: flag(s.vibration, d.vibration),
     big: flag(s.big, d.big),
@@ -93,6 +101,8 @@ export const SLOTS = [
   'fifteen-easy',
   'fifteen-medium',
   'fifteen-hard',
+  'fifteen-expert',
+  'fifteen-master',
   'fifteen-day',
   'levels',
   'unblock-easy',
@@ -118,14 +128,20 @@ export function slotOf(play: SlidePlay): Slot {
   return play.way === 'daily' ? `${play.mode}-day` : `${play.mode}-${play.difficulty!}`;
 }
 
-/** What a slot holds: its mode and way, and the difficulty of free play. */
-export function slotKind(slot: Slot): { mode: 'fifteen' | PoolMode; way: 'free' | 'daily' | 'level'; difficulty: Difficulty | null } {
+/**
+ * What a slot holds: its mode and way, and the difficulty of free play (the fifteen's size kind; "Clear the way" and
+ * "The chest" — one of DIFFICULTIES).
+ */
+export function slotKind(slot: Slot): { mode: 'fifteen' | PoolMode; way: 'free' | 'daily' | 'level'; difficulty: FifteenKind | null } {
   if (slot === 'levels') return { mode: 'unblock', way: 'level', difficulty: null };
   const [mode, rest] = slot.split('-') as ['fifteen' | PoolMode, string];
   if (rest === 'levels') return { mode, way: 'level', difficulty: null };
   if (rest === 'day') return { mode, way: 'daily', difficulty: null };
-  return { mode, way: 'free', difficulty: rest as Difficulty };
+  return { mode, way: 'free', difficulty: rest as FifteenKind };
 }
+
+/** The difficulty of a pool mode's free play slot (its slot holds one of DIFFICULTIES). */
+export const poolDifficulty = (slot: Slot): Difficulty => slotKind(slot).difficulty as Difficulty;
 
 /** The sets of puzzles of the modes that have them, and the puzzle of the day of each. */
 export interface PuzzleSets {
@@ -147,6 +163,8 @@ function wholePlay(play: unknown, slot: Slot, sets: PuzzleSets): play is SlidePl
   if (![p.undos, p.hints, p.restarts].every(isCount) || ms(p.ms) !== p.ms || typeof p.done !== 'boolean') return false;
   if (p.mode === 'fifteen') {
     const f = p as Partial<FifteenPlay>;
+    // saved before the fewest moves were counted (28.11): counted now from its start
+    if (f.fewest === undefined && Array.isArray(f.start)) f.fewest = fifteenFewest(f.start);
     const size = kind.way === 'daily' ? SLIDE.fifteen.dailySize : SLIDE.fifteen.sizes[kind.difficulty!];
     if (f.size !== size || !isCount(f.moves) || !isCount(f.picture) || !Array.isArray(f.start) || !Array.isArray(f.tiles)) return false;
   } else {
@@ -226,7 +244,7 @@ export function saveDayResult(mode: SlidePlay['mode'], date: string, result: Day
 /** Statistics; a part missing (a mode added since: "The chest") or broken starts from nothing. */
 export function loadStats(): SlideStats {
   type Ways = { levels?: Partial<UnblockStats>; free?: Partial<Record<Difficulty, Partial<UnblockStats>>> };
-  const v = read<{ fifteen?: Partial<Record<Difficulty, Partial<FifteenStats>>>; unblock?: Ways; box?: Ways }>('stats') ?? {};
+  const v = read<{ fifteen?: Partial<Record<FifteenKind, Partial<FifteenStats>>>; unblock?: Ways; box?: Ways }>('stats') ?? {};
   const stats = emptyStats();
   const unblock = (s: Partial<UnblockStats> | undefined): UnblockStats | null =>
     s && typeof s === 'object' ? { played: count(s.played), won: count(s.won), clean: count(s.clean), perfect: count(s.perfect) } : null;
@@ -238,9 +256,9 @@ export function loadStats(): SlideStats {
     const levels = unblock(saved?.levels);
     if (levels) into.levels = levels;
   };
-  for (const d of DIFFICULTIES) {
-    const f = v.fifteen?.[d];
-    if (f && typeof f === 'object') stats.fifteen[d] = { played: count(f.played), won: count(f.won), clean: count(f.clean), bestMoves: isCount(f.bestMoves) && f.bestMoves! > 0 ? f.bestMoves! : null };
+  for (const k of FIFTEEN_KINDS) {
+    const f = v.fifteen?.[k];
+    if (f && typeof f === 'object') stats.fifteen[k] = { played: count(f.played), won: count(f.won), clean: count(f.clean), bestMoves: isCount(f.bestMoves) && f.bestMoves! > 0 ? f.bestMoves! : null };
   }
   ways(v.unblock, stats.unblock);
   ways(v.box, stats.box);
