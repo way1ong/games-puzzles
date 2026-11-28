@@ -2,7 +2,7 @@
   "meta": {
     "langName": "English",
     "title": "Slide — sliding puzzles without ads",
-    "description": "Two sliding puzzles: the fifteen — put the tiles in order or make the picture — and Clear the Way — slide the pieces aside to let the boat, the sofa or the red bar out. No ads, no tracking, no accounts; works without the internet."
+    "description": "Three sliding puzzles: the fifteen — put the tiles in order or make the picture; Clear the Way — slide the pieces aside to let the boat, the sofa or the red bar out; and The Chest — move the wooden blocks to get the chest out through the slot. No ads, no tracking, no accounts; works without the internet."
   },
   "app": {
     "name": "Slide",
@@ -17,11 +17,13 @@
   },
   "mode": {
     "fifteen": "Fifteen",
-    "unblock": "Clear the Way"
+    "unblock": "Clear the Way",
+    "box": "The Chest"
   },
   "home": {
     "fifteenNote": "Put the tiles in order, or make the picture",
     "unblockNote": "Slide the pieces aside and let yours out",
+    "boxNote": "Move the blocks and get the chest out through the slot",
     "size": "{n} × {n}",
     "play": "Play",
     "continue": "Continue",
@@ -40,6 +42,7 @@
     },
     "dailyFifteen": "Fifteen of the day",
     "dailyUnblock": "Level of the day",
+    "dailyBox": "Chest of the day",
     "dailyOn": "{date} · the same for everyone",
     "begin": "Start",
     "started": "Continue",
@@ -54,6 +57,7 @@
     "dailyFifteen": "Fifteen of the day",
     "level": "Level {n}",
     "dailyUnblock": "Level of the day",
+    "dailyBox": "Chest of the day",
     "moves": {
       "one": "{n} move",
       "other": "{n} moves"
@@ -67,9 +71,12 @@
     "tipHarbour": "Slide the boats along their length and take the little boat with the arrow out to sea, on the right.",
     "tipRoom": "Slide the furniture along its length and carry the sofa with the arrow out of the door, on the right.",
     "tipBox": "Slide the bars along their length and take the red bar with the arrow out through the slot, on the right.",
+    "tipChest": "Slide the blocks up, down or sideways; bring the chest to the slot below — over it, the chest is out.",
     "notInLine": "This tile is not in the row or column of the gap.",
     "cannotMove": "This piece cannot move now: something is in its way at both ends.",
+    "cannotMoveBox": "This piece cannot move now: there is no room on any side.",
     "taken": "Now tap a free cell along this piece, or move it with the arrow keys.",
+    "takenBox": "Now tap a free cell in the same row or column, or move it with the arrow keys.",
     "put": "Piece put down.",
     "moved": "Moved.",
     "undone": "Move undone.",
@@ -86,7 +93,8 @@
       "down": "down"
     },
     "solved": "Solved! The tiles are in order.",
-    "out": "The way is clear!"
+    "out": "The way is clear!",
+    "chestOut": "The chest is out!"
   },
   "tools": {
     "label": "Buttons",
@@ -114,17 +122,27 @@
       "long": "a long bar"
     }
   },
+  "blocks": {
+    "chest": "the chest",
+    "single": "a small block",
+    "lying": "a long block",
+    "standing": "a long block"
+  },
   "board": {
     "fifteen": "Board of tiles",
     "unblock": "Board of pieces",
+    "box": "Board of the chest and blocks",
     "tile": "Tile {n}",
     "gap": "Gap",
     "at": "row {r}, column {c}",
     "lying": "{name}, lying in row {r}, columns {from}–{to}",
     "standing": "{name}, standing in column {c}, rows {from}–{to}",
+    "single": "{name}, row {r}, column {c}",
+    "chestAt": "{name}, rows {r}–{r2}, columns {c}–{c2}",
     "taken": "taken",
     "hint": "the hint",
     "exit": "The way out: on the right of row {r}",
+    "slot": "The slot: in the bottom side, columns {from}–{to}",
     "picture": "The whole picture",
     "goal": "The goal: the tiles in order, 1 in the top left corner, the gap in the bottom right",
     "home": "in its place"
@@ -132,6 +150,7 @@
   "end": {
     "solved": "Solved!",
     "out": "The way is clear!",
+    "chestOut": "The chest is out!",
     "moves": {
       "one": "{n} move",
       "other": "{n} moves"
@@ -163,7 +182,9 @@
     "shareFifteen": "{name} · {date}: fifteen of the day solved in {moves} moves",
     "shareFifteenClean": "{name} · {date}: fifteen of the day solved without help in {moves} moves",
     "shareUnblock": "{name} · {date}: level of the day solved in {moves} moves (fewest {fewest})",
-    "shareUnblockClean": "{name} · {date}: level of the day solved without help in {moves} moves (fewest {fewest})"
+    "shareUnblockClean": "{name} · {date}: level of the day solved without help in {moves} moves (fewest {fewest})",
+    "shareBox": "{name} · {date}: chest of the day out in {moves} moves (fewest {fewest})",
+    "shareBoxClean": "{name} · {date}: chest of the day out without help in {moves} moves (fewest {fewest})"
   },
   "settings": {
     "title": "Settings",
@@ -211,9 +232,11 @@
     "title": "About the game",
     "fifteen": "Fifteen: tap a tile in the row or column of the gap and it slides into the gap with the tiles between. The goal is the tiles in order: 1 in the top left corner, then to the right and down, the gap in the bottom right (the Goal button shows it) — or the whole picture. A tile in its place has a ✓. Every board can be solved.",
     "unblock": "Clear the Way: a piece moves only along its length, as far as it is free. Slide pieces aside to clear the way for yours (with the arrow) to the way out on the right. A move is one piece slid any distance. Every puzzle can be solved, and the game knows the fewest moves.",
+    "box": "The Chest: every piece moves up, down, left or right, as far as it is free. Move the blocks to make way for the chest to the slot in the middle of the bottom side: once it stands over the slot, it is out. A move is one piece slid one or more cells in one straight direction. Every puzzle can be solved, and the game knows the fewest moves.",
     "text": "No ads, no tracking, no accounts. Everything stays on this device; after the first visit the game works without the internet.",
     "keysFifteen": "Keys in the fifteen: arrows — between tiles, Enter or Space — slide, H — hint, Ctrl+Z — undo.",
     "keysUnblock": "Keys in Clear the Way: arrows — between pieces, Enter — take a piece, then arrows move it, Enter or Esc — put it down; H — hint, Ctrl+Z — undo.",
+    "keysBox": "Keys in The Chest: arrows — between pieces, Enter — take a piece, then arrows move it a cell, Enter or Esc — put it down; H — hint, Ctrl+Z — undo.",
     "credit": "Made by way1ong"
   },
   "update": {

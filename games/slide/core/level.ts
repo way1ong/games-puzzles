@@ -1,9 +1,10 @@
 // The ways to play (docs/slide/SPEC.md): the fifteen — a shuffle of each size from a seed, and the 4x4 of the day;
-// "Clear the way" — levels in a row (the fewest moves grow stage by stage), free play by difficulty and the puzzle
-// of the day, all taken from the set made in advance; each puzzle's look (harbour, room, box) drawn from its seed
+// "Clear the way" and "The chest" — levels in a row (the fewest moves grow stage by stage), free play by difficulty
+// and the puzzle of the day, all taken from each mode's set made in advance (its stages and difficulties: `ways`,
+// "Clear the way" when none is given); each puzzle's look of "Clear the way" (harbour, room, box) drawn from its seed
 // (decision of 27.11: at random). Pure; randomness only from seeds.
 import { nextInt, seedFromText } from '../../../shared/core/rng.ts';
-import { SLIDE, THEMES, type Difficulty, type Theme } from '../config.ts';
+import { SLIDE, THEMES, type Difficulty, type PoolWays, type Theme } from '../config.ts';
 import { shuffle } from './fifteen.ts';
 import { fewestMoves } from './fifteen-solve.ts';
 import { byMoves, type PoolPuzzle } from './pool.ts';
@@ -15,7 +16,7 @@ export function fifteenTiles(size: number, seed: number): number[] {
 }
 
 /** The seed of the day's puzzle of a mode: the same for everybody on that date ("YYYY-MM-DD"). */
-export function dailySeed(mode: 'fifteen' | 'unblock', date: string): number {
+export function dailySeed(mode: 'fifteen' | 'unblock' | 'box', date: string): number {
   return seedFromText(`way1ong-slide:${mode}:daily:${date}`);
 }
 
@@ -30,8 +31,8 @@ export function themeOf(seed: number): Theme {
 }
 
 /** The fewest moves of a level in a row. */
-export function levelMoves(level: number): number {
-  const stages = SLIDE.unblock.stages;
+export function levelMoves(level: number, ways: PoolWays = SLIDE.unblock): number {
+  const stages = ways.stages;
   let i = 0;
   while (i + 1 < stages.length && stages[i + 1]!.from <= level) i++;
   const stage = stages[i]!;
@@ -46,9 +47,9 @@ export function levelMoves(level: number): number {
   return least + ((level - stage.from) % (most - least + 1));
 }
 
-/** The seed of a level in a row (its look). */
-export function levelSeed(level: number): number {
-  return seedFromText(`way1ong-slide:level:${level}`);
+/** The seed of a level in a row (in "Clear the way", its look). */
+export function levelSeed(level: number, mode: 'unblock' | 'box' = 'unblock'): number {
+  return seedFromText(mode === 'unblock' ? `way1ong-slide:level:${level}` : `way1ong-slide:${mode}:level:${level}`);
 }
 
 const indexes = new WeakMap<readonly PoolPuzzle[], Map<number, PoolPuzzle[]>>();
@@ -62,10 +63,10 @@ const indexOf = (pool: readonly PoolPuzzle[]) => {
  * A level in a row: the next puzzle (in the order of the set) of its number of moves, so no two levels share one
  * while the set has enough; if the set has none of that number, the nearest fewer.
  */
-export function levelPuzzle(pool: readonly PoolPuzzle[], level: number): PoolPuzzle {
-  const moves = levelMoves(level);
+export function levelPuzzle(pool: readonly PoolPuzzle[], level: number, ways: PoolWays = SLIDE.unblock): PoolPuzzle {
+  const moves = levelMoves(level, ways);
   let earlier = 0;
-  for (let l = 1; l < level; l++) if (levelMoves(l) === moves) earlier++;
+  for (let l = 1; l < level; l++) if (levelMoves(l, ways) === moves) earlier++;
   const index = indexOf(pool);
   for (let m = moves; m > 0; m--) {
     const list = index.get(m);
@@ -75,14 +76,14 @@ export function levelPuzzle(pool: readonly PoolPuzzle[], level: number): PoolPuz
 }
 
 /** The puzzles of a difficulty of free play. */
-export function puzzlesOf(pool: readonly PoolPuzzle[], difficulty: Difficulty): PoolPuzzle[] {
-  const [least, most] = SLIDE.unblock.difficulties[difficulty];
+export function puzzlesOf(pool: readonly PoolPuzzle[], difficulty: Difficulty, ways: PoolWays = SLIDE.unblock): PoolPuzzle[] {
+  const [least, most] = ways.difficulties[difficulty];
   return pool.filter((p) => p.moves >= least && p.moves <= (most ?? Infinity));
 }
 
 /** A puzzle of a difficulty from a seed (free play, the day). */
-export function freePuzzle(pool: readonly PoolPuzzle[], difficulty: Difficulty, seed: number): PoolPuzzle {
-  const list = puzzlesOf(pool, difficulty);
+export function freePuzzle(pool: readonly PoolPuzzle[], difficulty: Difficulty, seed: number, ways: PoolWays = SLIDE.unblock): PoolPuzzle {
+  const list = puzzlesOf(pool, difficulty, ways);
   if (!list.length) throw new Error(`No puzzle of difficulty ${difficulty}`);
   return list[pick(seed, list.length)]!;
 }

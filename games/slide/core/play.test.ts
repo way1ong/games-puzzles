@@ -1,15 +1,17 @@
 // The course of a game (docs/slide/SPEC.md, "Допомога"): slides and moves are counted, "Undo" takes the last one back
 // (and its moves off), "Start again" goes to the start without counting as help, the end is noticed; a saved game is
 // whole only if its moves lead from its start to where it is; statistics count solved games, help and the fewest
-// moves.
+// moves, for every mode.
 import { describe, expect, it } from 'vitest';
 import { THEMES } from '../config.ts';
 import { solvedTiles } from './fifteen.ts';
-import { addTime, clean, countHint, movePiece, movesMade, newFifteen, newUnblock, perfect, slideTile, startAgain, started, undo, validPlay } from './play.ts';
+import { addTime, clean, countHint, moveBlock, movePiece, movesMade, newBox, newFifteen, newUnblock, perfect, slideTile, startAgain, started, undo, validPlay } from './play.ts';
 import { emptyStats, longestStreak, recordLeft, recordWon } from './stats.ts';
 
 const rows = (...r: string[]) => r.join('');
 const TWO = { moves: 2, text: rows('......', '...B..', 'AA.B..', '......', '......', '......') };
+/** The chest over two standing blocks: each aside, then the chest down through three rows — 3 moves. */
+const CHEST = { moves: 3, text: rows('.AA.', '.AA.', '.BC.', '.BC.', '....') };
 
 /** The end with the last row's two tiles moved left: two slides from solved. */
 const nearEnd = (): number[] => [1, 2, 3, 4, 5, 6, 0, 7, 8];
@@ -115,6 +117,56 @@ describe('"Clear the way"', () => {
   });
 });
 
+describe('"The chest"', () => {
+  it('a move is one piece in one straight way, any number of cells; over the slot — the end; "Undo" puts it back', () => {
+    let play = newBox(CHEST, 'level', 9, { level: 1 });
+    expect(play.fewest).toBe(3);
+    expect(play.places).toEqual([1, 9, 10]);
+    expect(moveBlock(play, { piece: 0, to: 13 })).toBeNull(); // the blocks are in the way
+    expect(moveBlock(play, { piece: 1, to: 4 })).toBeNull(); // not in one straight way
+    play = moveBlock(play, { piece: 1, to: 8 })!;
+    expect(movesMade(play)).toBe(1);
+    play = undo(play)!;
+    expect(play.places).toEqual([1, 9, 10]);
+    expect(movesMade(play)).toBe(0);
+    expect(play.undos).toBe(1);
+    play = moveBlock(moveBlock(play, { piece: 1, to: 8 })!, { piece: 2, to: 11 })!;
+    expect(play.done).toBe(false);
+    play = moveBlock(play, { piece: 0, to: 13 })!; // down three rows at once: over the slot
+    expect(play.done).toBe(true);
+    expect(movesMade(play)).toBe(3);
+    expect(moveBlock(play, { piece: 0, to: 12 })).toBeNull(); // nothing after the end
+    expect(undo(play)).toBeNull();
+    expect(perfect(play)).toBe(false); // "Undo" was help
+    expect(validPlay(play)).toBe(true);
+  });
+
+  it('in the fewest moves without help — perfect; a hint counts as help', () => {
+    let play = newBox(CHEST, 'free', 9, { difficulty: 'easy' });
+    play = moveBlock(moveBlock(moveBlock(play, { piece: 2, to: 11 })!, { piece: 1, to: 8 })!, { piece: 0, to: 13 })!;
+    expect(perfect(play)).toBe(true);
+    expect(perfect(countHint(play))).toBe(false);
+  });
+
+  it('"Start again" puts every piece back; a broken save is turned down', () => {
+    let play = newBox(CHEST, 'daily', 9, { daily: '2026-11-28' });
+    expect(startAgain(play)).toBeNull();
+    play = moveBlock(moveBlock(play, { piece: 1, to: 13 })!, { piece: 0, to: 0 })!;
+    expect(validPlay(play)).toBe(true);
+    expect(validPlay({ ...play, places: [0, 13, 13] })).toBe(false); // over one another
+    expect(validPlay({ ...play, places: [3, 13, 10] })).toBe(false); // the chest beyond the frame
+    expect(validPlay({ ...play, history: play.history.slice(1) })).toBe(false);
+    expect(validPlay({ ...play, history: [{ piece: 1, from: 8 }, play.history[1]!] })).toBe(false); // not a move that was made
+    expect(validPlay({ ...play, done: true })).toBe(false);
+    expect(validPlay({ ...play, board: 'nonsense' })).toBe(false);
+    play = startAgain(play)!;
+    expect(play.places).toEqual([1, 9, 10]);
+    expect(play.history).toEqual([]);
+    expect(play.restarts).toBe(1);
+    expect(clean(play)).toBe(true);
+  });
+});
+
 describe('statistics', () => {
   it('count solved, without help, the fewest moves and perfect games; the days of the day only in their days', () => {
     let stats = emptyStats();
@@ -137,6 +189,19 @@ describe('statistics', () => {
     let day = newUnblock(TWO, 'daily', 9, { daily: '2026-11-27' });
     day = movePiece(movePiece(day, { piece: 1, to: 0 })!, { piece: 0, to: 4 })!;
     expect(recordWon(stats, day)).toEqual(stats);
+  });
+
+  it('count the chest apart: its levels, each difficulty, a free game left; its days only in their days', () => {
+    let stats = emptyStats();
+    const solve = (p: ReturnType<typeof newBox>) => moveBlock(moveBlock(moveBlock(p, { piece: 1, to: 8 })!, { piece: 2, to: 11 })!, { piece: 0, to: 13 })!;
+    stats = recordWon(stats, solve(newBox(CHEST, 'level', 9, { level: 1 })));
+    expect(stats.box.levels).toEqual({ played: 1, won: 1, clean: 1, perfect: 1 });
+    expect(stats.unblock.levels).toEqual({ played: 0, won: 0, clean: 0, perfect: 0 });
+    stats = recordLeft(stats, moveBlock(newBox(CHEST, 'free', 9, { difficulty: 'medium' }), { piece: 1, to: 8 })!);
+    stats = recordWon(stats, countHint(solve(newBox(CHEST, 'free', 9, { difficulty: 'medium' }))));
+    expect(stats.box.free.medium).toEqual({ played: 2, won: 1, clean: 0, perfect: 0 });
+    expect(stats.unblock.free.medium).toEqual({ played: 0, won: 0, clean: 0, perfect: 0 });
+    expect(recordWon(stats, solve(newBox(CHEST, 'daily', 9, { daily: '2026-11-28' })))).toEqual(stats);
   });
 
   it('the longest run of days', () => {

@@ -5,7 +5,7 @@
 import { expect, it } from 'vitest';
 import app from './app.css?raw';
 import tokens from './tokens.css?raw';
-import { LOOKS } from '../art/palette.ts';
+import { BOX_LOOK, LOOKS } from '../art/palette.ts';
 
 const COLOUR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(/i;
 
@@ -113,10 +113,10 @@ for (const [theme, t] of Object.entries(themes)) {
 
   it(`${theme}: a mark's dark ring and light band are apart at 3:1, so one of them reads on anything`, () => {
     expect(ratio(solid('--mark-dark'), solid('--mark-light'))).toBeGreaterThanOrEqual(3);
-    // on the drawings of "Clear the way" each ground reads one of them at 3:1 at least
-    for (const look of Object.values(LOOKS)) {
-      const ground = parse(look.ground).rgb;
-      expect(Math.max(ratio(solid('--mark-dark'), ground), ratio(solid('--mark-light'), ground)), look.ground).toBeGreaterThanOrEqual(3);
+    // on the drawings of "Clear the way" and on the tray of "The chest" each ground reads one of them at 3:1 at least
+    for (const colour of [...Object.values(LOOKS).map((look) => look.ground), BOX_LOOK.ground]) {
+      const ground = parse(colour).rgb;
+      expect(Math.max(ratio(solid('--mark-dark'), ground), ratio(solid('--mark-light'), ground)), colour).toBeGreaterThanOrEqual(3);
     }
   });
 }

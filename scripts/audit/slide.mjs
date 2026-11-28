@@ -2,8 +2,9 @@
 // what it does, the goal shown, 3x3 to the end by the hints; a tile in its place has its check mark); the menu with
 // the widest settings (picture and numbers, the time, the large mode, the left hand) and the whole picture; "Clear the
 // way" (level 1: how to play, a piece taken, a hint with its place, to the end by the hints), free play hard, the
-// days; phones on their side; large system text; the keyboard: the tiles and the pieces by the arrows, a slide and a
-// move by Enter, a puzzle to the end by H.
+// days; "The chest" (level 1: how to play, a piece taken, a hint with its place and its move, to the end by the hints;
+// the tray keeps its shape), free play hard, its day; phones on their side; large system text; the keyboard: the
+// tiles and the pieces by the arrows, a slide and a move by Enter, puzzles to the end by H.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -21,7 +22,12 @@ function inspectSlide() {
   const board = document.querySelector('.tiles') ?? document.querySelector('.yard');
   if (!shown(board)) return out;
   const b = board.getBoundingClientRect();
-  if (Math.abs(b.width - b.height) > 1) out.push(`the board is not square (${Math.round(b.width)}×${Math.round(b.height)})`);
+  if (board.classList.contains('yard--box')) {
+    // the tray of "The chest" is taller than wide: its cells and its frame keep their shape
+    const v = (name) => parseFloat(board.style.getPropertyValue(name));
+    const shape = (v('--cols') + 2 * v('--frame')) / (v('--rows') + 2 * v('--frame'));
+    if (Math.abs(b.width / b.height - shape) > 0.01) out.push(`the tray is out of shape (${Math.round(b.width)}×${Math.round(b.height)})`);
+  } else if (Math.abs(b.width - b.height) > 1) out.push(`the board is not square (${Math.round(b.width)}×${Math.round(b.height)})`);
   if (b.left < -1 || b.right > innerWidth + 1) out.push('the board goes beyond the screen');
   const parts = [...board.querySelectorAll('.tile[data-tile], .piece')];
   // a tile on its own cell shows its check mark, any other tile none
@@ -31,7 +37,8 @@ function inspectSlide() {
   }
   if (parts.filter((p) => p.tabIndex === 0).length !== 1) out.push('the board is not one Tab stop');
   // the narrow side of a tile or piece under a finger (rule 6): 44 px; on a phone on its side whose browser bar
-  // leaves under 300 px of height, a cell of the 6x6 board may be 40 px (a piece is still 2 cells long)
+  // leaves under 300 px of height, a cell of the 6x6 board may be 40 px (a piece is still 2 cells long; the cells of
+  // the chest's tray are larger)
   const least = innerHeight < 300 ? 40 : 43.5;
   for (const p of parts) {
     const r = p.getBoundingClientRect();
@@ -71,6 +78,17 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await page.waitForSelector('.tile, .piece');
     await page.waitForTimeout(250);
   };
+  /** The moves of the game saved in a slot (the screen saves after every move). */
+  const movesIn = (page, slot) => page.evaluate((k) => JSON.parse(localStorage.getItem(k))?.play.history.length ?? 0, `${STORE}play:${slot}`);
+  /** The arrow key that moves the hint's piece one cell toward the place the hint shows. */
+  const hintKey = (page) =>
+    page.evaluate(() => {
+      const b = document.querySelector('.piece.is-hint');
+      const g = document.querySelector('.ghost');
+      const dx = +g.style.getPropertyValue('--x') - +b.style.getPropertyValue('--x');
+      const dy = +g.style.getPropertyValue('--y') - +b.style.getPropertyValue('--y');
+      return { piece: b.dataset.piece, key: dx ? (dx > 0 ? 'ArrowRight' : 'ArrowLeft') : dy > 0 ? 'ArrowDown' : 'ArrowUp' };
+    });
   /** Presses H until the end window (a hint, then "Do it"). */
   const byHints = async (page, label) => {
     for (let guard = 0; guard < 600 && !(await page.$('dialog:has(#end-title)[open]')); guard++) await page.keyboard.press('h');
@@ -143,14 +161,43 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await openGame(page, 'unblock-hard');
       await check(page, `${label} free play hard`);
       await shot(page, `${width}x${height}-${locale}-${colorScheme}-hard`);
+      // "The chest": level 1 — how to play, a piece taken, a hint with its place and what it does, to the end by hints
+      await openGame(page, 'box-levels');
+      if (!(await page.locator('.yard--box').count())) fail(`slide ${label}: the chest's levels show no tray`);
+      await check(page, `${label} chest level 1, how to play`);
+      await page.locator('.piece').nth(1).click();
+      await check(page, `${label} chest, a piece taken or stuck`);
+      await page.keyboard.press('h');
+      if (!(await page.locator('.ghost:not([hidden])').count())) fail(`slide ${label}: the chest's hint shows no place`);
+      await check(page, `${label} chest hint`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-chest-hint`);
+      await page.keyboard.press('h');
+      if ((await movesIn(page, 'box-levels')) !== 1) fail(`slide ${label}: the chest's hint did not make its move`);
+      await check(page, `${label} chest hint done`);
+      await byHints(page, `${label} chest level 1`);
+      await check(page, `${label} chest level 1 solved`);
+      await page.locator('dialog[open] .btn--primary').click();
+      await page.waitForTimeout(200);
+      await check(page, `${label} chest level 2`);
+      await openGame(page, 'box-hard');
+      await check(page, `${label} chest free play hard`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-chest-hard`);
       await page.evaluate((s) => localStorage.removeItem(`${s}last`), STORE);
       await settled(page);
       await page.goto(base);
       await page.waitForSelector('.pick');
       await check(page, `${label} start after games`);
-      await page.locator('.pick').last().click();
+      // the day of each mode with a set: the last choice of its part of the start screen
+      await page.locator('.home__part').nth(1).locator('.pick').last().click();
       await page.waitForSelector('.piece');
       await check(page, `${label} the level of the day`);
+      // back to the start (else the game opens where the player stopped)
+      await page.evaluate((s) => localStorage.removeItem(`${s}last`), STORE);
+      await page.goto(base);
+      await page.waitForSelector('.pick');
+      await page.locator('.home__part').nth(2).locator('.pick').last().click();
+      await page.waitForSelector('.yard--box .piece');
+      await check(page, `${label} the chest of the day`);
       await openGame(page, 'fifteen-day');
       await check(page, `${label} the fifteen of the day`);
       await ctx.close();
@@ -200,6 +247,13 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await openGame(page, 'unblock-hard');
     await side('hard');
     await shot(page, `side-${width}x${height}`);
+    await openGame(page, 'box-levels');
+    await side('chest level 1');
+    await page.keyboard.press('h');
+    await side('chest hint');
+    await openGame(page, 'box-hard');
+    await side('chest hard');
+    await shot(page, `side-${width}x${height}-chest`);
     await ctx.close();
   }
 
@@ -217,7 +271,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await page.waitForSelector('.pick');
     await big();
     await check(page, `${width}×${height} text ${size}% start`);
-    for (const route of ['fifteen-hard', 'unblock-medium']) {
+    for (const route of ['fifteen-hard', 'unblock-medium', 'box-medium']) {
       await openGame(page, route);
       await big();
       await page.waitForTimeout(150);
@@ -281,7 +335,24 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await shot(page, 'solved');
     await page.keyboard.press('Escape');
     await check(page, 'solved, the window closed');
+    // "The chest": Enter takes the hint's piece, an arrow moves it a cell toward the hint's place; then to the end by H
+    await openGame(page, 'box-medium');
+    await checkFocusVisible(page, 8, fail, 'slide keyboard chest');
+    await page.keyboard.press('h');
+    const block = await hintKey(page);
+    await page.locator(`.piece[data-piece="${block.piece}"]`).focus();
+    await page.keyboard.press('Enter');
+    if (!(await page.locator('.piece.is-taken').count())) fail('slide keyboard: Enter did not take the chest’s piece');
+    await page.keyboard.press(block.key);
+    if ((await movesIn(page, 'box-medium')) !== 1) fail('slide keyboard: an arrow did not move the chest’s taken piece');
+    await page.keyboard.press('Escape');
+    await byHints(page, 'keyboard chest');
+    await check(page, 'chest solved by the keys');
+    const boxStats = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), `${STORE}stats`);
+    if (boxStats?.box?.free?.medium?.won !== 1) fail(`slide keyboard: statistics did not count the chest (${JSON.stringify(boxStats?.box)})`);
+    await shot(page, 'chest-solved');
+    await page.keyboard.press('Escape');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, phones on their side, large text, keyboard, puzzles to the end`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks (three modes), phones on their side, large text, keyboard, puzzles to the end`;
 }
