@@ -6,7 +6,7 @@ import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
-import { PICTURES, pictureUrl } from '../art/pictures.ts';
+import { dailyPictureCount, PICTURES, pictureUrl } from '../art/pictures.ts';
 import { DIFFICULTIES, FIFTEEN_KINDS, SLIDE, type Difficulty, type FifteenKind, type PoolWays, type Theme } from '../config.ts';
 import { parseBox, sizeOf, type BoxMove, type BoxPuzzle } from '../core/box.ts';
 import { allPositions as allBoxPositions, nextMove as nextBoxMove, type BoxPositions } from '../core/box-solve.ts';
@@ -205,7 +205,7 @@ export function startApp(root: HTMLElement): void {
     if (k.mode === 'fifteen') {
       if (k.way === 'daily') {
         const seed = dailySeed('fifteen', today);
-        return newFifteen(fifteenTiles(SLIDE.fifteen.dailySize, seed), 'daily', seed, PICTURES.length, { daily: today });
+        return newFifteen(fifteenTiles(SLIDE.fifteen.dailySize, seed), 'daily', seed, dailyPictureCount(today), { daily: today });
       }
       const seed = randomSeed();
       return newFifteen(fifteenTiles(SLIDE.fifteen.sizes[k.difficulty!], seed), 'free', seed, PICTURES.length, { difficulty: k.difficulty! });

@@ -12,7 +12,7 @@ import { DIFFICULTIES, JIGSAW, PICTURES, type Difficulty } from '../config.ts';
 import { makeCut } from '../core/cut.ts';
 import { outlineOf } from '../core/outline.ts';
 import { clean, countHint, drop, hintOf, nearHome, newPlay, piecesOf, place, started, trayOf, addTime, gridOf, turn, turnOf, type JigsawPlay } from '../core/play.ts';
-import { dailySeed, partSeed, pictureOf } from '../core/seeds.ts';
+import { dailyPictureCount, dailySeed, partSeed, pictureOf } from '../core/seeds.ts';
 import { longestStreak, recordLeft, recordWon } from '../core/stats.ts';
 import { trayOrder } from '../core/tray.ts';
 import { chooseView } from './choose-view.ts';
@@ -210,7 +210,7 @@ export function startApp(root: HTMLElement): void {
 
   function dayGame(): JigsawPlay {
     const seed = dailySeed(today);
-    return newPlay('daily', JIGSAW.daily, seed, pictureOf(seed, PICTURES.length), today);
+    return newPlay('daily', JIGSAW.daily, seed, pictureOf(seed, dailyPictureCount(today)), today);
   }
 
   function openGame(slot: Slot): void {

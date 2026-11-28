@@ -4,7 +4,22 @@
 import type { Paint } from './palette.ts';
 import { el, path } from './svg.ts';
 
-export type DefName = 'wall' | 'floor' | 'sky' | 'spine' | 'round' | 'glow' | 'vignette' | 'soft' | 'softer' | 'wallpaper' | 'grain' | 'tiles' | 'arch';
+export type DefName =
+  | 'wall'
+  | 'floor'
+  | 'sky'
+  | 'spine'
+  | 'round'
+  | 'glow'
+  | 'vignette'
+  | 'soft'
+  | 'softer'
+  | 'wallpaper'
+  | 'grain'
+  | 'tiles'
+  | 'arch'
+  | 'frieze'
+  | 'street';
 
 export interface Ctx {
   p: Paint;

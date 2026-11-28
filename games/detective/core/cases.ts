@@ -43,7 +43,18 @@ export function on(room: RoomId, thing: ThingId, spotId: string, dx = 0, rot = 0
   return putOn(spot, thing, dx, rot);
 }
 
-export const STORY_IDS = ['lostLetter', 'midnightCall', 'fairPie', 'nightShift', 'strangeSuitcase', 'lastTrain', 'recipeBook', 'missingStamp'] as const;
+export const STORY_IDS = [
+  'lostLetter',
+  'midnightCall',
+  'fairPie',
+  'nightShift',
+  'strangeSuitcase',
+  'lastTrain',
+  'wrongParcel',
+  'nightLetter',
+  'recipeBook',
+  'missingStamp',
+] as const;
 export type StoryId = (typeof STORY_IDS)[number];
 
 /**
@@ -253,6 +264,76 @@ export const STORIES: Record<StoryId, CaseDef> = {
       { person: 'tamas', buttons: 'brown', scarf: 'blue', flower: false },
     ],
     culprit: 0,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
+    statements: [],
+  },
+  // A parcel with a clock's pendulum is gone from the post counter, and one just like it, but lighter, lies in its
+  // place. A lens, a blue button, a red thread: only Viktor.
+  wrongParcel: {
+    id: 'wrongParcel',
+    kind: 'story',
+    story: 'wrongParcel',
+    room: 'post',
+    time: 'day',
+    things: [
+      on('post', 'envelope', 'desk1'),
+      on('post', 'glasses', 'counter2'),
+      on('post', 'key', 'parcels1'),
+      on('post', 'coin', 'floor4'),
+      on('post', 'scarf:red', 'slot3'),
+      on('post', 'pencil', 'floor5', 0, 20),
+      on('post', 'watch', 'slot4'),
+      on('post', 'buttons:blue', 'mat1', 8),
+      on('post', 'ring', 'sill1'),
+      on('post', 'ticket', 'sill2'),
+    ],
+    clues: ['glasses', 'buttons:blue', 'scarf:red'],
+    suspects: [
+      { person: 'bence', buttons: 'blue', scarf: 'red', flower: false },
+      { person: 'anna', buttons: 'gold', scarf: 'red', flower: false },
+      { person: 'tamas', buttons: 'blue', scarf: 'yellow', flower: false },
+      { person: 'lina', buttons: 'brown', scarf: 'blue', flower: true },
+      { person: 'viktor', buttons: 'blue', scarf: 'red', flower: false },
+      { person: 'pavlo', buttons: 'gold', scarf: null, flower: false },
+    ],
+    culprit: 4,
+    level: 'easy',
+    circumstances: [],
+    facts: [],
+    statements: [],
+  },
+  // At night somebody came into the closed post office, raised a blind, lit a lamp and took a letter from the box to be
+  // sent; a key lies on the mat. A grey hair, a petal, a yellow thread: only Ilona.
+  nightLetter: {
+    id: 'nightLetter',
+    kind: 'story',
+    story: 'nightLetter',
+    room: 'post',
+    time: 'night',
+    things: [
+      on('post', 'key', 'mat2', -8, 14),
+      on('post', 'flower', 'counter3', 10),
+      on('post', 'hair:gray', 'bench1', -8),
+      on('post', 'envelope', 'desk1'),
+      on('post', 'scarf:yellow', 'slot2'),
+      on('post', 'glove', 'bench2', 8),
+      on('post', 'pencil', 'floor2', 0, 18),
+      on('post', 'ring', 'parcels2'),
+      on('post', 'coin', 'floor9'),
+      on('post', 'magnifier', 'floor7', 0, -20),
+    ],
+    clues: ['hair:gray', 'flower', 'scarf:yellow'],
+    suspects: [
+      { person: 'emma', buttons: 'gold', scarf: 'yellow', flower: true },
+      { person: 'oleg', buttons: 'blue', scarf: 'yellow', flower: false },
+      { person: 'sofia', buttons: 'brown', scarf: 'blue', flower: true },
+      { person: 'gabor', buttons: 'brown', scarf: null, flower: true },
+      { person: 'ilona', buttons: 'blue', scarf: 'yellow', flower: true },
+      { person: 'marta', buttons: 'gold', scarf: 'yellow', flower: false },
+    ],
+    culprit: 4,
     level: 'easy',
     circumstances: [],
     facts: [],

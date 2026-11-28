@@ -2,6 +2,7 @@
 // the date's for the puzzle of the day — and from it a seed of its own for each part (the cut, the tray, the things in
 // the room, the picture drawn for "Any", how the pieces lie turned), so the parts do not go together. Pure.
 import { nextInt, seedFromText } from '../../../shared/core/rng.ts';
+import { JIGSAW, PICTURES } from '../config.ts';
 
 export type Part = 'cut' | 'tray' | 'things' | 'picture' | 'turns';
 
@@ -23,4 +24,12 @@ export function pick(seed: number, count: number): number {
 /** The picture of a puzzle whose picture was not chosen (the day's, or "Any"). */
 export function pictureOf(seed: number, pictures: number): number {
   return pick(partSeed(seed, 'picture'), pictures);
+}
+
+/**
+ * How many pictures the puzzle of the day picks from on a date ("YYYY-MM-DD"): a room that joins later (JIGSAW.dailyFrom)
+ * has its pictures at the end of the list, so before its date the day's puzzle is what it was.
+ */
+export function dailyPictureCount(date: string): number {
+  return PICTURES.filter((p) => (JIGSAW.dailyFrom[p.room] ?? '') <= date).length;
 }

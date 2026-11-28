@@ -1,14 +1,15 @@
 // Rooms as the logic sees them: the places where a thing can stand or lie. A room's drawing uses the same
 // numbers (core/rooms/<room>.ts), so a thing never hangs in the air (docs/detective/SPEC.md).
 import { BAKERY_SPOTS } from './rooms/bakery.ts';
+import { POST_SPOTS } from './rooms/post.ts';
 import { STATION_SPOTS } from './rooms/station.ts';
 import { STUDY_SPOTS } from './rooms/study.ts';
 
 /**
- * How a place holds a thing. Ledges (a shelf; the top of a bookcase, a rack, a glass case or a suitcase; a
- * windowsill; a desk, a table, a counter or the ledge of a ticket window; a seat) are seen from the front: a
- * thing stands on the line. On the floor and on a rug, a mat or a carpet runner a thing lies and may be
- * turned a little.
+ * How a place holds a thing. Ledges (a shelf or a pigeonhole; the top of a bookcase, a rack, a glass case, a
+ * suitcase or a stack of parcels; a windowsill; a desk, a table, a counter or the ledge of a ticket window; a
+ * seat) are seen from the front: a thing stands on the line. On the floor and on a rug, a mat or a carpet
+ * runner a thing lies and may be turned a little.
  */
 export type SpotKind = 'shelf' | 'top' | 'sill' | 'desk' | 'seat' | 'floor' | 'rug';
 export const LEDGES: readonly SpotKind[] = ['shelf', 'top', 'sill', 'desk', 'seat'];
@@ -34,7 +35,11 @@ export type Where =
   | 'bench'
   | 'suitcase'
   | 'ticketDesk'
-  | 'runner';
+  | 'runner'
+  // the post office
+  | 'pigeonholes'
+  | 'postCounter'
+  | 'parcels';
 
 export interface Spot {
   id: string;
@@ -48,11 +53,12 @@ export interface Spot {
   h: number;
 }
 
-export type RoomId = 'study' | 'bakery' | 'station';
-export const ROOM_IDS: readonly RoomId[] = ['study', 'bakery', 'station'];
+export type RoomId = 'study' | 'bakery' | 'station' | 'post';
+export const ROOM_IDS: readonly RoomId[] = ['study', 'bakery', 'station', 'post'];
 
 export const SPOTS: Record<RoomId, readonly Spot[]> = {
   study: STUDY_SPOTS,
   bakery: BAKERY_SPOTS,
   station: STATION_SPOTS,
+  post: POST_SPOTS,
 };

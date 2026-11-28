@@ -23,6 +23,10 @@ export const ellipse = (cx: number, cy: number, rx: number, ry: number, fill: st
 
 export const path = (d: string, fill: string, a: Attrs = {}): string => el('path', { d, fill, ...a });
 
+/** Many boxes of one colour as one shape: [x, y, width, height] each. */
+export const rects = (boxes: readonly (readonly [number, number, number, number])[], fill: string, a: Attrs = {}): string =>
+  path(boxes.map(([x, y, w, h]) => `M${n(x)} ${n(y)}h${n(w)}v${n(h)}h${n(-w)}Z`).join(''), fill, a);
+
 /** A line along a path, with round ends. */
 export const stroke = (d: string, colour: string, width: number, a: Attrs = {}): string =>
   el('path', { d, fill: 'none', stroke: colour, 'stroke-width': width, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', ...a });

@@ -40,7 +40,15 @@
     "stationOfficeDay": "A pénztár és az óra nappal",
     "stationOfficeNight": "A pénztár és az óra éjjel",
     "stationBenchesDay": "A padok nappal",
-    "stationBenchesNight": "A padok éjjel"
+    "stationBenchesNight": "A padok éjjel",
+    "postDay": "A posta nappal",
+    "postNight": "A posta éjjel",
+    "postPigeonholesDay": "A levélrekeszek nappal",
+    "postPigeonholesNight": "A levélrekeszek éjjel",
+    "postDoorDay": "Az ajtó és a plakát nappal",
+    "postDoorNight": "Az ajtó és a plakát éjjel",
+    "postCounterDay": "A pult ablakai nappal",
+    "postCounterNight": "A pult ablakai éjjel"
   },
   "home": {
     "daily": "A nap kirakója",
@@ -68,7 +76,8 @@
     "rooms": {
       "study": "A detektív dolgozószobája",
       "bakery": "A pékség",
-      "station": "A pályaudvar"
+      "station": "A pályaudvar",
+      "post": "A posta"
     }
   },
   "game": {

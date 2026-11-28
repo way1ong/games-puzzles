@@ -8,7 +8,7 @@ import { anySign } from './icons.ts';
 import { pictureName } from './words.ts';
 
 /** The rooms in the order of the choice. */
-const ROOMS: readonly Room[] = ['study', 'bakery', 'station'];
+const ROOMS: readonly Room[] = ['study', 'bakery', 'station', 'post'];
 
 /** The pictures without things, drawn once (the things of a puzzle come from its seed). */
 const thumbs = new Map<number, string>();

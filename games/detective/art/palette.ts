@@ -198,6 +198,22 @@ const TABLE = {
   pigeon: ['#8F98A5'],
   pigeonDark: ['#6C7480'],
   pigeonNeck: ['#5E8A7C'],
+  // the post office: painted wall boards, the parquet, mail sacks, parcels, the post's own blue, fog at night
+  boardBlue: ['#6E8CA3', '#1F2A38'],
+  boardBlueLight: ['#87A4B8', '#283548'],
+  boardBlueDark: ['#56728A', '#18212C'],
+  parquet: ['#B27C47', '#33261E'],
+  canvas: ['#CEC6AE', '#666B75'],
+  canvasShade: ['#ADA48C', '#56595F'],
+  parcel: ['#C79D6B', '#61554C'],
+  parcelDark: ['#A57B4C', '#504338'],
+  parcelPale: ['#DDC59D', '#6D6B6C'],
+  twine: ['#F0E5C6', '#777C86'],
+  postBlue: ['#2E5C8A', '#1A3156'],
+  postBlueDark: ['#24486D', '#142644'],
+  /** A glass shade that is not lit (`milkGlass` is the lit one at night). */
+  opal: ['#F1EEE6', '#4D525C'],
+  fog: ['#F2F4F2', '#9AA6B4'],
 } satisfies Record<string, readonly [string, string?]>;
 
 /** What a room paints its own way: the walls, the skirting board, the floor. */
@@ -221,6 +237,20 @@ const ROOM_TABLE: Record<RoomId, Partial<Record<keyof typeof TABLE, readonly [st
     // a snowy night: the sky is pale with snow clouds
     skyTop: ['#BFE1F3', '#1A2233'],
     skyBottom: ['#E8F4FA', '#343E52'],
+  },
+  post: {
+    wallTop: ['#F4E8C9', '#29313F'],
+    wallBottom: ['#EADAB4', '#1F2630'],
+    wallMotif: ['#D9BF8C', '#36404F'],
+    skirting: ['#4A3626', '#16110D'],
+    floorTop: ['#D3A068', '#3D2F25'],
+    floorBottom: ['#B98450', '#2B211A'],
+    plank: ['#8C5C33', '#20170F'],
+    // a foggy night: the sky glows grey over the street, the houses fade into the fog
+    skyTop: ['#BFE1F3', '#232C38'],
+    skyBottom: ['#E8F4FA', '#4A5462'],
+    town: ['#B4C6D2', '#3A4452'],
+    townFar: ['#A3B6C4', '#465160'],
   },
 };
 

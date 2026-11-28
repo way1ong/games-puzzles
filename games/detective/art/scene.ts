@@ -8,6 +8,7 @@ import type { ThingId } from '../core/things.ts';
 import { context, sceneDefs, type Ctx } from './defs.ts';
 import { roomPaint } from './palette.ts';
 import { bakeryBack, bakeryDefs, bakeryFront } from './rooms/bakery.ts';
+import { postBack, postDefs, postFront } from './rooms/post.ts';
 import { stationBack, stationDefs, stationFront } from './rooms/station.ts';
 import { studyBack, studyFront } from './rooms/study.ts';
 import { el, g, type Attrs } from './svg.ts';
@@ -24,6 +25,7 @@ const ROOMS: Record<RoomId, RoomArt> = {
   study: { back: studyBack, front: studyFront },
   bakery: { back: bakeryBack, front: bakeryFront, defs: bakeryDefs },
   station: { back: stationBack, front: stationFront, defs: stationDefs },
+  post: { back: postBack, front: postFront, defs: postDefs },
 };
 
 export interface SceneView {
