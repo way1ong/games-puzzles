@@ -1,8 +1,9 @@
 // Browser audit of Slide: every size and look — the start screen; the fifteen (how to play, a tile slid, a hint and
-// what it does, 3x3 to the end by the hints); the menu with the widest settings (picture and numbers, the time, the
-// large mode, the left hand) and the whole picture; "Clear the way" (level 1: how to play, a piece taken, a hint with
-// its place, to the end by the hints), free play hard, the days; phones on their side; large system text; the
-// keyboard: the tiles and the pieces by the arrows, a slide and a move by Enter, a puzzle to the end by H.
+// what it does, the goal shown, 3x3 to the end by the hints; a tile in its place has its check mark); the menu with
+// the widest settings (picture and numbers, the time, the large mode, the left hand) and the whole picture; "Clear the
+// way" (level 1: how to play, a piece taken, a hint with its place, to the end by the hints), free play hard, the
+// days; phones on their side; large system text; the keyboard: the tiles and the pieces by the arrows, a slide and a
+// move by Enter, a puzzle to the end by H.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
 
@@ -23,6 +24,11 @@ function inspectSlide() {
   if (Math.abs(b.width - b.height) > 1) out.push(`the board is not square (${Math.round(b.width)}×${Math.round(b.height)})`);
   if (b.left < -1 || b.right > innerWidth + 1) out.push('the board goes beyond the screen');
   const parts = [...board.querySelectorAll('.tile[data-tile], .piece')];
+  // a tile on its own cell shows its check mark, any other tile none
+  for (const t of board.querySelectorAll('.tile[data-tile]')) {
+    const ok = getComputedStyle(t.querySelector('.tile__ok')).display !== 'none';
+    if (ok !== t.classList.contains('is-home')) out.push(`tile ${t.dataset.tile}: the check mark ${ok ? 'on a tile out of place' : 'missing'}`);
+  }
   if (parts.filter((p) => p.tabIndex === 0).length !== 1) out.push('the board is not one Tab stop');
   // the narrow side of a tile or piece under a finger (rule 6): 44 px; on a phone on its side whose browser bar
   // leaves under 300 px of height, a cell of the 6x6 board may be 40 px (a piece is still 2 cells long)
@@ -97,6 +103,11 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await check(page, `${label} fifteen hint`);
       await page.keyboard.press('h');
       await check(page, `${label} fifteen hint done`);
+      // the goal over the board (with numbers: the tiles in order), shown and hidden again
+      await page.locator('.tools .tool').nth(3).click();
+      if (!(await page.locator('.tiles__goal').isVisible())) fail(`slide ${label}: "Goal" did not show the tiles in order`);
+      await check(page, `${label} fifteen goal`);
+      await page.locator('.tools .tool').nth(3).click();
       await byHints(page, `${label} fifteen`);
       await check(page, `${label} fifteen solved`);
       await shot(page, `${width}x${height}-${locale}-${colorScheme}-fifteen-end`);

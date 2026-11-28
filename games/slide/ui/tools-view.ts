@@ -1,8 +1,9 @@
-// The buttons under the board (docs/slide/SPEC.md, "Допомога"): Undo, Hint (then "Do it"), Start again, and for a
-// fifteen with a picture — Picture, which shows the picture whole until pressed again. Help has no limit here.
+// The buttons under the board (docs/slide/SPEC.md, "Допомога"): Undo, Hint (then "Do it"), Start again, and for the
+// fifteen — the goal ("Goal" with numbers, "Picture" with a picture), shown over the board until pressed again. Help
+// has no limit here.
 import { h } from '../../../shared/ui/dom.ts';
 import type { Dict } from './i18n.ts';
-import { againSign, hintSign, pictureSign, undoSign } from './icons.ts';
+import { againSign, goalSign, hintSign, pictureSign, undoSign } from './icons.ts';
 
 export interface ToolActions {
   undo(): void;
@@ -14,8 +15,8 @@ export interface ToolActions {
 export interface ToolsState {
   /** A hint is shown: the button does it. */
   hintReady: boolean;
-  /** The picture button: null — none (numbers, or "Clear the way"); else whether the picture is shown whole. */
-  picture: boolean | null;
+  /** The goal button of the fifteen: whether the goal is shown, and whether it is a picture; null — none. */
+  goal: { shown: boolean; picture: boolean } | null;
 }
 
 export function createToolsView(actions: ToolActions) {
@@ -29,6 +30,7 @@ export function createToolsView(actions: ToolActions) {
   const hint = tool(hintSign(), () => actions.hint());
   const again = tool(againSign(), () => actions.again());
   const picture = tool(pictureSign(), () => actions.picture());
+  const signs = { picture: picture.b.firstElementChild!, goal: goalSign() };
   const el = h('div', { class: 'tools', role: 'group' }, undo.b, hint.b, again.b, picture.b);
 
   return {
@@ -39,10 +41,15 @@ export function createToolsView(actions: ToolActions) {
       hint.label.textContent = state.hintReady ? d.tools.doHint : d.tools.hint;
       hint.b.classList.toggle('is-ready', state.hintReady);
       again.label.textContent = d.tools.again;
-      picture.label.textContent = d.tools.picture;
-      picture.b.hidden = state.picture === null;
-      picture.b.setAttribute('aria-pressed', String(state.picture === true));
-      el.classList.toggle('tools--four', state.picture !== null);
+      const g = state.goal;
+      picture.b.hidden = g === null;
+      if (g) {
+        picture.label.textContent = g.picture ? d.tools.picture : d.tools.goal;
+        const sign = g.picture ? signs.picture : signs.goal;
+        if (picture.b.firstElementChild !== sign) picture.b.firstElementChild!.replaceWith(sign);
+        picture.b.setAttribute('aria-pressed', String(g.shown));
+      }
+      el.classList.toggle('tools--four', g !== null);
     },
   };
 }

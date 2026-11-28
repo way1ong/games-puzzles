@@ -85,8 +85,10 @@ const MARKS: [string, string][] = [
   ['--focus', '--surface'],
   ['--line', '--surface'],
   ['--line', '--bg'],
-  // a tile's edge on the tile
+  // a tile's edge on the tile; a tile on its own cell: its frame on the tile, the check on its round mark
   ['--tile-line', '--tile'],
+  ['--home', '--tile'],
+  ['--home-ink', '--home'],
 ];
 for (const [theme, t] of Object.entries(themes)) {
   const solid = (name: string): RGB => {

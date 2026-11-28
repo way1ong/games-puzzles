@@ -1,4 +1,4 @@
-// Small signs of the screen: back, undo, hint, start again, the picture, done. Drawn with the text colour of the
+// Small signs of the screen: back, undo, hint, start again, the picture, the goal, done. Drawn with the text colour of the
 // place they stand in.
 import { svg } from '../../../shared/ui/dom.ts';
 
@@ -19,5 +19,8 @@ export const againSign = (): SVGSVGElement => sign('<path d="M5 12a7 7 0 1 0 2.0
 
 /** A framed picture with hills and a sun: show the picture whole. */
 export const pictureSign = (): SVGSVGElement => sign('<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="m4 17 5-5 4 4 2.5-2.5 4.5 4.5"/><circle cx="15.5" cy="9" r="1.5"/>');
+
+/** A small board of four tiles, one corner empty: the tiles in order — the goal. */
+export const goalSign = (): SVGSVGElement => sign('<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/>');
 
 export const checkSign = (): SVGSVGElement => sign('<path d="M5 12.5l4.5 4.5L19 7.5"/>');

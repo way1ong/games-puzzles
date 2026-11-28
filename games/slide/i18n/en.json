@@ -62,8 +62,8 @@
       "one": "fewest: {n} move",
       "other": "fewest: {n} moves"
     },
-    "tipNumbers": "Tap a tile in the row or column of the gap: it slides into the gap. Put the tiles in order: 1, 2, 3…",
-    "tipPicture": "Tap a tile in the row or column of the gap: it slides into the gap. Make the picture whole.",
+    "tipNumbers": "Goal: 1 in the top left corner, then in order to the right and down; the gap in the bottom right.",
+    "tipPicture": "Goal: the whole picture — the Picture button shows it; the gap in the bottom right.",
     "tipHarbour": "Slide the boats along their length and take the little boat with the arrow out to sea, on the right.",
     "tipRoom": "Slide the furniture along its length and carry the sofa with the arrow out of the door, on the right.",
     "tipBox": "Slide the bars along their length and take the red bar with the arrow out through the slot, on the right.",
@@ -94,7 +94,8 @@
     "hint": "Hint",
     "doHint": "Do it",
     "again": "Start again",
-    "picture": "Picture"
+    "picture": "Picture",
+    "goal": "Goal"
   },
   "pieces": {
     "harbour": {
@@ -124,7 +125,9 @@
     "taken": "taken",
     "hint": "the hint",
     "exit": "The way out: on the right of row {r}",
-    "picture": "The whole picture"
+    "picture": "The whole picture",
+    "goal": "The goal: the tiles in order, 1 in the top left corner, the gap in the bottom right",
+    "home": "in its place"
   },
   "end": {
     "solved": "Solved!",
@@ -206,7 +209,7 @@
   },
   "about": {
     "title": "About the game",
-    "fifteen": "Fifteen: tap a tile in the row or column of the gap and it slides into the gap with the tiles between. Put the tiles in order, or make the picture. Every board can be solved.",
+    "fifteen": "Fifteen: tap a tile in the row or column of the gap and it slides into the gap with the tiles between. The goal is the tiles in order: 1 in the top left corner, then to the right and down, the gap in the bottom right (the Goal button shows it) — or the whole picture. A tile in its place has a ✓. Every board can be solved.",
     "unblock": "Clear the Way: a piece moves only along its length, as far as it is free. Slide pieces aside to clear the way for yours (with the arrow) to the way out on the right. A move is one piece slid any distance. Every puzzle can be solved, and the game knows the fewest moves.",
     "text": "No ads, no tracking, no accounts. Everything stays on this device; after the first visit the game works without the internet.",
     "keysFifteen": "Keys in the fifteen: arrows — between tiles, Enter or Space — slide, H — hint, Ctrl+Z — undo.",

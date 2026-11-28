@@ -8,6 +8,7 @@ import { h } from '../../../shared/ui/dom.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { PICTURES, pictureUrl } from '../art/pictures.ts';
 import { DIFFICULTIES, SLIDE, type Difficulty } from '../config.ts';
+import { homeOf } from '../core/fifteen.ts';
 import { findHint, type TileWay } from '../core/fifteen-solve.ts';
 import { dailySeed, fifteenTiles, freePuzzle, levelPuzzle, levelSeed } from '../core/level.ts';
 import { addTime, clean, countHint, movePiece, movesMade, newFifteen, newUnblock, perfect, slideTile, startAgain, started, undo, type SlidePlay } from '../core/play.ts';
@@ -326,10 +327,16 @@ export function startApp(root: HTMLElement): void {
         face,
         picture: face === 'numbers' ? null : pictureUrl(g.picture),
         hint: hintTile,
-        whole: whole && face !== 'numbers',
+        whole,
         done: g.done,
-        label: (tile, cell) => tileLabel(tile, cell, g.size, d, hintTile === tile ? [d.board.hint] : []),
+        label: (tile, cell) => {
+          const marks: string[] = [];
+          if (cell === homeOf(tile, g.size)) marks.push(d.board.home);
+          if (hintTile === tile) marks.push(d.board.hint);
+          return tileLabel(tile, cell, g.size, d, marks);
+        },
         pictureLabel: d.board.picture,
+        goalLabel: d.board.goal,
       });
     } else {
       if (board.firstChild !== unblockView.el) board.replaceChildren(unblockView.el);
@@ -352,7 +359,7 @@ export function startApp(root: HTMLElement): void {
         exitLabel: fmt(d.board.exit, { r: SLIDE.unblock.exitRow + 1 }),
       });
     }
-    tools.render(d, { hintReady: !!shown, picture: g.mode === 'fifteen' && settings.faces !== 'numbers' ? whole : null });
+    tools.render(d, { hintReady: !!shown, goal: g.mode === 'fifteen' ? { shown: whole, picture: settings.faces !== 'numbers' } : null });
     tools.el.hidden = g.done;
     const n = noteContent(g);
     noteText.textContent = n.text;
@@ -498,10 +505,11 @@ export function startApp(root: HTMLElement): void {
     render();
   }
 
+  /** The fifteen: the goal over the board — the tiles in order, or the whole picture — until pressed again. */
   function togglePicture(): void {
-    if (!game || game.mode !== 'fifteen' || settings.faces === 'numbers') return;
+    if (!game || game.mode !== 'fifteen') return;
     whole = !whole;
-    announce(whole ? d.board.picture : '');
+    announce(whole ? (settings.faces === 'numbers' ? d.board.goal : d.board.picture) : '');
     render();
   }
 
