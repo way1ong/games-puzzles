@@ -4,6 +4,8 @@ import { BLOCKS } from './games/blocks/config.ts';
 import blocksEn from './games/blocks/i18n/en.json' with { type: 'json' };
 import { DETECTIVE } from './games/detective/config.ts';
 import detectiveEn from './games/detective/i18n/en.json' with { type: 'json' };
+import { JIGSAW } from './games/jigsaw/config.ts';
+import jigsawEn from './games/jigsaw/i18n/en.json' with { type: 'json' };
 import { MINES } from './games/mines/config.ts';
 import minesEn from './games/mines/i18n/en.json' with { type: 'json' };
 import { POUR } from './games/pour/config.ts';
@@ -28,6 +30,7 @@ const here = (path: string) => fileURLToPath(new URL(path, import.meta.url));
 const GAMES: GameApp[] = [
   { game: 'blocks', name: BLOCKS.name, shortName: blocksEn.app.name, description: blocksEn.meta.description, lang: 'en' },
   { game: 'detective', name: DETECTIVE.name, shortName: detectiveEn.app.name, description: detectiveEn.meta.description, lang: 'en' },
+  { game: 'jigsaw', name: JIGSAW.name, shortName: jigsawEn.app.name, description: jigsawEn.meta.description, lang: 'en' },
   { game: 'mines', name: MINES.name, shortName: minesEn.app.name, description: minesEn.meta.description, lang: 'en' },
   { game: 'pour', name: POUR.name, shortName: pourEn.app.name, description: pourEn.meta.description, lang: 'en' },
   { game: 'nonograms', name: NONOGRAMS.name, shortName: nonogramsEn.app.name, description: nonogramsEn.meta.description, lang: 'en' },

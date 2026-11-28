@@ -1,0 +1,82 @@
+/*
+ * Jigsaw: the only file with colour values of the screen (the pictures are Detective's rooms, with their own colours).
+ * Light and dark themes follow the system unless the player chooses one in the settings; a page that hosts the game
+ * (e.g. a claude.ai test page) may force one too — both with data-theme="light" | "dark" on <html>.
+ */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --bg: #efece6;
+  --surface: #ffffff;
+  --text: #23201b;
+  --muted: #574f45;
+  --line: #6e655a;
+  --accent: #7a4518;
+  --on-accent: #ffffff;
+  --focus: #a64700;
+
+  /* The board's ground under the empty places, and how strongly the pale picture shows there (0..1). */
+  --board: #3b3731;
+  --ghost: 0.32;
+  /* A piece's thin edge (and the seams between pieces in place); a piece's place in the tray. */
+  --piece-edge: rgb(24 16 8 / 0.6);
+  --slot: #f7f4ef;
+  /*
+   * Marks on the board and in the tray — the hint, the piece taken, the place under a carried piece: a dark line
+   * along a light one, so one of them reads on any picture (the same in both themes, as the pictures are).
+   */
+  --mark-dark: #111111;
+  --mark-light: #ffffff;
+
+  --backdrop: rgb(20 16 10 / 0.45);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.22);
+  /* A piece lying in the tray, and a piece carried: their shadows. */
+  --rest: drop-shadow(0 1px 1px rgb(0 0 0 / 0.25));
+  --lift: drop-shadow(0 8px 10px rgb(0 0 0 / 0.35));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #15120e;
+    --surface: #221d18;
+    --text: #efe8de;
+    --muted: #bfb4a6;
+    --line: #857a6c;
+    --accent: #e3b07a;
+    --on-accent: #2b1a07;
+    --focus: #ffb469;
+
+    --board: #0c0a08;
+    --ghost: 0.34;
+    --piece-edge: rgb(0 0 0 / 0.65);
+    --slot: #2a241e;
+
+    --backdrop: rgb(0 0 0 / 0.6);
+    --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+    --lift: drop-shadow(0 8px 10px rgb(0 0 0 / 0.6));
+  }
+}
+
+/* The same dark values when the player or the host page chooses dark explicitly. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #15120e;
+  --surface: #221d18;
+  --text: #efe8de;
+  --muted: #bfb4a6;
+  --line: #857a6c;
+  --accent: #e3b07a;
+  --on-accent: #2b1a07;
+  --focus: #ffb469;
+
+  --board: #0c0a08;
+  --ghost: 0.34;
+  --piece-edge: rgb(0 0 0 / 0.65);
+  --slot: #2a241e;
+
+  --backdrop: rgb(0 0 0 / 0.6);
+  --shadow: 0 6px 18px rgb(0 0 0 / 0.55);
+  --lift: drop-shadow(0 8px 10px rgb(0 0 0 / 0.6));
+}

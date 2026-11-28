@@ -1,0 +1,927 @@
+/* Jigsaw screen. Colours only from tokens.css (the pictures are Detective's rooms); the page reset and common controls
+   are in shared/styles/ui.css. One column, centred; a phone in portrait first: the board under the top, the note,
+   the tray and the buttons under it. */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: max(0.5rem, env(safe-area-inset-top)) max(0.5rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom)) max(0.5rem, env(safe-area-inset-left));
+}
+
+/* Large mode: the board as wide as the screen allows. */
+html.big .app {
+  max-width: 46rem;
+  padding-left: max(0.25rem, env(safe-area-inset-left));
+  padding-right: max(0.25rem, env(safe-area-inset-right));
+}
+
+/* A puzzle fills the screen's height: the tray takes what the rest leaves. */
+.app:has(> .content > .play) {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* ---------- top: back, name, menu ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top__name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+/* The heading takes the focus when the screen changes (for screen readers); it is not a control. */
+.top__name:focus {
+  outline: none;
+}
+
+/* How many pieces are in place, and the time when it is shown. */
+.top__status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0 0.625rem;
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.sign {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------- the start screen ---------- */
+.home {
+  display: grid;
+  gap: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.home__part {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.home__note,
+.choose__note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.home__streak {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.pick {
+  display: grid;
+  grid-template-areas:
+    'name state'
+    'info info';
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.125rem 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--surface);
+  text-align: start;
+  cursor: pointer;
+}
+
+.pick__name {
+  grid-area: name;
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.pick__state {
+  display: flex;
+  grid-area: state;
+  align-items: center;
+  align-self: center;
+  gap: 0.25rem;
+  color: var(--accent);
+  font-weight: 700;
+  text-align: end;
+}
+
+.pick__state .sign {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.pick__info {
+  grid-area: info;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* A puzzle to continue and the day's begun: a frame in the accent colour, dashed; done — whole. */
+.pick--resume,
+.pick.is-started {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+
+.pick.is-done {
+  border-color: var(--accent);
+}
+
+/* ---------- the choice of a picture ---------- */
+.choose {
+  display: grid;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.choose__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.625rem;
+}
+
+.choice {
+  display: grid;
+  align-content: start;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding: 0.375rem;
+  border: 2px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--surface);
+  text-align: start;
+  cursor: pointer;
+}
+
+.choice__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  border-radius: 0.5rem;
+}
+
+.choice__name {
+  padding-inline: 0.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.choice__note {
+  padding-inline: 0.25rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* "Any picture": a die where the picture would be. */
+.choice--any {
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.choice--any .sign {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--accent);
+}
+
+/* ---------- a puzzle ---------- */
+.play {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 0.75rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* A low screen gives the picture's name to the board and the tray (it is in the end's window too). */
+@media (max-height: 44rem) {
+  .play .info {
+    display: none;
+  }
+}
+
+/* A word about the puzzle (how to play, not here, a hint, the end). It keeps one height while the puzzle is played —
+   two lines; a longer word scrolls by itself — so the board and the tray never move when it speaks
+   (.claude/rules/design.md); at the end, with the tray and the buttons gone, it may grow. */
+.note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem 0.75rem;
+  min-height: calc(2.8em + 1rem);
+  max-height: calc(2.8em + 1rem);
+  overflow-y: auto;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--surface);
+  /* the narrowest phones: a little smaller, so how to play fits its two lines */
+  font-size: clamp(0.875rem, 4.3vw, 1rem);
+  text-align: center;
+}
+
+.play.is-done .note {
+  max-height: 9.5rem;
+}
+
+.note.is-empty {
+  visibility: hidden;
+}
+
+.note__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.note__actions:empty {
+  display: none;
+}
+
+/* The end's choice in the note: a button at least a finger tall. */
+.note__btn {
+  min-height: 2.75rem;
+  padding-block: 0.25rem;
+}
+
+/* ---------- the board (ui/board-view.ts sets --cols, --rows and --cell; the zoom places the clip and the sheet) ---------- */
+.board {
+  position: relative;
+  flex: none;
+  width: 100%;
+  aspect-ratio: var(--cols, 3) / var(--rows, 2);
+  /* a low phone: the board gives way, so the tray keeps two rows of pieces and ‹ › (the rest is about 26rem) */
+  min-height: 8rem;
+  max-height: calc(100vh - 26rem);
+  max-height: calc(100dvh - 26rem);
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.board__clip {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  background: var(--board);
+}
+
+.board__sheet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+.sheet {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sheet__ground {
+  fill: var(--board);
+}
+
+.sheet__ghost {
+  opacity: var(--ghost);
+}
+
+.sheet__ghost.is-off {
+  display: none;
+}
+
+/* The seams between the pieces in place: thin, whatever the zoom; at the end they fade and the picture is whole. */
+.sheet__seams,
+.sheet__fresh,
+.piece-art__edge {
+  fill: none;
+  stroke: var(--piece-edge);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+}
+
+.board.is-done .sheet__seams {
+  opacity: 0;
+  transition: opacity 600ms ease-in;
+}
+
+/* The piece put last: its outline shines a moment in the marks' light colour ("it fits"). */
+.sheet__fresh {
+  stroke: var(--mark-light);
+  stroke-width: 3px;
+  opacity: 0;
+}
+
+.sheet__fresh.is-on {
+  animation: fresh 700ms ease-out;
+}
+
+@keyframes fresh {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* The place under a carried piece, and the hint's place: a dark line along a light one (tokens.css). */
+.sheet__shadow {
+  fill: var(--mark-light);
+  fill-opacity: 0.25;
+  stroke: var(--mark-dark);
+  stroke-width: 2px;
+  stroke-dasharray: 5 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.sheet__hint-light {
+  fill: none;
+  stroke: var(--mark-light);
+  stroke-width: 6px;
+  vector-effect: non-scaling-stroke;
+}
+
+.sheet__hint-dark {
+  fill: none;
+  stroke: var(--mark-dark);
+  stroke-width: 3px;
+  stroke-dasharray: 6 4;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The places, for the keys: invisible buttons over the board; the one of the keys is framed. */
+.board__places {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
+}
+
+.place {
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.place:focus-visible {
+  outline: 3px solid var(--mark-dark);
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 6px var(--mark-light);
+}
+
+.board.is-zoomed .board__places {
+  cursor: grab;
+}
+
+/* The whole picture over the board ("Picture"): the board's room, the picture as large as it fits. */
+.board__whole {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0.375rem;
+}
+
+/* ---------- the tray (ui/tray-view.ts sets --slot, --tray-cols and data-way: all, under or side — where ‹ › stand) ---------- */
+.tray {
+  /* rows the tray keeps room for in one column of the page (ui/tray-view.ts), however large the text */
+  --rows-min: 2;
+  display: grid;
+  flex: 1;
+  grid-template-areas:
+    'pieces pieces pieces'
+    'prev count next';
+  grid-template-columns: auto auto auto;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-content: center;
+  gap: 0.375rem 0.5rem;
+  min-height: 5rem;
+}
+
+.tray[data-way='side'] {
+  grid-template-areas: 'prev pieces next';
+  grid-template-columns: 2.75rem auto 2.75rem;
+  grid-template-rows: minmax(0, 1fr);
+  column-gap: 0.375rem;
+}
+
+.tray[data-way='all'] .tray__turn,
+.tray[data-way='all'] .tray__count {
+  display: none;
+}
+
+.tray__pieces {
+  display: grid;
+  grid-area: pieces;
+  grid-template-columns: repeat(var(--tray-cols, 4), var(--slot, 4.5rem));
+  grid-auto-rows: var(--slot, 4.5rem);
+  align-content: start;
+  justify-content: center;
+  gap: 4px;
+  min-height: 0;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.slot {
+  position: relative;
+  display: block;
+  width: var(--slot);
+  height: var(--slot);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--slot);
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.slot .piece-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: var(--rest);
+}
+
+/* A piece carried away: its place stays, empty. */
+.slot.is-carried .piece-art {
+  visibility: hidden;
+}
+
+.slot:focus-visible,
+.slot.is-taken {
+  outline: 3px solid var(--mark-dark);
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 6px var(--mark-light);
+}
+
+.slot.is-hint {
+  outline: 3px dashed var(--mark-dark);
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 6px var(--mark-light);
+}
+
+.tray__prev {
+  grid-area: prev;
+}
+
+.tray__next {
+  grid-area: next;
+}
+
+.tray__turn {
+  min-width: 3.5rem;
+  height: 2.75rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* Beside the pieces: ‹ and › as tall as the tray. */
+.tray[data-way='side'] .tray__turn {
+  min-width: 0;
+  width: 2.75rem;
+  height: auto;
+}
+
+.tray__turn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tray__count {
+  grid-area: count;
+  align-self: center;
+  min-width: 2.75rem;
+  color: var(--muted);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Beside the pieces there is no room for the count under them: it is told to screen readers only. */
+.tray[data-way='side'] .tray__count {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- a carried piece ---------- */
+.lift-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.lift {
+  position: absolute;
+  top: 0;
+  left: 0;
+  filter: var(--lift);
+  will-change: transform;
+}
+
+.lift .piece-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.lift.is-gliding {
+  transition:
+    transform 140ms ease-out,
+    width 140ms ease-out,
+    height 140ms ease-out;
+}
+
+/* ---------- buttons ---------- */
+.tools {
+  display: grid;
+  grid-template-columns: repeat(var(--tools, 4), minmax(0, 1fr));
+  gap: 0.375rem;
+  container-type: inline-size;
+}
+
+.tools[data-count='2'] {
+  --tools: 2;
+}
+
+.tools[data-count='3'] {
+  --tools: 3;
+}
+
+.tool {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem 0.375rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.375rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-size: min(0.9375rem, 4.4cqi);
+  font-weight: 650;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.tool .sign {
+  flex: none;
+  width: min(1.5rem, 6cqi);
+  height: min(1.5rem, 6cqi);
+}
+
+/* "Picture" while the picture is shown whole. */
+.tool[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* "Put it" while a hint is shown; "New" waiting for its second tap. */
+.tool.is-ready,
+.tool.is-armed {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---------- the end ---------- */
+.dialog__highlight {
+  font-weight: 700;
+}
+
+/* ---------- menu ---------- */
+.dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.dialog h3 {
+  margin: 0.5rem 0 0;
+  font-size: 1.0625rem;
+}
+
+.stats-wrap {
+  overflow-x: auto;
+}
+
+.stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats th,
+.stats td {
+  padding: 0.375rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+  text-align: end;
+}
+
+.stats thead th {
+  font-size: 0.8125rem;
+}
+
+.stats th:first-child {
+  text-align: start;
+}
+
+/* ---------- "reduce motion" in the system: nothing glides or shines ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .lift.is-gliding,
+  .board.is-done .sheet__seams {
+    transition: none;
+  }
+
+  .sheet__fresh.is-on {
+    animation: none;
+  }
+}
+
+/* ---------- a wide screen (a computer, a tablet on its side): the board left, the rest right ---------- */
+@media (min-width: 48rem) and (min-height: 30rem) and (min-aspect-ratio: 4/3) {
+  /* in the large mode too: there it makes everything bigger, never the page narrower */
+  .app,
+  html.big .app {
+    max-width: 80rem;
+  }
+
+  .play {
+    display: grid;
+    grid-template-areas:
+      'board info'
+      'board note'
+      'board tray'
+      'board tools';
+    grid-template-columns: minmax(0, 1fr) clamp(18rem, 30vw, 26rem);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    column-gap: 1.5rem;
+    row-gap: 0.75rem;
+  }
+
+  .info {
+    grid-area: info;
+  }
+
+  .note {
+    grid-area: note;
+  }
+
+  .board {
+    grid-area: board;
+    width: auto;
+    height: auto;
+    max-height: none;
+    aspect-ratio: auto;
+    min-height: 0;
+  }
+
+  .tray {
+    --rows-min: 0;
+    grid-area: tray;
+    min-height: 0;
+  }
+
+  .tools {
+    grid-area: tools;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* A phone on its side (a short, wide screen; decision of 25.11 — a new game has it from the start): the board on
+   the left as tall as the screen; back, the name and the menu, the line about the puzzle, the note, the tray and the
+   buttons on the right (on the left with the left-hand setting). Only while the screen is at least 26 of the player's
+   text sizes wide: with very large text the one column stays. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 29.99rem) {
+  @container app (min-width: 26rem) {
+    /* Every pixel of height counts here (a browser's own bar takes part of it): slimmer top and bottom edges. The
+       page as wide as the screen, in the large mode too. */
+    .app,
+    html.big .app {
+      max-width: 80rem;
+      padding-top: max(0.375rem, env(safe-area-inset-top));
+      padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+    }
+
+    /* The start screen and the choice: two columns. */
+    .home {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      column-gap: 1rem;
+    }
+
+    .choose__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    /* the panel takes about half the width: the board, as tall as the screen, needs no more on a phone */
+    .app:has(> .content > .play) {
+      --side: clamp(14rem, 48vw, 28rem);
+      display: grid;
+      grid-template-areas:
+        'board top'
+        'board info'
+        'board note'
+        'board tray'
+        'board tools';
+      grid-template-columns: minmax(0, 1fr) var(--side);
+      grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+      gap: 0.375rem 0.75rem;
+    }
+
+    html.left-hand .app:has(> .content > .play) {
+      grid-template-areas:
+        'top board'
+        'info board'
+        'note board'
+        'tray board'
+        'tools board';
+      grid-template-columns: var(--side) minmax(0, 1fr);
+    }
+
+    .app:has(> .content > .play) > .top {
+      grid-area: top;
+    }
+
+    .app:has(> .content > .play) > .content,
+    .play {
+      display: contents;
+    }
+
+    .play .info {
+      grid-area: info;
+    }
+
+    .play .note {
+      grid-area: note;
+      min-height: calc(2.8em + 0.5rem);
+      max-height: calc(2.8em + 0.5rem);
+      padding-block: 0.25rem;
+      font-size: 0.875rem;
+    }
+
+    .play .board {
+      grid-area: board;
+      width: auto;
+      height: auto;
+      max-height: none;
+      aspect-ratio: auto;
+      min-height: 0;
+    }
+
+    .play .tray {
+      --rows-min: 0;
+      grid-area: tray;
+      min-height: 0;
+    }
+
+    .play .tools {
+      grid-area: tools;
+      gap: 0.25rem;
+    }
+
+    .play .tool {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      padding: 0.125rem 0.25rem;
+      font-size: min(0.8125rem, 5cqi);
+    }
+  }
+}
+
+/* The lowest screens on their side (a browser's own bar takes part of the height): the word about the puzzle takes the
+   name's place in the top line, so the tray keeps a second row of pieces; the name is still there for screen readers. */
+@media (orientation: landscape) and (min-width: 36rem) and (max-height: 19.99rem) {
+  @container app (min-width: 26rem) {
+    .app:has(> .content > .play) {
+      grid-template-areas:
+        'board back note status menu'
+        'board tray tray tray tray'
+        'board tools tools tools tools';
+      grid-template-columns: minmax(0, 1fr) 2.75rem minmax(0, calc(var(--side) - 7rem)) auto 2.75rem;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      column-gap: 0.375rem;
+    }
+
+    html.left-hand .app:has(> .content > .play) {
+      grid-template-areas:
+        'back note status menu board'
+        'tray tray tray tray board'
+        'tools tools tools tools board';
+      grid-template-columns: 2.75rem minmax(0, calc(var(--side) - 7rem)) auto 2.75rem minmax(0, 1fr);
+    }
+
+    .app:has(> .content > .play) > .top {
+      display: contents;
+    }
+
+    .app:has(> .content > .play) > .top > .icon-btn:first-child {
+      grid-area: back;
+    }
+
+    .app:has(> .content > .play) > .top > .icon-btn:last-child {
+      grid-area: menu;
+    }
+
+    .app:has(> .content > .play) .top__status {
+      grid-area: status;
+      align-self: center;
+    }
+
+    .app:has(> .content > .play) .top__name {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .play .note {
+      grid-area: note;
+      align-self: center;
+      min-height: 2.75rem;
+      max-height: 2.75rem;
+      padding: 0.125rem 0.5rem;
+      font-size: 0.8125rem;
+      line-height: 1.25;
+    }
+  }
+}

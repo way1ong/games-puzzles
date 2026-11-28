@@ -1,0 +1,171 @@
+{
+  "meta": {
+    "langName": "Magyar",
+    "title": "Kirakó – kirakós játék reklám nélkül",
+    "description": "24, 54 és 96 darabos kirakók a Detektív játék szobáiból, és a nap kirakója. Reklám, követés és fiók nélkül; internet nélkül is működik."
+  },
+  "app": {
+    "name": "Kirakó",
+    "menu": "Menü",
+    "back": "Vissza",
+    "close": "Bezárás"
+  },
+  "difficulty": {
+    "easy": "Könnyű",
+    "medium": "Közepes",
+    "hard": "Nehéz"
+  },
+  "pictures": {
+    "studyDay": "A detektív dolgozószobája nappal",
+    "studyNight": "A detektív dolgozószobája éjjel",
+    "bakeryDay": "A pékség nappal",
+    "bakeryNight": "A pékség éjjel",
+    "stationDay": "A pályaudvar nappal",
+    "stationNight": "A pályaudvar éjjel"
+  },
+  "home": {
+    "daily": "A nap kirakója",
+    "dailyOn": "{date} · ma mindenkinek ugyanaz",
+    "free": "Szabad játék",
+    "freeNote": "Előbb a méretet, aztán a képet válassza",
+    "pieces": {
+      "one": "{n} darab",
+      "other": "{n} darab"
+    },
+    "play": "Játék",
+    "continue": "Folytatás",
+    "begin": "Kezdés",
+    "started": "Folytatás",
+    "done": "Kész",
+    "streak": {
+      "one": "{n} nap egymás után",
+      "other": "{n} nap egymás után"
+    }
+  },
+  "choose": {
+    "title": "Válasszon képet",
+    "any": "Bármelyik kép",
+    "anyNote": "véletlenszerűen"
+  },
+  "game": {
+    "daily": "A nap kirakója",
+    "count": "{n} / {total}",
+    "tip": "Húzza a darabot a helyére – vagy koppintson a darabra, aztán a helyére.",
+    "taken": "Most koppintson a helyére a táblán.",
+    "notHere": "Nem ide.",
+    "placed": "A helyén.",
+    "pickFirst": "Előbb válasszon egy darabot a tálcán.",
+    "hint": "Tipp: a megjelölt darab a megjelölt helyre kerül ({r}. sor, {c}. oszlop).",
+    "newSure": "Koppintson még egyszer az „Új” gombra: ezt a kirakót félbehagyja.",
+    "done": "Kész! A kép egész."
+  },
+  "tools": {
+    "label": "Gombok",
+    "hint": "Tipp",
+    "put": "Lerakás",
+    "picture": "Kép",
+    "zoom": "Nagyítás",
+    "whole": "Egész tábla",
+    "new": "Új"
+  },
+  "tray": {
+    "label": "A darabok tálcája",
+    "prev": "Előző darabok",
+    "next": "Következő darabok",
+    "page": "{n} / {total}"
+  },
+  "board": {
+    "label": "Tábla",
+    "place": "{r}. sor, {c}. oszlop",
+    "full": "egy darab a helyén",
+    "hint": "a tipp helye",
+    "picture": "Az egész kép"
+  },
+  "piece": {
+    "name": "{n}. darab",
+    "corner": {
+      "tl": "sarok, bal felső",
+      "tr": "sarok, jobb felső",
+      "bl": "sarok, bal alsó",
+      "br": "sarok, jobb alsó"
+    },
+    "edge": {
+      "top": "szél, felső",
+      "right": "szél, jobb oldali",
+      "bottom": "szél, alsó",
+      "left": "szél, bal oldali"
+    },
+    "inner": "belső",
+    "taken": "felvéve",
+    "hint": "tipp"
+  },
+  "end": {
+    "done": "Kész!",
+    "hints": {
+      "one": "{n} tipp",
+      "other": "{n} tipp"
+    },
+    "clean": "Tipp nélkül",
+    "time": "Idő: {time}",
+    "streak": {
+      "one": "{title}: {n} nap egymás után",
+      "other": "{title}: {n} nap egymás után"
+    },
+    "new": "Új kirakó",
+    "home": "Az elejére",
+    "copy": "Eredmény másolása",
+    "copied": "Másolva",
+    "share": "{name} · {date}: a nap kirakója kész, {pieces}",
+    "shareClean": "{name} · {date}: a nap kirakója kész, tipp nélkül, {pieces}",
+    "shareTime": "{text}, {time}"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "play": "Játék",
+    "ghost": "Halvány kép a táblán",
+    "ghostNote": "Megmutatja, mi hová kerül – így könnyebb. Nélküle a tábla üres, mint az igazi kirakónál.",
+    "time": "Az idő mutatása",
+    "vibration": "Rezgés, amikor a kirakó kész",
+    "look": "Megjelenés",
+    "big": "Nagy nézet",
+    "leftHand": "A tálca és a gombok a táblától balra, ha a telefon fekszik",
+    "theme": "Téma",
+    "themeSystem": "Mint a rendszer",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "install": "A játék telepítése",
+    "installIos": "iPhone-on vagy iPaden koppintson a „Megosztás”, majd a „Főképernyőhöz adás” gombra.",
+    "reset": "Az előrehaladás törlése",
+    "resetSure": "Koppintson újra a megkezdett kirakók, a napi eredmények és a statisztika törléséhez",
+    "resetDone": "Előrehaladás törölve"
+  },
+  "stats": {
+    "title": "Statisztika",
+    "size": "Méret",
+    "played": "Játszott",
+    "won": "Kész",
+    "clean": "Tipp nélkül",
+    "best": "Leggyorsabb",
+    "none": "—",
+    "longest": {
+      "one": "{title} – leghosszabb sorozat: {n} nap",
+      "other": "{title} – leghosszabb sorozat: {n} nap"
+    },
+    "note": "Tipp nélkül – egyetlen tipp nélkül kirakva; leggyorsabb – a legrövidebb idő."
+  },
+  "about": {
+    "title": "A játékról",
+    "how": "Húzzon egy darabot a tálcáról a helyére a táblán, vagy koppintson a darabra, aztán a helyére. A saját helye közelében a darab a helyére kerül, és ott marad; máshol visszamegy a tálcára. A tálca a sarok- és széldarabokkal kezdődik. A képek a Detektív játék szobái; a tárgyak bennük minden alkalommal máshol vannak.",
+    "zoom": "A nagy táblát nagyíthatja: a „Nagyítás” gombbal, két ujjal, a Ctrl billentyűvel és az egérgörgővel vagy a + és − billentyűkkel; egy ujjal vagy a görgővel mozgathatja.",
+    "text": "Reklám, követés és fiók nélkül. Minden csak ezen az eszközön marad; az első megnyitás után a játék internet nélkül is működik.",
+    "keys": "Billentyűk: a tálcán a nyilak a darabok között lépnek, az Enter vagy a szóköz felvesz egy darabot; utána a nyilak a tábla helyein lépnek, az Enter leteszi a darabot, az Esc visszaadja; H – tipp; + és − – nagyítás.",
+    "credit": "Készítette: way1ong"
+  },
+  "update": {
+    "title": "Elérhető a játék új verziója",
+    "text": "A játék újra megnyílik ott, ahol abbahagyta.",
+    "apply": "Frissítés",
+    "later": "Később"
+  }
+}
