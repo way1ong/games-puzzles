@@ -2,7 +2,7 @@
   "meta": {
     "langName": "English",
     "title": "Solitaire — patience with cards, without ads",
-    "description": "Klondike solitaire with big, easy-to-read cards. By default every deal can be won; hints and undo are free and unlimited. No ads, no accounts, no tracking; works offline."
+    "description": "Klondike, Spider and FreeCell solitaire with big, easy-to-read cards. By default every deal can be won; hints and undo are free and unlimited. No ads, no accounts, no tracking; works offline."
   },
   "app": {
     "name": "Solitaire",
@@ -98,6 +98,39 @@
     "streak": {
       "one": "Spider of the day: {n} day in a row",
       "other": "Spider of the day: {n} days in a row"
+    }
+  },
+  "freecell": {
+    "title": "FreeCell",
+    "daily": "FreeCell of the day",
+    "cells": {
+      "one": "{n} cell",
+      "other": "{n} cells"
+    },
+    "tip": "Tap a card — it goes where it fits best. A free cell holds any one card. Put every card on the foundations, from the ace to the king.",
+    "cellCard": "{card}, free cell {n}",
+    "cellEmpty": "Free cell {n}: empty",
+    "toCell": "a free cell",
+    "wentHome": "Went home by themselves: {cards}.",
+    "notInOrder": "{card}: only cards in order move together — down, red on black.",
+    "oneCard": "A free cell takes one card only.",
+    "tooMany": {
+      "one": "At most {n} card can move together now: free cells — {cells}, empty columns — {empty}.",
+      "other": "At most {n} cards can move together now: free cells — {cells}, empty columns — {empty}."
+    },
+    "fromHome": "Cards do not come back from a foundation.",
+    "finishNote": "The rest can go home by itself, card by card.",
+    "setting": "FreeCell: free cells",
+    "settingNote": "Fewer cells — harder.",
+    "autoHome": "FreeCell: cards no longer needed go home by themselves",
+    "statsKind": "Cells",
+    "longest": {
+      "one": "FreeCell of the day — longest run: {n} day",
+      "other": "FreeCell of the day — longest run: {n} days"
+    },
+    "streak": {
+      "one": "FreeCell of the day: {n} day in a row",
+      "other": "FreeCell of the day: {n} days in a row"
     }
   },
   "tools": {

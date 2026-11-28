@@ -1,4 +1,5 @@
-// The game screen: which screen is open (the start, Klondike, the deal of the day, or Spider — spider-screen.ts), the
+// The game screen: which screen is open (the start, Klondike, the deal of the day, Spider — spider-screen.ts — or
+// FreeCell — freecell-screen.ts), the
 // Klondike deal in play, the hint shown;
 // turns taps, drags and keys into moves and draws the result. The rules themselves are in ../core (pure functions);
 // the work that takes time (finding a deal that can be won, a hint, the quiet check that a way to the end is left)
@@ -31,6 +32,8 @@ import { longestStreak, recordLeft, recordWon } from '../core/stats.ts';
 import { carriedBack, worthChecking } from '../core/stuck.ts';
 import { bestPlace } from '../core/tap.ts';
 import { createEndDialog } from './end-dialog.ts';
+import { createFreeCellScreen } from './freecell-screen.ts';
+import * as freeStore from './freecell-storage.ts';
 import { canFullLandscape, enterFullLandscape, isFull, leaveFull } from './fullscreen.ts';
 import { homeView, type DailyState } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
@@ -54,6 +57,7 @@ const FINISH_STEP_MS = 110;
 
 const isRoute = (r: string): r is Route => (store.ROUTES as readonly string[]).includes(r);
 const isSpider = (r: Route): r is 'spider' | 'spider-daily' => r === 'spider' || r === 'spider-daily';
+const isFreeCell = (r: Route): r is 'freecell' | 'freecell-daily' => r === 'freecell' || r === 'freecell-daily';
 
 /** A latin letter key whatever the keyboard layout (H, D, F, N; Z with Ctrl). */
 function letterOf(event: KeyboardEvent): string {
@@ -138,6 +142,23 @@ export function startApp(root: HTMLElement): void {
     },
   });
 
+  // FreeCell's screen, the same way.
+  const freecell = createFreeCellScreen({
+    dict: () => d,
+    lang: () => lang,
+    settings: () => settings,
+    today: () => today,
+    announce: (text) => announce(text),
+    dateText: (key, style) => dateText(key, style),
+    openEnd: (content) => endDialog.open(content),
+    close: closeRoute,
+    openFreeCell(next) {
+      endDialog.el.close();
+      freecell.open(next);
+      renderFreeCell();
+    },
+  });
+
   /** A note longer than its place (large letters on the lowest screens) scrolls by itself: then the keys reach it. */
   function noteByKeys(): void {
     if (note.scrollHeight > note.clientHeight + 1) note.tabIndex = 0;
@@ -183,12 +204,14 @@ export function startApp(root: HTMLElement): void {
     if (!isRoute(route)) {
       leaveGame();
       spider.leave();
+      freecell.leave();
       store.saveLast(null);
       renderHome();
       return;
     }
     if (isSpider(route)) {
       leaveGame();
+      freecell.leave();
       const next = { daily: route === 'spider-daily', suits: settings.spiderSuits };
       const open = spider.slot();
       if (!open || open.daily !== next.daily || open.suits !== next.suits) {
@@ -198,7 +221,20 @@ export function startApp(root: HTMLElement): void {
       renderSpider();
       return;
     }
+    if (isFreeCell(route)) {
+      leaveGame();
+      spider.leave();
+      const next = { daily: route === 'freecell-daily', cells: settings.freeCells };
+      const open = freecell.slot();
+      if (!open || open.daily !== next.daily || open.cells !== next.cells) {
+        store.saveLast(route);
+        freecell.open(next);
+      }
+      renderFreeCell();
+      return;
+    }
     spider.leave();
+    freecell.leave();
     const next: Slot = { daily: route === 'daily', draw: settings.draw };
     if (!slot || slot.daily !== next.daily || slot.draw !== next.draw || (!game && !stopMaking)) openSlot(next);
     else renderGame();
@@ -318,6 +354,12 @@ export function startApp(root: HTMLElement): void {
     const spiderDaily: DailyState =
       spiderDays[today]?.[suits] || spiderDay?.done ? 'done' : spiderDay && spiderDay.history.length > 0 ? 'started' : 'new';
     const spiderPlayed = Object.keys(spiderDays).filter((date) => Object.keys(spiderDays[date] ?? {}).length > 0);
+    const cells = settings.freeCells;
+    const freeSaved = freeStore.loadFreeCell({ daily: false, cells }, today);
+    const freeDay = freeStore.loadFreeCell({ daily: true, cells }, today);
+    const freeDays = freeStore.loadFreeCellDays();
+    const freeDaily: DailyState = freeDays[today]?.[cells] || freeDay?.done ? 'done' : freeDay && freeDay.history.length > 0 ? 'started' : 'new';
+    const freePlayed = Object.keys(freeDays).filter((date) => Object.keys(freeDays[date] ?? {}).length > 0);
     content.replaceChildren(
       homeView(
         {
@@ -332,6 +374,12 @@ export function startApp(root: HTMLElement): void {
             kind: plural(lang, suits, d.spider.suits, { n: suits }),
             daily: spiderDaily,
             streak: streak(spiderPlayed, today),
+          },
+          freecell: {
+            started: !!freeSaved && !freeSaved.done && freeSaved.history.length > 0,
+            kind: plural(lang, cells, d.freecell.cells, { n: cells }),
+            daily: freeDaily,
+            streak: streak(freePlayed, today),
           },
           date: dateText(today, 'long'),
         },
@@ -349,6 +397,14 @@ export function startApp(root: HTMLElement): void {
     title.textContent = spider.title();
     if (content.firstChild !== spider.view) content.replaceChildren(spider.view);
     spider.render();
+  }
+
+  function renderFreeCell(): void {
+    applyLook();
+    backBtn.hidden = false;
+    title.textContent = freecell.title();
+    if (content.firstChild !== freecell.view) content.replaceChildren(freecell.view);
+    freecell.render();
   }
 
   function renderGame(): void {
@@ -742,6 +798,8 @@ export function startApp(root: HTMLElement): void {
     const played = Object.keys(days).filter((date) => Object.keys(days[date] ?? {}).length > 0);
     const spiderDays = spiderStore.loadSpiderDays();
     const spiderPlayed = Object.keys(spiderDays).filter((date) => Object.keys(spiderDays[date] ?? {}).length > 0);
+    const freeDays = freeStore.loadFreeCellDays();
+    const freePlayed = Object.keys(freeDays).filter((date) => Object.keys(freeDays[date] ?? {}).length > 0);
     menuDialog.open(
       {
         d,
@@ -751,6 +809,8 @@ export function startApp(root: HTMLElement): void {
         longest: longestStreak(played),
         spiderStats: spiderStore.loadSpiderStats(),
         spiderLongest: longestStreak(spiderPlayed),
+        freecellStats: freeStore.loadFreeCellStats(),
+        freecellLongest: longestStreak(freePlayed),
         full: canFullLandscape() ? isFull() : null,
       },
       {
@@ -770,8 +830,16 @@ export function startApp(root: HTMLElement): void {
         set(patch) {
           const drawChanged = patch.draw !== undefined && patch.draw !== settings.draw;
           const suitsChanged = patch.spiderSuits !== undefined && patch.spiderSuits !== settings.spiderSuits;
+          const cellsChanged = patch.freeCells !== undefined && patch.freeCells !== settings.freeCells;
           settings = { ...settings, ...patch };
           store.saveSettings(settings);
+          // Another number of FreeCell's free cells: that number's own deal opens (each keeps its unfinished one).
+          const openFree = freecell.slot();
+          if (cellsChanged && openFree) {
+            freecell.open({ daily: openFree.daily, cells: settings.freeCells });
+            renderFreeCell();
+            return;
+          }
           // Another number of Spider's suits: that number's own deal opens (each keeps its unfinished one).
           const open = spider.slot();
           if (suitsChanged && open) {
@@ -790,12 +858,21 @@ export function startApp(root: HTMLElement): void {
           redraw();
         },
         clearProgress() {
+          // Spider's and FreeCell's open deal is left first: leaving saves it, and it would outlive the clearing.
+          const open = spider.slot();
+          const openFree = freecell.slot();
+          spider.leave();
+          freecell.leave();
           store.clearAll();
           tipDone = false;
-          const open = spider.slot();
           if (open) {
             spider.open(open);
             renderSpider();
+            return;
+          }
+          if (openFree) {
+            freecell.open(openFree);
+            renderFreeCell();
             return;
           }
           if (slot) {
@@ -811,6 +888,7 @@ export function startApp(root: HTMLElement): void {
   function redraw(): void {
     if (slot) renderGame();
     else if (spider.slot()) renderSpider();
+    else if (freecell.slot()) renderFreeCell();
     else renderHome();
   }
 
@@ -819,6 +897,10 @@ export function startApp(root: HTMLElement): void {
     if (menuDialog.el.open || endDialog.el.open) return;
     if (spider.slot()) {
       spider.keydown(event, letterOf(event));
+      return;
+    }
+    if (freecell.slot()) {
+      freecell.keydown(event, letterOf(event));
       return;
     }
     if (!slot) return;
@@ -854,6 +936,7 @@ export function startApp(root: HTMLElement): void {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       spider.visibility(false);
+      freecell.visibility(false);
       stopClock();
       return;
     }
@@ -862,6 +945,7 @@ export function startApp(root: HTMLElement): void {
     const newDay = now !== today;
     today = now;
     spider.visibility(true);
+    freecell.visibility(true);
     if (newDay) {
       if (slot?.daily) {
         const s = slot;
@@ -869,7 +953,7 @@ export function startApp(root: HTMLElement): void {
         openSlot(s);
         return;
       }
-      if (!slot && !spider.slot()) renderHome();
+      if (!slot && !spider.slot() && !freecell.slot()) renderHome();
     }
     startClock();
   });

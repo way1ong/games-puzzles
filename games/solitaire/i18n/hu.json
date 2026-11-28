@@ -2,7 +2,7 @@
   "meta": {
     "langName": "Magyar",
     "title": "Pasziánsz – kártyajáték reklám nélkül",
-    "description": "Klondike pasziánsz nagy, jól olvasható lapokkal. Alapértelmezés szerint minden leosztás kirakható; a tipp és a visszavonás ingyenes és korlátlan. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
+    "description": "Klondike, Pók és FreeCell pasziánsz nagy, jól olvasható lapokkal. Alapértelmezés szerint minden leosztás kirakható; a tipp és a visszavonás ingyenes és korlátlan. Reklám, fiók és nyomkövetés nélkül; internet nélkül is működik."
   },
   "app": {
     "name": "Pasziánsz",
@@ -98,6 +98,39 @@
     "streak": {
       "one": "A nap Pókja: {n} nap egymás után",
       "other": "A nap Pókja: {n} nap egymás után"
+    }
+  },
+  "freecell": {
+    "title": "FreeCell",
+    "daily": "A nap FreeCellje",
+    "cells": {
+      "one": "{n} cella",
+      "other": "{n} cella"
+    },
+    "tip": "Koppintson egy lapra: oda kerül, ahová a legjobban illik. Egy szabad cellába egy tetszőleges lap kerülhet. Tegye az összes lapot az alapkupacokra, ásztól királyig.",
+    "cellCard": "{card}, {n}. szabad cella",
+    "cellEmpty": "{n}. szabad cella: üres",
+    "toCell": "szabad cella",
+    "wentHome": "Maguktól az alapkupacokra kerültek: {cards}.",
+    "notInOrder": "{card}: együtt csak a sorban lévő lapok mozognak — csökkenő rendben, piros a feketén.",
+    "oneCard": "Egy szabad cellába csak egy lap kerülhet.",
+    "tooMany": {
+      "one": "Most legfeljebb {n} lap mozoghat együtt: szabad cella — {cells}, üres oszlop — {empty}.",
+      "other": "Most legfeljebb {n} lap mozoghat együtt: szabad cella — {cells}, üres oszlop — {empty}."
+    },
+    "fromHome": "Az alapkupacról nem lehet lapot visszavenni.",
+    "finishNote": "A többi lap magától, egyenként az alapkupacokra kerülhet.",
+    "setting": "FreeCell: szabad cellák",
+    "settingNote": "Kevesebb cellával nehezebb.",
+    "autoHome": "FreeCell: a már nem szükséges lapok maguktól az alapkupacokra kerülnek",
+    "statsKind": "Cellák",
+    "longest": {
+      "one": "A nap FreeCellje — leghosszabb sorozat: {n} nap",
+      "other": "A nap FreeCellje — leghosszabb sorozat: {n} nap"
+    },
+    "streak": {
+      "one": "A nap FreeCellje: {n} nap egymás után",
+      "other": "A nap FreeCellje: {n} nap egymás után"
     }
   },
   "tools": {
