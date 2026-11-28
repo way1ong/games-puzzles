@@ -1,22 +1,24 @@
-// The game screen: which screen is open (the start, levels in a row, a difficulty of free play, the day), the game in
-// play, the lifted bottle, the hint and its kept way, a dead end, the time, the end, the menu, the keys
+// The game screen: which screen is open (the start, levels in a row, a kind of free play, the choice of the player's
+// own size, the day), the game in play, the lifted bottle, the hint and its kept way, a dead end, the time, the end, the menu, the keys
 // (docs/pour/SPEC.md). The rules are the core's; this module only shows them and passes the player's actions on.
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
-import { DIFFICULTIES, POUR, type Difficulty } from '../config.ts';
+import { KINDS, POUR, type Kind } from '../config.ts';
 import { isClosed, whyNot, type Move } from '../core/bottles.ts';
+import { sizeOf, type CustomSize } from '../core/custom.ts';
 import { findHint, hasWay, stepsBack, type PourWay } from '../core/hint.ts';
-import { dailyDeal, freeDeal, levelDeal } from '../core/level.ts';
+import { customDeal, dailyDeal, freeDeal, levelDeal } from '../core/level.ts';
 import { addBottle, addTime, clean, countHint, helpLeft, hintAllowed, newPlay, pourIn, startAgain, started, undo, type PourPlay } from '../core/play.ts';
 import { longestStreak, recordLeft, recordWon } from '../core/stats.ts';
+import { customView } from './custom-view.ts';
 import { createEndDialog } from './end-dialog.ts';
-import { homeView, ROUTES, type DayState, type Route } from './home-view.ts';
+import { CUSTOM_SIZE_ROUTE, homeView, ROUTES, sizeText, type DayState, type Route } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
 import { backSign } from './icons.ts';
 import { createMenuDialog } from './menu-dialog.ts';
-import { closeRoute, currentRoute, openRoute, restoreRoute, watchRoute } from './route.ts';
+import { closeRoute, currentRoute, openRoute, replaceRoute, restoreRoute, watchRoute } from './route.ts';
 import { randomSeed } from './seed.ts';
 import { createShelfView } from './shelf-view.ts';
 import * as store from './storage.ts';
@@ -80,7 +82,7 @@ export function startApp(root: HTMLElement): void {
   const endDialog = createEndDialog();
   // A new version: asked on the start screen only, never in play (shared/ui/update-view.ts).
   const updates = offerUpdates(
-    () => !isRoute(currentRoute()),
+    () => !isRoute(currentRoute()) && currentRoute() !== CUSTOM_SIZE_ROUTE,
     () => d.update,
   );
 
@@ -147,7 +149,8 @@ export function startApp(root: HTMLElement): void {
     }
     store.saveLast('');
     leaveGame();
-    renderHome();
+    if (route === CUSTOM_SIZE_ROUTE) renderCustom();
+    else renderHome();
   }
 
   function leaveGame(): void {
@@ -179,6 +182,10 @@ export function startApp(root: HTMLElement): void {
       return newPlay(levelDeal(level), 'level', { level });
     }
     if (route === 'daily') return newPlay(dailyDeal(today), 'daily', { daily: today });
+    if (route === 'custom') {
+      const size = store.loadCustom();
+      return newPlay(customDeal(size, randomSeed()), 'free', { difficulty: 'custom', size });
+    }
     return newPlay(freeDeal(route, randomSeed()), 'free', { difficulty: route });
   }
 
@@ -237,7 +244,8 @@ export function startApp(root: HTMLElement): void {
         {
           reached: store.loadReached(),
           levelBegun: begun('level'),
-          begun: Object.fromEntries(DIFFICULTIES.map((diff) => [diff, begun(diff)])) as Record<Difficulty, boolean>,
+          begun: Object.fromEntries(KINDS.map((kind) => [kind, begun(kind)])) as Record<Kind, boolean>,
+          custom: customShown(),
           daily,
           date: dateText(today, 'long'),
           streak: streak(Object.keys(days), today),
@@ -250,11 +258,39 @@ export function startApp(root: HTMLElement): void {
     updates.check();
   }
 
+  /** The player's own size on the start screen: of the game begun, else the one chosen last. */
+  function customShown(): CustomSize {
+    const p = store.loadPlay('custom', today);
+    return p?.size && !p.done && started(p) ? p.size : store.loadCustom();
+  }
+
+  /** The choice of the player's own size; "Play" opens a new game of it in this screen's place. */
+  function renderCustom(): void {
+    applyLook();
+    backBtn.hidden = false;
+    title.textContent = d.difficulty.custom;
+    content.replaceChildren(
+      customView(
+        store.loadCustom(),
+        d,
+        lang,
+        (size) => store.saveCustom(size),
+        (size) => {
+          store.saveCustom(size);
+          store.dropPlay('custom');
+          replaceRoute('custom');
+        },
+      ),
+    );
+    title.focus();
+  }
+
   // ---------- the game ----------
   function whereText(g: PourPlay): string {
     const colours = plural(lang, g.colours, d.home.colours, { n: g.colours });
     if (g.way === 'level') return `${fmt(d.game.level, { n: g.level! })} · ${colours}`;
     if (g.way === 'daily') return `${dateText(today, 'long')} · ${colours}`;
+    if (g.difficulty === 'custom') return sizeText(sizeOf('custom', g.size), d, lang);
     return `${d.difficulty[g.difficulty!]} · ${colours}`;
   }
 
@@ -538,6 +574,12 @@ export function startApp(root: HTMLElement): void {
     const diff = game.difficulty!;
     if (!game.done && started(game)) store.saveStats(recordLeft(store.loadStats(), diff));
     store.dropPlay(diff);
+    // the player's own size: its size is chosen again first (the last one ready)
+    if (diff === 'custom') {
+      leaveGame();
+      replaceRoute(CUSTOM_SIZE_ROUTE);
+      return;
+    }
     openGame(open);
   }
 
@@ -590,7 +632,7 @@ export function startApp(root: HTMLElement): void {
     const home = { label: d.end.home, action: () => closeRoute('') };
     endDialog.open({
       title: d.end.title,
-      highlight: g.way === 'daily' ? `${d.game.daily} · ${dateText(today, 'long')}` : titleText(g),
+      highlight: g.way === 'daily' ? `${d.game.daily} · ${dateText(today, 'long')}` : g.difficulty === 'custom' ? `${titleText(g)} · ${whereText(g)}` : titleText(g),
       lines,
       share,
       secondary: g.way === 'daily' ? null : home,

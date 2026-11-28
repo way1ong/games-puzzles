@@ -1,6 +1,6 @@
 /*
  * What every game screen shares: the page reset and the common controls (menu button, choice buttons,
- * buttons, dialogs, switches). Colours only through the tokens that each game defines in its own
+ * buttons, dialogs, switches, numbers with − and +). Colours only through the tokens that each game defines in its own
  * styles/tokens.css: --bg, --surface, --text, --muted, --line, --accent, --on-accent, --focus, --backdrop,
  * --shadow. A game loads tokens.css, then this file, then its own app.css.
  */
@@ -229,4 +229,67 @@ button {
   height: 1.5rem;
   margin: 0;
   accent-color: var(--accent);
+}
+
+/* ---------- the player's own size (Mines, Pour): numbers with − and + (shared/ui/stepper.ts), a note, "Play" ---------- */
+.custom {
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 28rem;
+  padding-bottom: 0.5rem;
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(3.5ch, auto) auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--line);
+  border-radius: 0.875rem;
+  background: var(--surface);
+}
+
+.stepper__label {
+  font-size: 1.0625rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.stepper__btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.stepper__btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.stepper__value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.custom__note {
+  margin: 0;
+  color: var(--muted);
+}
+
+.custom__play {
+  min-height: 3rem;
+  font-size: 1.125rem;
 }

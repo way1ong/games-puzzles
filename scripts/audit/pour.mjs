@@ -1,6 +1,7 @@
 // Browser audit of Pour: every size and look — the start screen, a level (how to play), a bottle lifted, a hint and
 // what it does, the menu with the widest settings (patterns off, help limited, the time, the large mode, the left
-// hand), free play hard, the level of the day, a level to the end by the hints; phones on their side; large system
+// hand), free play hard, the player's own size (its choice, a game, the biggest shelf), the level of the day, a level
+// to the end by the hints; phones on their side; large system
 // text; the keyboard: the bottles by the arrows, a pour by Enter, a level to the end by H.
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
@@ -109,6 +110,32 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await shot(page, `${width}x${height}-${locale}-${colorScheme}`);
       await openGame(page, 'hard');
       await check(page, `${label} free play hard`);
+      // the player's own size: its choice (− and +; with many colours the empty bottles follow), a game of it, then
+      // the biggest shelf of it — the most colours and empty bottles
+      await page.goto(`${base}#custom-size`);
+      await page.waitForSelector('.stepper');
+      await check(page, `${label} own size, the choice`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-own-size`);
+      const steppers = page.locator('.stepper__btn');
+      // colours +: past the most one empty bottle may have
+      await steppers.nth(1).click();
+      if (!(await steppers.nth(2).isDisabled())) fail(`pour ${label}: one empty bottle allowed with ${await page.locator('.stepper__value').first().textContent()} colours`);
+      await steppers.nth(0).click();
+      await steppers.nth(0).click();
+      await steppers.nth(2).click();
+      const chosen = (await page.locator('.stepper__value').allTextContents()).map(Number);
+      await page.locator('.custom__play').click();
+      await page.waitForSelector('.bottle');
+      const bottles = await page.locator('.bottle').count();
+      if (chosen[1] !== 1 || bottles !== chosen[0] + chosen[1]) fail(`pour ${label}: ${bottles} bottles for ${chosen.join(' colours, ')} empty`);
+      await check(page, `${label} own size, a game`);
+      await page.evaluate((s) => localStorage.setItem(`${s}custom`, JSON.stringify({ colours: 99, empty: 99 })), STORE);
+      await page.goto(`${base}#custom-size`);
+      await page.waitForSelector('.stepper');
+      await page.locator('.custom__play').click();
+      await page.waitForSelector('.bottle');
+      await check(page, `${label} own size, the biggest`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-own-size-biggest`);
       await page.evaluate((s) => localStorage.removeItem(`${s}last`), STORE);
       await settled(page);
       await page.goto(base);
@@ -160,6 +187,15 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await openGame(page, 'hard');
     await side('hard');
     await shot(page, `side-${width}x${height}`);
+    // the player's own size: its choice, then the biggest shelf of it
+    await page.evaluate((s) => localStorage.setItem(`${s}custom`, JSON.stringify({ colours: 99, empty: 99 })), STORE);
+    await page.goto(`${base}#custom-size`);
+    await page.waitForSelector('.stepper');
+    await check(page, `${label} own size, the choice`);
+    await page.locator('.custom__play').click();
+    await page.waitForSelector('.bottle');
+    await page.waitForTimeout(250);
+    await side('own size, the biggest');
     await ctx.close();
   }
 
@@ -183,6 +219,10 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, `${width}×${height} text ${size}% game`);
     await page.keyboard.press('h');
     await check(page, `${width}×${height} text ${size}% hint`);
+    await page.goto(`${base}#custom-size`);
+    await page.waitForSelector('.stepper');
+    await big();
+    await check(page, `${width}×${height} text ${size}% own size, the choice`);
     await ctx.close();
   }
 
@@ -194,6 +234,16 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await page.goto(base);
     await page.waitForSelector('.pick');
     await checkFocusVisible(page, 6, fail, 'pour keyboard start');
+    // the player's own size by the keys: − and + reached by Tab, Enter and Space count one each
+    await page.goto(`${base}#custom-size`);
+    await page.waitForSelector('.stepper');
+    await checkFocusVisible(page, 6, fail, 'pour keyboard own size');
+    const colours = async () => Number(await page.locator('.stepper__value').first().textContent());
+    const was = await colours();
+    await page.locator('.stepper__btn').nth(0).focus();
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Space');
+    if ((await colours()) !== was - 2) fail(`pour keyboard: Enter and Space on "−" did not count two (${was} → ${await colours()})`);
     await openGame(page, 'medium');
     await checkFocusVisible(page, 8, fail, 'pour keyboard game');
     await page.locator('.bottle[tabindex="0"]').focus();
@@ -218,5 +268,5 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await check(page, 'solved, the window closed');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, phones on their side, large text, keyboard, a level to the end`;
+  return `${SIZES.length} sizes × ${LOOKS.length} looks, phones on their side, large text, keyboard, own size, a level to the end`;
 }

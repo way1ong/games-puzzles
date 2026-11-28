@@ -13,7 +13,8 @@
   "difficulty": {
     "easy": "Könnyű",
     "medium": "Közepes",
-    "hard": "Nehéz"
+    "hard": "Nehéz",
+    "custom": "Saját méret"
   },
   "home": {
     "levels": "Szintek",
@@ -23,9 +24,14 @@
     "continue": "Folytatás",
     "free": "Szabad játék",
     "new": "Új játék",
+    "choose": "Kiválasztás",
     "colours": {
       "one": "{n} szín",
       "other": "{n} szín"
+    },
+    "empty": {
+      "one": "{n} üres üvegcse",
+      "other": "{n} üres üvegcse"
     },
     "dailyTitle": "A nap szintje · {date}",
     "dailyNote": "Ma mindenkinek ugyanaz",
@@ -36,6 +42,15 @@
       "one": "A nap szintje: {n} nap egymás után",
       "other": "A nap szintje: {n} nap egymás után"
     }
+  },
+  "custom": {
+    "colours": "Színek",
+    "empty": "Üres üvegcsék",
+    "less": "{what}: kevesebb",
+    "more": "{what}: több",
+    "play": "Játék",
+    "note": "Minden szint megoldható.",
+    "oneEmpty": "Egy üres üvegcsével legfeljebb {n} szín lehet."
   },
   "game": {
     "level": "{n}. szint",

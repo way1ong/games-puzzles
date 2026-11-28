@@ -1,7 +1,7 @@
-// Statistics on the device (docs/pour/SPEC.md, "Що зберігається"): free play by difficulty — games played and won,
-// won without help, the fewest pours; levels in a row — won and won without help. The days of the level of the day
+// Statistics on the device (docs/pour/SPEC.md, "Що зберігається"): free play by difficulty and of the player's own
+// size — games played and won, won without help, the fewest pours; levels in a row — won and won without help. The days of the level of the day
 // are kept by the screen's storage (a list of dates), their runs counted here. Pure, no DOM.
-import { DIFFICULTIES, type Difficulty } from '../config.ts';
+import { KINDS, type Kind } from '../config.ts';
 import { clean, type PourPlay } from './play.ts';
 
 export interface FreeStats {
@@ -15,17 +15,17 @@ export interface FreeStats {
 }
 
 export interface PourStats {
-  free: Record<Difficulty, FreeStats>;
+  free: Record<Kind, FreeStats>;
   levels: { won: number; clean: number };
 }
 
 export const emptyStats = (): PourStats => ({
-  free: Object.fromEntries(DIFFICULTIES.map((d) => [d, { played: 0, won: 0, clean: 0, bestMoves: null }])) as Record<Difficulty, FreeStats>,
+  free: Object.fromEntries(KINDS.map((d) => [d, { played: 0, won: 0, clean: 0, bestMoves: null }])) as Record<Kind, FreeStats>,
   levels: { won: 0, clean: 0 },
 });
 
 /** A free game begun and left for a new one. */
-export function recordLeft(stats: PourStats, difficulty: Difficulty): PourStats {
+export function recordLeft(stats: PourStats, difficulty: Kind): PourStats {
   const now = stats.free[difficulty];
   return { ...stats, free: { ...stats.free, [difficulty]: { ...now, played: now.played + 1 } } };
 }
