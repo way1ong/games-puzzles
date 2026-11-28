@@ -495,11 +495,15 @@ export function createSpiderScreen(shell: SpiderShell): SpiderScreen {
     commit(next, d().game.restarted);
   }
 
-  /** A new ordinary deal: the unfinished one is counted as played. */
+  /**
+   * A new ordinary deal: the unfinished one is counted as played. It is left first: leaving saves the deal (its time),
+   * and a deal saved after it was dropped would open again in place of the new one.
+   */
   function dealAnew(): void {
     if (!slot) return;
     const s = slot;
     if (game && !game.done) spiderStore.saveSpiderStats(recordSpiderLeft(spiderStore.loadSpiderStats(), game));
+    leave();
     spiderStore.dropSpider({ daily: false, suits: s.suits });
     shell.openSpider({ daily: false, suits: s.suits });
   }

@@ -2,7 +2,7 @@
 // deals of the day, deals prepared in advance, the results of the days, statistics. Nothing leaves the device
 // (docs/solitaire/SPEC.md, "Що зберігається"). Every read survives a missing or broken value; a saved deal carries a
 // format version, and one in another format (or one that does not hold together) is dropped rather than break the game.
-import { DRAWS, SOLITAIRE, SPIDER_SUITS, type Draw, type SpiderSuits } from '../config.ts';
+import { DRAWS, FREE_CELLS, SOLITAIRE, SPIDER_SUITS, type Draw, type FreeCells, type SpiderSuits } from '../config.ts';
 import { DECK } from '../core/cards.ts';
 import type { Klondike, Place, Step } from '../core/klondike.ts';
 import { emptyStats, type Stats } from '../core/stats.ts';
@@ -53,6 +53,9 @@ export interface Settings {
   look: Look;
   /** Spider: how many suits (docs/solitaire/SPEC.md, "Павук"). */
   spiderSuits: SpiderSuits;
+  /** FreeCell: how many free cells, and whether the cards no longer needed go home by themselves ("Вільні клітинки"). */
+  freeCells: FreeCells;
+  autoHome: boolean;
 }
 
 /** As approved on 25.11 (docs/solitaire/SPEC.md, "Налаштування"). */
@@ -67,6 +70,8 @@ export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
   look: 'drawn',
   spiderSuits: SOLITAIRE.spider.defaultSuits,
+  freeCells: SOLITAIRE.freecell.defaultCells,
+  autoHome: SOLITAIRE.freecell.defaultAutoHome,
 };
 
 const oneOf = <T extends string | number>(value: unknown, options: readonly T[], fallback: T): T =>
@@ -88,6 +93,8 @@ export function loadSettings(): Settings {
     theme: oneOf(s.theme, ['system', 'light', 'dark'] as const, d.theme),
     look: oneOf(s.look, ['drawn', 'simple'] as const, d.look),
     spiderSuits: oneOf(s.spiderSuits, SPIDER_SUITS, d.spiderSuits),
+    freeCells: oneOf(s.freeCells, FREE_CELLS, d.freeCells),
+    autoHome: flag(s.autoHome, d.autoHome),
   };
 }
 
@@ -227,8 +234,8 @@ export function saveStats(stats: Stats): void {
   write('stats', stats);
 }
 
-/** The screens a game is played on: Klondike and its deal of the day, Spider and its deal of the day. */
-export const ROUTES = ['play', 'daily', 'spider', 'spider-daily'] as const;
+/** The screens a game is played on: Klondike, Spider and FreeCell, each with its deal of the day. */
+export const ROUTES = ['play', 'daily', 'spider', 'spider-daily', 'freecell', 'freecell-daily'] as const;
 export type Route = (typeof ROUTES)[number];
 
 /** The deal open last time, to open again; null — the start screen. Saved before Spider as { daily }. */

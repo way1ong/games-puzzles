@@ -1,8 +1,9 @@
 // Work that would freeze the screen — finding a deal that can be won, looking for a hint — goes in short slices; the
 // screen stays responsive in between. Deals are also prepared in advance, when the device is idle, so a new one opens
 // at once (docs/solitaire/SPEC.md, "Роздачі").
-import { DRAWS, type Draw, type SpiderSuits } from '../config.ts';
+import { DRAWS, type Draw, type FreeCells, type SpiderSuits } from '../config.ts';
 import { winnableSeed, type Task } from '../core/deals.ts';
+import { freecellWinnableSeed } from '../core/freecell-deals.ts';
 import { spiderChecked, spiderWinnableSeed } from '../core/spider-deals.ts';
 
 /** Work done in one slice, ms: short enough to keep taps and scrolling smooth. */
@@ -59,6 +60,17 @@ export function keepSpiderReady(suits: SpiderSuits, has: (suits: SpiderSuits) =>
     if (has(suits)) return;
     runSoon(spiderWinnableSeed(randomSeed(), suits), (seed) => {
       if (seed !== null) keep(suits, seed);
+    });
+  }, READY_DELAY_MS);
+}
+
+/** Keeps a FreeCell deal that can be won ready for a number of free cells. */
+export function keepFreeCellReady(cells: FreeCells, has: (cells: FreeCells) => boolean, keep: (cells: FreeCells, seed: number) => void): void {
+  if (has(cells)) return;
+  window.setTimeout(() => {
+    if (has(cells)) return;
+    runSoon(freecellWinnableSeed(randomSeed(), cells), (seed) => {
+      if (seed !== null) keep(cells, seed);
     });
   }, READY_DELAY_MS);
 }

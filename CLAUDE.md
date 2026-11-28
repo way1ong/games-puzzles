@@ -64,6 +64,9 @@ games/solitaire/core/spider.ts, spider-solve.ts, spider-search.ts  Павук: �
 games/solitaire/core/spider-deals.ts, spider-hint.ts  роздачі, що проходяться (1 і 2 масті; з 4 — будь-які), роздача дня; підказка — шляхом, який гра пам’ятає, поки гравець іде за нею
 games/solitaire/core/spider-tap.ts, spider-stuck.ts, spider-stats.ts  куди йде торкнутий ряд; глухий кут; статистика за мастями
 games/solitaire/ui/spider-screen.ts, spider-table-view.ts, spider-layout.ts, spider-storage.ts  екран Павука: стіл (торкання, перетягування, клавіші), розклад карт, збереження за мастями
+games/solitaire/core/freecell.ts, freecell-solve.ts, freecell-deals.ts  Вільні клітинки: правила (скільки карт разом, «самі на основи», з основи назад — ні); розв’язувач «спершу найближче до кінця» (позиція — без порядку стовпців і клітинок); роздачі, що проходяться, і роздача дня
+games/solitaire/core/freecell-hint.ts, freecell-tap.ts, freecell-stuck.ts, freecell-stats.ts  підказка шляхом, який гра пам’ятає; куди йде торкнута карта й чому нікуди; глухий кут (ходів немає чи стіл повернувся туди, де був); статистика за клітинками
+games/solitaire/ui/freecell-screen.ts, freecell-table-view.ts, freecell-layout.ts, freecell-storage.ts  екран Вільних клітинок: стіл (торкання, перетягування в клітинку й на основу, клавіші), розклад (клітинки й основи над стовпцями чи обабіч), збереження за клітинками
 games/solitaire/ui/fullscreen.ts  «Лежачи на весь екран» (Android): весь екран і поворот; де браузер не вміє — кнопки немає
 games/solitaire/art/suits.ts  обриси мастей (SVG, колір дає карта — tokens.css)
 games/solitaire/art/courts.ts, textures.ts  вигляд «Мальований»: фігури валета, дами й короля (кольори — змінні tokens.css), фактури сукна й паперу

@@ -1,10 +1,12 @@
-// Menu: language; the settings approved on 25.11 (playing and look) and Spider's suits (26.11); full screen on its side
-// where the browser can (26.11); installing; clearing progress; statistics for each way of turning the stock and each
-// number of Spider's suits; about the game and the "Made by way1ong" line (docs/solitaire/SPEC.md, "Налаштування").
+// Menu: language; the settings approved on 25.11 (playing and look), Spider's suits (26.11), FreeCell's free cells and
+// its cards going home by themselves (28.11); full screen on its side where the browser can (26.11); installing;
+// clearing progress; statistics for each way of turning the stock, each number of Spider's suits and of FreeCell's free
+// cells; about the game and the "Made by way1ong" line (docs/solitaire/SPEC.md, "Налаштування").
 import { h } from '../../../shared/ui/dom.ts';
 import { updateLine } from '../../../shared/ui/update-view.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
-import { DRAWS, SOLITAIRE, SPIDER_SUITS, type Draw, type SpiderSuits } from '../config.ts';
+import { DRAWS, FREE_CELLS, SOLITAIRE, SPIDER_SUITS, type Draw, type FreeCells, type SpiderSuits } from '../config.ts';
+import type { FreeCellStats } from '../core/freecell-stats.ts';
 import type { SpiderStats } from '../core/spider-stats.ts';
 import type { DrawStats, Stats } from '../core/stats.ts';
 import { dict, LANGS, num, plural, type Dict } from './i18n.ts';
@@ -29,6 +31,9 @@ export interface MenuContent {
   spiderStats: SpiderStats;
   /** The longest run of Spider of the day, in days. */
   spiderLongest: number;
+  freecellStats: FreeCellStats;
+  /** The longest run of FreeCell of the day, in days. */
+  freecellLongest: number;
   /** Full screen on its side: null — the browser cannot; else whether it is on now. */
   full: boolean | null;
 }
@@ -94,6 +99,14 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           (spiderSuits) => actions.set({ spiderSuits }),
         ),
         h('p', { class: 'dialog__note' }, d.spider.settingNote),
+        ...choices<FreeCells>(
+          d.freecell.setting,
+          FREE_CELLS.map((n) => ({ value: n, text: plural(lang, n, d.freecell.cells, { n }) })),
+          settings.freeCells,
+          (freeCells) => actions.set({ freeCells }),
+        ),
+        h('p', { class: 'dialog__note' }, d.freecell.settingNote),
+        toggle(d.freecell.autoHome, settings.autoHome, (on) => actions.set({ autoHome: on })),
         toggle(s.time, settings.time, (on) => actions.set({ time: on })),
       ];
       let fullPart: HTMLElement | null = null;
@@ -199,6 +212,10 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
         d.spider.statsKind,
         SPIDER_SUITS.map((n) => ({ name: plural(lang, n, d.spider.suits, { n }), st: content.spiderStats[n] })),
       );
+      const freecellStats = statsTable(
+        d.freecell.statsKind,
+        FREE_CELLS.map((n) => ({ name: plural(lang, n, d.freecell.cells, { n }), st: content.freecellStats[n] })),
+      );
 
       const site = SOLITAIRE.links.site;
       const credit = site ? h('a', { href: site }, d.about.credit) : h('span', {}, d.about.credit);
@@ -231,6 +248,9 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
           h('h3', {}, d.spider.title),
           spiderStats,
           h('p', {}, plural(lang, content.spiderLongest, d.spider.longest, { n: content.spiderLongest })),
+          h('h3', {}, d.freecell.title),
+          freecellStats,
+          h('p', {}, plural(lang, content.freecellLongest, d.freecell.longest, { n: content.freecellLongest })),
           h('h2', {}, d.about.title),
           h('p', {}, d.about.rules),
           h('p', {}, d.about.text),

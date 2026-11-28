@@ -1,8 +1,9 @@
 // Browser audit of Solitaire: every size and look — the start screen, a deal, the stock turned, a hint, a face-down
 // card touched, the menu with the widest settings (the time, four colours, the large mode, the left hand), three cards
 // a turn, the deal of the day, and the deal of the day where no way to the end is left; Spider: a deal ("Turn the
-// phone" on a phone upright), the stock dealt, a hint, four suits, Spider of the day where no way is left; phones on
-// their side; large system text; the keyboard; a deal of each played to the end.
+// phone" on a phone upright), the stock dealt, a hint, four suits, Spider of the day where no way is left; FreeCell: a
+// deal, a card played, a hint, two free cells, the deal of the day where no way is left; phones on their side; large
+// system text; the keyboard; a deal of each played to the end; "New deal" in the middle of a deal deals anew.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { LOOKS, SIZES, checkFocusVisible, inspectScreen, watch } from './common.mjs';
@@ -24,6 +25,11 @@ const DEAD_END = JSON.parse(readFileSync(new URL('./solitaire-dead-end.json', im
  * no move at all — the game says so, one move to undo in the note, "Start over" standing out (Spider of the day).
  */
 const SPIDER_DEAD_END = JSON.parse(readFileSync(new URL('./spider-dead-end.json', import.meta.url), 'utf8'));
+/**
+ * FreeCell, made up: a deal that can be won, with four free cells, played at random until no move is left at all; five
+ * moves back it can be won again — the game says so, "Start over" standing out (the deal of the day).
+ */
+const FREECELL_DEAD_END = JSON.parse(readFileSync(new URL('./freecell-dead-end.json', import.meta.url), 'utf8'));
 
 /** Puts the dead end in place of today's deal of the day for a way of turning the stock (runs in the page). */
 function plantDeadEnd([store, play, draw]) {
@@ -39,6 +45,23 @@ function plantSpiderDeadEnd([store, play, suits]) {
   const pad = (n) => String(n).padStart(2, '0');
   const today = `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
   localStorage.setItem(`${store}spider-daily:${suits}`, JSON.stringify({ version: 1, play: { ...play, suits, daily: today } }));
+}
+
+/** Puts the FreeCell dead end in place of today's FreeCell of the day for a number of free cells (runs in the page). */
+function plantFreeCellDeadEnd([store, play, cells]) {
+  const t = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const today = `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+  localStorage.setItem(`${store}freecell-daily:${cells}`, JSON.stringify({ version: 1, play: { ...play, daily: today } }));
+}
+
+/** From a deal to the start screen, the FreeCell dead end planted (four free cells), and into FreeCell of the day. */
+async function openFreeCellDeadEnd(page) {
+  await page.locator('.top .icon-btn').first().click();
+  await page.waitForSelector('.pick');
+  await page.evaluate(plantFreeCellDeadEnd, [STORE, FREECELL_DEAD_END, 4]);
+  await openFreeCell(page, 5);
+  await page.waitForFunction(() => document.querySelector('.play--freecell .note__actions button') && document.querySelector('.play--freecell .tools .is-suggested:not([hidden])'), null, { timeout: 60000 });
 }
 
 /** From Spider (with four suits chosen) to the start screen, the dead end planted, and into Spider of the day. */
@@ -109,6 +132,22 @@ async function openDeal(page, nth = 0) {
 async function openSpider(page, nth = 2) {
   await page.locator('.pick').nth(nth).click();
   await page.waitForSelector('.table--spider .card:not(.is-down)', { timeout: 60000 });
+  await page.waitForTimeout(250);
+}
+
+/** FreeCell from the start screen: 4 — a deal, 5 — FreeCell of the day. */
+async function openFreeCell(page, nth = 4) {
+  await page.locator('.pick').nth(nth).click();
+  await page.waitForSelector('.table--freecell .card', { timeout: 60000 });
+  await page.waitForTimeout(250);
+}
+
+/** FreeCell's number of free cells in the menu (the fifth group of choices, after Spider's suits). */
+async function freeCells(page, n) {
+  await page.locator('.top .icon-btn').nth(1).click();
+  await page.locator('dialog[open] .choices').nth(4).locator('.choices__btn').nth([4, 3, 2].indexOf(n)).click();
+  await page.locator('dialog[open] .dialog__actions .btn--primary').click();
+  await page.waitForSelector('.table--freecell .card', { timeout: 60000 });
   await page.waitForTimeout(250);
 }
 
@@ -184,7 +223,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       // the widest settings: the time, four colours, the large mode, the left hand; three cards a turn
       await page.locator('.top .icon-btn').nth(1).click();
       await check(page, `${label} menu`);
-      for (const n of [0, 1, 2, 3]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
+      // the boxes: FreeCell's cards home by themselves (on by default), the time, the left hand, four colours, large
+      for (const n of [1, 2, 3, 4]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
       await page.locator('dialog[open] .choices__btn').filter({ hasText: /3|три|Három|Three/i }).first().click();
       // the simple look (the drawn one is the default): in one of the looks of every size
       if (locale === 'hu-HU') await page.locator('dialog[open] .choices__btn', { hasText: 'Egyszerű' }).click();
@@ -216,6 +256,23 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await check(page, `${label} spider four suits`);
       await openSpiderDeadEnd(page);
       await check(page, `${label} spider of the day, no way left`);
+      // FreeCell (decision of 28.11): a deal, a card touched, a hint, two free cells, the deal of the day where no way is left
+      await page.locator('.top .icon-btn').first().click();
+      await page.waitForSelector('.pick');
+      await openFreeCell(page);
+      await check(page, `${label} freecell`);
+      // the top card of the first column, chosen with the keys (an arrow brings the focus onto it) and played by Enter
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('Enter');
+      await check(page, `${label} freecell card played`);
+      await hint(page);
+      await check(page, `${label} freecell hint`);
+      await shot(page, `${width}x${height}-${locale}-${colorScheme}-freecell`);
+      await freeCells(page, 2);
+      await check(page, `${label} freecell two cells`);
+      await freeCells(page, 4);
+      await openFreeCellDeadEnd(page);
+      await check(page, `${label} freecell of the day, no way left`);
       await ctx.close();
     }
   }
@@ -254,7 +311,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await hint(page);
     await side('hint');
     await page.locator('.top .icon-btn').nth(1).click();
-    for (const n of [0, 2, 3]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
+    for (const n of [1, 2, 4]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
     await page.locator('dialog[open] .dialog__actions .btn--primary').click();
     await side('time, large, left hand');
     await shot(page, `side-${width}x${height}`);
@@ -270,6 +327,15 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await spiderSuits(page, 4);
     await openSpiderDeadEnd(page);
     await side('spider of the day, no way left');
+    await page.locator('.top .icon-btn').first().click();
+    await page.waitForSelector('.pick');
+    await openFreeCell(page);
+    await side('freecell');
+    await hint(page);
+    await side('freecell hint');
+    await shot(page, `side-${width}x${height}-freecell`);
+    await openFreeCellDeadEnd(page);
+    await side('freecell of the day, no way left');
     await ctx.close();
   }
 
@@ -300,6 +366,14 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await spiderSuits(page, 4);
     await openSpiderDeadEnd(page);
     await check(page, `${width}×${height} text ${size}% spider of the day, no way left`);
+    await page.locator('.top .icon-btn').first().click();
+    await page.waitForSelector('.pick');
+    await openFreeCell(page);
+    await check(page, `${width}×${height} text ${size}% freecell`);
+    await hint(page);
+    await check(page, `${width}×${height} text ${size}% freecell hint`);
+    await openFreeCellDeadEnd(page);
+    await check(page, `${width}×${height} text ${size}% freecell of the day, no way left`);
     await ctx.close();
   }
 
@@ -386,5 +460,67 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await shot(page, 'spider-solved');
     await ctx.close();
   }
-  return `${SIZES.length} sizes × ${LOOKS.length} looks, three a turn, Spider with one and four suits, phones on their side, large text, keyboard, a deal of each to the end`;
+  // FreeCell: the keyboard, and one deal to the end by the hints (cards dragged with the mouse; "Collect all" by F)
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 }, locale: 'hu-HU' });
+    const page = await ctx.newPage();
+    watch(page, 'solitaire freecell keyboard', origin, fail);
+    await page.goto(base);
+    await page.waitForSelector('.pick');
+    await openFreeCell(page);
+    await checkFocusVisible(page, 8, fail, 'solitaire freecell keyboard');
+    await page.keyboard.press('ArrowRight');
+    if (!(await page.evaluate(() => !!document.activeElement?.closest('.table--freecell')))) fail('solitaire freecell keyboard: an arrow did not bring the focus onto the table');
+    for (let guard = 0; guard < 400 && !(await page.$('dialog[open]')); guard++) {
+      if (await page.locator('.play--freecell .note__actions .btn').count()) {
+        await page.keyboard.press('f');
+        await page.waitForSelector('dialog[open]', { timeout: 30000 }).catch(() => undefined);
+        break;
+      }
+      await hint(page);
+      const spot = await page.evaluate(hintedSpot);
+      if (!spot || spot === 'stock') {
+        if (await page.locator('.play--freecell .note__actions .btn').count()) continue;
+        fail(`solitaire freecell keyboard: a hint without a move (${(await page.textContent('.play--freecell .note__text')).trim()})`);
+        break;
+      }
+      await dragMouse(page, spot);
+    }
+    await page.waitForSelector('dialog[open]', { timeout: 30000 }).catch(() => fail('solitaire freecell keyboard: no "solved" window at the end'));
+    await check(page, 'freecell solved');
+    const stats = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), `${STORE}freecell-stats`);
+    if (stats?.['4']?.won !== 1) fail(`solitaire freecell keyboard: statistics did not count the deal (${JSON.stringify(stats)})`);
+    await shot(page, 'freecell-solved');
+    await ctx.close();
+  }
+
+  // "New deal" in the middle of a deal deals anew (found 28.11: Spider opened the same deal again, saved once more as it
+  // was left) — Spider after the stock dealt, FreeCell after a card played; N twice (the second press deals)
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 }, locale: 'en-GB' });
+    const page = await ctx.newPage();
+    watch(page, 'solitaire new deal', origin, fail);
+    const seedOf = (key) => page.evaluate((k) => JSON.parse(localStorage.getItem(k) ?? 'null')?.play?.seed ?? null, `${STORE}${key}`);
+    await page.goto(base);
+    await page.waitForSelector('.pick');
+    await openSpider(page);
+    const spiderBefore = await seedOf('spider:1');
+    await page.locator('.table--spider .slot--stock').click();
+    await page.keyboard.press('n');
+    await page.keyboard.press('n');
+    await page.waitForFunction((k) => JSON.parse(localStorage.getItem(k) ?? 'null')?.play?.history?.length === 0, `${STORE}spider:1`, { timeout: 60000 }).catch(() => undefined);
+    if ((await seedOf('spider:1')) === spiderBefore) fail('solitaire new deal: Spider opened the same deal again');
+    await page.locator('.top .icon-btn').first().click();
+    await page.waitForSelector('.pick');
+    await openFreeCell(page);
+    const freeBefore = await seedOf('freecell:4');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('n');
+    await page.keyboard.press('n');
+    await page.waitForFunction((k) => JSON.parse(localStorage.getItem(k) ?? 'null')?.play?.history?.length === 0, `${STORE}freecell:4`, { timeout: 60000 }).catch(() => undefined);
+    if ((await seedOf('freecell:4')) === freeBefore) fail('solitaire new deal: FreeCell opened the same deal again');
+    await ctx.close();
+  }
+  return `${SIZES.length} sizes × ${LOOKS.length} looks, three a turn, Spider with one and four suits, FreeCell with four and two cells, phones on their side, large text, keyboard, a deal of each to the end, a new deal mid-game`;
 }

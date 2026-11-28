@@ -10,6 +10,13 @@ export type Draw = (typeof DRAWS)[number];
 export const SPIDER_SUITS = [1, 2, 4] as const;
 export type SpiderSuits = (typeof SPIDER_SUITS)[number];
 
+/**
+ * How many free cells FreeCell has (docs/solitaire/SPEC.md, "Вільні клітинки"; decision of 28.11): four, the classic,
+ * or fewer — harder.
+ */
+export const FREE_CELLS = [4, 3, 2] as const;
+export type FreeCells = (typeof FREE_CELLS)[number];
+
 export const SOLITAIRE = {
   name: 'way1ong Solitaire',
   links: { site: null as string | null, game: gameAddress('solitaire') },
@@ -57,6 +64,26 @@ export const SOLITAIRE = {
      * the hint counts the moves to undo — and how many searches, each along another order of equal moves, it may make.
      */
     solve: { deal: 10_000, hint: 20_000, back: 4_000, attempts: 10 },
+    /** Seeds tried, one after another, for one deal that can be won. */
+    dealTries: 32,
+    /** How far back the hint looks for a position that can still be won, in moves. */
+    lookBack: 200,
+  },
+  /**
+   * FreeCell (docs/solitaire/SPEC.md, "Вільні клітинки"; decision of 28.11): one deck, every card face up; eight
+   * columns and the cards dealt to each; four free cells by default (the classic); the cards no longer needed go home
+   * by themselves unless the player turns it off.
+   */
+  freecell: {
+    columns: 8,
+    deal: [7, 7, 7, 7, 6, 6, 6, 6],
+    defaultCells: 4 as FreeCells,
+    defaultAutoHome: true,
+    /**
+     * Solving (C): positions the solver may look at — for a deal before it is shown (a deal it has not won within them
+     * is not shown), for a hint, for each look back when the hint counts the moves to undo.
+     */
+    solve: { deal: 20_000, hint: 40_000, back: 10_000 },
     /** Seeds tried, one after another, for one deal that can be won. */
     dealTries: 32,
     /** How far back the hint looks for a position that can still be won, in moves. */
