@@ -115,9 +115,11 @@
     "notInOrder": "{card}: only cards in order move together — down, red on black.",
     "oneCard": "A free cell takes one card only.",
     "tooMany": {
-      "one": "At most {n} card can move together now: free cells — {cells}, empty columns — {empty}.",
-      "other": "At most {n} cards can move together now: free cells — {cells}, empty columns — {empty}."
+      "one": "A pile of {count} cards cannot move now: at most {n} card moves at once (free cells — {cells}, empty columns — {empty}).",
+      "other": "A pile of {count} cards cannot move now: at most {n} cards move at once (free cells — {cells}, empty columns — {empty})."
     },
+    "freeCellOrColumn": "Free a cell or empty a column.",
+    "freeColumn": "Empty a column.",
     "fromHome": "Cards do not come back from a foundation.",
     "finishNote": "The rest can go home by itself, card by card.",
     "setting": "FreeCell: free cells",

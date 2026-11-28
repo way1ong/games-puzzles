@@ -227,7 +227,7 @@ describe('a touch', () => {
     const run = [c(S, 9), c(H, 8), c(C, 7), c(D, 6)];
     const full = table([run, [c(H, 10)], [c(S, 13)], [c(H, 13)], [c(C, 13)], [c(D, 13)], [c(S, 12)], [c(D, 12)]], [c(S, 1), c(H, 1), null, c(C, 1)]);
     expect(freeBestPlace(full, col(0), 0)).toBeNull();
-    expect(tapRefusal(full, col(0), 0)).toEqual({ kind: 'too-many', most: 2, cells: 1, empty: 0 });
+    expect(tapRefusal(full, col(0), 0)).toEqual({ kind: 'too-many', count: 4, most: 2, cells: 1, empty: 0 });
   });
 });
 

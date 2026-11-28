@@ -425,9 +425,15 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
     return card === null || card === undefined ? '' : name(card);
   }
 
-  /** More cards than may move together: how many may, and why — the free cells and the empty columns. */
-  function tooManyText(g: FreeCell, most: number): string {
-    return plural(shell.lang(), most, d().freecell.tooMany, { n: most, cells: freeCellsLeft(g), empty: emptyColumns(g) });
+  /**
+   * More cards than may move together: how many would move, how many may, why — the free cells and the empty columns —
+   * and what helps (a column alone when every cell is free). The cards in the cells shake: they take the room.
+   */
+  function refuseTooMany(g: FreeCell, count: number, most: number): void {
+    table.refuseCells();
+    const t = d().freecell;
+    const why = plural(shell.lang(), most, t.tooMany, { count, n: most, cells: freeCellsLeft(g), empty: emptyColumns(g) });
+    say(`${why} ${g.cells.some((c) => c !== null) ? t.freeCellOrColumn : t.freeColumn}`);
   }
 
   function onTap(target: FreeTarget): void {
@@ -450,7 +456,7 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
     const why = tapRefusal(game, place, index);
     const t = d();
     if (why.kind === 'order') say(fmt(t.freecell.notInOrder, { card: cardAt(game, place, index) }));
-    else if (why.kind === 'too-many') say(tooManyText(game, why.most));
+    else if (why.kind === 'too-many') refuseTooMany(game, why.count, why.most);
     else say(fmt(t.game.noPlace, { card: cardAt(game, place, index) }));
   }
 
@@ -461,7 +467,7 @@ export function createFreeCellScreen(shell: FreeCellShell): FreeCellScreen {
       shell.sounds.play('refuse');
       const t = d();
       if (reason === 'order') say(fmt(t.freecell.notInOrder, { card: cardAt(game, from, index) }));
-      else if (reason === 'too-many') say(tooManyText(game, moveLimit(game, to)));
+      else if (reason === 'too-many') refuseTooMany(game, movingCards(game, from, index)!.length, moveLimit(game, to));
       else if (reason === 'one-card') say(t.freecell.oneCard);
       else say(fmt(t.game.cantDrop, { card: cardAt(game, from, index) }));
       return false;

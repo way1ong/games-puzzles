@@ -30,7 +30,10 @@ export type FreeTarget = { kind: 'card'; place: FreePlace; index: number } | { k
 export interface FreeTableHandlers {
   /** A card or a place was tapped, or chosen with the keys. */
   tap(target: FreeTarget): void;
-  /** Cards were dragged from a place onto another; false — the move was refused (they go back). */
+  /**
+   * Cards were dragged from a place onto another; false — the move was refused (they go back). Also called for a place the
+   * cards were let go over though they may not go there, so the game can say why.
+   */
   drop(from: FreePlace, index: number, to: FreePlace): boolean;
 }
 
@@ -46,6 +49,8 @@ export interface FreeTableView {
   render(g: FreeCell, marks: FreeMarks, d: Dict): void;
   /** Shakes what cannot move (no motion when the system asks for less). */
   refuse(target: FreeTarget): void;
+  /** Shakes the cards in the free cells: they keep a pile from moving together. */
+  refuseCells(): void;
   hasFocus(): boolean;
   /** Moves the keys' focus the way of an arrow (onto the table first); true if it moved. */
   step(dir: 'left' | 'right' | 'up' | 'down'): boolean;
@@ -65,8 +70,13 @@ interface Press {
   index: number;
   dragging: boolean;
   lift: number;
+  /** Where the cards would go if let go now; else the place under them where they may not go (the game says why). */
   drop: FreePlace | null;
+  refused: FreePlace | null;
 }
+
+/** Where dragged cards are over: a place, and whether they may go there. */
+type Over = { to: FreePlace; ok: boolean };
 
 const samePlace = (a: FreePlace, b: FreePlace): boolean =>
   a.kind === b.kind && (a.kind === 'foundation' ? a.suit === (b as { suit: number }).suit : a.index === (b as { index: number }).index);
@@ -259,22 +269,39 @@ export function createFreeTableView(handlers: FreeTableHandlers): FreeTableView 
     }
     // where it would land: under the middle of the lowest card moved
     const first = layout.cards.get(p.moving[0]!)!;
-    p.drop = dropAt(first.x + dx + layout.w / 2, first.y + dy - p.lift + layout.h / 2, p);
+    const over = dropAt(first.x + dx + layout.w / 2, first.y + dy - p.lift + layout.h / 2, p);
+    p.drop = over?.ok ? over.to : null;
+    p.refused = over && !over.ok ? over.to : null;
     showDrop(p.drop);
   }
 
-  function dropAt(x: number, y: number, p: Press): FreePlace | null {
+  /**
+   * The place under a point: one the cards may go to — a foundation, a free cell, else the nearest column; else the
+   * nearest place there where they may not go (ok false), so that letting go there gets the reason (or nothing, when it is
+   * the place they came from).
+   */
+  function dropAt(x: number, y: number, p: Press): Over | null {
     if (!layout || !game || !p.from) return null;
+    const g = game;
     const { w, h } = layout;
     const from = p.from;
+    const refused: { to: FreePlace | null; dist: number } = { to: null, dist: Infinity };
+    const fits = (to: FreePlace, dist: number) => {
+      if (canMove(g, from, p.index, to)) return true;
+      if (dist < refused.dist) Object.assign(refused, { to, dist });
+      return false;
+    };
     const near = (bx: number, by: number) => Math.abs(x - (bx + w / 2)) <= w * 0.75 && Math.abs(y - (by + h / 2)) <= h * 0.75;
+    const away = (bx: number, by: number) => Math.hypot(x - (bx + w / 2), y - (by + h / 2));
     for (let s = 0; s < layout.foundations.length; s++) {
       const to: FreePlace = { kind: 'foundation', suit: s };
-      if (near(layout.foundations[s]!.x, layout.foundations[s]!.y) && canMove(game, from, p.index, to)) return to;
+      const { x: bx, y: by } = layout.foundations[s]!;
+      if (near(bx, by) && fits(to, away(bx, by))) return { to, ok: true };
     }
     for (let k = 0; k < layout.cells.length; k++) {
       const to: FreePlace = { kind: 'cell', index: k };
-      if (near(layout.cells[k]!.x, layout.cells[k]!.y) && canMove(game, from, p.index, to)) return to;
+      const { x: bx, y: by } = layout.cells[k]!;
+      if (near(bx, by) && fits(to, away(bx, by))) return { to, ok: true };
     }
     let best: FreePlace | null = null;
     let bestDist = Infinity;
@@ -283,12 +310,13 @@ export function createFreeTableView(handlers: FreeTableHandlers): FreeTableView 
       const dist = Math.abs(x - (col.x + w / 2));
       if (dist > w * 0.75 || y < col.y - h * 0.25) continue;
       const to: FreePlace = { kind: 'column', index: i };
-      if (dist < bestDist && canMove(game, from, p.index, to)) {
+      if (fits(to, dist) && dist < bestDist) {
         best = to;
         bestDist = dist;
       }
     }
-    return best;
+    if (best) return { to: best, ok: true };
+    return refused.to ? { to: refused.to, ok: false } : null;
   }
 
   function showDrop(to: FreePlace | null): void {
@@ -322,7 +350,7 @@ export function createFreeTableView(handlers: FreeTableHandlers): FreeTableView 
         index = target.index;
       }
     }
-    press = { id: e.pointerId, x0: e.clientX, y0: e.clientY, target, moving, from, index, dragging: false, lift: 0, drop: null };
+    press = { id: e.pointerId, x0: e.clientX, y0: e.clientY, target, moving, from, index, dragging: false, lift: 0, drop: null, refused: null };
     el.setPointerCapture(e.pointerId);
   });
   // A finger on the table is handled here alone (pointer events above): no gestures of the browser for it, else a quick
@@ -358,7 +386,12 @@ export function createFreeTableView(handlers: FreeTableHandlers): FreeTableView 
     for (const card of p.moving) views[card]!.el.classList.remove('is-lifted');
     dropMark.hidden = true;
     if (p.dragging) {
-      const moved = !cancelled && p.drop && p.from ? handlers.drop(p.from, p.index, p.drop) : false;
+      let moved = false;
+      if (!cancelled && p.from) {
+        if (p.drop) moved = handlers.drop(p.from, p.index, p.drop);
+        // let go where they may not go: the game says why — unless they were put back where they came from
+        else if (p.refused && !samePlace(p.refused, p.from)) handlers.drop(p.from, p.index, p.refused);
+      }
       if (!moved && game && lastDict) render(game, { ...lastMarks, flying: [] }, lastDict);
       return;
     }
@@ -381,6 +414,17 @@ export function createFreeTableView(handlers: FreeTableHandlers): FreeTableView 
     else if (cellSlots.includes(node as HTMLButtonElement)) focusKey = `cell:${cellSlots.indexOf(node as HTMLButtonElement)}`;
     else if (columnSlots.includes(node as HTMLButtonElement)) focusKey = `column:${columnSlots.indexOf(node as HTMLButtonElement)}`;
   });
+
+  /** Shakes cards (no motion when the system asks for less). */
+  function shake(cards: readonly Card[]): void {
+    if (reducedMotion()) return;
+    for (const card of cards) {
+      const node = views[card]!.el;
+      node.classList.remove('is-refused');
+      void node.offsetWidth; // restart the animation
+      node.classList.add('is-refused');
+    }
+  }
 
   // ---------- keys ----------
   /** The middle of what can be seen of a place: a covered card shows only its top strip. */
@@ -435,18 +479,13 @@ export function createFreeTableView(handlers: FreeTableHandlers): FreeTableView 
     el,
     render,
     refuse(target) {
-      if (reducedMotion() || !game) return;
-      let nodes: HTMLElement[] = [];
-      if (target.kind === 'card') {
-        const cards = movingCards(game, target.place, target.index);
-        const own = target.place.kind === 'column' ? game.columns[target.place.index]!.slice(target.index) : target.place.kind === 'cell' ? [game.cells[target.place.index]!] : [];
-        nodes = (cards ?? own).filter((c) => c !== null).map((c) => views[c]!.el);
-      }
-      for (const node of nodes) {
-        node.classList.remove('is-refused');
-        void node.offsetWidth; // restart the animation
-        node.classList.add('is-refused');
-      }
+      if (!game || target.kind !== 'card') return;
+      const cards = movingCards(game, target.place, target.index);
+      const own = target.place.kind === 'column' ? game.columns[target.place.index]!.slice(target.index) : target.place.kind === 'cell' ? [game.cells[target.place.index]!] : [];
+      shake((cards ?? own).filter((c) => c !== null));
+    },
+    refuseCells() {
+      if (game) shake(game.cells.filter((c) => c !== null));
     },
     hasFocus() {
       return el.contains(document.activeElement);
