@@ -133,6 +133,69 @@
   list-style: none;
 }
 
+/* Room by room (decision of 28.11: "Групуй"): the room's cases, then "Just searching" in it by day and at night as two
+   small round-ended buttons with the same sun and moon. */
+.home__room {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home h3 {
+  margin: 0.5rem 0 0;
+  font-size: 1.0625rem;
+}
+
+.search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.search-row__label {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 650;
+}
+
+.search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.875rem 0.25rem 0.375rem;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.search-btn__time {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+}
+
+.search-btn__time .sign {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.search-btn--day .search-btn__time {
+  background: var(--bg);
+  color: var(--clue);
+}
+
+.search-btn--night .search-btn__time {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--surface);
+}
+
 /* A card's place measures itself: when large text leaves too little room, the words go under the sign. */
 .case-slot {
   container-type: inline-size;

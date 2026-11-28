@@ -169,7 +169,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       await shot('1-cases');
 
       // the first story
-      await page.locator('.cases .case-card').first().click();
+      await page.locator('.case-card[data-kind="story"]').first().click();
       await page.waitForSelector('.intro');
       await check(page, `${label} story`);
       await page.locator('.intro .btn--primary').click();
@@ -245,7 +245,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       if ((await page.locator('.badge--solved').count()) !== 1) fail(`detective ${label}: the solved case is not marked in the list`);
 
       // the night case in the large mode: the room and the things
-      await page.locator('.cases .case-card').nth(1).click();
+      await page.locator('.case-card[data-kind="story"]').nth(1).click();
       await page.locator('.intro .btn--primary').click();
       await page.waitForSelector('.room__scroll .scene');
       await page.waitForFunction(() => Number(document.querySelector('.room__scroll .scene').getAttribute('width')) > 0);
@@ -268,8 +268,8 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     watch(page, `detective ${label}`, origin, fail);
     await page.goto(base);
     await page.waitForSelector('.case-card');
-    stories = await page.locator('.cases').first().locator('.case-card').count();
-    searches = await page.locator('.cases').nth(1).locator('.case-card').count();
+    stories = await page.locator('.case-card[data-kind="story"]').count();
+    searches = await page.locator('[data-kind="search"]').count();
     const openRoom = async () => {
       await page.waitForSelector('.room__scroll .scene');
       await page.waitForFunction(() => Number(document.querySelector('.room__scroll .scene').getAttribute('width')) > 0);
@@ -277,7 +277,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     // the first two stories are played above on every size
     for (let i = 2; i < stories; i++) {
       const name = `${label} ${i + 1}`;
-      await page.locator('.cases').first().locator('.case-card').nth(i).click();
+      await page.locator('.case-card[data-kind="story"]').nth(i).click();
       await page.waitForSelector('.intro');
       await check(page, `${name} story`);
       await page.locator('.intro .btn--primary').click();
@@ -306,7 +306,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     }
     if ((await page.locator('.badge--solved').count()) !== Math.max(0, stories - 2)) fail(`detective ${label}: not every story played here is marked solved`);
     for (let i = 0; i < searches; i++) {
-      await page.locator('.cases').nth(1).locator('.case-card').nth(i).click();
+      await page.locator('[data-kind="search"]').nth(i).click();
       await openRoom();
       await check(page, `${label} search ${i + 1}`);
       for (const p of await page.evaluate(inspectThings)) fail(`detective ${label} search ${i + 1}: ${p}`);
@@ -330,7 +330,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       };
       await page.goto(base);
       await page.waitForSelector('.case-card');
-      await page.locator('.cases').first().locator('.case-card').nth(which).click();
+      await page.locator('.case-card[data-kind="story"]').nth(which).click();
       await page.waitForSelector('.intro');
       await check(page, `${label} story`);
       await shot('h1-story');
@@ -361,7 +361,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     const page = await ctx.newPage();
     watch(page, `detective ${label}`, origin, fail);
     await page.goto(base);
-    await page.locator('.home__part .case-card').first().click();
+    await page.locator('.case-card[data-kind="daily"]').click();
     await page.waitForSelector('.intro');
     await page.locator('.intro .btn--primary').click();
     await page.waitForSelector('.room__scroll .scene');
@@ -389,7 +389,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await page.waitForSelector('.home__streak');
 
     // free search: no story, ends with the last thing, "once more" hides the things anew
-    await page.locator('.home__part').nth(2).locator('.case-card').first().click();
+    await page.locator('[data-kind="search"]').first().click();
     await page.waitForSelector('.room__scroll .scene');
     await page.waitForFunction(() => Number(document.querySelector('.room__scroll .scene').getAttribute('width')) > 0);
     const placesOf = () => page.evaluate(() => [...document.querySelectorAll('.room__scroll [data-thing]')].map((e) => `${e.getAttribute('data-thing')}@${e.getAttribute('transform')}`).sort().join());
@@ -412,7 +412,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await page.goto(base);
     await page.waitForSelector('.case-card');
     await checkFocusVisible(page, 7, fail, 'detective keyboard, cases');
-    await page.locator('.cases .case-card').first().focus();
+    await page.locator('.case-card[data-kind="story"]').first().focus();
     await page.keyboard.press('Enter');
     await page.waitForSelector('.intro');
     await page.locator('.intro .btn--primary').focus();
@@ -484,7 +484,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await page.goto(base);
     await page.waitForSelector('.case-card');
     await check(page, `${label} cases`);
-    await page.locator('.cases .case-card').first().click();
+    await page.locator('.case-card[data-kind="story"]').first().click();
     await page.waitForSelector('.intro');
     await check(page, `${label} story`);
     await shot('1-story');
@@ -530,7 +530,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       // a harder case from its suspects to the end (its room is the same as above)
       await page.locator('.result .btn--primary').click();
       await page.waitForSelector('.case-card');
-      await page.locator('.cases').first().locator('.case-card').nth(harder.at(-1)).click();
+      await page.locator('.case-card[data-kind="story"]').nth(harder.at(-1)).click();
       await page.waitForSelector('.intro');
       await check(page, `${label} harder story`);
       await page.locator('.intro .btn--primary').click();
@@ -572,7 +572,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await page.goto(base);
     await page.waitForSelector('.case-card');
     await check(page, `${label} cases`);
-    await page.locator('.cases .case-card').first().click();
+    await page.locator('.case-card[data-kind="story"]').first().click();
     await page.waitForSelector('.intro');
     await check(page, `${label} story`);
     await page.locator('.intro .btn--primary').click();

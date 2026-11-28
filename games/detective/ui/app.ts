@@ -11,7 +11,7 @@ import { accuse, allFound, begin, canAccuse, hint, isEvidence, newProgress, reas
 import { ROOM_IDS, type RoomId } from '../core/rooms.ts';
 import { sizeOf } from '../core/things.ts';
 import { factLines, reasonChoices, rulingText, statementText } from './deduction-text.ts';
-import { homeView, roomLine, statusOf, storyTitle, type HomeEntry } from './home-view.ts';
+import { homeView, roomLine, statusOf, storyTitle, type HomeEntry, type HomeRoom } from './home-view.ts';
 import { dict, fmt, pickLang, plural, type Dict } from './i18n.ts';
 import { backSign } from './icons.ts';
 import { introView } from './intro-view.ts';
@@ -150,17 +150,19 @@ export function startApp(root: HTMLElement): void {
     const daily = dailyCase(today);
     const days = Object.keys(store.loadDays());
     const inRow = streak(days, today);
-    const stories: HomeEntry[] = STORY_IDS.map((id) => {
-      const c = STORIES[id];
-      return { route: id, title: storyTitle(d, c), line: `${roomLine(d, c.room, c.time)} · ${d.levels[c.level]}`, time: c.time, status: statusOf(stageOf(c)) };
-    });
-    const searches: HomeEntry[] = ROOM_IDS.flatMap((roomId) =>
-      TIMES.map((time): HomeEntry => {
+    const rooms: HomeRoom[] = ROOM_IDS.map((roomId) => ({
+      id: roomId,
+      name: d.rooms[roomId],
+      stories: STORY_IDS.filter((id) => STORIES[id].room === roomId).map((id): HomeEntry => {
+        const c = STORIES[id];
+        return { route: id, title: storyTitle(d, c), line: `${d.home[c.time]} · ${d.levels[c.level]}`, time: c.time, status: statusOf(stageOf(c)) };
+      }),
+      search: TIMES.map((time): HomeEntry => {
         const seed = store.loadSearchSeed(`search:${roomId}:${time}`);
         const stage = seed === null ? null : stageOf(searchCase(roomId, time, seed));
         return { route: searchRoute(roomId, time), title: d.rooms[roomId], line: d.home[time], time, status: stage === 'search' ? 'started' : null };
       }),
-    );
+    }));
     return homeView(
       d,
       {
@@ -173,8 +175,7 @@ export function startApp(root: HTMLElement): void {
           note: d.home.dailyNote,
           streak: inRow > 0 ? plural(lang, inRow, d.home.streak, { n: inRow }) : null,
         },
-        stories,
-        search: searches,
+        rooms,
       },
       openRoute,
     );
