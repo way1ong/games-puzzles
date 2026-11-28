@@ -56,6 +56,8 @@ export interface Settings {
   /** FreeCell: how many free cells, and whether the cards no longer needed go home by themselves ("Вільні клітинки"). */
   freeCells: FreeCells;
   autoHome: boolean;
+  /** Sound (decision of 28.11): off by default (rule 6). */
+  sound: boolean;
 }
 
 /** As approved on 25.11 (docs/solitaire/SPEC.md, "Налаштування"). */
@@ -72,6 +74,7 @@ export const DEFAULT_SETTINGS: Settings = {
   spiderSuits: SOLITAIRE.spider.defaultSuits,
   freeCells: SOLITAIRE.freecell.defaultCells,
   autoHome: SOLITAIRE.freecell.defaultAutoHome,
+  sound: false,
 };
 
 const oneOf = <T extends string | number>(value: unknown, options: readonly T[], fallback: T): T =>
@@ -95,6 +98,7 @@ export function loadSettings(): Settings {
     spiderSuits: oneOf(s.spiderSuits, SPIDER_SUITS, d.spiderSuits),
     freeCells: oneOf(s.freeCells, FREE_CELLS, d.freeCells),
     autoHome: flag(s.autoHome, d.autoHome),
+    sound: flag(s.sound, d.sound),
   };
 }
 

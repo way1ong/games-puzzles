@@ -1,5 +1,5 @@
 // Menu: language; the settings approved on 25.11 (playing and look), Spider's suits (26.11), FreeCell's free cells and
-// its cards going home by themselves (28.11); full screen on its side where the browser can (26.11); installing;
+// its cards going home by themselves, the sound (28.11); full screen on its side where the browser can (26.11); installing;
 // clearing progress; statistics for each way of turning the stock, each number of Spider's suits and of FreeCell's free
 // cells; about the game and the "Made by way1ong" line (docs/solitaire/SPEC.md, "Налаштування").
 import { h } from '../../../shared/ui/dom.ts';
@@ -108,6 +108,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
         h('p', { class: 'dialog__note' }, d.freecell.settingNote),
         toggle(d.freecell.autoHome, settings.autoHome, (on) => actions.set({ autoHome: on })),
         toggle(s.time, settings.time, (on) => actions.set({ time: on })),
+        toggle(s.sound, settings.sound, (on) => actions.set({ sound: on })),
       ];
       let fullPart: HTMLElement | null = null;
       if (content.full !== null) {

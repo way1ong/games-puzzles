@@ -223,14 +223,15 @@ export async function audit({ browser, origin, axe, fail, shots }) {
       // the widest settings: the time, four colours, the large mode, the left hand; three cards a turn
       await page.locator('.top .icon-btn').nth(1).click();
       await check(page, `${label} menu`);
-      // the boxes: FreeCell's cards home by themselves (on by default), the time, the left hand, four colours, large
-      for (const n of [1, 2, 3, 4]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
+      // the boxes: FreeCell's cards home by themselves (on by default), the time, the sound, the left hand, four colours,
+      // large
+      for (const n of [1, 2, 3, 4, 5]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
       await page.locator('dialog[open] .choices__btn').filter({ hasText: /3|три|Három|Three/i }).first().click();
       // the simple look (the drawn one is the default): in one of the looks of every size
       if (locale === 'hu-HU') await page.locator('dialog[open] .choices__btn', { hasText: 'Egyszerű' }).click();
       await page.locator('dialog[open] .dialog__actions .btn--primary').click();
       await page.waitForSelector('.table .card:not(.is-down)', { timeout: 60000 });
-      await check(page, `${label} three a turn, time, four colours, large, left hand`);
+      await check(page, `${label} three a turn, time, sound, four colours, large, left hand`);
       await shot(page, `${width}x${height}-${locale}-${colorScheme}`);
       // the deal of the day from the start screen
       await page.locator('.top .icon-btn').first().click();
@@ -311,7 +312,7 @@ export async function audit({ browser, origin, axe, fail, shots }) {
     await hint(page);
     await side('hint');
     await page.locator('.top .icon-btn').nth(1).click();
-    for (const n of [1, 2, 4]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
+    for (const n of [1, 3, 5]) await page.locator('dialog[open] input[type=checkbox]').nth(n).check();
     await page.locator('dialog[open] .dialog__actions .btn--primary').click();
     await side('time, large, left hand');
     await shot(page, `side-${width}x${height}`);

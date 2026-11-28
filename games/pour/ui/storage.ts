@@ -47,6 +47,8 @@ export interface Settings {
   patterns: boolean;
   help: Help;
   time: boolean;
+  /** Sound (decision of 28.11): off by default (rule 6). */
+  sound: boolean;
   vibration: boolean;
   big: boolean;
   leftHand: boolean;
@@ -58,6 +60,7 @@ export const DEFAULT_SETTINGS: Settings = {
   patterns: true,
   help: POUR.defaultHelp,
   time: false,
+  sound: false,
   vibration: false,
   big: false,
   leftHand: false,
@@ -78,6 +81,7 @@ export function loadSettings(): Settings {
     patterns: flag(s.patterns, d.patterns),
     help: oneOf(s.help, HELPS, d.help),
     time: flag(s.time, d.time),
+    sound: flag(s.sound, d.sound),
     vibration: flag(s.vibration, d.vibration),
     big: flag(s.big, d.big),
     leftHand: flag(s.leftHand, d.leftHand),

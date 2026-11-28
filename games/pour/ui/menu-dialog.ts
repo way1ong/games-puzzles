@@ -1,5 +1,5 @@
 // Menu (docs/pour/SPEC.md, "Налаштування"): language; patterns on the colours (decision of 27.11: on, can be turned
-// off); help in a level (decision of 27.11: without limits, can be limited); the time, vibration; the look; installing;
+// off); help in a level (decision of 27.11: without limits, can be limited); the time, sound (28.11), vibration; the look; installing;
 // clearing progress; statistics; about the game and the "Made by way1ong" line.
 import { h } from '../../../shared/ui/dom.ts';
 import { install, installWay } from '../../../shared/ui/install.ts';
@@ -79,6 +79,7 @@ export function createMenuDialog(): { el: HTMLDialogElement; open(content: MenuC
         ),
         h('p', { class: 'dialog__note' }, fmt(s.helpNote, { undo: some.undo ?? 0, hints: some.hints ?? 0 })),
         toggle(s.time, settings.time, (on) => actions.set({ time: on })),
+        toggle(s.sound, settings.sound, (on) => actions.set({ sound: on })),
         canVibrate() ? toggle(s.vibration, settings.vibration, (on) => actions.set({ vibration: on })) : null,
       ];
       const look = [

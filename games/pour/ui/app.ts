@@ -4,6 +4,7 @@
 import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { createSounds } from '../../../shared/ui/sound.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { KINDS, POUR, type Kind } from '../config.ts';
 import { isClosed, whyNot, type Move } from '../core/bottles.ts';
@@ -137,6 +138,9 @@ export function startApp(root: HTMLElement): void {
   function vibrate(): void {
     if (settings.vibration && 'vibrate' in navigator) navigator.vibrate(POUR.vibrateMs);
   }
+
+  /** The sounds (decision of 28.11): a pour, a bottle done, solved, a bottle lifted, not allowed — while switched on. */
+  const sounds = createSounds(() => settings.sound);
 
   // ---------- screens ----------
   function show(): void {
@@ -415,7 +419,9 @@ export function startApp(root: HTMLElement): void {
       if (why) {
         message = why;
         announce(why);
+        sounds.play('refuse');
       } else {
+        sounds.play('tap');
         up = i;
         message = null;
         announce(bottleLabel(game.bottles[i]!, i, game.paints, d, [d.bottle.up]));
@@ -434,6 +440,7 @@ export function startApp(root: HTMLElement): void {
       return;
     }
     // not here: say why, and lift the tapped bottle instead when it can be poured from (C)
+    sounds.play('refuse');
     message = whyText(why, d);
     up = liftable(i) ? null : i;
     announce(message);
@@ -464,6 +471,10 @@ export function startApp(root: HTMLElement): void {
     const closedNow = next.bottles.filter((b) => isClosed(b, POUR.capacity)).length;
     message = closedNow > before ? d.game.closedOne : null;
     if (closedNow > before) vibrate();
+    // the water, then — once it has run — a bottle done, or the whole shelf
+    const running = sounds.play('pour', { amount: poured.amount });
+    if (next.done) sounds.play('win', {}, running);
+    else if (closedNow > before) sounds.play('success', {}, running);
     announce(message ?? d.game.poured);
     save();
     if (game.done) {
@@ -479,10 +490,14 @@ export function startApp(root: HTMLElement): void {
     armedAgain = false;
     if (!game.history.length) {
       message = d.game.nothingToUndo;
+      sounds.play('refuse');
     } else {
       const next = undo(game, rule(), count);
-      if (!next) message = d.game.noUndo;
-      else {
+      if (!next) {
+        message = d.game.noUndo;
+        sounds.play('refuse');
+      } else {
+        sounds.play('tap');
         game = next;
         up = null;
         hint = null;
@@ -533,8 +548,11 @@ export function startApp(root: HTMLElement): void {
     if (!game || game.done) return;
     armedAgain = false;
     const next = addBottle(game, rule());
-    if (!next) message = game.extra > 0 ? d.game.extraUsed : d.game.noExtra;
-    else {
+    if (!next) {
+      message = game.extra > 0 ? d.game.extraUsed : d.game.noExtra;
+      sounds.play('refuse');
+    } else {
+      sounds.play('tap');
       game = next;
       up = null;
       hint = null;
@@ -560,6 +578,7 @@ export function startApp(root: HTMLElement): void {
     const next = startAgain(game);
     armedAgain = false;
     if (!next) return;
+    sounds.play('tap');
     game = next;
     clearTurn();
     message = d.game.again;
@@ -655,8 +674,11 @@ export function startApp(root: HTMLElement): void {
           openMenu();
         },
         set(patch) {
+          const soundOn = patch.sound === true && !settings.sound;
           settings = { ...settings, ...patch };
           store.saveSettings(settings);
+          // switched on by a touch: the sound wakes, and a soft knock says it is on
+          if (soundOn) sounds.switchedOn();
           redraw();
         },
         clearProgress() {

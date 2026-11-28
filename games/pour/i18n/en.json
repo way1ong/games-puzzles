@@ -164,6 +164,7 @@
     "helpNone": "No help",
     "helpNote": "No limits: undos and hints as many as you like, and one extra bottle. Limited: per level, undos: {undo}, hints: {hints}, no extra bottle.",
     "time": "Show the time",
+    "sound": "Sound",
     "vibration": "Vibration when a bottle is done",
     "look": "Look",
     "big": "Large bottles",

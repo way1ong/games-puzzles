@@ -8,6 +8,7 @@ import { localDateKey, streak } from '../../../shared/core/dates.ts';
 import { setTextures } from '../../../shared/ui/textures.ts';
 import type { ShareText } from '../../../shared/ui/copy.ts';
 import { h } from '../../../shared/ui/dom.ts';
+import { createSounds } from '../../../shared/ui/sound.ts';
 import { offerUpdates } from '../../../shared/ui/update-view.ts';
 import { TEXTURES } from '../art/textures.ts';
 import { SOLITAIRE } from '../config.ts';
@@ -125,8 +126,15 @@ export function startApp(root: HTMLElement): void {
   backBtn.addEventListener('click', closeRoute);
   menuBtn.addEventListener('click', openMenu);
 
+  /**
+   * The sounds (decision of 28.11), while switched on: a card moves, a suit (or Spider's run) complete, solved, not
+   * allowed. Shared with Spider's and FreeCell's screens.
+   */
+  const sounds = createSounds(() => settings.sound);
+
   // Spider's screen: its own deal, table, note and tools; the top bar, the menu and the start screen stay here.
   const spider = createSpiderScreen({
+    sounds,
     dict: () => d,
     lang: () => lang,
     settings: () => settings,
@@ -144,6 +152,7 @@ export function startApp(root: HTMLElement): void {
 
   // FreeCell's screen, the same way.
   const freecell = createFreeCellScreen({
+    sounds,
     dict: () => d,
     lang: () => lang,
     settings: () => settings,
@@ -504,6 +513,10 @@ export function startApp(root: HTMLElement): void {
   // ---------- moves ----------
   function commit(next: Klondike, words: string | null): void {
     if (!game || !slot || next === game) return;
+    // a card moves; then a suit complete, or the whole deal
+    const moving = sounds.play('card');
+    if (next.done) sounds.play('win', {}, moving);
+    else if (suitsDone(next) > suitsDone(game)) sounds.play('success', {}, moving);
     // The move that finishes the deal stops the clock: its last stretch counts.
     if (next.done && clockFrom !== null) {
       next = { ...next, ms: next.ms + (performance.now() - clockFrom) };
@@ -554,6 +567,9 @@ export function startApp(root: HTMLElement): void {
     });
   }
 
+  /** Foundations full, from the ace to the king. */
+  const suitsDone = (t: Klondike): number => t.foundations.filter((rank) => rank === SOLITAIRE.deck.ranks).length;
+
   /** Words for a move: the card and where it went, and the card it turned up. */
   function moveWords(before: Klondike, after: Klondike, from: Place, index: number, to: Place): string {
     const card = movingCards(before, from, index)?.[0];
@@ -592,10 +608,12 @@ export function startApp(root: HTMLElement): void {
     const { place, index } = target;
     if (place.kind === 'column' && index < game.down[place.index]!) {
       table.refuse(target);
+      sounds.play('refuse');
       say(d.game.faceDown);
       return;
     }
     if (place.kind === 'foundation') {
+      sounds.play('refuse');
       say(d.game.fromHome);
       return;
     }
@@ -603,6 +621,7 @@ export function startApp(root: HTMLElement): void {
     if (!to) {
       const card = movingCards(game, place, index)?.[0];
       table.refuse(target);
+      sounds.play('refuse');
       say(fmt(d.game.noPlace, { card: card === undefined ? '' : cardName(card, d) }));
       return;
     }
@@ -613,6 +632,7 @@ export function startApp(root: HTMLElement): void {
     if (!game || game.done || finishing !== null) return false;
     if (!canMove(game, from, index, to)) {
       const card = movingCards(game, from, index)?.[0];
+      sounds.play('refuse');
       say(fmt(d.game.cantDrop, { card: card === undefined ? '' : cardName(card, d) }));
       return false;
     }
@@ -623,6 +643,7 @@ export function startApp(root: HTMLElement): void {
     if (!game || game.done) return;
     if (game.talon.length === 0) {
       table.refuse({ kind: 'stock' });
+      sounds.play('refuse');
       say(d.game.stockNone);
       return;
     }
@@ -675,6 +696,7 @@ export function startApp(root: HTMLElement): void {
       if (!s || s === 'draw') return false;
       next = moveCards(next, s.from, s.index, s.to);
       if (next === game) return false;
+      if (!next.done) sounds.play('card');
       if (next.done) {
         finishing = null;
         commit(next, null);
@@ -828,11 +850,14 @@ export function startApp(root: HTMLElement): void {
           openMenu();
         },
         set(patch) {
+          const soundOn = patch.sound === true && !settings.sound;
           const drawChanged = patch.draw !== undefined && patch.draw !== settings.draw;
           const suitsChanged = patch.spiderSuits !== undefined && patch.spiderSuits !== settings.spiderSuits;
           const cellsChanged = patch.freeCells !== undefined && patch.freeCells !== settings.freeCells;
           settings = { ...settings, ...patch };
           store.saveSettings(settings);
+          // switched on by a touch: the sound wakes, and a soft knock says it is on
+          if (soundOn) sounds.switchedOn();
           // Another number of FreeCell's free cells: that number's own deal opens (each keeps its unfinished one).
           const openFree = freecell.slot();
           if (cellsChanged && openFree) {

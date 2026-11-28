@@ -164,6 +164,7 @@
     "helpNone": "Segítség nélkül",
     "helpNote": "Korlátlan: visszavonás és tipp akárhányszor, plusz egy üvegcse. Korlátozott: szintenként visszavonás: {undo}, tipp: {hints}, plusz üvegcse nélkül.",
     "time": "Az idő mutatása",
+    "sound": "Hang",
     "vibration": "Rezgés, amikor egy üvegcse kész",
     "look": "Megjelenés",
     "big": "Nagy üvegcsék",
